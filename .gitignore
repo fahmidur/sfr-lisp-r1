@@ -1,0 +1,7 @@
+*_test
+nassert_test
+sfr_lisp
+sfr-lisp
+*_test
+*.o
+*.exe
