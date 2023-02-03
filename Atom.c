@@ -69,7 +69,7 @@ Atom* Atom_find(char* str) {
     return NULL;
   }
   size_t lidx = av->lidx;
-  if(av == NULL || lidx == 0) {
+  if(lidx == 0) {
     return NULL;
   }
   int i;
@@ -88,12 +88,14 @@ Atom* Atom_new(char* str) {
   if(self != NULL) {
     return self;
   }
+
   self = malloc(sizeof(Atom));
   size_t str_len = strlen(str);
   self->str_len = str_len;
   size_t buflen = str_len+1;
   self->str = malloc(buflen);
   strcpy(self->str, str);
+
   size_t key = Atom_key(str);
   AtomVector* av = av_buckets[key];
   if(av == NULL) {

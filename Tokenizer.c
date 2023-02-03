@@ -110,6 +110,7 @@ char Tokenizer_buf_push(Tokenizer* self, char* str, unsigned int str_size) {
     self->buf[self->buf_endp++] = str[i];
   }
   printf("Tokenizer_buf_push. buf=|%s| buf_endp=%d buf_size=%d\n", self->buf, self->buf_endp, self->buf_size);
+  return 1;
 }
 
 char Tokenizer_nq_cstr1(Tokenizer* self, char* str) {

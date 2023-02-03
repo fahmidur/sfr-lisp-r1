@@ -43,8 +43,8 @@ void repl() {
 }
 
 char file_exists(const char *path) {
-  FILE *file;
-  if(file = fopen(path, "r")) {
+  FILE *file = fopen(path, "r");
+  if(file) {
     fclose(file);
     return 1;
   }
@@ -52,11 +52,10 @@ char file_exists(const char *path) {
 }
 
 int strcmp_onedash(const char* a, const char* b, const char* c) {
-  char* buf = (char*) malloc(strlen(a)+1);
+  char* buf = (char*) calloc(strlen(a)+1, sizeof(char));
   size_t buf_pos = 0;
   unsigned int i;
   int res;
-  memset(buf, 0, sizeof buf);
   size_t a_len = strlen(a);
   char leading = 1;
   unsigned int leading_dash_count = 0;
