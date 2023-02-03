@@ -36,7 +36,6 @@ int main(int argc, char** argv) {
   };
   assert_token_match(tokenizer, texpected, 10);
   printf("=========== } CASE 001 }\n");
-  return 0;
 
   printf("=========== { CASE 002 {\n");
   tokenizer = Tokenizer_new();
