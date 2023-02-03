@@ -70,8 +70,12 @@ void AtomVector_del(AtomVector* self) {
   printf("AtomVector_del(%p)\n", self);
   int i;
   size_t lidx = self->lidx;
+  Atom* atom;
   for(i = 0; i < lidx; i++) {
-    Atom_del(self->list[i]);
+    atom = self->list[i];
+    if(atom != NULL) {
+      Atom_del(atom);
+    }
   }
   free(self->list);
   free(self);
@@ -98,11 +102,11 @@ Atom* Atom_find(char* str) {
     return NULL;
   }
   int i;
-  Atom* iatom = NULL;
+  Atom* atom = NULL;
   for(i = 0; i < lidx; i++) {
-    iatom = av->list[i];
-    if(strcmp(iatom->str, str) == 0) {
-      return iatom;
+    atom = av->list[i];
+    if(strcmp(atom->str, str) == 0) {
+      return atom;
     }
   }
   return NULL;
@@ -121,8 +125,8 @@ Atom* Atom_new(char* str) {
   self = malloc(sizeof(Atom));
   size_t str_len = strlen(str);
   self->str_len = str_len;
-  self->str = calloc(str_len+1, sizeof(char));
 
+  self->str = calloc(str_len+1, sizeof(char));
   strcpy(self->str, str);
 
   size_t key = Atom_key(str);
