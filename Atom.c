@@ -9,7 +9,7 @@ void Atom_system_init() {
   printf("--- Atom_system_init() ---\n");
   int i = 0;
   for(i = 0; i < ATOM_BUCKET_SIZE; i++) {
-    av_buckets[i] = NULL;
+    av_buckets[i] = NULL; //AtomVector_new();
   }
 }
 
@@ -19,11 +19,32 @@ void Atom_system_done() {
   AtomVector* iter;
   for(i = 0; i < ATOM_BUCKET_SIZE; i++) {
     iter = av_buckets[i];
-    if(iter == NULL) {
-      continue;
+    if(iter != NULL) {
+      AtomVector_del(iter);
     }
-    AtomVector_del(iter);
   }
+}
+
+void Atom_system_print() {
+  printf("--- BEG. Atom_system_print() ---\n");
+  printf("NULL=%p\n", NULL);
+  int i, j;
+  AtomVector* av;
+  Atom* atom;
+  for(i = 0; i < ATOM_BUCKET_SIZE; i++) {
+    av = av_buckets[i];
+    printf("i[%02u] = %p\n", i, av);
+    if(av != NULL) {
+      printf("  lidx=%u\n", av->lidx);
+      for(j = 0; j < (av->lidx-1); j++) {
+        atom = av->list[j];
+        printf("  j[%02u] = %p || ", j, atom);
+        Atom_print(atom);
+        printf("\n");
+      }
+    }
+  }
+  printf("--- END. Atom_system_print() ---\n");
 }
 
 AtomVector* AtomVector_new() {
@@ -83,17 +104,21 @@ Atom* Atom_find(char* str) {
   return NULL;
 }
 
+void Atom_print(Atom* self) {
+  printf("Atom(%s)", self->str);
+}
+
 Atom* Atom_new(char* str) {
   Atom* self = Atom_find(str);
   if(self != NULL) {
     return self;
   }
-
+  int i;
   self = malloc(sizeof(Atom));
   size_t str_len = strlen(str);
   self->str_len = str_len;
-  size_t buflen = str_len+1;
-  self->str = malloc(buflen);
+  self->str = calloc(str_len+1, sizeof(char));
+
   strcpy(self->str, str);
 
   size_t key = Atom_key(str);
