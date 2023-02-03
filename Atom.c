@@ -67,9 +67,10 @@ void AtomVector_push(AtomVector* self, Atom* atom) {
 }
 
 void AtomVector_del(AtomVector* self) {
+  printf("AtomVector_del(%p)\n", self);
   int i;
-  size_t lsize = self->size;
-  for(i = 0; i < lsize; i++) {
+  size_t lidx = self->lidx;
+  for(i = 0; i < lidx; i++) {
     Atom_del(self->list[i]);
   }
   free(self->list);
