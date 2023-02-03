@@ -25,6 +25,7 @@ Atom_test: Atom.o Atom_test.c
 test: build_test
 	./nassert_test
 	./Tokenizer_test
+	./Atom_test
 
 sfr-lisp: sfr-lisp.c Tokenizer.o String.o
 	$(CC) $(CFLAGS) -o sfr-lisp sfr-lisp.c Tokenizer.o String.o
