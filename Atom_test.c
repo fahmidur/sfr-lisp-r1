@@ -5,10 +5,6 @@
 
 int main(int argc, char** argv) {
   printf("--- Atom test ---\n");
-
-  /*nassert(2+2 == 4);*/
-  /*nassert(2+2 == 5);*/
-  /*nassert(2+3 == 5);*/
   
   Atom_system_init();
 

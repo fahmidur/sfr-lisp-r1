@@ -104,6 +104,13 @@ Atom* Atom_new(char* str) {
   size_t buflen = str_len+1;
   self->str = malloc(buflen);
   strcpy(self->str, str);
+  size_t key = Atom_key(str);
+  AtomVector* av = av_buckets[key];
+  if(av == NULL) {
+    av = AtomVector_new();
+    av_buckets[key] = av;
+  }
+  AtomVector_push(av, self);
   return self;
 }
 
