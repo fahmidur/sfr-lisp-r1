@@ -6,3 +6,5 @@ sfr-lisp
 *.o
 *.exe
 *_test
+build
+build/**
