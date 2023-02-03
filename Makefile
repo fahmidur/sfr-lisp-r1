@@ -13,6 +13,7 @@ Tokenizer.o: Tokenizer.c Tokenizer.h
 	gcc -c Tokenizer.c
 String.o: String.h String.c
 	gcc -c String.c
+Atom.o: Atom.c Atom.h
 #=== } Objects } ===
 
 Tokenizer_test: Tokenizer_test.c Tokenizer.o nassert.h

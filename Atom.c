@@ -29,7 +29,7 @@ AtomVector* AtomVector_new() {
   return self;
 }
 
-void AtomVector_push(AtomVector self, Atom* atom) {
+void AtomVector_push(AtomVector* self, Atom* atom) {
   self->list[self->lidx++] = atom;
   if(self->lidx == self->size) {
     self->list = (Atom**) realloc(self->list, 2 * self->lidx);
@@ -39,8 +39,8 @@ void AtomVector_push(AtomVector self, Atom* atom) {
 
 void AtomVector_del(AtomVector* self) {
   int i;
-  size_t list_size = self->size;
-  for(i = 0; i < size; i++) {
+  size_t lsize = self->size;
+  for(i = 0; i < lsize; i++) {
     Atom_del(self->list[i]);
   }
   free(self->list);
