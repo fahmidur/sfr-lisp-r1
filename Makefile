@@ -17,10 +17,13 @@ Atom.o: Atom.c Atom.h
 #=== } Objects } ===
 
 Tokenizer_test: Tokenizer_test.c Tokenizer.o nassert.h
-	gcc -O3 -o Tokenizer_test Tokenizer_test.c Tokenizer.o
+	gcc -o Tokenizer_test Tokenizer_test.c Tokenizer.o
 
 Tokenizer_test_run: Tokenizer_test
 	./Tokenizer_test
+
+Atom_test: Atom.o Atom_test.c
+	gcc -o Atom_test Atom_test.c Atom.o
 
 test: build_test
 	./nassert_test

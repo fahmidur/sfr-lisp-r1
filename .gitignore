@@ -5,3 +5,4 @@ sfr-lisp
 *_test
 *.o
 *.exe
+*_test
