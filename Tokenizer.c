@@ -97,7 +97,6 @@ void Tokenizer_del(Tokenizer** self_ptr) {
   *self_ptr = NULL;
 }
 
-
 char Tokenizer_buf_push(Tokenizer* self, char* str, unsigned int str_size) {
   printf("Tokenizer_buf_push. buf=|%s| str=%s\n", self->buf, str);
   unsigned int i;
@@ -113,25 +112,25 @@ char Tokenizer_buf_push(Tokenizer* self, char* str, unsigned int str_size) {
   printf("Tokenizer_buf_push. buf=|%s| buf_endp=%d buf_size=%d\n", self->buf, self->buf_endp, self->buf_size);
 }
 
-inline char Tokenizer_nq_cstr1(Tokenizer* self, char* str) {
+char Tokenizer_nq_cstr1(Tokenizer* self, char* str) {
   printf("Tokenizer_nq_cstr1. str=|%s|\n", str);
   return Tokenizer_buf_push(self, str, strlen(str));
   return 1;
 }
 
-inline char TokenizerUtil_isdigit(char ch) {
+char TokenizerUtil_isdigit(char ch) {
   return (ch >= '0' && ch <= '9');
 }
 
-inline char TokenizerUtil_numlike(char ch) {
+char TokenizerUtil_numlike(char ch) {
  return ch == '.' || TokenizerUtil_isdigit(ch);
 }
 
-inline char TokenizerUtil_wordlike(char ch) {
+char TokenizerUtil_wordlike(char ch) {
   return (ch >= 65 && ch <= 90) || (ch >= 97 && ch <= 122) || (ch == '_') || (ch == '-') || (ch == '+');
 }
 
-inline char TokenizerUtil_min_uint(unsigned int a, unsigned int b) {
+char TokenizerUtil_min_uint(unsigned int a, unsigned int b) {
   return (a < b) ? a : b;
 }
 

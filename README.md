@@ -34,5 +34,16 @@ if(Object_is_type(obj, "Number")) {
 Atom* number = Atom_new("Number")
 if(Object_type(obj) == number) {
 }
+
+Atom* number1 = Atom_new("Number");
+Atom* number2 = Atom_new("Number");
+assert(number1 == number2);
 ```
 
+## Scrap
+
+```
+Tokenizer *tokenizer = Tokenizer_new();
+tokenizer.enqueue_cstr("(print 'hello world')");
+Token tok = Tokenizer_dequeue(tokenizer);
+```
