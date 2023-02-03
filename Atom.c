@@ -37,8 +37,8 @@ AtomVector* AtomVector_new() {
 void AtomVector_push(AtomVector* self, Atom* atom) {
   self->list[self->lidx++] = atom;
   if(self->lidx == self->size) {
-    self->list = (Atom**) realloc(self->list, 2 * self->lidx);
-    self->lidx = 2 * self->lidx;
+    self->list = (Atom**) realloc(self->list, 2*self->lidx);
+    self->lidx = 2*self->lidx;
   }
 }
 
@@ -53,31 +53,23 @@ void AtomVector_del(AtomVector* self) {
 }
 
 size_t Atom_key(char* str) {
-  printf("Atom_key. str=%s\n", str);
   int i = 0;
   size_t out = 0;
   size_t len = strlen(str);
   for(i = 0; i < len; i++) {
-    printf("i=%u\n", i);
     out = (out + (str[i] * (i+1))) % ATOM_BUCKET_SIZE;
   }
-  printf("Atom_key. out=%u\n", (unsigned int)out);
   return out;
 }
 
 Atom* Atom_find(char* str) {
-  printf("Atom_find(%s).\n", str);
   size_t key = Atom_key(str);
-  printf("Atom_find(%s). key=%u\n", str, (unsigned int)key);
   AtomVector* av = av_buckets[key];
   if(av == NULL) {
     return NULL;
   }
-  printf("Atom_find(%s). av=%p\n", str, av);
   size_t lidx = av->lidx;
-  printf("Atom_find(%s). lidx=%u\n", str, (unsigned int)lidx);
   if(av == NULL || lidx == 0) {
-    printf("Atom_find(%s). return null 1\n", str);
     return NULL;
   }
   int i;
@@ -88,12 +80,10 @@ Atom* Atom_find(char* str) {
       return iatom;
     }
   }
-  printf("Atom_find. return null 2\n");
   return NULL;
 }
 
 Atom* Atom_new(char* str) {
-  printf("Atom_new. str=%s\n", str);
   Atom* self = Atom_find(str);
   if(self != NULL) {
     return self;
