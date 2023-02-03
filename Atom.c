@@ -35,8 +35,8 @@ void Atom_system_print() {
     av = av_buckets[i];
     printf("i[%02u] = %p\n", i, av);
     if(av != NULL) {
-      printf("  lidx=%zu\n", av->lidx);
-      for(j = 0; j < av->lidx; j++) {
+      printf("  lidx=%zu size=%zu\n", av->lidx, av->size);
+      for(j = 0; j < av->size; j++) {
         atom = av->list[j];
         printf("  j[%02u] = %p || ", j, atom);
         if(atom != NULL) {
@@ -64,7 +64,11 @@ void AtomVector_push(AtomVector* self, Atom* atom) {
     size_t size_old = self->size;
     size_t size_new = 2*size_old;
     printf("AtomVector_push. grow. growing... size_old=%zu size_new=%zu\n", size_old, size_new);
-    self->list = (Atom**) realloc(self->list, size_new);
+    self->list = (Atom**) realloc(self->list, size_new*sizeof(Atom*));
+    if(self->list == NULL) {
+      printf("ERROR: AtomVector_push. grow. Failed to realloc AtomVector\n");
+      exit(1);
+    }
     self->size = size_new;
     int i;
     for(i = self->lidx; i < size_new; i++) {
