@@ -35,11 +35,13 @@ void Atom_system_print() {
     av = av_buckets[i];
     printf("i[%02u] = %p\n", i, av);
     if(av != NULL) {
-      printf("  lidx=%u\n", av->lidx);
-      for(j = 0; j < (av->lidx-1); j++) {
+      printf("  lidx=%zu\n", av->lidx);
+      for(j = 0; j < av->lidx; j++) {
         atom = av->list[j];
         printf("  j[%02u] = %p || ", j, atom);
-        Atom_print(atom);
+        if(atom != NULL) {
+          Atom_print(atom);
+        }
         printf("\n");
       }
     }
@@ -58,8 +60,9 @@ AtomVector* AtomVector_new() {
 void AtomVector_push(AtomVector* self, Atom* atom) {
   self->list[self->lidx++] = atom;
   if(self->lidx == self->size) {
-    self->list = (Atom**) realloc(self->list, 2*self->lidx);
-    self->lidx = 2*self->lidx;
+    printf("AtomVector_push. growing...\n");
+    self->list = (Atom**) realloc(self->list, 2*self->size);
+    self->size = 2*self->size;
   }
 }
 
