@@ -61,7 +61,7 @@ file "build/Tokenizer_test" => ["Tokenizer_test.c", "build/Tokenizer.o"] do
   sh "#{cc} #{cflags} -o build/Tokenizer_test Tokenizer_test.c build/Tokenizer.o"
 end
 
-desc "build Atom_test program"
+desc "Build Atom_test program"
 file "build/Atom_test" => ["Atom_test.c", "build/Atom.o"] do
   sh "#{cc} #{cflags} -o build/Atom_test Atom_test.c build/Atom.o"
 end
