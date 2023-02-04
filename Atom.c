@@ -118,12 +118,9 @@ Atom* Atom_find(char* str) {
   Atom* atom = NULL;
   for(i = 0; i < lidx; i++) {
     atom = av->list[i];
-    if(atom != NULL) {
+    if(strcmp(atom->str, str) == 0) {
       return atom;
     }
-    /*if(strcmp(atom->str, str) == 0) {*/
-      /*return atom;*/
-    /*}*/
   }
   return NULL;
 }
