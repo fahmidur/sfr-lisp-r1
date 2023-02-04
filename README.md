@@ -1,8 +1,9 @@
 # SFR-Lisp
 
-
 A very simple lisp-1. This is not designed to be
-used for anything, it is merely a self-learning exercise.
+used for anything important, it is merely a self-learning exercise.
+
+> What I cannot create in C, I do not understand.
 
 ## The Plan
 
