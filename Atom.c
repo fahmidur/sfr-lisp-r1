@@ -9,7 +9,7 @@ void Atom_system_init() {
   printf("--- Atom_system_init() ---\n");
   int i = 0;
   for(i = 0; i < ATOM_BUCKET_SIZE; i++) {
-    av_buckets[i] = NULL; //AtomVector_new();
+    av_buckets[i] = NULL;
   }
 }
 
