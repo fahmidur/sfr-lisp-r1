@@ -1,7 +1,20 @@
 require 'fileutils'
 
+def env_truthy?(name)
+  name = name.to_s
+  val = ENV[name] || ENV[name.downcase]
+  return true if val == '1' || val == 't'
+  return true if val =~ /true/i
+  return false
+end
+
+debug = env_truthy?(:debug) ? true : false
 cc = ENV['CC'] || "clang"
-cflags = "-g"
+cflags = ["-g"]
+if debug
+  cflags << "-D DEBUG"
+end
+cflags = cflags.join(' ')
 
 task :default => :build
 

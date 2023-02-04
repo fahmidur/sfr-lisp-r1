@@ -1,8 +1,13 @@
 #ifndef __ATOM
 #define __ATOM
 
-#define ATOM_BUCKET_SIZE 10
-#define ATOMVECTOR_ISIZE 1
+#ifdef DEBUG
+  #define ATOM_BUCKET_SIZE 10
+  #define ATOMVECTOR_ISIZE 1
+#else
+  #define ATOM_BUCKET_SIZE 1024
+  #define ATOMVECTOR_ISIZE 256
+#endif
 
 void Atom_system_init();
 void Atom_system_done();
