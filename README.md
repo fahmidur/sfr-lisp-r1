@@ -7,23 +7,23 @@ used for anything important, it is merely a self-learning exercise.
 
 ## The Plan
 
-- Make C at least as usable as C++
-  - Atom
-  - Number
-  - String
-  - Table
+- Make C at least as usable as Ruby
+  - Symbol -- Just like Ruby Symbols
+  - String -- Mutable Strings
+  - Number -- Generic Numbers
+  - Hash   -- Just like Ruby Hash
   - Error
   - Object
   - Shared Ptr Garbage Collection
 
 
-What is the purpose of Atom?
+What is the purpose of Symbol?
 
 ```
 Object *obj = eval("(add 2 3)");
 
-Atom* atom = Object_type(obj);
-if(Atom_cstr_equal(atom, "Number")) {
+Symbol* atom = Object_type(obj);
+if(Symbol_cstr_equal(atom, "Number")) {
   // do stuff
 }
 
@@ -32,12 +32,12 @@ if(Object_is_type(obj, "Number")) {
 }
 
 // this is beautiful
-Atom* number = Atom_new("Number")
+Symbol* number = Symbol_new("Number")
 if(Object_type(obj) == number) {
 }
 
-Atom* number1 = Atom_new("Number");
-Atom* number2 = Atom_new("Number");
+Symbol* number1 = Symbol_new("Number");
+Symbol* number2 = Symbol_new("Number");
 assert(number1 == number2);
 ```
 
