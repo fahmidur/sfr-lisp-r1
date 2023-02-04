@@ -1,8 +1,8 @@
 #ifndef __SYMBOL
 #define __SYMBOL
 
-#define SYMBOL_BUCKET_SIZE 16
-#define SYMBOLVECTOR_ISIZE 1
+#define SYMBOL_BUCKET_SIZE 1024
+#define SYMBOLVECTOR_ISIZE 32
 
 void Symbol_system_init();
 void Symbol_system_done();
