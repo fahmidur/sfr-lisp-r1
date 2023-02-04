@@ -47,3 +47,11 @@ Tokenizer *tokenizer = Tokenizer_new();
 tokenizer.enqueue_cstr("(print 'hello world')");
 Token tok = Tokenizer_dequeue(tokenizer);
 ```
+
+```
+Lisp_system_init();
+LispList* list = Lisp.parse("(print 'hello world'))
+list[0] == Symbol_new("print")
+list[1] == String_new("Hello World") 
+Lisp_system_done();
+```
