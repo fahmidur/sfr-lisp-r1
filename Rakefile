@@ -1,21 +1,7 @@
-require 'find'
 require 'fileutils'
 
 cc = ENV['CC'] || "clang"
 cflags = "-g"
-
-task :efiles do
-  Find.find('.') do |path|
-    # Ignore hidden directories
-    if path != "." && File.basename(path).start_with?(".")
-      Find.prune
-      next
-    end
-    if !File.directory?(path) && File.executable?(path)
-      puts path
-    end
-  end
-end
 
 task :clean do
   puts "clean. cleaning..."
