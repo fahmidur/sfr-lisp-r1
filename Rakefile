@@ -65,3 +65,8 @@ desc "Build Atom_test program"
 file "build/Atom_test" => ["Atom_test.c", "build/Atom.o"] do
   sh "#{cc} #{cflags} -o build/Atom_test Atom_test.c build/Atom.o"
 end
+
+desc "Run all tests"
+task :test => :build do
+  puts "TODO: Run all tests"
+end
