@@ -77,7 +77,12 @@ file build('Util_test') => ['Util_test.c', build('Util.o')] do
   sh "#{cc} #{cflags} -o #{build('Util_test')} Util_test.c #{build('Util.o')}"
 end
 
+desc "Build leaky test program."
+file build('leaky') => ['leaky.c'] do
+  sh "#{cc} #{cflags} -o #{build('leaky')} leaky.c"
+end
+
 desc "Run all tests"
 task :test => :build do
-  puts "TODO: Run all tests"
+  sh "ruby ./test/all.rb"
 end
