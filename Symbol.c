@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "Symbol.h"
+#include "Util.h"
 
 static SymbolVector* av_buckets[SYMBOL_BUCKET_SIZE];
 
@@ -94,13 +95,7 @@ void SymbolVector_del(SymbolVector* self) {
 }
 
 size_t Symbol_key(char* str) {
-  int i = 0;
-  size_t out = 0;
-  size_t len = strlen(str);
-  for(i = 0; i < len; i++) {
-    out = (out + (str[i] * (i+1))) % SYMBOL_BUCKET_SIZE;
-  }
-  return out;
+  return Util_cstr_hash_djb2(str) % SYMBOL_BUCKET_SIZE;
 }
 
 Symbol* Symbol_find(char* str) {

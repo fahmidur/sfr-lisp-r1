@@ -4,6 +4,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-size_t cstr_hash_djb2(char* str);
+size_t Util_cstr_hash_djb2(char* str);
 
 #endif
