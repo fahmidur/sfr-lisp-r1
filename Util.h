@@ -1,5 +1,9 @@
 #ifndef __SFR_UTIL
 #define __SFR_UTIL
 
-size_t string_hash_djb2(char* str);
+#include <stdio.h>
+#include <stdlib.h>
+
+size_t cstr_hash_djb2(char* str);
+
 #endif

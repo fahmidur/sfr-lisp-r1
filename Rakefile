@@ -38,6 +38,11 @@ task :build do
   end
 end
 
+desc "Build Util object"
+file "build/Util.o" => ["Util.h", "Util.c"] do
+  sh "#{cc} #{cflags} -c -o build/Util.o Util.c"
+end
+
 desc "Build Symbol object"
 file "build/Symbol.o" =>  ["Symbol.c", "Symbol.h"] do
   sh "#{cc} #{cflags} -c -o build/Symbol.o Symbol.c"
