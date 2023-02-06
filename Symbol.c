@@ -27,27 +27,56 @@ void Symbol_system_done() {
 }
 
 void Symbol_system_print() {
-  printf("--- BEG. Symbol_system_print() ---\n");
-  printf("NULL=%p\n", NULL);
+  printf("--- { Symbol_system_print(). BEG { ---\n");
   int i, j;
   SymbolVector* av;
   Symbol* atom;
+  unsigned int nulls_count = 0;
+  unsigned int nulls_max = 1;
+  char intrim = 0;
+  size_t ilast = SYMBOL_BUCKET_SIZE-1;
   for(i = 0; i < SYMBOL_BUCKET_SIZE; i++) {
     av = av_buckets[i];
-    printf("i[%02u] = %p\n", i, av);
-    if(av != NULL) {
+    if(av == NULL) {
+      nulls_count++;
+      if(nulls_count > nulls_max) {
+        if(intrim) {
+          if(i == ilast) {
+            printf("%05u] \t= (nil) count=%d\n", i, nulls_count);
+            intrim = 0;
+          }
+        } 
+        else {
+          printf("i[%05u..", i);
+          intrim = 1;
+        }
+      }
+      else {
+        printf("i[%05u] \t\t= %p\n", i, av);
+      }
+    }
+    else {
+      if(intrim) {
+        printf("%05u] \t= (nil) count=%d\n", i, nulls_count);
+        intrim = 0;
+      }
+      printf("i[%05u] \t\t= %p\n", i, av);
+      nulls_count = 0;
       printf("  lidx=%zu size=%zu\n", av->lidx, av->size);
       for(j = 0; j < av->size; j++) {
         atom = av->list[j];
-        printf("  j[%02u] = %p || ", j, atom);
-        if(atom != NULL) {
-          Symbol_print(atom);
+        printf("  i[%05u] j[%03u] \t= %p", i, j, atom);
+        if(atom == NULL) {
+          printf("\n");
+          break;
         }
+        printf(" || ");
+        Symbol_print(atom);
         printf("\n");
       }
     }
   }
-  printf("--- END. Symbol_system_print() ---\n");
+  printf("--- } Symbol_system_print(). END } ---\n");
 }
 
 SymbolVector* SymbolVector_new() {
