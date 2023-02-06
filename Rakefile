@@ -48,7 +48,7 @@ file build("Util.o") => ["Util.h", "Util.c"] do
 end
 
 desc "Build Symbol object"
-file build('Symbol.o') =>  ['Symbol.c', 'Symbol.h'] do
+file build('Symbol.o') =>  ['Symbol.c', 'Symbol.h', build('Util.o')] do
   sh "#{cc} #{cflags} -c -o #{build('Symbol.o')} Symbol.c"
 end
 
