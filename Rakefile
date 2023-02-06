@@ -19,7 +19,7 @@ end
 
 debug = env_truthy?(:debug) ? true : false
 cc = ENV['CC'] || "clang"
-cflags = ["-g"]
+cflags = ["-g", "-I."]
 if debug
   cflags << "-D DEBUG"
 end
@@ -48,8 +48,8 @@ file build("Util.o") => ["Util.h", "Util.c"] do
 end
 
 desc "Build Symbol object"
-file build('Symbol.o') =>  ['Symbol.c', 'Symbol.h', build('Util.o')] do
-  sh "#{cc} #{cflags} -c -o #{build('Symbol.o')} Symbol.c #{build('Util.o')}"
+file build('Symbol.o') =>  ['Symbol.c', 'Symbol.h'] do
+  sh "#{cc} #{cflags} -c -o #{build('Symbol.o')} Symbol.c"
 end
 
 desc "Build Symbol_test program"
