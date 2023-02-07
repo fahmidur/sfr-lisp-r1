@@ -11,7 +11,7 @@ module Util
   end
 
   def self.valgrind(cmd)
-    ecode = Util.run("valgrind --leak-check=full --error-exitcode=#{VALGRIND_EXITCODE} #{cmd}")
+    ecode = self.run("valgrind --leak-check=full --error-exitcode=#{VALGRIND_EXITCODE} #{cmd}")
     return ecode
   end
 end
