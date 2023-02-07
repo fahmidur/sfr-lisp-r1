@@ -80,10 +80,10 @@ void Symbol_system_print() {
 }
 
 SymbolVector* SymbolVector_new() {
-  SymbolVector* self = (SymbolVector*) malloc(sizeof(SymbolVector));
+  SymbolVector* self = (SymbolVector*) calloc(1, sizeof(SymbolVector));
   self->size = SYMBOLVECTOR_ISIZE;
   self->lidx = 0;
-  self->list = (Symbol**) malloc(self->size * sizeof(Symbol));
+  self->list = (Symbol**) calloc(self->size, sizeof(Symbol*));
   return self;
 }
 
@@ -159,7 +159,7 @@ Symbol* Symbol_new(char* str) {
     return self;
   }
   int i;
-  self = malloc(sizeof(Symbol));
+  self = calloc(1, sizeof(Symbol));
   size_t str_len = strlen(str);
   self->str_len = str_len;
 
