@@ -2,12 +2,26 @@ module Util
 
   VALGRIND_EXITCODE = 9
 
+  class Shellout
+    attr_reader :cmd
+    attr_reader :exitstatus
+    attr_reader :stdout
+
+    def initialize(cmd)
+      @cmd = cmd
+      @exitstatus = nil
+      @stdout = nil
+    end
+    def run!
+      puts "Shellout. run! cmd=#{@cmd}"
+      @stdout = `#{@cmd}`
+      @exitstatus = $?.exitstatus
+      return self
+    end
+  end
+
   def self.run(cmd)
-    puts "Util.run. cmd=#{cmd}"
-    out = `#{cmd}`
-    ecode = $?.exitstatus
-    puts "Util.run. ecode=#{ecode}"
-    return ecode
+    return Shellout.new(cmd).run!
   end
 
   def self.valgrind(cmd)
