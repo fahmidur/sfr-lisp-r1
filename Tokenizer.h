@@ -52,7 +52,7 @@ void Tokenizer_del(Tokenizer** self_ptr);
 void Tokenizer_ptoken(Tokenizer* self, Token token);
 void Tokenizer_dprint(Tokenizer* self);
 
-char  Tokenizer_nq_cstr1(Tokenizer* self, char* str);
+char Tokenizer_nq_cstr1(Tokenizer* self, char* str);
 Token Tokenizer_dq(Tokenizer* self);
 
 #endif
