@@ -33,6 +33,15 @@ task :clean do
   sh "mkdir -p ./build"
   sh "rm -rf ./build/*"
   sh "rm -f *.o"
+
+  # Remove any stray executable files which 
+  # my be in non-build directory
+  $build_targets.each do |name, target|
+    if File.exist?(name) && File.executable?(name)
+      puts "stray found: #{name}"
+      sh "rm #{name}"
+    end
+  end
 end
 
 desc "Build everything"
