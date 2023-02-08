@@ -14,8 +14,13 @@ int main(int argc, char** argv) {
   nassert(str1->len == 5);
   nassert(String_len(str1) == 5);
 
+  String* str2 = String_new("Hello\n\n");
+  String_chomp(str2);
+  nassert(strcmp("Hello\n", str2->buf) == 0);
+
   String_del(str0);
   String_del(str1);
+  String_del(str2);
 
   nassert_report();
   return nassert_exit_code();

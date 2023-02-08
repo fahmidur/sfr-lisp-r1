@@ -55,6 +55,7 @@ void String_chomp(String* self) {
     }
     if(ch == '\n' || ch == '\r') {
       self->buf[i] = '\0';
+      break;
     } 
     else {
       break;
