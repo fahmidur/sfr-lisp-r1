@@ -4,20 +4,20 @@
 #include "String.h"
 #include "Util.h"
 
-struct String*  String_new(char* istr) {
-  struct String* ds = malloc(sizeof(struct String));
+struct String* String_new(char* istr) {
+  struct String* self = malloc(sizeof(struct String));
   size_t ilen = strlen(istr);
   size_t i;
-  ds->buf_size = Util_sizet_max(String_IBUFSIZE, ilen+1);
-  ds->buf = calloc(ds->buf_size, sizeof(char));
-  /*memset(ds->buf, '\0', ds->buf_size);*/
+  self->buf_size = Util_sizet_max(String_IBUFSIZE, ilen+1);
+  self->buf = calloc(self->buf_size, sizeof(char));
   for(i = 0; i < ilen; i++) {
-    ds->buf[i] = istr[i];
+    self->buf[i] = istr[i];
   }
-  return ds;
+  self->len = strlen(self->buf);
+  return self;
 }
 
-void String_del(struct String* self) {
+void String_del(String* self) {
   if(self == NULL) {
     return;
   }
@@ -27,7 +27,7 @@ void String_del(struct String* self) {
   free(self);
 }
 
-void String_zero(struct String* self) {
+void String_zero(String* self) {
   memset(self->buf, 0, self->buf_size);
   #ifdef STRING_RETURN_MEMORY
     if(self->buf_size > String_MBUFSIZE) {
@@ -35,16 +35,18 @@ void String_zero(struct String* self) {
       self->buf_size = String_IBUFSIZE;
     }
   #endif
+  String_len(self);
 }
 
-ssize_t String_getline(struct String * self, FILE *stream) {
+ssize_t String_getline(String* self, FILE *stream) {
   String_zero(self);
   ssize_t ret = getline(&self->buf, &(self->buf_size), stream);
   printf("String_getline. ret=%ld buf_size=%ld\n", ret, self->buf_size);
+  String_len(self);
   return ret;
 }
 
-void String_chomp(struct String * self) {
+void String_chomp(String* self) {
   char ch;
   for(size_t i = self->buf_size-1; i >= 0; i--) {
     ch = self->buf[i];
@@ -58,4 +60,10 @@ void String_chomp(struct String * self) {
       break;
     }
   }
+  String_len(self);
+}
+
+size_t String_len(String* self) {
+  self->len = strlen(self->buf);
+  return self->len;
 }

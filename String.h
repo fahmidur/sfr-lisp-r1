@@ -10,17 +10,18 @@
 #define String_IBUFSIZE 4
 #define String_MBUFSIZE 8
 
-
 typedef struct String String;
 struct String {
+  size_t len;
   size_t buf_size;
   char* buf;
 };
 
 String* String_new(char* buf);
 ssize_t String_getline(struct String* self, FILE *stream);
-void String_zero(struct String* self);
-void String_del(struct String* self);
-void String_chomp(struct String* self);
+void String_zero(String* self);
+void String_del(String* self);
+void String_chomp(String* self);
+size_t String_len(String* self);
 
 #endif
