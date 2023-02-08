@@ -62,7 +62,6 @@ Object_system_init();
 
 typedef struct Object Object;
 struct Object {
-  size_t  id;
   Symbol* type;
   void*   impl;
 };
