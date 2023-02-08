@@ -5,13 +5,18 @@
 #include "Util.h"
 
 static SymbolVector* av_buckets[SYMBOL_BUCKET_SIZE];
+static char Symbol_system_inited = 0;
 
 void Symbol_system_init() {
   printf("--- Symbol_system_init() ---\n");
+  if(Symbol_system_inited) {
+    return;
+  }
   int i = 0;
   for(i = 0; i < SYMBOL_BUCKET_SIZE; i++) {
     av_buckets[i] = NULL;
   }
+  Symbol_system_inited = 1;
 }
 
 void Symbol_system_done() {
