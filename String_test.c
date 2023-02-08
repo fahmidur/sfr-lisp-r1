@@ -10,6 +10,9 @@ int main(int argc, char** argv) {
   String* str1 = String_new("Hello");
   nassert(strcmp("Hello", str1->buf) == 0);
 
+  String_del(str0);
+  String_del(str1);
+
   nassert_report();
   return nassert_exit_code();
 }
