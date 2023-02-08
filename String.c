@@ -2,25 +2,29 @@
 #include <stdlib.h>
 #include <string.h>
 #include "String.h"
+#include "Util.h"
 
-struct String*  String_new(char* str) {
-  struct String * ds = malloc(sizeof(struct String));
-  ds->buf_strlen = 0;
-  ds->buf = malloc(sizeof(char) * String_IBUFSIZE);
-  ds->buf_size = String_IBUFSIZE;
-  memset(ds->buf, '\0', ds->buf_size);
+struct String*  String_new(char* istr) {
+  struct String* ds = malloc(sizeof(struct String));
+  size_t ilen = strlen(istr);
+  size_t i;
+  ds->buf_size = Util_sizet_max(String_IBUFSIZE, ilen+1);
+  ds->buf = calloc(ds->buf_size, sizeof(char));
+  /*memset(ds->buf, '\0', ds->buf_size);*/
+  for(i = 0; i < ilen; i++) {
+    ds->buf[i] = istr[i];
+  }
   return ds;
 }
 
-void String_del(struct String** dspp) {
-  struct String * dsp = *dspp;
-  if(dsp != NULL) {
-    if(dsp->buf != NULL) {
-      free(dsp->buf);
-    }
-    free(dsp);
-    *dspp = NULL;
+void String_del(struct String* self) {
+  if(self == NULL) {
+    return;
   }
+  if(self->buf != NULL) {
+    free(self->buf);
+  }
+  free(self);
 }
 
 void String_zero(struct String* self) {

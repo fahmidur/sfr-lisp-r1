@@ -11,3 +11,9 @@ size_t Util_cstr_hash_djb2(char* str) {
   return hash;
 }
 
+size_t Util_sizet_max(size_t a, size_t b) {
+  if(a > b) {
+    return a;
+  }
+  return b;
+}

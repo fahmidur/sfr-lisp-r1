@@ -71,6 +71,16 @@ file build('Tokenizer.o') => ['Tokenizer.c', 'Tokenizer.h'] do
   sh "#{cc} #{cflags} -c -o #{build('Tokenizer.o')} Tokenizer.c"
 end
 
+desc "Build String object"
+file build('String.o') => ['String.c', 'String.h', build('Util.o')] do
+  sh "#{cc} #{cflags} -c -o #{build('String.o')} String.c"
+end
+
+desc "Build String_test program"
+file build('String_test') => ['String_test.c', build('String.o')] do
+  sh "#{cc} #{cflags} -o #{build('String_test')} String_test.c #{build('String.o')} #{build('Util.o')}"
+end
+
 desc "Build nassert_test program"
 file build('nassert_test') => ['nassert.h', 'nassert_test.c'] do
   sh "#{cc} #{cflags} -o #{build('nassert_test')} nassert_test.c"

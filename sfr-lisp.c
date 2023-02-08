@@ -22,8 +22,8 @@ void print_usage(const char* progname) {
 }
 
 void repl() {
-  struct String * inp = String_new("");
-  struct Tokenizer * tok = Tokenizer_new();
+  struct String* inp = String_new("");
+  struct Tokenizer* tok = Tokenizer_new();
   ssize_t inp_ret;
   while(1) {
     printf("> ");
@@ -39,7 +39,7 @@ void repl() {
       break;
     }
   }
-  String_del(&inp);
+  String_del(inp);
 }
 
 char file_exists(const char *path) {
