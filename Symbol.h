@@ -25,7 +25,7 @@ SymbolVector* SymbolVector_new();
 void SymbolVector_push(SymbolVector* self, Symbol* atom);
 void SymbolVector_del(SymbolVector* self);
 
-size_t Symbol_key(char* str);
+size_t Symbol_calc_key(char* str);
 Symbol* Symbol_find(char* str);
 Symbol* Symbol_new(char* str);
 void Symbol_del(Symbol* str);
