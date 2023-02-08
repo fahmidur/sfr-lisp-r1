@@ -62,15 +62,28 @@ Object_system_init();
 
 typedef struct Object Object;
 struct Object {
+  size_t  id;
   Symbol* type;
   void*   impl;
-}
+};
 TYPE_STRING = Symbol_new("String");
-Object_reg_class(TYPE_STRING);
-Object_reg_class_method(TYPE_STRING, Symbol_new("del"), String_del);
+Object_reg_class(TYPE_STRING, String_del); // String_del is the 0-arity destructor
 Object* str1 = Object_new(Symbol_new("String"), (void*) String_new("Hello"));
 
-gscope = Scope_new(NULL, Symbol_new("global"));
+void FancyPrint(Object* str) {
+  printf("=== FancyPrint ==="\n");
+  String_inspect((String*) str->impl);
+}
 
+- Where does FancyPrint live?
+- How do you call FancyPrint?
+
+global = Scope_new(NULL, Symbol_new("global"));
+Object_reg_class(global, TYPE_STRING, String_del);
+
+Object* str1 = Object_new(global, TYPE_STRING, String_new("Hello"));
+Object_assign(global, Symbol_new("str1"), str1);
+
+Scope_del(global);
 Object_system_done();
 ```
