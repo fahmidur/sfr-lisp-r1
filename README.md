@@ -56,3 +56,21 @@ list[0] == Symbol_new("print")
 list[1] == String_new("Hello World") 
 Lisp_system_done();
 ```
+
+```
+Object_system_init();
+
+typedef struct Object Object;
+struct Object {
+  Symbol* type;
+  void*   impl;
+}
+TYPE_STRING = Symbol_new("String");
+Object_reg_class(TYPE_STRING);
+Object_reg_class_method(TYPE_STRING, Symbol_new("del"), String_del);
+Object* str1 = Object_new(Symbol_new("String"), (void*) String_new("Hello"));
+
+gscope = Scope_new(NULL, Symbol_new("global"));
+
+Object_system_done();
+```
