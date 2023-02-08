@@ -12,10 +12,9 @@ used for anything important, it is merely a self-learning exercise.
   - String -- Mutable Strings
   - Number -- Generic Numbers
   - Hash   -- Just like Ruby Hash
-  - Error
   - Object
+  - List   -- List of objects.
   - Shared Ptr Garbage Collection
-
 
 What is the purpose of Symbol?
 
