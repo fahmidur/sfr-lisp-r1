@@ -70,19 +70,27 @@ TYPE_STRING = Symbol_new("String");
 Object_reg_class(TYPE_STRING, String_del); // String_del is the 0-arity destructor
 Object* str1 = Object_new(Symbol_new("String"), (void*) String_new("Hello"));
 
-void FancyPrint(Object* str) {
-  printf("=== FancyPrint ==="\n");
+void fancyprint(Object* str) {
+  printf("=== BEG. fancyprint ==="\n");
   String_inspect((String*) str->impl);
+  printf("=== end. fancyprint ==="\n");
 }
 
-- Where does FancyPrint live?
-- How do you call FancyPrint?
+- Where does this function live?
+- How do you call this function?
+
+---
 
 global = Scope_new(NULL, Symbol_new("global"));
 Object_reg_class(global, TYPE_STRING, String_del);
 
 Object* str1 = Object_new(global, TYPE_STRING, String_new("Hello"));
-Object_assign(global, Symbol_new("str1"), str1);
+Object_var_assign_named(global, Symbol_new("str1"), str1);
+
+Object* str2 = Object_new(global, TYPE_STRING, String_new("Hello2"));
+str1 = str2;
+
+str1 is now garbage
 
 Scope_del(global);
 Object_system_done();
