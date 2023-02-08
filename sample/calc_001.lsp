@@ -1,1 +1,2 @@
-(puts (+ 2 3))
+#lang racket
+(print (+ 2 3))

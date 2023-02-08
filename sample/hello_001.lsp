@@ -1,2 +1,3 @@
-(puts "hello world")
+#lang racket
+(print "hello world")
 
