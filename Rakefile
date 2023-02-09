@@ -51,6 +51,16 @@ task :build do
   end
 end
 
+desc "Build nassert_test program"
+file build('nassert_test') => ['nassert.h', 'nassert_test.c'] do
+  sh "#{cc} #{cflags} -o #{build('nassert_test')} nassert_test.c"
+end
+
+desc "Build leaky test program."
+file build('leaky') => ['leaky.c'] do
+  sh "#{cc} #{cflags} -o #{build('leaky')} leaky.c"
+end
+
 desc "Build Util object"
 file build("Util.o") => ["Util.h", "Util.c"] do
   sh "#{cc} #{cflags} -c -o #{build('Util.o')} Util.c"
@@ -64,11 +74,6 @@ end
 desc "Build Symbol_test program"
 file build('Symbol_test') => ['Symbol_test.c', build('Symbol.o')] do
   sh "#{cc} #{cflags} -o #{build('Symbol_test')} Symbol_test.c #{build('Symbol.o')} #{build('Util.o')}"
-end
-
-desc "Build Tokenizer object"
-file build('Tokenizer.o') => ['Tokenizer.c', 'Tokenizer.h'] do
-  sh "#{cc} #{cflags} -c -o #{build('Tokenizer.o')} Tokenizer.c"
 end
 
 desc "Build Number object"
@@ -91,9 +96,9 @@ file build('String_test') => ['String_test.c', build('String.o')] do
   sh "#{cc} #{cflags} -o #{build('String_test')} String_test.c #{build('String.o')} #{build('Util.o')}"
 end
 
-desc "Build nassert_test program"
-file build('nassert_test') => ['nassert.h', 'nassert_test.c'] do
-  sh "#{cc} #{cflags} -o #{build('nassert_test')} nassert_test.c"
+desc "Build Tokenizer object"
+file build('Tokenizer.o') => ['Tokenizer.c', 'Tokenizer.h'] do
+  sh "#{cc} #{cflags} -c -o #{build('Tokenizer.o')} Tokenizer.c"
 end
 
 desc "Build Tokenizer_test program"
@@ -104,11 +109,6 @@ end
 desc "Build Util_test program"
 file build('Util_test') => ['Util_test.c', build('Util.o')] do
   sh "#{cc} #{cflags} -o #{build('Util_test')} Util_test.c #{build('Util.o')}"
-end
-
-desc "Build leaky test program."
-file build('leaky') => ['leaky.c'] do
-  sh "#{cc} #{cflags} -o #{build('leaky')} leaky.c"
 end
 
 desc "Run all tests"
