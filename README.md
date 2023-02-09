@@ -17,9 +17,9 @@ used for anything important, it is merely a self-learning exercise.
   - Number -- Generic Numbers
     - del
     - clone
-  - Hash   -- Just like Ruby Hash
   - Object
-  - List   -- List of objects.
+  - List   -- List of objects. 
+  - Hash   -- Similar to Ruby hash.
   - Shared Ptr Garbage Collection
 
 
