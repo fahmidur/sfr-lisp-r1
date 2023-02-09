@@ -16,9 +16,17 @@ int main(int argc, char** argv) {
   Number* n4 = Number_new_from_cstr("4.2");
   nassert(n4->rep == 4.2);
 
+  Number* dolly1 = Number_new_from_cstr("80771");
+  Number* dolly2 = Number_clone(dolly1);
+  nassert(dolly1->rep == dolly2->rep);
+  nassert(dolly1 != dolly2);
+
   Number_del(n1);
   Number_del(n2);
   Number_del(n3);
+  Number_del(n4);
+  Number_del(dolly1);
+  Number_del(dolly2);
 
   nassert_report();
   return nassert_exit_code();

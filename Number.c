@@ -4,31 +4,31 @@
 #include "Number.h"
 
 Number* Number_new_from_int(int x) {
-  Number* self = (Number*) calloc(1, sizeof(Number));
+  Number* self = calloc(1, sizeof(Number));
   self->rep = x;
   return self;
 }
 
 Number* Number_new_from_float(float x) {
-  Number* self = (Number*) calloc(1, sizeof(Number));
+  Number* self = calloc(1, sizeof(Number));
   self->rep = x;
   return self;
 }
 
 Number* Number_new_from_double(double x) {
-  Number* self = (Number*) calloc(1, sizeof(Number));
+  Number* self = calloc(1, sizeof(Number));
   self->rep = x;
   return self;
 }
 
 Number* Number_new_from_cstr(char* cstr) {
-  Number* self = (Number*) calloc(1, sizeof(Number));
+  Number* self = calloc(1, sizeof(Number));
   self->rep = atof(cstr);
   return self;
 }
 
 Number* Number_clone(Number* self) {
-  Number* clone = (Number*) calloc(1, sizeof(Number));
+  Number* clone = calloc(1, sizeof(Number));
   clone->rep = self->rep;
   return clone;
 }
