@@ -6,7 +6,7 @@
 
 typedef struct Number Number;
 struct Number {
-  double asdouble;
+  double rep;
 };
 
 Number* Number_new_from_int(int x);
