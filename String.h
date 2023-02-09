@@ -18,6 +18,7 @@ struct String {
 };
 
 String* String_new(char* buf);
+String* String_clone(String* self);
 ssize_t String_getline(struct String* self, FILE *stream);
 void String_zero(String* self);
 void String_del(String* self);

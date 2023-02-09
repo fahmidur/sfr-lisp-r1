@@ -21,9 +21,15 @@ int main(int argc, char** argv) {
   String_chomp(str2);
   nassert(strcmp("Hello\n", str2->buf) == 0);
 
+  String* dolly1 = String_new("dolly");
+  String* dolly2 = String_clone(dolly1);
+  nassert(strcmp(dolly1->buf, dolly2->buf) == 0);
+
   String_del(str0);
   String_del(str1);
   String_del(str2);
+  String_del(dolly1);
+  String_del(dolly2);
 
   nassert_report();
   return nassert_exit_code();

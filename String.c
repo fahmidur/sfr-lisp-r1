@@ -4,8 +4,8 @@
 #include "String.h"
 #include "Util.h"
 
-struct String* String_new(char* istr) {
-  struct String* self = malloc(sizeof(struct String));
+String* String_new(char* istr) {
+  String* self = calloc(1, sizeof(String));
   size_t ilen = strlen(istr);
   size_t i;
   self->buf_size = Util_sizet_max(String_IBUFSIZE, ilen+1);
@@ -15,6 +15,19 @@ struct String* String_new(char* istr) {
   }
   self->len = strlen(self->buf);
   return self;
+}
+
+String* String_clone(String* self) {
+  String* clone = calloc(1, sizeof(String));
+  clone->len = self->len;
+  clone->buf_size = self->buf_size;
+  clone->buf = calloc(clone->buf_size, sizeof(char));
+  int i;
+  int ilen = self->len;
+  for(i = 0; i < ilen; i++) {
+    clone->buf[i] = self->buf[i];
+  }
+  return clone;
 }
 
 void String_del(String* self) {
