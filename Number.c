@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "Number.h"
 
 Number* Number_new_from_int(int x) {
@@ -22,7 +23,7 @@ Number* Number_new_from_double(double x) {
 
 Number* Number_new_from_cstr(char* cstr) {
   Number* self = (Number*) calloc(1, sizeof(Number));
-  self->rep = strtol(cstr, cstr+(strlen(cstr)), 10);
+  self->rep = atof(cstr);
   return self;
 }
 

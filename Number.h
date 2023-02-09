@@ -1,8 +1,9 @@
 #ifndef _SFR_NUMBER_H
-#define _SFR_STRING_H
+#define _SFR_NUMBER_H
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 typedef struct Number Number;
 struct Number {
