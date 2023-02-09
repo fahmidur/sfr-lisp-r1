@@ -9,8 +9,14 @@ used for anything important, it is merely a self-learning exercise.
 
 - Make C at least as usable as Ruby
   - Symbol -- Just like Ruby Symbols
+    - del
+    - clone
   - String -- Mutable Strings
+    - del
+    - clone
   - Number -- Generic Numbers
+    - del
+    - clone
   - Hash   -- Just like Ruby Hash
   - Object
   - List   -- List of objects.
