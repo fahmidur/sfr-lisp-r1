@@ -98,4 +98,11 @@ str1 is now garbage
 
 Scope_del(global);
 Object_system_done();
+
+---
+
+Object* one = Object_new(...);
+Object* two = Object_new(...);
+
+two = one; 
 ```
