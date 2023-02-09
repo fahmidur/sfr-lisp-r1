@@ -181,6 +181,11 @@ Symbol* Symbol_new(char* str) {
   return self;
 }
 
+// Symbols have a trivial clone.
+Symbol* Symbol_clone(Symbol* self) {
+  return self;
+}
+
 void Symbol_del(Symbol* self) {
   free(self->str);
   free(self);
