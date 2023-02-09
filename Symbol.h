@@ -29,7 +29,6 @@ size_t Symbol_calc_key(char* str);
 Symbol* Symbol_find(char* str);
 Symbol* Symbol_new(char* str);
 void Symbol_del(Symbol* str);
-
 void Symbol_print(Symbol* self);
 Symbol* Symbol_clone(Symbol* self);
 
