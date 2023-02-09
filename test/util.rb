@@ -13,8 +13,11 @@ module Util
       @stdout = nil
     end
     def run!
-      puts "Shellout. run! cmd=#{@cmd}"
+      puts "Shellout. run! cmd: #{@cmd}"
       @stdout = `#{@cmd}`
+      puts "--- { stdout { ---"
+      puts @stdout
+      puts "--- } stdout } ---"
       @exitstatus = $?.exitstatus
       return self
     end
