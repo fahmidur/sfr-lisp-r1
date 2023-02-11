@@ -8,11 +8,12 @@
 
 static ObjectSystem object_system;
 
+static Symbol* SYMBOL_NEW;
+static Symbol* SYMBOL_DEL;
+
 static Symbol* SYMBOL_SYMBOL;
 static Symbol* SYMBOL_STRING;
 static Symbol* SYMBOL_NUMBER;
-static Symbol* SYMBOL_NEW;
-static Symbol* SYMBOL_DEL;
 
 void Object_system_init() {
   if(object_system.init_called) {
@@ -30,7 +31,7 @@ void Object_system_init() {
   SYMBOL_STRING = Symbol_new("String");
   SYMBOL_NUMBER = Symbol_new("Number");
 
-  Object_reg_type(SYMBOL_STRING);
+  Object_reg_type(SYMBOL_STRING, Symbol_noop);
 
   object_system.init_called = 1;
   object_system.done_called = 0;
@@ -46,7 +47,7 @@ Object* Object_new(Symbol* type, void* impl) {
 
 void Object_system_done() {
   if(object_system.done_called) {
-    printf(return);
+    return;
   }
   printf("--- Object_system_done() ---\n");
   object_system.done_called = 1;

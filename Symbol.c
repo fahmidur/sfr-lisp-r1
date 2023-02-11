@@ -191,3 +191,7 @@ void Symbol_del(Symbol* self) {
   free(self);
 }
 
+void Symbol_noop(void* self) {
+  return;
+}
+

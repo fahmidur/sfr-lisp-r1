@@ -17,9 +17,10 @@ struct Object {
   void*   impl;
 };
 
+typedef struct ObjectTypeInfo ObjectTypeInfo;
 struct ObjectTypeInfo {
   Symbol* type;
-  void *del(void* s);
+  void (*del)(void* s);
 };
 
 typedef struct ObjectSystem ObjectSystem;
@@ -29,6 +30,8 @@ struct ObjectSystem {
   Object* head;
   Object* tail;
   size_t  size;
+  size_t types_idx;
+  ObjectTypeInfo types[100];
 };
 //   [head]                        [tail]
 //   |                             |
@@ -36,7 +39,7 @@ struct ObjectSystem {
 //   +                             +
 //   [Object] +---+ [Object] +---+ [Object] ---+ [NULL]
 
-char Object_reg_type(Symbol* type);
+char Object_reg_type(Symbol* type, void (*del)(void* s));
 Object* Object_new(Symbol* type, void* impl);
 
 void Object_system_init();
