@@ -17,11 +17,15 @@ static Symbol* SYMBOL_NUMBER;
 
 char Object_reg_type(Symbol* type, void (*del)(void* s)) {
   ObjectTypeInfo* oti = malloc(sizeof(ObjectTypeInfo));
+  oti->next = NULL;
+  oti->prev = NULL;
   oti->type = type;
   oti->del = del;
-  if(object_system.types[type->hash] == NULL) {
-    object_system.types[type->hash] = oti;
-  }
+  oti->key = (type->hash)%OBJECT_TYPES_BUCKETS_SIZE;
+  ObjectTypeInfo* oti_old = object_system.types[oti->key];
+  oti->next = oti_old;
+  oti_old->prev = oti;
+  object_system.types[type->hash] = oti;
   return 0;
 }
 
@@ -54,10 +58,20 @@ void Object_system_init() {
 
 Object* Object_new(Symbol* type, void* impl) {
   Object* self = malloc(sizeof(Object));
-  // TODO guard against unknown types
   self->type = type;
-  self->impl;
+  self->impl = impl;
+
+  Object_add(self);
+  
   return self;
+}
+
+void Object_add(Object* self) {
+
+}
+
+void Object_del(Object* self) {
+
 }
 
 void Object_system_done() {

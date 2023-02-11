@@ -9,7 +9,7 @@
 #include "String.h"
 #include "Number.h"
 
-#define OBJECT_TYPES_BUCKETS_SIZE 2048
+#define OBJECT_TYPES_BUCKETS_SIZE 128
 
 typedef struct Object Object;
 struct Object {
@@ -21,7 +21,9 @@ struct Object {
 
 typedef struct ObjectTypeInfo ObjectTypeInfo;
 struct ObjectTypeInfo {
+  size_t key;
   Symbol* type;
+  ObjectTypeInfo* prev;
   ObjectTypeInfo* next;
   void (*del)(void* s);
 };
@@ -43,6 +45,8 @@ struct ObjectSystem {
 
 char Object_reg_type(Symbol* type, void (*del)(void* s));
 Object* Object_new(Symbol* type, void* impl);
+void Object_add(Object* self);
+void Object_del(Object* self);
 
 void Object_system_init();
 void Object_system_done();
