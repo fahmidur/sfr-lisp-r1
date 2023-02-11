@@ -15,6 +15,13 @@ static Symbol* SYMBOL_SYMBOL;
 static Symbol* SYMBOL_STRING;
 static Symbol* SYMBOL_NUMBER;
 
+char Object_reg_type(Symbol* type, void (*del)(void* s)) {
+  ObjectTypeInfo* oti = malloc(sizeof(ObjectTypeInfo));
+  oti->type = type;
+  oti->del = del;
+  return 0;
+}
+
 void Object_system_init() {
   if(object_system.init_called) {
     return;
@@ -32,6 +39,7 @@ void Object_system_init() {
   SYMBOL_NUMBER = Symbol_new("Number");
 
   Object_reg_type(SYMBOL_SYMBOL, Symbol_noop);
+  Object_reg_type(SYMBOL_STRING, (void (*)(void*))String_del);
 
   object_system.init_called = 1;
   object_system.done_called = 0;
