@@ -19,6 +19,9 @@ char Object_reg_type(Symbol* type, void (*del)(void* s)) {
   ObjectTypeInfo* oti = malloc(sizeof(ObjectTypeInfo));
   oti->type = type;
   oti->del = del;
+  if(object_system.types[type->hash] == NULL) {
+    object_system.types[type->hash] = oti;
+  }
   return 0;
 }
 
@@ -27,9 +30,13 @@ void Object_system_init() {
     return;
   }
   printf("--- Object_system_init() ---\n");
+  size_t i = 0;
   object_system.head = NULL;
   object_system.tail = NULL;
   object_system.size = 0;
+  for(i = 0; i < OBJECT_TYPES_BUCKETS_SIZE; i++) {
+    object_system.types[i] = NULL;
+  }
 
   SYMBOL_NEW = Symbol_new("new");
   SYMBOL_DEL = Symbol_new("del");

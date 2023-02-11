@@ -10,6 +10,8 @@ void Symbol_system_print();
 
 typedef struct Symbol Symbol;
 struct Symbol {
+  size_t hash;
+  size_t key;
   size_t str_len;
   char* str;
 };
@@ -25,7 +27,9 @@ SymbolVector* SymbolVector_new();
 void SymbolVector_push(SymbolVector* self, Symbol* atom);
 void SymbolVector_del(SymbolVector* self);
 
+size_t Symbol_calc_hash(char* str);
 size_t Symbol_calc_key(char* str);
+size_t Symbol_calc_key_from_hash(size_t hash);
 Symbol* Symbol_find(char* str);
 Symbol* Symbol_new(char* str);
 void Symbol_del(Symbol* str);

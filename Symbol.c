@@ -128,8 +128,16 @@ void SymbolVector_del(SymbolVector* self) {
   free(self);
 }
 
+size_t Symbol_calc_hash(char* str) {
+  return Util_cstr_hash_djb2(str); 
+}
+
+size_t Symbol_calc_key_from_hash(size_t hash) {
+  return hash % SYMBOL_BUCKET_SIZE;
+}
+
 size_t Symbol_calc_key(char* str) {
-  return Util_cstr_hash_djb2(str) % SYMBOL_BUCKET_SIZE;
+  return Symbol_calc_key_from_hash(Symbol_calc_hash(str));
 }
 
 Symbol* Symbol_find(char* str) {
@@ -171,7 +179,10 @@ Symbol* Symbol_new(char* str) {
   self->str = calloc(str_len+1, sizeof(char));
   strcpy(self->str, str);
 
-  size_t key = Symbol_calc_key(str);
+  size_t hash = Symbol_calc_hash(str);
+  size_t key = Symbol_calc_key_from_hash(hash);
+  self->hash = hash;
+  self->key = key;
   SymbolVector* av = av_buckets[key];
   if(av == NULL) {
     av = SymbolVector_new();
