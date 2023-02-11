@@ -17,6 +17,11 @@ struct Object {
   void*   impl;
 };
 
+struct ObjectTypeInfo {
+  Symbol* type;
+  void *del(void* s);
+};
+
 typedef struct ObjectSystem ObjectSystem;
 struct ObjectSystem {
   size_t  init_called;

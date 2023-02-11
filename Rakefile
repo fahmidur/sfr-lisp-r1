@@ -96,6 +96,12 @@ file build('String_test') => ['String_test.c', build('String.o')] do
   sh "#{cc} #{cflags} -o #{build('String_test')} String_test.c #{build('String.o')} #{build('Util.o')}"
 end
 
+desc "Build Object.o"
+obj_base_types = ['Symbol', 'String', 'Number'].map {|e| build("#{e}.o") }
+file build('Object.o') => ['Object.h', 'Object.c', *obj_base_types] do
+  sh "#{cc} #{cflags} -o #{build('Object.o')} Object.c #{obj_base_types.join(' ')}"
+end
+
 desc "Build Tokenizer object"
 file build('Tokenizer.o') => ['Tokenizer.c', 'Tokenizer.h'] do
   sh "#{cc} #{cflags} -c -o #{build('Tokenizer.o')} Tokenizer.c"

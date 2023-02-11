@@ -23,8 +23,8 @@ void Object_system_init() {
   object_system.tail = NULL;
   object_system.size = 0;
 
-  SYMBOL_new = Symbol_new("new");
-  SYMBOL_del = Symbol_new("del");
+  SYMBOL_NEW = Symbol_new("new");
+  SYMBOL_DEL = Symbol_new("del");
 
   SYMBOL_SYMBOL = Symbol_new("Symbol");
   SYMBOL_STRING = Symbol_new("String");
