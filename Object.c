@@ -82,6 +82,7 @@ void Object_add(Object* self) {
 }
 
 void Object_del(Object* self) {
+  
 }
 
 void Object_system_done() {
