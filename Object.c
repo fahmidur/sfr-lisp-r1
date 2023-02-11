@@ -31,7 +31,7 @@ void Object_system_init() {
   SYMBOL_STRING = Symbol_new("String");
   SYMBOL_NUMBER = Symbol_new("Number");
 
-  Object_reg_type(SYMBOL_STRING, Symbol_noop);
+  Object_reg_type(SYMBOL_SYMBOL, Symbol_noop);
 
   object_system.init_called = 1;
   object_system.done_called = 0;
