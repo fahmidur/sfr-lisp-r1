@@ -15,7 +15,7 @@ static Symbol* SYMBOL_NEW;
 static Symbol* SYMBOL_DEL;
 
 void Object_system_init() {
-  if(object_system.done_called) {
+  if(object_system.init_called) {
     return;
   }
   printf("--- Object_system_init() ---\n");
