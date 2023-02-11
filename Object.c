@@ -67,11 +67,21 @@ Object* Object_new(Symbol* type, void* impl) {
 }
 
 void Object_add(Object* self) {
-
+  if(object_system.size == 0) {
+    object_system.head = self;
+    object_system.tail = self;
+    self->prev = NULL;
+    self->next = NULL;
+  } 
+  else {
+    Object* old_head = object_system.head;
+    object_system.head = self;
+    self->next = old_head;
+    old_head->prev = self;
+  }
 }
 
 void Object_del(Object* self) {
-
 }
 
 void Object_system_done() {
