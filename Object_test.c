@@ -7,8 +7,12 @@ int main(int argc, char** argv) {
   Symbol_system_init();
   Object_system_init();
 
+  printf("=========================\n");
+
   Object* str1 = Object_new(Symbol_new("String"), String_new("Hello there"));
   
+  printf("=========================\n");
+
   Object_system_done();
   Symbol_system_done();
 

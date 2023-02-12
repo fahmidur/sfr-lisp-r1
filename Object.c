@@ -171,4 +171,5 @@ void Object_system_done() {
       iter = iter_next;
     }
   }
+  free(object_system);
 }
