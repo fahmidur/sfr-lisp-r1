@@ -31,6 +31,19 @@ char Object_type_set(Symbol* type, void (*del)(void* s)) {
   return 0;
 }
 
+ObjectTypeInfo* Object_type_get(Symbol* type) {
+  size_t hash = type->hash;
+  size_t key = hash % OBJECT_TYPES_BUCKETS_SIZE;
+  ObjectTypeInfo* oti = object_system.types[key];
+  if(oti == NULL) {
+    return NULL;
+  }
+  while(oti->type != type) {
+    oti = oti->next;
+  }
+  return oti;
+}
+
 void Object_system_init() {
   if(object_system.init_called) {
     return;

@@ -102,6 +102,11 @@ file build('Object.o') => ['Object.h', 'Object.c', *obj_base_types] do
   sh "#{cc} #{cflags} -c -o #{build('Object.o')} Object.c #{obj_base_types.join(' ')}"
 end
 
+desc "Build Object_type test program" 
+file build('Object_test') => ['Object_test.c', build('Object.o')] do
+  sh "#{cc} #{cflags} -o #{build('Object_test')} Object_test.c #{build('Object.o')} #{obj_base_types.join(' ')} #{build('Util.o')}"
+end
+
 desc "Build Tokenizer object"
 file build('Tokenizer.o') => ['Tokenizer.c', 'Tokenizer.h'] do
   sh "#{cc} #{cflags} -c -o #{build('Tokenizer.o')} Tokenizer.c"
