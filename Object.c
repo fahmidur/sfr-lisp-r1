@@ -84,7 +84,7 @@ void Object_system_init() {
 }
 
 Object* Object_new(Symbol* type, void* impl) {
-  Object* self = malloc(sizeof(Object));
+  Object* self = calloc(1, sizeof(Object));
   self->type = type;
   self->impl = impl;
 
@@ -110,6 +110,7 @@ void Object_add(Object* self) {
 }
 
 void Object_del(Object* self) {
+  printf("Object_del(%p) \n", self);
   if(object_system->size == 0) {
     return;
   }
@@ -142,6 +143,8 @@ void Object_del(Object* self) {
     exit(1);
   }
   oti->del(self->impl);
+  printf("Object_del(%p). calling free on self.\n", self);
+  free(self);
 }
 
 void Object_system_done() {
@@ -151,9 +154,11 @@ void Object_system_done() {
   printf("--- Object_system_done() ---\n");
   int i;
   object_system->done_called = 1;
+  // delete all objects
   while(object_system->size > 0) {
     Object_del(object_system->head);
   }
+  // delete type information
   ObjectTypeInfo* iter;
   ObjectTypeInfo* iter_next;
   for(i = 0; i < OBJECT_TYPES_BUCKETS_SIZE; i++) {
