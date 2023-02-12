@@ -21,6 +21,7 @@ struct Object {
 
 typedef struct ObjectTypeInfo ObjectTypeInfo;
 struct ObjectTypeInfo {
+  size_t hash;
   size_t key;
   Symbol* type;
   ObjectTypeInfo* prev;

@@ -5,6 +5,7 @@
 #include "Util.h"
 
 String* String_new(char* istr) {
+  printf("String_new(%s)\n", istr);
   String* self = calloc(1, sizeof(String));
   size_t ilen = strlen(istr);
   size_t i;
@@ -14,6 +15,7 @@ String* String_new(char* istr) {
     self->buf[i] = istr[i];
   }
   self->len = strlen(self->buf);
+  printf("String_new. p=%p || buf=%s\n", self, self->buf);
   return self;
 }
 
@@ -34,6 +36,7 @@ void String_del(String* self) {
   if(self == NULL) {
     return;
   }
+  printf("String_del. p=%p || buf=%s\n", self, self->buf);
   if(self->buf != NULL) {
     free(self->buf);
   }
