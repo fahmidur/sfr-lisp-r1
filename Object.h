@@ -43,7 +43,8 @@ struct ObjectSystem {
 //   +                             +
 //   [Object] +---+ [Object] +---+ [Object] ---+ [NULL]
 
-char Object_reg_type(Symbol* type, void (*del)(void* s));
+char Object_type_set(Symbol* type, void (*del)(void* s));
+ObjectTypeInfo* Object_type_get(Symbol* type);
 Object* Object_new(Symbol* type, void* impl);
 void Object_add(Object* self);
 void Object_del(Object* self);
