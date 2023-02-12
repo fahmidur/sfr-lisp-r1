@@ -9,7 +9,9 @@ int main(int argc, char** argv) {
 
   printf("=========================\n");
 
-  Object* str1 = Object_new(Symbol_new("String"), String_new("Hello there"));
+  Object* str1 = Object_new(Symbol_new("String"), String_new("Hello there 001"));
+  Object* str2 = Object_new(Symbol_new("String"), String_new("Hello there 002"));
+  Object* str3 = Object_new(Symbol_new("String"), String_new("Hello there 003"));
   
   printf("=========================\n");
 
