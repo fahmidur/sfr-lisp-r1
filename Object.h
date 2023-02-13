@@ -26,7 +26,7 @@ struct ObjectTypeInfo {
   Symbol* type;
   ObjectTypeInfo* prev;
   ObjectTypeInfo* next;
-  void (*del)(void* s);
+  void (*del)(void* s); 
 };
 
 typedef struct ObjectSystem ObjectSystem;
@@ -44,8 +44,9 @@ struct ObjectSystem {
 //   +                             +
 //   [Object] +---+ [Object] +---+ [Object] ---+ [NULL]
 
-char Object_type_set(Symbol* type, void (*del)(void* s));
+char            Object_type_set(Symbol* type, void (*del)(void* s));
 ObjectTypeInfo* Object_type_get(Symbol* type);
+
 Object* Object_new(Symbol* type, void* impl);
 void Object_add(Object* self);
 void Object_del(Object* self);
