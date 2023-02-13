@@ -22,4 +22,8 @@ used for anything important, it is merely a self-learning exercise.
   - Hash   -- Similar to Ruby hash.
   - Shared Ptr Garbage Collection
 
-
+- Common object methods:
+  - `new`      -- constructor
+  - `clone`    -- cloner
+  - `del`      -- destructor
+  - `cmp`      -- compare, returns -1, 0, 1
