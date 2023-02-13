@@ -84,3 +84,7 @@ size_t String_len(String* self) {
   self->len = strlen(self->buf);
   return self->len;
 }
+
+int String_cmp(String* self, String* other) {
+  return strcmp(self->buf, other->buf);
+}

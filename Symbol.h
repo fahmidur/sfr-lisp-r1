@@ -36,5 +36,6 @@ void Symbol_del(Symbol* str);
 void Symbol_print(Symbol* self);
 Symbol* Symbol_clone(Symbol* self);
 void Symbol_noop(void* self);
+int Symbol_cmp(Symbol* self, Symbol* other);
 
 #endif

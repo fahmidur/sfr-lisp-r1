@@ -15,6 +15,7 @@ Number* Number_new_from_float(float x);
 Number* Number_new_from_double(double x);
 Number* Number_new_from_cstr(char* cstr);
 Number* Number_clone(Number* self);
+int cmp(Number* self, Number* other);
 
 void Number_del(Number* self);
 

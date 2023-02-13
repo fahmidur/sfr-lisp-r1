@@ -39,3 +39,14 @@ void Number_del(Number* self) {
   }
   free(self);
 }
+
+int Number_cmp(Number* self, Number* other) {
+  if(self->rep < other->rep) {
+    return -1;
+  }
+  else
+  if(self->rep > other->rep) {
+    return 1;
+  }
+  return 0;
+}

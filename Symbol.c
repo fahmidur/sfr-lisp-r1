@@ -206,3 +206,9 @@ void Symbol_noop(void* self) {
   return;
 }
 
+int Symbol_cmp(Symbol* self, Symbol* other) {
+  if(self == other) {
+    return 0;
+  }
+  return strcmp(self->str, other->str);
+}
