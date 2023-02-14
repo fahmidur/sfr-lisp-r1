@@ -24,6 +24,6 @@ used for anything important, it is merely a self-learning exercise.
 
 - Common object methods:
   - `new`      -- constructor
-  - `clone`    -- cloner
   - `del`      -- destructor
+  - `clone`    -- cloner
   - `cmp`      -- compare, returns -1, 0, 1

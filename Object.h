@@ -21,9 +21,9 @@ struct Object {
 
 typedef struct ObjectTypeInfo ObjectTypeInfo;
 struct ObjectTypeInfo {
+  Symbol* type;
   size_t hash;
   size_t key;
-  Symbol* type;
   ObjectTypeInfo* prev;
   ObjectTypeInfo* next;
   void (*del)(void* s); 
