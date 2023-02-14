@@ -31,12 +31,12 @@ struct ObjectTypeInfo {
 
 typedef struct ObjectSystem ObjectSystem;
 struct ObjectSystem {
-  size_t         init_called;
-  size_t         done_called;
-  Object*        head;
-  Object*        tail;
-  size_t         size;
-  ObjectTypeInfo* types[OBJECT_TYPES_BUCKETS_SIZE];
+  size_t           init_called;
+  size_t           done_called;
+  Object*          head;
+  Object*          tail;
+  size_t           size;
+  ObjectTypeInfo*  types[OBJECT_TYPES_BUCKETS_SIZE];
 };
 //   [head]                        [tail]
 //   |                             |
