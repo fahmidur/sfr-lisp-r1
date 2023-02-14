@@ -33,6 +33,30 @@ Number* Number_clone(Number* self) {
   return clone;
 }
 
+Number* Number_add(Number* self, Number* other) {
+  Number* clone = Number_clone(self);
+  clone->rep = clone->rep + other->rep;
+  return clone;
+}
+
+Number* Number_sub(Number* self, Number* other) {
+  Number* clone = Number_clone(self);
+  clone->rep = clone->rep - other->rep;
+  return clone;
+}
+
+Number* Number_mul(Number* self, Number* other) {
+  Number* clone = Number_clone(self);
+  clone->rep = clone->rep * other->rep;
+  return clone;
+}
+
+Number* Number_div(Number* self, Number* other) {
+  Number* clone = Number_clone(self);
+  clone->rep = clone->rep / other->rep;
+  return clone;
+}
+
 void Number_del(Number* self) {
   if(self == NULL) {
     return;

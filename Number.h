@@ -14,7 +14,14 @@ Number* Number_new_from_int(int x);
 Number* Number_new_from_float(float x);
 Number* Number_new_from_double(double x);
 Number* Number_new_from_cstr(char* cstr);
+
+// returns clone
 Number* Number_clone(Number* self);
+Number* Number_add(Number* self, Number* other); 
+Number* Number_sub(Number* self, Number* other);
+Number* Number_mul(Number* self, Number* other);
+Number* Number_div(Number* self, Number* other);
+
 int cmp(Number* self, Number* other);
 
 void Number_del(Number* self);
