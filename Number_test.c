@@ -10,6 +10,9 @@ int main(int argc, char** argv) {
   Number* n2 = Number_new_from_float(2.5);
   nassert(n2->rep == 2.5);
 
+  Number* res1 = Number_add(n1, n2);
+  nassert(res1->rep == 3.5);
+
   Number* n3 = Number_new_from_double(3.5);
   nassert(n3->rep == 3.5);
 
@@ -23,6 +26,8 @@ int main(int argc, char** argv) {
 
   Number_del(n1);
   Number_del(n2);
+  Number_del(res1);
+
   Number_del(n3);
   Number_del(n4);
   Number_del(dolly1);

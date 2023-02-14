@@ -15,9 +15,9 @@ Number* Number_new_from_float(float x);
 Number* Number_new_from_double(double x);
 Number* Number_new_from_cstr(char* cstr);
 
-// returns clone
 Number* Number_clone(Number* self);
-Number* Number_add(Number* self, Number* other); 
+Number* Number_add (Number* self, Number* other);  // returns clone
+Number* Number_addx(Number* self, Number* other);  // returns self
 Number* Number_sub(Number* self, Number* other);
 Number* Number_mul(Number* self, Number* other);
 Number* Number_div(Number* self, Number* other);
