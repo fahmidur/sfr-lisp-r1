@@ -12,6 +12,8 @@ int main(int argc, char** argv) {
   Object* str1 = Object_new(Symbol_new("String"), String_new("Hello there 001"));
   Object* str2 = Object_new(Symbol_new("String"), String_new("Hello there 002"));
   Object* str3 = Object_new(Symbol_new("String"), String_new("Hello there 003"));
+
+  nassert(Object_system_size() == 3);
   
   printf("=========================\n");
 

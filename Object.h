@@ -51,7 +51,8 @@ Object* Object_new(Symbol* type, void* impl);
 void Object_add(Object* self);
 void Object_del(Object* self);
 
-void Object_system_init();
-void Object_system_done();
+void    Object_system_init();
+size_t  Object_system_size();
+void    Object_system_done();
 
 #endif

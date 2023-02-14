@@ -68,6 +68,7 @@ void Object_system_init() {
   SYMBOL_NEW = Symbol_new("new");
   SYMBOL_DEL = Symbol_new("del");
 
+  // Atomic Types
   SYMBOL_SYMBOL = Symbol_new("Symbol");
   SYMBOL_STRING = Symbol_new("String");
   SYMBOL_NUMBER = Symbol_new("Number");
@@ -91,6 +92,13 @@ Object* Object_new(Symbol* type, void* impl) {
   Object_add(self);
   
   return self;
+}
+
+size_t Object_system_size() {
+  if(object_system == NULL) {
+    return 0;
+  }
+  return object_system->size;
 }
 
 void Object_add(Object* self) {
