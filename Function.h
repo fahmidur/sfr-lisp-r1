@@ -4,7 +4,7 @@
 typedef struct Function Function;
 struct Function {
   int arity;
-  FunctionRet (impl*)(FunctionArgList*);
+  List* retlist (impl*)(List* arglist);
 };
 
 #endif

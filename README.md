@@ -8,18 +8,21 @@ used for anything important, it is merely a self-learning exercise.
 ## The Plan
 
 - Make C at least as usable as Ruby
-  - Symbol -- Just like Ruby Symbols
-    - del
-    - clone
-  - String -- Mutable Strings
-    - del
-    - clone
-  - Number -- Generic Numbers
-    - del
-    - clone
+  - Atomics
+    - Symbol -- Just like Ruby Symbols
+      - del
+      - clone
+    - String -- Mutable Strings
+      - del
+      - clone
+    - Number -- Generic Numbers
+      - del
+      - clone
+  - Compound
+    - List   -- List of things.
+    - Array
+    - Hash   -- Similar to Ruby hash.
   - Object
-  - List   -- List of objects. 
-  - Hash   -- Similar to Ruby hash.
   - Shared Ptr Garbage Collection
 
 - Common object methods:
@@ -27,3 +30,4 @@ used for anything important, it is merely a self-learning exercise.
   - `del`      -- destructor
   - `clone`    -- cloner
   - `cmp`      -- compare, returns -1, 0, 1
+  - `to_s`     -- To string.
