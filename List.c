@@ -36,6 +36,10 @@ List* List_new() {
   return self;
 }
 
+size_t List_size(List* self) {
+  return self->size;
+}
+
 size_t List_push(List* self, void* data) {
   ListNode* datanode = ListNode_new(data);
   if(self->size == 0) {
@@ -48,13 +52,32 @@ size_t List_push(List* self, void* data) {
   return self->size++;
 };
 
-void List_del(List* self) {
-  ListNode* iter = self->head;
-  while(iter != NULL) {
-    ListNode_del(iter);
-    iter = iter->next;
+void* List_pop(List* self) {
+  if(self->size == 0) {
+    return NULL;
   }
-  self->head = NULL;
-  self->tail = NULL;
+  ListNode* node;
+  void* ret;
+  if(self->size == 1) {
+    node = self->tail;
+    self->head = NULL;
+    self->tail = NULL;
+  }
+  else {
+    node = self->tail;
+    self->tail = node->prev;
+  }
+  node->prev = NULL;
+  node->next = NULL;
+  self->size--;
+  ret = node->data;
+  ListNode_del(node);
+  return ret;
+}
+
+void List_del(List* self) {
+  while(self->size > 0) {
+    List_pop(self);
+  }
   free(self);
 }

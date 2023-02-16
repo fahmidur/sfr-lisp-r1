@@ -8,13 +8,14 @@ used for anything important, it is merely a self-learning exercise.
 ## The Plan
 
 - Make C at least as usable as Ruby
-  - Atomics
-    - Symbol -- Just like Ruby Symbols
-    - String -- Mutable Strings
-    - Number -- Generic Numbers
-  - Composits
-    - List   -- List of things.
-    - Hash   -- Similar to Ruby hash.
+  - Primitives:
+    - Atomics:
+      - Symbol -- Just like Ruby Symbols
+      - String -- Mutable Strings
+      - Number -- Generic Numbers
+    - Composits:
+      - List   -- List of things.
+      - Hash   -- Similar to Ruby hash.
   - Object
   - Shared Ptr Garbage Collection
 

@@ -25,8 +25,9 @@ void ListNode_del(ListNode* self);
 List* List_new();
 void  List_del(List* self);
 
+size_t List_size(List* self);
 size_t List_push(List* self, void* data);
-//void*  List_pop(List* self);
+void* List_pop(List* self);
 //size_t List_unshift(List* self, void* data);
 //void*  List_shift(List* self);
 
