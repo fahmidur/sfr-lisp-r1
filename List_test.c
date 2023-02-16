@@ -16,6 +16,10 @@ int main(int argc, char** argv) {
   List_push(list1, hello);
   nassert(List_size(list1) == 1);
 
+  String* hello_popped = List_pop(list1);
+  nassert(hello_popped == hello);
+  nassert(List_size(list1) == 0);
+
   //--- cleanup
   String_del(hello);
   List_del(list1);
