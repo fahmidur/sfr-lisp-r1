@@ -23,4 +23,4 @@ used for anything important, it is merely a self-learning exercise.
   - `del`      -- destructor
   - `clone`    -- cloner
   - `cmp`      -- compare, returns -1, 0, 1
-  - `to_s`     -- To string.
+  - `print`    -- print yourself
