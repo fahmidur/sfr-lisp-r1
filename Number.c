@@ -27,6 +27,10 @@ Number* Number_new_from_cstr(char* cstr) {
   return self;
 }
 
+Number* Number_new(double x) {
+  return Number_new_from_double(x);
+}
+
 Number* Number_clone(Number* self) {
   Number* clone = calloc(1, sizeof(Number));
   clone->rep = self->rep;

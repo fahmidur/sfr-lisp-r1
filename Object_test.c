@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "nassert.h"
+#include "Symbol.h"
+#include "String.h"
+#include "Number.h"
 #include "Object.h"
 
 int main(int argc, char** argv) {
@@ -14,6 +17,9 @@ int main(int argc, char** argv) {
   Object* str3 = Object_new(Symbol_new("String"), String_new("Hello there 003"));
 
   nassert(Object_system_size() == 3);
+
+  Object* num1 = Object_new(Symbol_new("Number"), Number_new(5));
+  Object* num2 = Object_new(Symbol_new("Number"), Number_new(7));
   
   printf("=========================\n");
 

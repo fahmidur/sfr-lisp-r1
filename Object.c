@@ -82,7 +82,7 @@ void Object_system_init() {
   Object_type_set(SYMBOL_SYMBOL, Symbol_noop);
   Object_type_set(SYMBOL_STRING, (void (*)(void*))String_del);
   Object_type_set(SYMBOL_NUMBER, (void (*)(void*))Number_del);
-  Object_type_set(SYMBOL_LIST, (void (*)(void*))List_del);
+  Object_type_set(SYMBOL_LIST,   (void (*)(void*))List_del);
 
   object_system->init_called = 1;
   object_system->done_called = 0;
@@ -107,6 +107,9 @@ size_t Object_system_size() {
   return object_system->size;
 }
 
+// TODO: make this idempotent.
+// May need to change object storage
+// from List to Hash
 void Object_add(Object* self) {
   if(object_system->size == 0) {
     object_system->head = self;

@@ -10,6 +10,7 @@ struct Number {
   double rep;
 };
 
+Number* Number_new(double x);
 Number* Number_new_from_int(int x);
 Number* Number_new_from_float(float x);
 Number* Number_new_from_double(double x);
