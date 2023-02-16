@@ -101,6 +101,11 @@ file build('List.o') => ['List.h', 'List.c'] do
   sh "#{cc} #{cflags} -c -o #{build('List.o')} List.c"
 end
 
+desc "Build List_test program"
+file build('List_test') => ['List_test.c', build('List.o')] do
+  sh "#{cc} #{cflags} -o #{build('List_test')} List_test.c #{build('List.o')}"
+end
+
 desc "Build Object object"
 obj_base_types = ['Symbol', 'String', 'Number', 'List'].map {|e| build("#{e}.o") }
 file build('Object.o') => ['Object.h', 'Object.c', *obj_base_types] do
