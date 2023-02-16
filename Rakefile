@@ -96,8 +96,13 @@ file build('String_test') => ['String_test.c', build('String.o')] do
   sh "#{cc} #{cflags} -o #{build('String_test')} String_test.c #{build('String.o')} #{build('Util.o')}"
 end
 
+desc "Build List object"
+file build('List.o') => ['List.h', 'List.c'] do
+  sh "#{cc} #{cflags} -c -o #{build('List.o')} List.c"
+end
+
 desc "Build Object object"
-obj_base_types = ['Symbol', 'String', 'Number'].map {|e| build("#{e}.o") }
+obj_base_types = ['Symbol', 'String', 'Number', 'List'].map {|e| build("#{e}.o") }
 file build('Object.o') => ['Object.h', 'Object.c', *obj_base_types] do
   sh "#{cc} #{cflags} -c -o #{build('Object.o')} Object.c #{obj_base_types.join(' ')}"
 end

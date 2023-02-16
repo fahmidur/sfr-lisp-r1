@@ -56,7 +56,6 @@ void    Object_system_init();
 size_t  Object_system_size();
 void    Object_system_done();
 
-
 // Composits
 #include "List.h"
 

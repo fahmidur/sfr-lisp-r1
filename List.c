@@ -1,10 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "Object.h"
 #include "List.h"
 
-ListNode* ListNode_new(Object* data) {
-  ListNode* self = malloc(sizeof(ListNode));
+ListNode* ListNode_new(void* data) {
+  ListNode* self = calloc(1, sizeof(ListNode));
   self->data = data;
   self->next = NULL;
   self->prev = NULL;
@@ -26,8 +25,7 @@ void ListNode_unlink(ListNode* self) {
 
 void ListNode_del(ListNode* self) {
   ListNode_unlink(self);
-  Object_del(self->data);
-
+  free(self);
 }
 
 List* List_new() {
@@ -38,6 +36,25 @@ List* List_new() {
   return self;
 }
 
-size_t List_push(List* self, Object* data) {
+size_t List_push(List* self, void* data) {
   ListNode* datanode = ListNode_new(data);
+  if(self->size == 0) {
+    self->head = datanode;
+    self->tail = datanode;
+  } 
+  else {
+    self->tail->next = datanode;
+  }
+  return self->size++;
 };
+
+void List_del(List* self) {
+  ListNode* iter = self->head;
+  while(iter != NULL) {
+    ListNode_del(iter);
+    iter = iter->next;
+  }
+  self->head = NULL;
+  self->tail = NULL;
+  free(self);
+}

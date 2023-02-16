@@ -4,6 +4,7 @@
 #include "Symbol.h"
 #include "String.h"
 #include "Number.h"
+#include "List.h"
 #include "Object.h"
 
 static ObjectSystem* object_system;
@@ -14,6 +15,7 @@ static Symbol* SYMBOL_DEL;
 static Symbol* SYMBOL_SYMBOL;
 static Symbol* SYMBOL_STRING;
 static Symbol* SYMBOL_NUMBER;
+static Symbol* SYMBOL_LIST;
 
 char Object_type_set(Symbol* type, void (*del)(void* s)) {
   printf("Object_type_set("); Symbol_print(type); printf(", del=%p)\n", del);
@@ -72,11 +74,15 @@ void Object_system_init() {
   SYMBOL_SYMBOL = Symbol_new("Symbol");
   SYMBOL_STRING = Symbol_new("String");
   SYMBOL_NUMBER = Symbol_new("Number");
+  // Composit Types
+  SYMBOL_LIST = Symbol_new("List");
 
   printf("\n\n");
 
   Object_type_set(SYMBOL_SYMBOL, Symbol_noop);
   Object_type_set(SYMBOL_STRING, (void (*)(void*))String_del);
+  Object_type_set(SYMBOL_NUMBER, (void (*)(void*))Number_del);
+  Object_type_set(SYMBOL_LIST, (void (*)(void*))List_del);
 
   object_system->init_called = 1;
   object_system->done_called = 0;
