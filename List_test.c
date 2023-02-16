@@ -18,6 +18,7 @@ int main(int argc, char** argv) {
 
   String* hello_popped = List_pop(list1);
   nassert(hello_popped == hello);
+  nassert(strcmp(hello_popped->buf, hello->buf) == 0);
   nassert(List_size(list1) == 0);
 
   //--- cleanup
