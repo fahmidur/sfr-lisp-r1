@@ -74,3 +74,25 @@ Object* one = Object_new(...);
 Object* two = Object_new(...);
 
 two = one; 
+
+----
+
+Object* num = Object_new(SYMBOL_NUMBER, Number_new(5));
+Object* list = Object_new(SYMBOL_LIST, List_new());
+
+how do we add num to the list safely?
+
+Object_send(list, Symbol_new("push"), num);
+
+----
+
+Object* a = Object_new(SYMBOL_NUMBER, Number_new(5));
+Object* b = Object_new(SYMBOL_NUMBER, Number_new(7));
+
+how do we add these together safely?
+Number_add(a->impl, b->impl)
+this is unsafe because it is outside of the Object system,
+Number_add is returning a new Number* that needs to be tracked/freed.
+
+Object* res = Object_send(a, Symbol_new("add"), b);
+

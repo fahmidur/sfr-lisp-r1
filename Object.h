@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+// Atomics
 #include "Symbol.h"
 #include "String.h"
 #include "Number.h"
@@ -54,5 +55,9 @@ void Object_del(Object* self);
 void    Object_system_init();
 size_t  Object_system_size();
 void    Object_system_done();
+
+
+// Composits
+#include "List.h"
 
 #endif
