@@ -83,3 +83,7 @@ int Number_cmp(Number* self, Number* other) {
   }
   return 0;
 }
+
+void Number_print(Number* self) {
+  printf("Number(%f)", self->rep);
+}

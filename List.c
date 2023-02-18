@@ -1,8 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "List.h"
+#include "Object.h"
 
-ListNode* ListNode_new(void* data) {
+ListNode* ListNode_new(Object* data) {
   ListNode* self = calloc(1, sizeof(ListNode));
   self->data = data;
   self->next = NULL;
@@ -25,6 +26,8 @@ void ListNode_unlink(ListNode* self) {
 
 void ListNode_del(ListNode* self) {
   ListNode_unlink(self);
+  // TODO: either delete the data or 
+  // decrement the refcount for data.
   free(self);
 }
 
@@ -40,7 +43,7 @@ size_t List_size(List* self) {
   return self->size;
 }
 
-size_t List_push(List* self, void* data) {
+size_t List_push(List* self, Object* data) {
   ListNode* datanode = ListNode_new(data);
   if(self->size == 0) {
     self->head = datanode;
@@ -52,7 +55,7 @@ size_t List_push(List* self, void* data) {
   return self->size++;
 };
 
-void* List_pop(List* self) {
+Object* List_pop(List* self) {
   if(self->size == 0) {
     return NULL;
   }

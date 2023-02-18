@@ -101,12 +101,6 @@ file build('List.o') => ['List.h', 'List.c'] do
   sh "#{cc} #{cflags} -c -o #{build('List.o')} List.c"
 end
 
-desc "Build List_test program"
-atom_types = ['Symbol', 'String', 'Number'].map {|e| build("#{e}.o") }
-file build('List_test') => ['List_test.c', build('List.o'), *atom_types, build('Util.o')] do
-  sh "#{cc} #{cflags} -o #{build('List_test')} List_test.c #{build('List.o')} #{atom_types.join(' ')} #{build('Util.o')}"
-end
-
 desc "Build Object object"
 obj_basenames = ['Symbol', 'String', 'Number', 'List'];
 obj_hfiles = obj_basenames.map {|e| "#{e}.h" }
@@ -115,9 +109,15 @@ file build('Object.o') => ['Object.h', 'Object.c', *obj_hfiles] do
   sh "#{cc} #{cflags} -c -o #{build('Object.o')} Object.c"
 end
 
-desc "Build Object_type test program" 
+desc "Build Object_test program" 
 file build('Object_test') => ['Object_test.c', build('Object.o')] do
   sh "#{cc} #{cflags} -o #{build('Object_test')} Object_test.c #{build('Object.o')} #{obj_ofiles.join(' ')} #{build('Util.o')}"
+end
+
+desc "Build List_test program"
+atom_types = ['Symbol', 'String', 'Number'].map {|e| build("#{e}.o") }
+file build('List_test') => ['List_test.c', build('List.o'), *atom_types, build('Object.o'), build('Util.o')] do
+  sh "#{cc} #{cflags} -o #{build('List_test')} List_test.c #{build('List.o')} #{atom_types.join(' ')} #{build('Util.o')} #{build('Object.o')}"
 end
 
 desc "Build Tokenizer object"

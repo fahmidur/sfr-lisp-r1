@@ -88,3 +88,7 @@ size_t String_len(String* self) {
 int String_cmp(String* self, String* other) {
   return strcmp(self->buf, other->buf);
 }
+
+void String_print(String* self) {
+  printf("String(%s)", self->buf);
+}

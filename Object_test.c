@@ -20,6 +20,8 @@ int main(int argc, char** argv) {
 
   Object* num1 = Object_new(Symbol_new("Number"), Number_new(5));
   Object* num2 = Object_new(Symbol_new("Number"), Number_new(7));
+
+  // Basic normalized interface to objects
   
   printf("=========================\n");
 

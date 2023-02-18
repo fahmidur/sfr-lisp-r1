@@ -25,5 +25,6 @@ void String_del(String* self);
 void String_chomp(String* self);
 size_t String_len(String* self);
 int String_cmp(String* self, String* other);
+void String_print(String* self);
 
 #endif

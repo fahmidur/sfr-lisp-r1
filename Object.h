@@ -5,7 +5,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-// Atomics
 #include "Symbol.h"
 #include "String.h"
 #include "Number.h"
