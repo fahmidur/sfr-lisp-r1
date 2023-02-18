@@ -4,7 +4,7 @@
 # Prototype implementation.
 
 class ParseError < Exception; end
-OPERATORS = ['+', '-', '/', '*']
+OPERATORS = ['+', '-', '/', '*', '>', '<', '=', '==']
 
 def tokenize(str)
   str.
