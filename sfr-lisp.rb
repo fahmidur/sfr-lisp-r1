@@ -6,6 +6,34 @@
 class ParseError < Exception; end
 OPERATORS = ['+', '-', '/', '*', '>', '<', '=', '==']
 
+class Env
+  def initialize(parent=nil, map={})
+    @parent = parent
+    @map = map.clone
+  end
+  def [](key)
+    return @map[key]
+  end
+  def []=(key, val)
+    return @map[key.to_sym] = val
+  end
+  def to_s
+    return @map.to_s
+  end
+  def inspect
+    return @map.inspect
+  end
+end
+
+$env_global = Env.new(nil, {
+  :+ => lambda {|a, b| a + b },
+  :- => lambda {|a, b| a - b },
+  :* => lambda {|a, b| a * b },
+  :/ => lambda {|a, b| a / b },
+  :print => lambda {|*args| puts(*args) },
+  :begin => lambda {|*args| args[-1] },
+})
+
 def tokenize(str)
   str.
     gsub('(', ' ( ').
@@ -17,7 +45,7 @@ end
 def token_to_atom(token)
   if token =~ /^[0-9\.]+$/
     return token.to_f
-  elsif token =~ /^[a-z][a-z0-9]+$/i || OPERATORS.member?(token)
+  elsif token =~ /^[a-z][a-z0-9]*$/i || OPERATORS.member?(token)
     return token.to_sym
   else
     raise ParseError.new("Invalid atom token: #{token}")
@@ -34,6 +62,7 @@ def tokens_read(tokens)
     while tokens.first != ')'
       toklist << tokens_read(tokens)
     end
+    tokens.shift
     return toklist
   elsif token == ')'
     raise ParseError.new("unexpected ')'")
@@ -42,21 +71,51 @@ def tokens_read(tokens)
   end
 end
 
-def parse(str)
+def lisp_parse(str)
   tokens = tokenize(str)
+  puts "--- { tokens { ---"
+  p tokens
+  puts "--- } tokens } ---"
   program = tokens_read(tokens)
+  puts "--- { program parsed { ---"
+  p program
+  puts "--- } program parsed } ---"
   return program
+end
+
+def lisp_eval(x, env=$env_global, depth=0)
+  #prefix = '  '*depth;
+  #puts "#{prefix}eval. x=#{x}"
+  if x.is_a?(Symbol)
+    return env[x]
+  elsif x.is_a?(Numeric)
+    return x
+  end
+  op, *args = x
+  if op == :define
+    symbol, exp = *args
+    #puts "#{prefix}eval. define. symbol=#{symbol} exp=#{exp}"
+    return env[symbol] = lisp_eval(exp, env, depth+1)
+  end
+  # procedure call
+  #puts "#{prefix}eval. proc-call. op=#{op} args=#{args}"
+  func = lisp_eval(op, env, depth+1)
+  #puts "#{prefix}eval. proc-call. func=#{func}"
+  vals = args.map {|e| lisp_eval(e, env, depth+1) }
+  return func.call(*vals)
 end
 
 def repl
   while(true)
     print "> "
     line = gets.chomp
-    if line == ".exit"
+    if line == ".exit" || line == 'exit'
       break
     end
-    program = parse(line)
+    program = lisp_parse(line)
     p program
+    puts "---"
+    puts lisp_eval(program)
   end
 end
 
@@ -65,7 +124,21 @@ def lisp_eval_file(path)
     puts "ERROR: no such file at #{path}"
     exit 1
   end
-  # TODO
+  lines = []
+  File.open(path) do |f|
+    f.each_line do |line|
+      if line =~ /^\s*#/
+        next
+      end
+      lines << line.chomp
+    end
+  end
+  source = lines.join("\n")
+  puts "--- { program source { ---"
+  puts source
+  puts "--- } program source } ---"
+  program = lisp_parse(source)
+  puts lisp_eval(program)
 end
 
 if ARGV.size == 0
