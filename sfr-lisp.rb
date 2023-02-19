@@ -197,7 +197,6 @@ def lisp_parse(str)
   return program
 end
 
-
 class LispProcedure
   attr_reader :params
   attr_reader :body
