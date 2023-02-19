@@ -8,3 +8,5 @@ sfr-lisp
 *_test
 build
 build/**
+tmp
+tmp/**

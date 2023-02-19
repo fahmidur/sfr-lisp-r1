@@ -58,7 +58,9 @@ $env_global = Env.new(nil, {
   :<        => lambda {|a, b| a < b },
   :>=       => lambda {|a, b| a >= b },
   :<=       => lambda {|a, b| a <= b },
-  :print    => lambda {|*args| print(*args);puts },
+  :print    => lambda {|*args| print(*args) },
+  :println  => lambda {|*args| puts(*args) },
+  :puts     => lambda {|*args| puts(*args) },
   :begin    => lambda {|*args| args[-1] },
 })
 
@@ -80,6 +82,39 @@ class TokenSeg
 end
 
 class LispString < String; end;
+
+class LispNumber
+  attr_reader :rep
+  def initialize(rep)
+    unless rep.is_a?(Float)
+      raise ArgumentError("Expecting rep of class Float")
+    end
+    @rep = rep
+    #puts "LispNumber. @rep=#{@rep}"
+  end
+  def to_s
+    if (@rep*10)%10 == 0
+      return @rep.to_i.to_s
+    else
+      return @rep.to_s
+    end
+  end
+  def +(x)
+    LispNumber.new(@rep + x.rep)
+  end
+  def -(x)
+    LispNumber.new(@rep - x.rep)
+  end
+  def /(x)
+    LispNumber.new(@rep / x.rep)
+  end
+  def *(x)
+    LispNumber.new(@rep * x.rep)
+  end
+  def ==(x)
+    @rep == x.rep
+  end
+end
 
 def tokenize(str)
   segments_arr = []
@@ -120,10 +155,10 @@ def tokenize(str)
 end
 
 def token_to_atom(token)
-  if token.is_a?(LispString)
+  if token.is_a?(Symbol) || token.is_a?(LispString) || token.is_a?(LispNumber)
     return token
   elsif token =~ /^\-?[0-9\.]+$/
-    return token.to_f
+    return LispNumber.new(token.to_f)
   elsif token =~ /^[a-z][a-z0-9\-\_\!]*$/i || OPERATORS.member?(token)
     return token.to_sym
   else
@@ -152,13 +187,13 @@ end
 
 def lisp_parse(str)
   tokens = tokenize(str)
-  puts "--- { tokens { ---"
-  p tokens
-  puts "--- } tokens } ---"
+  STDERR.puts "--- { tokens { ---"
+  STDERR.puts tokens.inspect
+  STDERR.puts "--- } tokens } ---"
   program = tokens_read(tokens)
-  puts "--- { program parsed { ---"
-  p program
-  puts "--- } program parsed } ---"
+  STDERR.puts "--- { program parsed { ---"
+  STDERR.puts program.inspect
+  STDERR.puts "--- } program parsed } ---"
   return program
 end
 
@@ -185,7 +220,7 @@ def lisp_eval(x, env=$env_global)
   #puts "lisp_eval. x=#{x}"
   if x.is_a?(Symbol)
     return env[x]
-  elsif x.is_a?(Numeric)
+  elsif x.is_a?(Numeric) || x.is_a?(LispNumber)
     return x
   elsif x.is_a?(LispString)
     return x
@@ -251,11 +286,11 @@ def lisp_eval_file(path)
     end
   end
   source = lines.join("\n")
-  puts "--- { program source { ---"
-  puts source
-  puts "--- } program source } ---"
+  STDERR.puts "--- { program source { ---"
+  STDERR.puts source
+  STDERR.puts "--- } program source } ---"
   program = lisp_parse(source)
-  puts lisp_eval(program)
+  STDERR.puts lisp_eval(program)
 end
 
 if ARGV.size == 0
