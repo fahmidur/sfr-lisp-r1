@@ -288,7 +288,7 @@ def schemestr(obj)
   elsif obj.is_a?(LispNumber)
     obj.to_s
   elsif obj.is_a?(LispProcedure)
-    "#LispProcedure(ID=#{obj.id})"
+    "#<LispProcedure(ID=#{obj.id})>"
   elsif obj.is_a?(Proc)
     obj.to_s
   end
