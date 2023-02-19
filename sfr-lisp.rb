@@ -279,6 +279,9 @@ def lisp_eval_file(path)
     end
   end
   source = lines.join("\n")
+  unless source.gsub(/\s+/m, ' ') =~ /\(begin\b(.+)\)/
+    source = "(begin\n#{source})"
+  end
   STDERR.puts "--- { program source { ---"
   STDERR.puts source
   STDERR.puts "--- } program source } ---"
