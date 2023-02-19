@@ -228,6 +228,8 @@ def lisp_eval(x, env=$env_global)
     test, conseq, alt = *args
     exp = lisp_eval(test, env) ? conseq : alt
     lisp_eval(exp, env)
+  elsif op == :quote
+    return args[0]
   elsif op == :lambda
     params, body = *args
     LispProcedure.new(params, body, env)
@@ -249,18 +251,28 @@ def lisp_eval(x, env=$env_global)
   end
 end
 
+def schemestr(obj)
+  if obj.is_a?(Symbol)
+    obj.to_s
+  elsif obj.is_a?(Array)
+    "(" + obj.map {|e| schemestr(e) }.join(' ') + ")"
+  elsif obj.is_a?(LispString)
+    "\"#{obj}\""
+  elsif obj.is_a?(LispNumber)
+    obj.to_s
+  end
+end
+
 def repl
   while(true)
-    #print "> "
-    #line = gets.chomp
     line = Readline.readline('> ', true)
-    if line == ".exit" || line == 'exit'
+    if line == ".exit" 
       break
     end
     program = lisp_parse(line)
     p program
     puts "---"
-    puts lisp_eval(program)
+    puts schemestr(lisp_eval(program))
   end
 end
 
