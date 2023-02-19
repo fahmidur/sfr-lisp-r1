@@ -49,19 +49,20 @@ class Env
 end
 
 $env_global = Env.new(nil, {
-  :global?  => true,
-  :+        => lambda {|a, b| a + b },
-  :-        => lambda {|a, b| a - b },
-  :*        => lambda {|a, b| a * b },
-  :/        => lambda {|a, b| a / b },
-  :>        => lambda {|a, b| a > b },
-  :<        => lambda {|a, b| a < b },
-  :>=       => lambda {|a, b| a >= b },
-  :<=       => lambda {|a, b| a <= b },
-  :print    => lambda {|*args| print(*args) },
-  :println  => lambda {|*args| puts(*args) },
-  :puts     => lambda {|*args| puts(*args) },
-  :begin    => lambda {|*args| args[-1] },
+  :global?     => true,
+  :+           => lambda {|a, b| a + b },
+  :-           => lambda {|a, b| a - b },
+  :*           => lambda {|a, b| a * b },
+  :/           => lambda {|a, b| a / b },
+  :>           => lambda {|a, b| a > b },
+  :<           => lambda {|a, b| a < b },
+  :>=          => lambda {|a, b| a >= b },
+  :<=          => lambda {|a, b| a <= b },
+  :print       => lambda {|*args| print(*args) },
+  :println     => lambda {|*args| puts(*args) },
+  :puts        => lambda {|*args| puts(*args) },
+  :displayln   => lambda {|*args| puts(*args) },
+  :begin       => lambda {|*args| args[-1] },
 })
 
 class TokenSeg
@@ -99,20 +100,12 @@ class LispNumber
       return @rep.to_s
     end
   end
-  def +(x)
-    LispNumber.new(@rep + x.rep)
-  end
-  def -(x)
-    LispNumber.new(@rep - x.rep)
-  end
-  def /(x)
-    LispNumber.new(@rep / x.rep)
-  end
-  def *(x)
-    LispNumber.new(@rep * x.rep)
-  end
-  def ==(x)
-    @rep == x.rep
+  def method_missing(m, *args)
+    resp = @rep.send(m, *args)
+    if resp.is_a?(Float)
+      return LispNumber.new(resp)
+    end
+    return resp
   end
 end
 

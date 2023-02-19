@@ -1,2 +1,2 @@
 #lang racket
-(print (+ 2 3))
+(displayln (+ 2 3))

@@ -8,8 +8,8 @@
           balance
         ))))
   (define account1 (make_account 100))
-  (println (account1 -20))
-  (println (account1 -10))
-  (println (account1 -5))
-  (println (account1 40))
+  (displayln (account1 -20))
+  (displayln (account1 -10))
+  (displayln (account1 -5))
+  (displayln (account1 40))
 )

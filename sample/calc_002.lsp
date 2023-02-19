@@ -1,7 +1,7 @@
 #lang racket
 (begin
   (define pi 3.14159)
-  (print pi)
+  (displayln pi)
   (define r 10)
-  (print (* pi (* r r)))
+  (displayln (* pi (* r r)))
 )

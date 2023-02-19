@@ -1,3 +1,3 @@
 #lang racket
-(print "hello world")
+(displayln "hello world")
 
