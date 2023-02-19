@@ -92,7 +92,6 @@ class LispNumber
       raise ArgumentError("Expecting rep of class Float")
     end
     @rep = rep
-    #puts "LispNumber. @rep=#{@rep}"
   end
   def to_s
     if (@rep*10)%10 == 0
