@@ -49,7 +49,6 @@ class Env
 end
 
 $env_global = Env.new(nil, {
-  :global?     => true,
   :+           => lambda {|a, b| a + b },
   :-           => lambda {|a, b| a - b },
   :*           => lambda {|a, b| a * b },
@@ -58,11 +57,13 @@ $env_global = Env.new(nil, {
   :<           => lambda {|a, b| a < b },
   :>=          => lambda {|a, b| a >= b },
   :<=          => lambda {|a, b| a <= b },
-  :print       => lambda {|*args| print(*args) },
-  :println     => lambda {|*args| puts(*args) },
-  :puts        => lambda {|*args| puts(*args) },
-  :displayln   => lambda {|*args| puts(*args) },
   :begin       => lambda {|*args| args[-1] },
+  :print       => lambda {|*args| print(*args) },
+  :println     => lambda {|*args| puts(*args)  },
+  :puts        => lambda {|*args| puts(*args)  },
+  :display     => lambda {|*args| print(*args) },
+  :displayln   => lambda {|*args| puts(*args)  },
+  :newline     => lambda { puts }
 })
 
 class TokenSeg
