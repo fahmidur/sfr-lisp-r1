@@ -58,12 +58,12 @@ $env_global = Env.new(nil, {
   :>=          => lambda {|a, b| a >= b },
   :<=          => lambda {|a, b| a <= b },
   :begin       => lambda {|*args| args[-1] },
-  :print       => lambda {|*args| print(*args) },
-  :println     => lambda {|*args| puts(*args)  },
-  :puts        => lambda {|*args| puts(*args)  },
+  :print       => lambda {|obj| print(schemstr(obj)) },
+  :println     => lambda {|obj| puts(schemestr(obj))  },
   :display     => lambda {|*args| print(*args) },
   :displayln   => lambda {|*args| puts(*args)  },
-  :newline     => lambda { puts }
+  :newline     => lambda { puts },
+  :exit        => lambda { |ecode| exit(ecode) }
 })
 
 class TokenSeg
@@ -194,6 +194,7 @@ class LispProcedure
   attr_reader :params
   attr_reader :body
   attr_reader :env
+  attr_reader :id
   @@count = 0
   def initialize(params, body, env)
     @params = params
@@ -212,7 +213,7 @@ def lisp_eval(x, env=$env_global)
   #puts "lisp_eval. x=#{x}"
   if x.is_a?(Symbol)
     return env[x]
-  elsif x.is_a?(Numeric) || x.is_a?(LispNumber)
+  elsif x.is_a?(LispNumber)
     return x
   elsif x.is_a?(LispString)
     return x
@@ -258,6 +259,10 @@ def schemestr(obj)
   elsif obj.is_a?(LispString)
     "\"#{obj}\""
   elsif obj.is_a?(LispNumber)
+    obj.to_s
+  elsif obj.is_a?(LispProcedure)
+    "#LispProcedure(ID=#{obj.id})"
+  elsif obj.is_a?(Proc)
     obj.to_s
   end
 end
