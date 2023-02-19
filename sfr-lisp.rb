@@ -58,11 +58,6 @@ end
 class LispString < String; end;
 
 def tokenize(str)
-  #str.
-    #gsub('(', ' ( ').
-    #gsub(')', ' ) ').
-    #strip.
-    #split(/\s+/)
   segments_arr = []
   instring = false
   segment = TokenSeg.new(:normal)
