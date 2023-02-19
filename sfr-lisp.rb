@@ -6,8 +6,24 @@
 require 'readline'
 require 'pry'
 
+$debug = false
+env_debug = ENV['debug'] || ENV['DEBUG']
+if env_debug == '1' || env_debug =~ /^true$/i
+  $debug = true
+end
+
 class ParseError < Exception; end
 OPERATORS = ['+', '-', '/', '*', '>', '<', '=', '==']
+
+def dputs(str)
+  return unless $debug
+  STDERR.puts(str)
+end
+
+def dprint(str)
+  return unless $debug
+  STDERR.print(str)
+end
 
 class Env
   attr_reader :parent
@@ -181,13 +197,13 @@ end
 
 def lisp_parse(str)
   tokens = tokenize(str)
-  STDERR.puts "--- { tokens { ---"
-  STDERR.puts tokens.inspect
-  STDERR.puts "--- } tokens } ---"
+  dputs "--- { tokens { ---"
+  dputs tokens.inspect
+  dputs "--- } tokens } ---"
   program = tokens_read(tokens)
-  STDERR.puts "--- { program parsed { ---"
-  STDERR.puts program.inspect
-  STDERR.puts "--- } program parsed } ---"
+  dputs "--- { program parsed { ---"
+  dputs program.inspect
+  dputs "--- } program parsed } ---"
   return program
 end
 
@@ -309,11 +325,11 @@ def lisp_eval_file(path)
   #unless source.gsub(/\s+/m, ' ') =~ /\(begin\b(.+)\)/
     #source = "(begin\n#{source})"
   #end
-  STDERR.puts "--- { program source { ---"
-  STDERR.puts source
-  STDERR.puts "--- } program source } ---"
+  dputs "--- { program source { ---"
+  dputs source
+  dputs "--- } program source } ---"
   program = begin_wrap(lisp_parse(source))
-  STDERR.puts lisp_eval(program)
+  dputs lisp_eval(program)
 end
 
 if ARGV.size == 0
