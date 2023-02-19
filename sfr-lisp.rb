@@ -10,10 +10,11 @@ class ParseError < Exception; end
 OPERATORS = ['+', '-', '/', '*', '>', '<', '=', '==']
 
 class Env
+  attr_reader :parent
+  attr_reader :map
   def initialize(parent=nil, map={})
     @parent = parent
     @map = map.clone
-    #binding.pry
   end
   def [](key)
     if @map.has_key?(key)
@@ -58,12 +59,12 @@ $env_global = Env.new(nil, {
   :>=          => lambda {|a, b| a >= b },
   :<=          => lambda {|a, b| a <= b },
   :begin       => lambda {|*args| args[-1] },
-  :print       => lambda {|obj| print(schemstr(obj)) },
+  :print       => lambda {|obj| print(schemestr(obj)) },
   :println     => lambda {|obj| puts(schemestr(obj))  },
   :display     => lambda {|*args| print(*args) },
   :displayln   => lambda {|*args| puts(*args)  },
   :newline     => lambda { puts },
-  :exit        => lambda { |ecode| exit(ecode) }
+  :exit        => lambda { |ecode| exit(ecode) },
 })
 
 class TokenSeg
@@ -190,6 +191,13 @@ def lisp_parse(str)
   return program
 end
 
+def begin_wrap(program)
+  if program.size > 0 && program[0] != :begin
+    return program.inject([:begin]) {|s,e| s.push(e); s}
+  end
+  return program
+end
+
 class LispProcedure
   attr_reader :params
   attr_reader :body
@@ -198,13 +206,12 @@ class LispProcedure
   @@count = 0
   def initialize(params, body, env)
     @params = params
-    @body = body
+    @body = begin_wrap(body)
     @env = env
     @id = (@@count += 1)
     #puts "LispProcedure(#{@id}). params=#{@params}"
   end
   def call(*args)
-    #puts "LispProcedure(#{@id}). call. args=#{args}"
     lisp_eval(@body, Env.new(@env, @params.zip(args).to_h))
   end
 end
@@ -224,6 +231,9 @@ def lisp_eval(x, env=$env_global)
   if op == :define
     symbol, exp = *args
     env[symbol] = lisp_eval(exp, env)
+    if symbol == :account1
+      #binding.pry
+    end
   elsif op == :if
     test, conseq, alt = *args
     exp = lisp_eval(test, env) ? conseq : alt
@@ -231,8 +241,9 @@ def lisp_eval(x, env=$env_global)
   elsif op == :quote
     return args[0]
   elsif op == :lambda
-    params, body = *args
-    LispProcedure.new(params, body, env)
+    params, *body = *args
+    ret = LispProcedure.new(params, body, env)
+    return ret
   elsif op == :set!
     symbol, exp = *args
     tenv = env.find(symbol)
@@ -288,20 +299,20 @@ def lisp_eval_file(path)
   lines = []
   File.open(path) do |f|
     f.each_line do |line|
-      if line =~ /^\s*#/
+      if line =~ /^\s*[#;]/
         next
       end
       lines << line.chomp
     end
   end
   source = lines.join("\n")
-  unless source.gsub(/\s+/m, ' ') =~ /\(begin\b(.+)\)/
-    source = "(begin\n#{source})"
-  end
+  #unless source.gsub(/\s+/m, ' ') =~ /\(begin\b(.+)\)/
+    #source = "(begin\n#{source})"
+  #end
   STDERR.puts "--- { program source { ---"
   STDERR.puts source
   STDERR.puts "--- } program source } ---"
-  program = lisp_parse(source)
+  program = begin_wrap(lisp_parse(source))
   STDERR.puts lisp_eval(program)
 end
 
