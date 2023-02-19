@@ -4,6 +4,7 @@
 # Prototype implementation.
 
 require 'readline'
+require 'pry'
 
 class ParseError < Exception; end
 OPERATORS = ['+', '-', '/', '*', '>', '<', '=', '==']
@@ -12,9 +13,16 @@ class Env
   def initialize(parent=nil, map={})
     @parent = parent
     @map = map.clone
+    #binding.pry
   end
   def [](key)
-    return @map[key]
+    if @map.has_key?(key)
+      return @map[key]
+    elsif @parent
+      @parent[key]
+    else
+      return nil
+    end
   end
   def []=(key, val)
     return @map[key.to_sym] = val
@@ -25,9 +33,23 @@ class Env
   def inspect
     return @map.inspect
   end
+  def find(key)
+    return self if @map.has_key?(key)
+    return @parent.find(key) if @parent
+    return nil
+  end
+  def pp
+    puts "--- { env { ---"
+    @map.each do |k, v|
+      printf("%20s => %s\n", k.to_s, v.to_s)
+    end
+    puts "--- } env } ---"
+    return nil
+  end
 end
 
 $env_global = Env.new(nil, {
+  :global?  => true,
   :+        => lambda {|a, b| a + b },
   :-        => lambda {|a, b| a - b },
   :*        => lambda {|a, b| a * b },
@@ -100,9 +122,9 @@ end
 def token_to_atom(token)
   if token.is_a?(LispString)
     return token
-  elsif token =~ /^[0-9\.]+$/
+  elsif token =~ /^\-?[0-9\.]+$/
     return token.to_f
-  elsif token =~ /^[a-z][a-z0-9]*$/i || OPERATORS.member?(token)
+  elsif token =~ /^[a-z][a-z0-9\-\_\!]*$/i || OPERATORS.member?(token)
     return token.to_sym
   else
     raise ParseError.new("Invalid atom token: #{token}")
@@ -140,33 +162,63 @@ def lisp_parse(str)
   return program
 end
 
-def lisp_eval(x, env=$env_global, depth=0)
-  #prefix = '  '*depth;
-  #puts "#{prefix}eval. x=#{x}"
+
+class LispProcedure
+  attr_reader :params
+  attr_reader :body
+  attr_reader :env
+  @@count = 0
+  def initialize(params, body, env)
+    @params = params
+    @body = body
+    @env = env
+    @id = (@@count += 1)
+    #puts "LispProcedure(#{@id}). params=#{@params}"
+  end
+  def call(*args)
+    #puts "LispProcedure(#{@id}). call. args=#{args}"
+    lisp_eval(@body, Env.new(@env, @params.zip(args).to_h))
+  end
+end
+
+def lisp_eval(x, env=$env_global)
+  #puts "lisp_eval. x=#{x}"
   if x.is_a?(Symbol)
     return env[x]
   elsif x.is_a?(Numeric)
     return x
   elsif x.is_a?(LispString)
     return x
+  elsif x.is_a?(LispProcedure)
+    return x
   end
   op, *args = x
   if op == :define
     symbol, exp = *args
-    #puts "#{prefix}eval. define. symbol=#{symbol} exp=#{exp}"
-    return env[symbol] = lisp_eval(exp, env, depth+1)
-  end
-  if op == :if
+    env[symbol] = lisp_eval(exp, env)
+  elsif op == :if
     test, conseq, alt = *args
     exp = lisp_eval(test, env) ? conseq : alt
-    return lisp_eval(exp, env)
+    lisp_eval(exp, env)
+  elsif op == :lambda
+    params, body = *args
+    LispProcedure.new(params, body, env)
+  elsif op == :set!
+    symbol, exp = *args
+    tenv = env.find(symbol)
+    if tenv
+      tenv[symbol] = lisp_eval(exp, env)
+    end
+  else
+    # procedure call
+    func = lisp_eval(op, env)
+    vals = args.map {|e| lisp_eval(e, env) }
+    if func.respond_to?(:call)
+      func.call(*vals)
+    else
+      func
+    end
   end
-  # procedure call
-  #puts "#{prefix}eval. proc-call. op=#{op} args=#{args}"
-  func = lisp_eval(op, env, depth+1)
-  #puts "#{prefix}eval. proc-call. func=#{func}"
-  vals = args.map {|e| lisp_eval(e, env, depth+1) }
-  return func.call(*vals)
 end
 
 def repl
