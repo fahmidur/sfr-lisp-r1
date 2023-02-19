@@ -12,9 +12,6 @@ if env_debug == '1' || env_debug =~ /^true$/i
   $debug = true
 end
 
-class ParseError < Exception; end
-OPERATORS = ['+', '-', '/', '*', '>', '<', '=', '==']
-
 def dputs(str)
   return unless $debug
   STDERR.puts(str)
@@ -24,6 +21,9 @@ def dprint(str)
   return unless $debug
   STDERR.print(str)
 end
+
+class ParseError < Exception; end
+OPERATORS = ['+', '-', '/', '*', '>', '<', '=', '==']
 
 class Env
   attr_reader :parent
