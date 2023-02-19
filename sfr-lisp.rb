@@ -34,7 +34,7 @@ $env_global = Env.new(nil, {
   :<        => lambda {|a, b| a < b },
   :>=       => lambda {|a, b| a >= b },
   :<=       => lambda {|a, b| a <= b },
-  :print    => lambda {|*args| puts(*args) },
+  :print    => lambda {|*args| print(*args);puts },
   :begin    => lambda {|*args| args[-1] },
 })
 
