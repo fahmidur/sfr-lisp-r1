@@ -3,6 +3,8 @@
 ##
 # Prototype implementation.
 
+require 'readline'
+
 class ParseError < Exception; end
 OPERATORS = ['+', '-', '/', '*', '>', '<', '=', '==']
 
@@ -169,8 +171,9 @@ end
 
 def repl
   while(true)
-    print "> "
-    line = gets.chomp
+    #print "> "
+    #line = gets.chomp
+    line = Readline.readline('> ', true)
     if line == ".exit" || line == 'exit'
       break
     end
