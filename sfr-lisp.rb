@@ -26,24 +26,84 @@ class Env
 end
 
 $env_global = Env.new(nil, {
-  :+ => lambda {|a, b| a + b },
-  :- => lambda {|a, b| a - b },
-  :* => lambda {|a, b| a * b },
-  :/ => lambda {|a, b| a / b },
-  :print => lambda {|*args| puts(*args) },
-  :begin => lambda {|*args| args[-1] },
+  :+        => lambda {|a, b| a + b },
+  :-        => lambda {|a, b| a - b },
+  :*        => lambda {|a, b| a * b },
+  :/        => lambda {|a, b| a / b },
+  :>        => lambda {|a, b| a > b },
+  :<        => lambda {|a, b| a < b },
+  :>=       => lambda {|a, b| a >= b },
+  :<=       => lambda {|a, b| a <= b },
+  :print    => lambda {|*args| puts(*args) },
+  :begin    => lambda {|*args| args[-1] },
 })
 
+class TokenSeg
+  attr_reader :label
+  def initialize(label)
+    @label = label
+    @arr = []
+  end
+  def size
+    @arr.size
+  end
+  def push(ch)
+    @arr.push(ch)
+  end
+  def to_s
+    @arr.join
+  end
+end
+
+class LispString < String; end;
+
 def tokenize(str)
-  str.
-    gsub('(', ' ( ').
-    gsub(')', ' ) ').
-    strip.
-    split(/\s+/)
+  #str.
+    #gsub('(', ' ( ').
+    #gsub(')', ' ) ').
+    #strip.
+    #split(/\s+/)
+  segments_arr = []
+  instring = false
+  segment = TokenSeg.new(:normal)
+  str.split('').each do |ch|
+    if !instring && ch == '"'
+      instring = true
+      segments_arr << segment if segment.size > 0
+      segment = TokenSeg.new(:string)
+    elsif instring
+      if ch == '"'
+        instring = false
+        segments_arr << segment
+        segment = TokenSeg.new(:normal)
+        next
+      end
+      segment.push(ch)
+    else
+      segment.push(ch)
+    end
+  end
+  segments_arr << segment if segment.size > 0
+  tokens = []
+  segments_arr.each do |seg|
+    if seg.label == :normal
+      tar = seg.to_s.gsub('(', ' ( ').gsub(')', ' ) ').
+        strip.
+        split(/\s+/)
+      tokens.concat(tar)
+    elsif seg.label == :string
+      tokens << LispString.new(seg.to_s)
+    else
+      raise "Invalid Segment Type"
+    end
+  end
+  return tokens
 end
 
 def token_to_atom(token)
-  if token =~ /^[0-9\.]+$/
+  if token.is_a?(LispString)
+    return token
+  elsif token =~ /^[0-9\.]+$/
     return token.to_f
   elsif token =~ /^[a-z][a-z0-9]*$/i || OPERATORS.member?(token)
     return token.to_sym
@@ -90,12 +150,19 @@ def lisp_eval(x, env=$env_global, depth=0)
     return env[x]
   elsif x.is_a?(Numeric)
     return x
+  elsif x.is_a?(LispString)
+    return x
   end
   op, *args = x
   if op == :define
     symbol, exp = *args
     #puts "#{prefix}eval. define. symbol=#{symbol} exp=#{exp}"
     return env[symbol] = lisp_eval(exp, env, depth+1)
+  end
+  if op == :if
+    test, conseq, alt = *args
+    exp = lisp_eval(test, env) ? conseq : alt
+    return lisp_eval(exp, env)
   end
   # procedure call
   #puts "#{prefix}eval. proc-call. op=#{op} args=#{args}"
