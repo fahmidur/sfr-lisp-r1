@@ -247,9 +247,6 @@ def lisp_eval(x, env=$env_global)
   if op == :define
     symbol, exp = *args
     env[symbol] = lisp_eval(exp, env)
-    if symbol == :account1
-      #binding.pry
-    end
   elsif op == :if
     test, conseq, alt = *args
     exp = lisp_eval(test, env) ? conseq : alt
