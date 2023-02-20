@@ -17,11 +17,6 @@ def dputs(str)
   STDERR.puts(str)
 end
 
-def dprint(str)
-  return unless $debug
-  STDERR.print(str)
-end
-
 class ParseError < Exception; end
 OPERATORS = ['+', '-', '/', '*', '>', '<', '=', '==']
 
@@ -208,10 +203,13 @@ def lisp_parse(str)
 end
 
 def begin_wrap(program)
+  dputs "begin_wrap. BEF: #{program}"
+  program_new = program
   if program.size > 0 && program[0] != :begin
-    return program.inject([:begin]) {|s,e| s.push(e); s}
+    program_new = program.inject([:begin]) {|s,e| s.push(e); s}
   end
-  return program
+  dputs "begin_wrap. AFT: #{program_new}"
+  return program_new
 end
 
 class LispProcedure
@@ -319,13 +317,13 @@ def lisp_eval_file(path)
     end
   end
   source = lines.join("\n")
-  #unless source.gsub(/\s+/m, ' ') =~ /\(begin\b(.+)\)/
-    #source = "(begin\n#{source})"
-  #end
+  unless source.gsub(/\s+/m, ' ') =~ /\(begin\b(.+)\)/
+    source = "(begin\n#{source})"
+  end
   dputs "--- { program source { ---"
   dputs source
   dputs "--- } program source } ---"
-  program = begin_wrap(lisp_parse(source))
+  program = lisp_parse(source)
   dputs lisp_eval(program)
 end
 
