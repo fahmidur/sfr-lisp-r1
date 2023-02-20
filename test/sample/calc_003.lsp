@@ -1,2 +1,2 @@
 #lang racket
-(+ 1 (- 12 7))
+(displayln (+ 1 (- 12 7)))

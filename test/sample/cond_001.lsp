@@ -1,7 +1,8 @@
 #lang racket
 (begin
  (define x 5)
- (displayln "x is " x)
+ (display "x is ")
+ (displayln x)
  (if (> x 8)
   (displayln "x is > 8")
   (displayln "x is <= 8"))
