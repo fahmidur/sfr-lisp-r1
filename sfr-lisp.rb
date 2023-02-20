@@ -218,15 +218,20 @@ class LispProcedure
   attr_reader :env
   attr_reader :id
   @@count = 0
-  def initialize(params, body, env)
+  def initialize(params, bodies, env)
     @params = params
-    @body = begin_wrap(body)
+    @bodies = bodies
     @env = env
     @id = (@@count += 1)
     #puts "LispProcedure(#{@id}). params=#{@params}"
   end
   def call(*args)
-    lisp_eval(@body, LispEnv.new(@env, @params.zip(args).to_h))
+    newenv = LispEnv.new(@env, @params.zip(args).to_h)
+    ret = nil
+    @bodies.each do |body|
+      ret = lisp_eval(body, newenv)
+    end
+    return ret
   end
 end
 
