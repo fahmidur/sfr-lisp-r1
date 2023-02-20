@@ -25,7 +25,7 @@ end
 class ParseError < Exception; end
 OPERATORS = ['+', '-', '/', '*', '>', '<', '=', '==']
 
-class Env
+class LispEnv
   attr_reader :parent
   attr_reader :map
   def initialize(parent=nil, map={})
@@ -65,7 +65,7 @@ class Env
   end
 end
 
-$env_global = Env.new(nil, {
+$env_global = LispEnv.new(nil, {
   :+           => lambda {|a, b| a + b },
   :-           => lambda {|a, b| a - b },
   :*           => lambda {|a, b| a * b },
@@ -228,7 +228,7 @@ class LispProcedure
     #puts "LispProcedure(#{@id}). params=#{@params}"
   end
   def call(*args)
-    lisp_eval(@body, Env.new(@env, @params.zip(args).to_h))
+    lisp_eval(@body, LispEnv.new(@env, @params.zip(args).to_h))
   end
 end
 
