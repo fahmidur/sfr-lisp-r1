@@ -1,10 +1,10 @@
 #lang racket
-
 (begin
-  (define bla
+  (define foo
     (lambda (x)
+      (display "foo: ")
       (display x)
       (newline)))
-  (bla "hello world")
+  (foo "hello world")
 )
 
