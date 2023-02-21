@@ -8,16 +8,16 @@
 #include "Error.h"
 #include "Object.h"
 
-static ObjectSystem* object_system;
+ObjectSystem* object_system;
 
-static Symbol* SYMBOL_NEW;
-static Symbol* SYMBOL_DEL;
+Symbol* SYMBOL_NEW;
+Symbol* SYMBOL_DEL;
 
-static Symbol* SYMBOL_SYMBOL;
-static Symbol* SYMBOL_STRING;
-static Symbol* SYMBOL_NUMBER;
-static Symbol* SYMBOL_ERROR;
-static Symbol* SYMBOL_LIST;
+Symbol* SYMBOL_SYMBOL;
+Symbol* SYMBOL_STRING;
+Symbol* SYMBOL_NUMBER;
+Symbol* SYMBOL_ERROR;
+Symbol* SYMBOL_LIST;
 
 char Object_oti_set(
   Symbol* type, 
@@ -262,11 +262,29 @@ int Object_cmp(Object* a, Object* b) {
 // (+ "hello" "there")
 Object* Object_bop_add(Object* a, Object* b) {
   if(Object_type(a) == SYMBOL_NUMBER && Object_type(b) == SYMBOL_NUMBER) {
-    Number* ret = Number_add(a->impl, b->impl);
-    return Object_new(SYMBOL_NUMBER, ret);
+    return Object_new(SYMBOL_NUMBER, Number_add(a->impl, b->impl));
   }
-  else {
-    return Object_new(SYMBOL_ERROR, Error_new("Invalid types for bop_add"));
+  return Object_new(SYMBOL_ERROR, Error_new("Invalid types bop_add"));
+}
+
+Object* Object_bop_sub(Object* a, Object* b) {
+  if(Object_type(a) == SYMBOL_NUMBER && Object_type(b) == SYMBOL_NUMBER) {
+    return Object_new(SYMBOL_NUMBER, Number_sub(a->impl, b->impl));
   }
+  return Object_new(SYMBOL_ERROR, Error_new("Invalid types for bop_sub"));
+}
+
+Object* Object_bop_div(Object* a, Object* b) {
+  if(Object_type(a) == SYMBOL_NUMBER && Object_type(b) == SYMBOL_NUMBER) {
+    return Object_new(SYMBOL_NUMBER, Number_div(a->impl, b->impl));
+  }
+  return Object_new(SYMBOL_ERROR, Error_new("Invalid types for bop_div"));
+}
+
+Object* Object_bop_mul(Object* a, Object* b) {
+  if(Object_type(a) == SYMBOL_NUMBER && Object_type(b) == SYMBOL_NUMBER) {
+    return Object_new(SYMBOL_NUMBER, Number_mul(a->impl, b->impl));
+  }
+  return Object_new(SYMBOL_ERROR, Error_new("Invalid types for bop_mul"));
 }
 
