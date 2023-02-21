@@ -17,8 +17,12 @@ static Symbol* SYMBOL_STRING;
 static Symbol* SYMBOL_NUMBER;
 static Symbol* SYMBOL_LIST;
 
-char Object_type_set(Symbol* type, void (*del)(void* s)) {
-  printf("Object_type_set("); Symbol_print(type); printf(", del=%p)\n", del);
+char Object_oti_set(
+  Symbol* type, 
+  void (*del)(void* s),
+  void (*print)(void* s)
+  ) {
+  printf("Object_oti_set("); Symbol_print(type); printf(", del=%p)\n", del);
   size_t hash = type->hash;
   size_t key = hash % OBJECT_TYPES_BUCKETS_SIZE;
   ObjectTypeInfo* oti = calloc(1, sizeof(ObjectTypeInfo));
@@ -28,6 +32,7 @@ char Object_type_set(Symbol* type, void (*del)(void* s)) {
   oti->type = type;
   /*printf("oti setting oti->del\n");*/
   oti->del = del;
+  oti->print = print;
   /*printf("oti->del = %p\n", oti->del);*/
   oti->hash = hash;
   oti->key = key;
@@ -41,7 +46,7 @@ char Object_type_set(Symbol* type, void (*del)(void* s)) {
   return 0;
 }
 
-ObjectTypeInfo* Object_type_get(Symbol* type) {
+ObjectTypeInfo* Object_oti_get(Symbol* type) {
   size_t hash = type->hash;
   size_t key = hash % OBJECT_TYPES_BUCKETS_SIZE;
   ObjectTypeInfo* oti = object_system->types[key];
@@ -79,10 +84,26 @@ void Object_system_init() {
 
   printf("\n\n");
 
-  Object_type_set(SYMBOL_SYMBOL, Symbol_noop);
-  Object_type_set(SYMBOL_STRING, (void (*)(void*))String_del);
-  Object_type_set(SYMBOL_NUMBER, (void (*)(void*))Number_del);
-  Object_type_set(SYMBOL_LIST,   (void (*)(void*))List_del);
+  Object_oti_set(
+    SYMBOL_SYMBOL, 
+    Symbol_noop, 
+    (void (*)(void*))Symbol_print
+  );
+  Object_oti_set(
+    SYMBOL_STRING, 
+    (void (*)(void*))String_del,
+    (void (*)(void*))String_print
+  );
+  Object_oti_set(
+    SYMBOL_NUMBER, 
+    (void (*)(void*))Number_del,
+    (void (*)(void*))Number_print
+  );
+  Object_oti_set(
+    SYMBOL_LIST, 
+    (void (*)(void*))List_del,
+    (void (*)(void*))List_print
+  );
 
   object_system->init_called = 1;
   object_system->done_called = 0;
@@ -92,10 +113,12 @@ void Object_system_init() {
 
 Object* Object_new(Symbol* type, void* impl) {
   Object* self = calloc(1, sizeof(Object));
+
   self->type = type;
   self->impl = impl;
+  self->refc = 0;
 
-  Object_add(self);
+  Object_add_to_system(self);
   
   return self;
 }
@@ -110,7 +133,7 @@ size_t Object_system_size() {
 // TODO: make this idempotent.
 // May need to change object storage
 // from List to Hash
-void Object_add(Object* self) {
+void Object_add_to_system(Object* self) {
   if(object_system->size == 0) {
     object_system->head = self;
     object_system->tail = self;
@@ -153,7 +176,7 @@ void Object_del(Object* self) {
   self->next = NULL;
   self->prev = NULL;
 
-  ObjectTypeInfo* oti = Object_type_get(self->type);
+  ObjectTypeInfo* oti = Object_oti_get(self->type);
   if(!oti) {
     printf("FATAL: unknown ObjectTypeInfo for type: ");
     Symbol_print(self->type);
@@ -195,3 +218,30 @@ void Object_system_done() {
   }
   free(object_system);
 }
+
+Symbol* Object_type(Object* self) {
+  return self->type;
+}
+
+void Object_print(Object* self) {
+  ObjectTypeInfo* oti = Object_oti_get(self->type);
+  if(oti == NULL) {
+    return;
+  }
+  oti->print(self);
+}
+
+// Binary Operations
+// (+ 1 2)
+// (+ "hello" "there")
+Object* Object_bop_add(Object* a, Object* b) {
+  if(Object_type(a) == SYMBOL_NUMBER && Object_type(b) == SYMBOL_NUMBER) {
+    Number* ret = Number_add(a->impl, b->impl);
+    return Object_new(SYMBOL_NUMBER, ret);
+  }
+  else {
+    //TODO return Error object
+    return NULL;
+  }
+}
+

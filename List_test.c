@@ -14,7 +14,8 @@ int main(int argc, char** argv) {
   List* list1 = List_new();
   nassert(List_size(list1) == 0);
 
-  Object* hello = Object_new(Symbol_new("String"), String_new("Hello"));
+  Symbol* SYMBOL_STRING = Symbol_new("String");
+  Object* hello = Object_new(SYMBOL_STRING, String_new("Hello"));
 
   List_push(list1, hello);
   nassert(List_size(list1) == 1);

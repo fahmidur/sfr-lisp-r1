@@ -17,6 +17,7 @@ struct Object {
   Object* next;
   Object* prev;
   void*   impl;
+  int     refc;
 };
 
 typedef struct ObjectTypeInfo ObjectTypeInfo;
@@ -27,6 +28,7 @@ struct ObjectTypeInfo {
   ObjectTypeInfo* prev;
   ObjectTypeInfo* next;
   void (*del)(void* s); 
+  void (*print)(void* s);
 };
 
 typedef struct ObjectSystem ObjectSystem;
@@ -44,12 +46,19 @@ struct ObjectSystem {
 //   +                             +
 //   [Object] +---+ [Object] +---+ [Object] ---+ [NULL]
 
-char            Object_type_set(Symbol* type, void (*del)(void* s));
-ObjectTypeInfo* Object_type_get(Symbol* type);
+char Object_oti_set(
+  Symbol* type, 
+  void (*)(void* s),
+  void (*)(void* s)
+);
+ObjectTypeInfo* Object_oti_get(Symbol* type);
 
 Object* Object_new(Symbol* type, void* impl);
-void Object_add(Object* self);
+void Object_add_to_system(Object* self);
 void Object_del(Object* self);
+Symbol* Object_type(Object* self);
+Object* Object_bop_add(Object* a, Object* b);
+void Object_print(Object* self);
 
 void    Object_system_init();
 size_t  Object_system_size();

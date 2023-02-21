@@ -21,7 +21,11 @@ int main(int argc, char** argv) {
   Object* num1 = Object_new(Symbol_new("Number"), Number_new(5));
   Object* num2 = Object_new(Symbol_new("Number"), Number_new(7));
 
+  Object* sum1 = Object_bop_add(num1, num2);
+
   // Basic normalized interface to objects
+  /*Object* add = Object_new(Symbol_new("Function"), Function_new(2, 0, &Number_add));*/
+  /*Object_call(add, num1, num2);*/
   
   printf("=========================\n");
 

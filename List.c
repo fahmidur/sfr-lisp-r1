@@ -84,3 +84,17 @@ void List_del(List* self) {
   }
   free(self);
 }
+
+void List_print(List* self) {
+  ListNode* iter = self->head;
+  printf("(");
+  int i = 0;
+  while(iter != NULL) {
+    if(i > 0) {
+      printf(" ");
+    }
+    Object_print(iter->data);
+    iter = iter->next;
+    i++;
+  }
+}
