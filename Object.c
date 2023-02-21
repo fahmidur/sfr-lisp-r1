@@ -5,6 +5,7 @@
 #include "String.h"
 #include "Number.h"
 #include "List.h"
+#include "Error.h"
 #include "Object.h"
 
 static ObjectSystem* object_system;
@@ -15,6 +16,7 @@ static Symbol* SYMBOL_DEL;
 static Symbol* SYMBOL_SYMBOL;
 static Symbol* SYMBOL_STRING;
 static Symbol* SYMBOL_NUMBER;
+static Symbol* SYMBOL_ERROR;
 static Symbol* SYMBOL_LIST;
 
 char Object_oti_set(
@@ -79,6 +81,7 @@ void Object_system_init() {
   SYMBOL_SYMBOL = Symbol_new("Symbol");
   SYMBOL_STRING = Symbol_new("String");
   SYMBOL_NUMBER = Symbol_new("Number");
+  SYMBOL_ERROR  = Symbol_new("Error");
   // Composit Types
   SYMBOL_LIST = Symbol_new("List");
 
@@ -103,6 +106,11 @@ void Object_system_init() {
     SYMBOL_LIST, 
     (void (*)(void*))List_del,
     (void (*)(void*))List_print
+  );
+  Object_oti_set(
+    SYMBOL_ERROR, 
+    (void (*)(void*))Error_del,
+    (void (*)(void*))Error_print
   );
 
   object_system->init_called = 1;

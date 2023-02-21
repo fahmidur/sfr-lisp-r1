@@ -27,6 +27,7 @@ struct ObjectTypeInfo {
   size_t key;
   ObjectTypeInfo* prev;
   ObjectTypeInfo* next;
+  // vtable
   void (*del)(void* s); 
   void (*print)(void* s);
 };

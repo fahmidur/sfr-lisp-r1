@@ -27,6 +27,13 @@ cflags = cflags.join(' ')
 
 task :default => :build
 
+atom_basenames = [
+];
+molecules_basenames = [
+];
+obj_basenames = [
+];
+
 desc "Clean all build artifacts"
 task :clean do
   puts "clean. cleaning..."
@@ -96,13 +103,18 @@ file build('String_test') => ['String_test.c', build('String.o')] do
   sh "#{cc} #{cflags} -o #{build('String_test')} String_test.c #{build('String.o')} #{build('Util.o')}"
 end
 
+desc "Build Error object"
+file build('Error.o') => ['Error.h', 'Error.c', 'Util.h'] do
+  sh "#{cc} #{cflags} -c -o #{build('Error.o')} Error.c"
+end
+
 desc "Build List object"
 file build('List.o') => ['List.h', 'List.c'] do
   sh "#{cc} #{cflags} -c -o #{build('List.o')} List.c"
 end
 
 desc "Build Object object"
-obj_basenames = ['Symbol', 'String', 'Number', 'List'];
+obj_basenames = ['Symbol', 'String', 'Number', 'Error', 'List'];
 obj_hfiles = obj_basenames.map {|e| "#{e}.h" }
 obj_ofiles = obj_basenames.map {|e| build("#{e}.o") }
 file build('Object.o') => ['Object.h', 'Object.c', *obj_hfiles] do
@@ -115,7 +127,7 @@ file build('Object_test') => ['Object_test.c', build('Object.o')] do
 end
 
 desc "Build List_test program"
-atom_types = ['Symbol', 'String', 'Number'].map {|e| build("#{e}.o") }
+atom_types = ['Symbol', 'String', 'Number', 'Error'].map {|e| build("#{e}.o") }
 file build('List_test') => ['List_test.c', build('List.o'), *atom_types, build('Object.o'), build('Util.o')] do
   sh "#{cc} #{cflags} -o #{build('List_test')} List_test.c #{build('List.o')} #{atom_types.join(' ')} #{build('Util.o')} #{build('Object.o')}"
 end
