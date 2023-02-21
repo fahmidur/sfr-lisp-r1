@@ -51,9 +51,22 @@ static int failure_count = 0;
 
 void nassert_report() {
   printf("=======.\n");
+
+  if(success_count == general_count) { printf("\033[0;32m"); } // GREEN
   printf("NASSERT. SUCCESS_COUNT = %5d/%d\n", success_count, general_count);
+  printf("\033[0m"); // CLEAR
+
+  if(failure_count > 0) { printf("\033[0;31m"); } // RED
   printf("NASSERT. FAILURE_COUNT = %5d/%d\n", failure_count, general_count);
+  printf("\033[0m"); // CLEAR
+
+  if(failure_count == 0) {
+    printf("\033[0;32m"); // GREEN
+  } else {
+    printf("\033[0;31m"); // RED
+  }
   printf("NASSERT. ---%s---\n", failure_count == 0 ? "SUCCESS" : "FAILURE");
+  printf("\033[0m"); // CLEAR
   printf("=======.\n");
 }
 

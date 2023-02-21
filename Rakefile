@@ -61,7 +61,7 @@ file build('nassert_test') => ['nassert.h', 'nassert_test.c'] do
 end
 
 desc "Build leaky test program."
-file build('leaky') => ['leaky.c'] do
+file build('leaky') => ['leaky.c', 'nassert.h'] do
   sh "#{cc} #{cflags} -o #{build('leaky')} leaky.c"
 end
 
@@ -76,7 +76,7 @@ file build('Symbol.o') =>  ['Symbol.c', 'Symbol.h', 'Util.h'] do
 end
 
 desc "Build Symbol_test program"
-file build('Symbol_test') => ['Symbol_test.c', build('Symbol.o')] do
+file build('Symbol_test') => ['Symbol_test.c', build('Symbol.o'), 'nassert.h'] do
   sh "#{cc} #{cflags} -o #{build('Symbol_test')} Symbol_test.c #{build('Symbol.o')} #{build('Util.o')}"
 end
 
@@ -86,7 +86,7 @@ file build('Number.o') => ['Number.c', 'Number.h'] do
 end
 
 desc "Build Number_test program"
-file build("Number_test") => ['Number_test.c', build('Number.o')] do
+file build("Number_test") => ['Number_test.c', build('Number.o'), 'nassert.h'] do
   sh "#{cc} #{cflags} -o #{build('Number_test')} Number_test.c #{build('Number.o')}"
 end
 
@@ -96,7 +96,7 @@ file build('String.o') => ['String.c', 'String.h', 'Util.h'] do
 end
 
 desc "Build String_test program"
-file build('String_test') => ['String_test.c', build('String.o')] do
+file build('String_test') => ['String_test.c', build('String.o'), 'nassert.h'] do
   sh "#{cc} #{cflags} -o #{build('String_test')} String_test.c #{build('String.o')} #{build('Util.o')}"
 end
 
@@ -119,13 +119,13 @@ file build('Object.o') => ['Object.h', 'Object.c', *obj_hfiles] do
 end
 
 desc "Build Object_test program" 
-file build('Object_test') => ['Object_test.c', build('Object.o')] do
+file build('Object_test') => ['Object_test.c', build('Object.o'), 'nassert.h'] do
   sh "#{cc} #{cflags} -o #{build('Object_test')} Object_test.c #{build('Object.o')} #{obj_ofiles.join(' ')} #{build('Util.o')}"
 end
 
 desc "Build List_test program"
 atom_types = ['Symbol', 'String', 'Number', 'Error'].map {|e| build("#{e}.o") }
-file build('List_test') => ['List_test.c', build('List.o'), *atom_types, build('Object.o'), build('Util.o')] do
+file build('List_test') => ['List_test.c', build('List.o'), *atom_types, build('Object.o'), build('Util.o'), 'nassert.h'] do
   sh "#{cc} #{cflags} -o #{build('List_test')} List_test.c #{build('List.o')} #{atom_types.join(' ')} #{build('Util.o')} #{build('Object.o')}"
 end
 
@@ -135,12 +135,12 @@ file build('Tokenizer.o') => ['Tokenizer.c', 'Tokenizer.h'] do
 end
 
 desc "Build Tokenizer_test program"
-file build('Tokenizer_test') => ['Tokenizer_test.c', build('Tokenizer.o')] do
+file build('Tokenizer_test') => ['Tokenizer_test.c', build('Tokenizer.o'), 'nassert.h'] do
   sh "#{cc} #{cflags} -o #{build('Tokenizer_test')} Tokenizer_test.c #{build('Tokenizer.o')}"
 end
 
 desc "Build Util_test program"
-file build('Util_test') => ['Util_test.c', build('Util.o')] do
+file build('Util_test') => ['Util_test.c', build('Util.o'), 'nassert.h'] do
   sh "#{cc} #{cflags} -o #{build('Util_test')} Util_test.c #{build('Util.o')}"
 end
 
