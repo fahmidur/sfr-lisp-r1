@@ -150,7 +150,7 @@ void Object_add_to_system(Object* self) {
 }
 
 void Object_del(Object* self) {
-  printf("Object_del(%p) \n", self);
+  printf("Object_del(%p) || type=", self); Symbol_print(Object_type(self)); printf("\n");
   if(object_system->size == 0) {
     return;
   }

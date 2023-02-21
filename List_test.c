@@ -24,6 +24,12 @@ int main(int argc, char** argv) {
   nassert(hello_popped == hello);
   nassert(List_size(list1) == 0);
 
+  Object* listobj = Object_new(Symbol_new("List"), List_new());
+  List_push(listobj->impl, hello);
+  printf("--- listobj=");
+  Object_print(listobj);
+  printf("\n");
+
   //--- cleanup
   Object_system_done();
   Symbol_system_done();
