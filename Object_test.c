@@ -15,6 +15,7 @@ int main(int argc, char** argv) {
   nassert(Symbol_new("Symbol") == SYMBOL_SYMBOL);
   nassert(Symbol_new("Number") == SYMBOL_NUMBER);
   nassert(Symbol_new("String") == SYMBOL_STRING);
+  nassert(Symbol_new("Error") == SYMBOL_ERROR);
   nassert(Symbol_new("List") == SYMBOL_LIST);
 
   Object* str1 = Object_new(Symbol_new("String"), String_new("Hello there 001"));
@@ -34,7 +35,7 @@ int main(int argc, char** argv) {
 
   printf("Test Num1 - Number ...\n");
   Object* res2 = Object_bop_sub(num1, num2);
-  Object* res2_expected = Object_new(SYMBOL_NUMBER, Number_new(-7));
+  Object* res2_expected = Object_new(SYMBOL_NUMBER, Number_new(-2));
   nassert(Object_cmp(res2, res2_expected) == 0);
 
   printf("Test String + Number ...\n");
