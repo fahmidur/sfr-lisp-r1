@@ -22,6 +22,9 @@ int main(int argc, char** argv) {
   Object* num2 = Object_new(Symbol_new("Number"), Number_new(7));
 
   Object* sum1 = Object_bop_add(num1, num2);
+  Object* sum1_expected = Object_new(Symbol_new("Number"), Number_new(12));
+  nassert(Object_cmp(sum1, sum1_expected) == 0);
+  printf("sum1 = "); Object_print(sum1); printf("\n");
 
   // Basic normalized interface to objects
   /*Object* add = Object_new(Symbol_new("Function"), Function_new(2, 0, &Number_add));*/

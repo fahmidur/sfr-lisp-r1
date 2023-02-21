@@ -57,6 +57,7 @@ Object* Object_new(Symbol* type, void* impl);
 void Object_add_to_system(Object* self);
 void Object_del(Object* self);
 Symbol* Object_type(Object* self);
+int Object_cmp(Object* a, Object* b);
 Object* Object_bop_add(Object* a, Object* b);
 void Object_print(Object* self);
 

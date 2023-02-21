@@ -228,7 +228,25 @@ void Object_print(Object* self) {
   if(oti == NULL) {
     return;
   }
-  oti->print(self);
+  if(oti->print == NULL) {
+    return;
+  }
+  oti->print(self->impl);
+}
+
+int Object_cmp(Object* a, Object* b) {
+  if(Object_type(a) == SYMBOL_NUMBER && Object_type(b) == SYMBOL_NUMBER) {
+    return Number_cmp(a->impl, b->impl);
+  }
+  else
+  if(Object_type(a) == SYMBOL_STRING && Object_type(b) == SYMBOL_STRING) {
+    return String_cmp(a->impl, b->impl);
+  }
+  else
+  if(Object_type(a) == SYMBOL_SYMBOL && Object_type(b) == SYMBOL_SYMBOL) {
+    return Symbol_cmp(a->impl, b->impl);
+  }
+  return -9;
 }
 
 // Binary Operations
