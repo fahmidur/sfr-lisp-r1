@@ -158,7 +158,7 @@ void Object_add_to_system(Object* self) {
 }
 
 void Object_del(Object* self) {
-  printf("Object_del(%p) || type=", self); Symbol_print(Object_type(self)); printf("\n");
+  printf("Object_del(%p). type = ", self); Symbol_print(Object_type(self)); printf("\n");
   if(object_system->size == 0) {
     return;
   }
@@ -191,7 +191,7 @@ void Object_del(Object* self) {
     exit(1);
   }
   oti->del(self->impl);
-  printf("Object_del(%p). calling free on self.\n", self);
+  /*printf("Object_del(%p). calling free on self.\n", self);*/
   free(self);
 }
 
@@ -199,7 +199,7 @@ void Object_system_done() {
   if(object_system->done_called) {
     return;
   }
-  printf("--- Object_system_done() ---\n");
+  printf("--- { Object_system_done() { ---\n");
   int i;
   object_system->done_called = 1;
   // delete all objects
@@ -225,6 +225,7 @@ void Object_system_done() {
     }
   }
   free(object_system);
+  printf("--- } Object_system_done() } ---\n");
 }
 
 Symbol* Object_type(Object* self) {
@@ -274,6 +275,13 @@ Object* Object_bop_sub(Object* a, Object* b) {
   return Object_new(SYMBOL_ERROR, Error_new("Invalid types for bop_sub"));
 }
 
+Object* Object_bop_mul(Object* a, Object* b) {
+  if(Object_type(a) == SYMBOL_NUMBER && Object_type(b) == SYMBOL_NUMBER) {
+    return Object_new(SYMBOL_NUMBER, Number_mul(a->impl, b->impl));
+  }
+  return Object_new(SYMBOL_ERROR, Error_new("Invalid types for bop_mul"));
+}
+
 Object* Object_bop_div(Object* a, Object* b) {
   if(Object_type(a) == SYMBOL_NUMBER && Object_type(b) == SYMBOL_NUMBER) {
     return Object_new(SYMBOL_NUMBER, Number_div(a->impl, b->impl));
@@ -281,10 +289,5 @@ Object* Object_bop_div(Object* a, Object* b) {
   return Object_new(SYMBOL_ERROR, Error_new("Invalid types for bop_div"));
 }
 
-Object* Object_bop_mul(Object* a, Object* b) {
-  if(Object_type(a) == SYMBOL_NUMBER && Object_type(b) == SYMBOL_NUMBER) {
-    return Object_new(SYMBOL_NUMBER, Number_mul(a->impl, b->impl));
-  }
-  return Object_new(SYMBOL_ERROR, Error_new("Invalid types for bop_mul"));
-}
+
 

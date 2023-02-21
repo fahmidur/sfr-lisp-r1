@@ -24,26 +24,42 @@ int main(int argc, char** argv) {
 
   nassert(Object_system_size() == 3);
 
-  Object* num1 = Object_new(SYMBOL_NUMBER, Number_new(5));
-  Object* num2 = Object_new(SYMBOL_NUMBER, Number_new(7));
+  printf("======================================\n");
+  printf("=== === BEG. NUMBER OPERATIONS === ===\n");
+  printf("======================================\n");
+  Object* num1 = Object_new(SYMBOL_NUMBER, Number_new(3));
+  Object* num2 = Object_new(SYMBOL_NUMBER, Number_new(4));
 
   printf("Test Number + Number ...\n");
   Object* res1 = Object_bop_add(num1, num2);
-  Object* res1_expected = Object_new(SYMBOL_NUMBER, Number_new(12));
+  Object* res1_expected = Object_new(SYMBOL_NUMBER, Number_new(7));
   nassert(Object_cmp(res1, res1_expected) == 0);
   printf("res1 = "); Object_print(res1); printf("\n");
 
-  printf("Test Num1 - Number ...\n");
+  printf("Test Number - Number ...\n");
   Object* res2 = Object_bop_sub(num1, num2);
-  Object* res2_expected = Object_new(SYMBOL_NUMBER, Number_new(-2));
+  Object* res2_expected = Object_new(SYMBOL_NUMBER, Number_new(-1));
   nassert(Object_cmp(res2, res2_expected) == 0);
+
+  printf("Test Number * Number ...\n");
+  Object* res3 = Object_bop_mul(num1, num2);
+  Object* res3_expected = Object_new(SYMBOL_NUMBER, Number_new(12));
+  nassert(Object_cmp(res3, res3_expected) == 0);
+
+  printf("Test Number / Number ...\n");
+  Object* res4 = Object_bop_div(num1, num2);
+  Object* res4_expected = Object_new(SYMBOL_NUMBER, Number_new(0.75));
+  nassert(Object_cmp(res4, res4_expected) == 0);
 
   printf("Test String + Number ...\n");
   Object* sum_invalid = Object_bop_add(str1, num2);
   Object_print(sum_invalid); printf("\n");
   nassert(Object_type(sum_invalid) == Symbol_new("Error"));
   
-  printf("=========================\n");
+  printf("======================================\n");
+  printf("=== === END. NUMBER OPERATIONS === ===\n");
+  printf("======================================\n");
+  printf("\n\n");
 
   Object_system_done();
   Symbol_system_done();

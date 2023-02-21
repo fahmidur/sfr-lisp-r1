@@ -68,6 +68,7 @@ int Object_cmp(Object* a, Object* b);
 void Object_print(Object* self);
 Object* Object_bop_add(Object* a, Object* b);
 Object* Object_bop_sub(Object* a, Object* b);
+Object* Object_bop_mul(Object* a, Object* b);
 Object* Object_bop_div(Object* a, Object* b);
 
 void    Object_system_init();

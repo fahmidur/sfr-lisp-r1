@@ -163,7 +163,7 @@ Symbol* Symbol_find(char* str) {
 }
 
 void Symbol_print(Symbol* self) {
-  printf("Symbol(%s)", self->str);
+  printf(":%s", self->str);
 }
 
 Symbol* Symbol_new(char* str) {

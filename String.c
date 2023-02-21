@@ -36,7 +36,7 @@ void String_del(String* self) {
   if(self == NULL) {
     return;
   }
-  printf("String_del(%p) || buf=%s\n", self, self->buf);
+  printf("String_del(%p). buf=%s\n", self, self->buf);
   if(self->buf != NULL) {
     free(self->buf);
   }
