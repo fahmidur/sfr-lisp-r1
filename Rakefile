@@ -1,4 +1,8 @@
 require 'set'
+
+#TODO
+#- Simplify the targets.
+
 def env_truthy?(name)
   name = name.to_s
   val = ENV[name] || ENV[name.downcase]
