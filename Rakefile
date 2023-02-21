@@ -27,13 +27,6 @@ cflags = cflags.join(' ')
 
 task :default => :build
 
-atom_basenames = [
-];
-molecules_basenames = [
-];
-obj_basenames = [
-];
-
 desc "Clean all build artifacts"
 task :clean do
   puts "clean. cleaning..."

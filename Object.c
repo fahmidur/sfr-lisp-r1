@@ -266,8 +266,7 @@ Object* Object_bop_add(Object* a, Object* b) {
     return Object_new(SYMBOL_NUMBER, ret);
   }
   else {
-    //TODO return Error object
-    return NULL;
+    return Object_new(SYMBOL_ERROR, Error_new("Invalid types for bop_add"));
   }
 }
 

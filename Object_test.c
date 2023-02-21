@@ -21,14 +21,16 @@ int main(int argc, char** argv) {
   Object* num1 = Object_new(Symbol_new("Number"), Number_new(5));
   Object* num2 = Object_new(Symbol_new("Number"), Number_new(7));
 
+  printf("Adding Num1 + Num2 ...\n");
   Object* sum1 = Object_bop_add(num1, num2);
   Object* sum1_expected = Object_new(Symbol_new("Number"), Number_new(12));
   nassert(Object_cmp(sum1, sum1_expected) == 0);
   printf("sum1 = "); Object_print(sum1); printf("\n");
 
-  // Basic normalized interface to objects
-  /*Object* add = Object_new(Symbol_new("Function"), Function_new(2, 0, &Number_add));*/
-  /*Object_call(add, num1, num2);*/
+  printf("Adding String + Number ...\n");
+  Object* sum_invalid = Object_bop_add(str1, num2);
+  Object_print(sum_invalid); printf("\n");
+  nassert(Object_type(sum_invalid) == Symbol_new("Error"));
   
   printf("=========================\n");
 

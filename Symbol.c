@@ -141,7 +141,7 @@ size_t Symbol_calc_key(char* str) {
 }
 
 Symbol* Symbol_find(char* str) {
-  printf("Symbol_find(%s). \n", str);
+  /*printf("Symbol_find(%s). \n", str);*/
   size_t key = Symbol_calc_key(str);
   SymbolVector* av = av_buckets[key];
   if(av == NULL) {
