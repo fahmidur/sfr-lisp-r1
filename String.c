@@ -32,6 +32,23 @@ String* String_clone(String* self) {
   return clone;
 }
 
+String* String_add(String* a, String* b) {
+  String* clone = calloc(1, sizeof(String));
+  clone->len = a->len + b->len;
+  clone->buf_size = a->buf_size + b->buf_size;
+  clone->buf = calloc(clone->buf_size, sizeof(char));
+  int i;
+  int alen = a->len;
+  int blen = b->len;
+  for(i = 0; i < alen; i++) {
+    clone->buf[i] = a->buf[i];
+  }
+  for(i = 0; i < blen; i++) {
+    clone->buf[alen+i] = b->buf[i];
+  }
+  return clone;
+}
+
 void String_del(String* self) {
   if(self == NULL) {
     return;

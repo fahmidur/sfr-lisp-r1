@@ -25,11 +25,19 @@ int main(int argc, char** argv) {
   String* dolly2 = String_clone(dolly1);
   nassert(strcmp(dolly1->buf, dolly2->buf) == 0);
 
+  String* hello = String_new("Hello");
+  String* there = String_new("There");
+  String* conc1 = String_add(hello, there);
+  nassert(strcmp(conc1->buf, "HelloThere") == 0);
+
   String_del(str0);
   String_del(str1);
   String_del(str2);
   String_del(dolly1);
   String_del(dolly2);
+  String_del(hello);
+  String_del(there);
+  String_del(conc1);
 
   nassert_report();
   return nassert_exit_code();
