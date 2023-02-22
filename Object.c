@@ -266,6 +266,7 @@ Object* Object_bop_add(Object* a, Object* b) {
     return Object_new(SYMBOL_NUMBER, Number_add(a->impl, b->impl));
   }
   if(Object_type(a) == SYMBOL_STRING && Object_type(b) == SYMBOL_STRING) {
+    return Object_new(SYMBOL_STRING, String_add(a->impl, b->impl));
   }
   return Object_new(SYMBOL_ERROR, Error_new("Invalid types bop_add"));
 }
