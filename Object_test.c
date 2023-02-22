@@ -18,11 +18,17 @@ int main(int argc, char** argv) {
   nassert(Symbol_new("Error") == SYMBOL_ERROR);
   nassert(Symbol_new("List") == SYMBOL_LIST);
 
-  Object* str1 = Object_new(Symbol_new("String"), String_new("Hello there 001"));
-  Object* str2 = Object_new(Symbol_new("String"), String_new("Hello there 002"));
-  Object* str3 = Object_new(Symbol_new("String"), String_new("Hello there 003"));
+  Object* str1 = Object_new(SYMBOL_STRING, String_new("Hello there 001"));
+  Object* str2 = Object_new(SYMBOL_STRING, String_new("Hello there 002"));
+  Object* str3 = Object_new(SYMBOL_STRING, String_new("Hello there 003"));
 
   nassert(Object_system_size() == 3);
+
+  Object* str_hello = Object_new(SYMBOL_STRING, String_new("Hello"));
+  Object* str_there = Object_new(SYMBOL_STRING, String_new("There"));
+  Object* str_conc1 = Object_bop_add(str_hello, str_there);
+  Object* str_conc1_exp = Object_new(SYMBOL_STRING, String_new("HelloThere"));
+  nassert(Object_cmp(str_conc1, str_conc1_exp) == 0);
 
   printf("======================================\n");
   printf("=== === BEG. NUMBER OPERATIONS === ===\n");
