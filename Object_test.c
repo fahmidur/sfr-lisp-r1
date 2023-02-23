@@ -18,7 +18,6 @@ int main(int argc, char** argv) {
   nassert(Symbol_new("Error") == SYMBOL_ERROR);
   nassert(Symbol_new("List") == SYMBOL_LIST);
 
-
   printf("======================================\n");
   printf("=== === BEG. STRING OPERATIONS === ===\n");
   printf("======================================\n");
