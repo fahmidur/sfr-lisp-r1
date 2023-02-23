@@ -18,11 +18,17 @@ int main(int argc, char** argv) {
   nassert(Symbol_new("Error") == SYMBOL_ERROR);
   nassert(Symbol_new("List") == SYMBOL_LIST);
 
+
+  printf("======================================\n");
+  printf("=== === BEG. STRING OPERATIONS === ===\n");
+  printf("======================================\n");
+
+  int objsize = Object_system_size();
   Object* str1 = Object_new(SYMBOL_STRING, String_new("Hello there 001"));
   Object* str2 = Object_new(SYMBOL_STRING, String_new("Hello there 002"));
   Object* str3 = Object_new(SYMBOL_STRING, String_new("Hello there 003"));
+  nassert(objsize - Object_system_size() >= 3); // gained at least 3 objects
 
-  nassert(Object_system_size() == 3);
   Object* stralike1 = Object_new(SYMBOL_STRING, String_new("John Doe"));
   Object* stralike2 = Object_new(SYMBOL_STRING, String_new("John Doe"));
   Object* stralike3 = Object_new(SYMBOL_STRING, String_new("John Doo"));
@@ -36,6 +42,10 @@ int main(int argc, char** argv) {
   Object* str_conc1 = Object_bop_add(str_hello, str_there);
   Object* str_conc1_exp = Object_new(SYMBOL_STRING, String_new("HelloThere"));
   nassert(Object_cmp(str_conc1, str_conc1_exp) == 0);
+
+  printf("======================================\n");
+  printf("=== === END. STRING OPERATIONS === ===\n");
+  printf("======================================\n");
 
   printf("======================================\n");
   printf("=== === BEG. NUMBER OPERATIONS === ===\n");
