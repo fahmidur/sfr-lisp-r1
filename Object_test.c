@@ -23,6 +23,13 @@ int main(int argc, char** argv) {
   Object* str3 = Object_new(SYMBOL_STRING, String_new("Hello there 003"));
 
   nassert(Object_system_size() == 3);
+  Object* stralike1 = Object_new(SYMBOL_STRING, String_new("John Doe"));
+  Object* stralike2 = Object_new(SYMBOL_STRING, String_new("John Doe"));
+  Object* stralike3 = Object_new(SYMBOL_STRING, String_new("John Doo"));
+
+  nassert(Object_cmp(str1, str2) != 0);
+  nassert(Object_cmp(stralike1, stralike2) == 0);
+  nassert(Object_cmp(stralike2, stralike3) != 0);
 
   Object* str_hello = Object_new(SYMBOL_STRING, String_new("Hello"));
   Object* str_there = Object_new(SYMBOL_STRING, String_new("There"));
