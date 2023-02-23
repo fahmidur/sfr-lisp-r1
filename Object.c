@@ -258,9 +258,6 @@ int Object_cmp(Object* a, Object* b) {
   return -9;
 }
 
-// Binary Operations
-// (+ 1 2)
-// (+ "hello" "there")
 Object* Object_bop_add(Object* a, Object* b) {
   if(Object_type(a) == SYMBOL_NUMBER && Object_type(b) == SYMBOL_NUMBER) {
     return Object_new(SYMBOL_NUMBER, Number_add(a->impl, b->impl));
