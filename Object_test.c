@@ -6,6 +6,21 @@
 #include "Number.h"
 #include "Object.h"
 
+void heading(char isbeg, char* str) {
+  if(isbeg) {
+    printf("{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{\n");
+  } else {
+    printf("}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}\n");
+  }
+  printf("=== %s. %s \n", (isbeg ? "BEG" : "END"), str);
+  if(isbeg) {
+    printf("{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{\n");
+  } else {
+    printf("}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}\n");
+    printf("\n\n");
+  }
+}
+
 int main(int argc, char** argv) {
   Symbol_system_init();
   Object_system_init();
@@ -18,9 +33,7 @@ int main(int argc, char** argv) {
   nassert(Symbol_new("Error") == SYMBOL_ERROR);
   nassert(Symbol_new("List") == SYMBOL_LIST);
 
-  printf("======================================\n");
-  printf("=== === BEG. STRING OPERATIONS === ===\n");
-  printf("======================================\n");
+  heading(1, "STRING OPERATIONS");
 
   int objsize = Object_system_size();
   Object* str1 = Object_new(SYMBOL_STRING, String_new("Hello there 001"));
@@ -42,13 +55,9 @@ int main(int argc, char** argv) {
   Object* str_conc1_exp = Object_new(SYMBOL_STRING, String_new("HelloThere"));
   nassert(Object_cmp(str_conc1, str_conc1_exp) == 0);
 
-  printf("======================================\n");
-  printf("=== === END. STRING OPERATIONS === ===\n");
-  printf("======================================\n");
+  heading(0, "STRING OPERATIONS");
 
-  printf("======================================\n");
-  printf("=== === BEG. NUMBER OPERATIONS === ===\n");
-  printf("======================================\n");
+  heading(1, "NUMBER OPERATIONS");
   Object* num1 = Object_new(SYMBOL_NUMBER, Number_new(3));
   Object* num2 = Object_new(SYMBOL_NUMBER, Number_new(4));
 
@@ -78,10 +87,7 @@ int main(int argc, char** argv) {
   Object_print(sum_invalid); printf("\n");
   nassert(Object_type(sum_invalid) == Symbol_new("Error"));
   
-  printf("======================================\n");
-  printf("=== === END. NUMBER OPERATIONS === ===\n");
-  printf("======================================\n");
-  printf("\n\n");
+  heading(0, "NUMBER OPERATIONS");
 
   Object_system_done();
   Symbol_system_done();
