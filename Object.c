@@ -24,7 +24,7 @@ char Object_oti_set(
   void (*del)(void* s),
   void (*print)(void* s)
   ) {
-  printf("Object_oti_set("); Symbol_print(type); printf(", del=%p)\n", del);
+  printf("Object_oti_set("); Symbol_print(type); printf(", del=%p, print=%p)\n", del, print);
   size_t hash = type->hash;
   size_t key = hash % OBJECT_TYPES_BUCKETS_SIZE;
   ObjectTypeInfo* oti = calloc(1, sizeof(ObjectTypeInfo));

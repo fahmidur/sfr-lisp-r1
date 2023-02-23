@@ -22,10 +22,13 @@ void heading(char isbeg, char* str) {
 }
 
 int main(int argc, char** argv) {
+
+  heading(1, "RUNTIME INIT");
   Symbol_system_init();
   Object_system_init();
+  heading(0, "RUNTIME INIT");
 
-  printf("=========================\n");
+  //===========================================================================
 
   nassert(Symbol_new("Symbol") == SYMBOL_SYMBOL);
   nassert(Symbol_new("Number") == SYMBOL_NUMBER);
@@ -33,6 +36,7 @@ int main(int argc, char** argv) {
   nassert(Symbol_new("Error") == SYMBOL_ERROR);
   nassert(Symbol_new("List") == SYMBOL_LIST);
 
+  //===========================================================================
   heading(1, "STRING OPERATIONS");
 
   int objsize = Object_system_size();
@@ -57,7 +61,9 @@ int main(int argc, char** argv) {
 
   heading(0, "STRING OPERATIONS");
 
+  //===========================================================================
   heading(1, "NUMBER OPERATIONS");
+
   Object* num1 = Object_new(SYMBOL_NUMBER, Number_new(3));
   Object* num2 = Object_new(SYMBOL_NUMBER, Number_new(4));
 
@@ -89,8 +95,11 @@ int main(int argc, char** argv) {
   
   heading(0, "NUMBER OPERATIONS");
 
+  //===========================================================================
+  heading(1, "RUNTIME DONE");
   Object_system_done();
   Symbol_system_done();
+  heading(0, "RUNTIME DONE");
 
   nassert_report();
   return nassert_exit_code();
