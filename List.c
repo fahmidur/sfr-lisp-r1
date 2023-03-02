@@ -26,8 +26,6 @@ void ListNode_unlink(ListNode* self) {
 
 void ListNode_del(ListNode* self) {
   ListNode_unlink(self);
-  // TODO: either delete the data or 
-  // decrement the refcount for data.
   Object_rc_decr(self->data);
   free(self);
 }
