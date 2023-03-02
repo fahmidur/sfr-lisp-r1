@@ -23,7 +23,7 @@ struct Object {
   Object* next;
   Object* prev;
   void*   impl;
-  int     refc;
+  int     rc;
 };
 
 typedef struct ObjectTypeInfo ObjectTypeInfo;
@@ -60,12 +60,16 @@ char Object_oti_set(
 );
 ObjectTypeInfo* Object_oti_get(Symbol* type);
 
-Object* Object_new(Symbol* type, void* impl);
+Object* Object_new(Symbol* type, int rc, void* impl);
 void Object_add_to_system(Object* self);
 void Object_del(Object* self);
 Symbol* Object_type(Object* self);
 int Object_cmp(Object* a, Object* b);
 void Object_print(Object* self);
+void Object_rc_incr(Object* self);
+void Object_rc_decr(Object* self);
+void Object_gc(Object* self);
+
 Object* Object_bop_add(Object* a, Object* b);
 Object* Object_bop_sub(Object* a, Object* b);
 Object* Object_bop_mul(Object* a, Object* b);
@@ -74,6 +78,7 @@ Object* Object_bop_div(Object* a, Object* b);
 void    Object_system_init();
 size_t  Object_system_size();
 void    Object_system_done();
+void    Object_system_gc();
 
 // Composits
 #include "List.h"

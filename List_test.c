@@ -15,7 +15,7 @@ int main(int argc, char** argv) {
   nassert(List_size(list1) == 0);
 
   Symbol* SYMBOL_STRING = Symbol_new("String");
-  Object* hello = Object_new(SYMBOL_STRING, String_new("Hello"));
+  Object* hello = Object_new(SYMBOL_STRING, 1, String_new("Hello"));
 
   List_push(list1, hello);
   nassert(List_size(list1) == 1);
@@ -24,7 +24,7 @@ int main(int argc, char** argv) {
   nassert(hello_popped == hello);
   nassert(List_size(list1) == 0);
 
-  Object* listobj = Object_new(Symbol_new("List"), List_new());
+  Object* listobj = Object_new(Symbol_new("List"), 1, List_new());
   List_push(listobj->impl, hello);
   printf("--- listobj=");
   Object_print(listobj);

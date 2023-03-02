@@ -119,12 +119,12 @@ void Object_system_init() {
   printf("--- END. Object_system_init() ---\n");
 }
 
-Object* Object_new(Symbol* type, void* impl) {
+Object* Object_new(Symbol* type, int rc, void* impl) {
   Object* self = calloc(1, sizeof(Object));
 
   self->type = type;
   self->impl = impl;
-  self->refc = 0;
+  self->rc = rc;
 
   Object_add_to_system(self);
   
@@ -136,6 +136,16 @@ size_t Object_system_size() {
     return 0;
   }
   return object_system->size;
+}
+
+void Object_system_gc() {
+  Object* iter = object_system->head;
+  Object* next = NULL;
+  while(iter != NULL) {
+    next = iter->next;
+    Object_gc(iter);
+    iter = next;
+  }
 }
 
 // TODO: make this idempotent.
@@ -232,6 +242,23 @@ Symbol* Object_type(Object* self) {
   return self->type;
 }
 
+void Object_rc_incr(Object* self) {
+  self->rc++;
+}
+
+void Object_gc(Object* self) {
+  if(self->rc <= 0) {
+    Object_del(self);
+  }
+}
+
+void Object_rc_decr(Object* self) {
+  if(self->rc >= 1) {
+    self->rc--;
+  }
+  Object_gc(self);
+}
+
 void Object_print(Object* self) {
   ObjectTypeInfo* oti = Object_oti_get(self->type);
   if(oti == NULL) {
@@ -260,33 +287,33 @@ int Object_cmp(Object* a, Object* b) {
 
 Object* Object_bop_add(Object* a, Object* b) {
   if(Object_type(a) == SYMBOL_NUMBER && Object_type(b) == SYMBOL_NUMBER) {
-    return Object_new(SYMBOL_NUMBER, Number_add(a->impl, b->impl));
+    return Object_new(SYMBOL_NUMBER, 0, Number_add(a->impl, b->impl));
   }
   if(Object_type(a) == SYMBOL_STRING && Object_type(b) == SYMBOL_STRING) {
-    return Object_new(SYMBOL_STRING, String_add(a->impl, b->impl));
+    return Object_new(SYMBOL_STRING, 0, String_add(a->impl, b->impl));
   }
-  return Object_new(SYMBOL_ERROR, Error_new("Invalid types bop_add"));
+  return Object_new(SYMBOL_ERROR, 0, Error_new("Invalid types bop_add"));
 }
 
 Object* Object_bop_sub(Object* a, Object* b) {
   if(Object_type(a) == SYMBOL_NUMBER && Object_type(b) == SYMBOL_NUMBER) {
-    return Object_new(SYMBOL_NUMBER, Number_sub(a->impl, b->impl));
+    return Object_new(SYMBOL_NUMBER, 0, Number_sub(a->impl, b->impl));
   }
-  return Object_new(SYMBOL_ERROR, Error_new("Invalid types for bop_sub"));
+  return Object_new(SYMBOL_ERROR, 0, Error_new("Invalid types for bop_sub"));
 }
 
 Object* Object_bop_mul(Object* a, Object* b) {
   if(Object_type(a) == SYMBOL_NUMBER && Object_type(b) == SYMBOL_NUMBER) {
-    return Object_new(SYMBOL_NUMBER, Number_mul(a->impl, b->impl));
+    return Object_new(SYMBOL_NUMBER, 0, Number_mul(a->impl, b->impl));
   }
-  return Object_new(SYMBOL_ERROR, Error_new("Invalid types for bop_mul"));
+  return Object_new(SYMBOL_ERROR, 0, Error_new("Invalid types for bop_mul"));
 }
 
 Object* Object_bop_div(Object* a, Object* b) {
   if(Object_type(a) == SYMBOL_NUMBER && Object_type(b) == SYMBOL_NUMBER) {
-    return Object_new(SYMBOL_NUMBER, Number_div(a->impl, b->impl));
+    return Object_new(SYMBOL_NUMBER, 0, Number_div(a->impl, b->impl));
   }
-  return Object_new(SYMBOL_ERROR, Error_new("Invalid types for bop_div"));
+  return Object_new(SYMBOL_ERROR, 0, Error_new("Invalid types for bop_div"));
 }
 
 
