@@ -12,7 +12,7 @@ struct Error {
 
 Error* Error_new(char* str);
 void   Error_del(Error* self);
-
-void Error_print(Error* self);
+void   Error_print(Error* self);
+Error* Error_clone(Error* self);
 
 #endif

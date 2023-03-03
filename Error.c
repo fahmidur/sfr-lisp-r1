@@ -18,3 +18,7 @@ void Error_del(Error* self) {
 void Error_print(Error* self) {
   printf("Error(%s)", self->msg);
 }
+
+Error* Error_clone(Error* self) {
+  return Error_new(self->msg);
+}

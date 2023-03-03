@@ -19,25 +19,22 @@ Symbol* SYMBOL_NUMBER;
 Symbol* SYMBOL_ERROR;
 Symbol* SYMBOL_LIST;
 
-char Object_oti_set(
-  Symbol* type, 
-  void (*del)(void* s),
-  void (*print)(void* s)
-  ) {
-  printf("Object_oti_set("); Symbol_print(type); printf(", del=%p, print=%p)\n", del, print);
+  /*void    (*del)(void* s),*/
+  /*void    (*print)(void* s),*/
+  /*void* (*clone)(void* s)*/
+char Object_oti_set(Symbol* type, ObjectTypeInfo otiarg) {
+  printf("Object_oti_set("); Symbol_print(type); printf(")\n");
   size_t hash = type->hash;
   size_t key = hash % OBJECT_TYPES_BUCKETS_SIZE;
   ObjectTypeInfo* oti = calloc(1, sizeof(ObjectTypeInfo));
-  /*printf("oti=%p\n", oti);*/
+  oti->hash = hash;
+  oti->key = key;
   oti->next = NULL;
   oti->prev = NULL;
   oti->type = type;
-  /*printf("oti setting oti->del\n");*/
-  oti->del = del;
-  oti->print = print;
-  /*printf("oti->del = %p\n", oti->del);*/
-  oti->hash = hash;
-  oti->key = key;
+  oti->fn_del   = otiarg.fn_del;
+  oti->fn_print = otiarg.fn_print;
+  oti->fn_clone = otiarg.fn_clone;
   ObjectTypeInfo* oti_old = object_system->types[oti->key];
   /*printf("oti_old=%p\n", oti_old);*/
   oti->next = oti_old;
@@ -87,31 +84,40 @@ void Object_system_init() {
 
   printf("\n\n");
 
-  Object_oti_set(
-    SYMBOL_SYMBOL, 
-    Symbol_noop, 
-    (void (*)(void*))Symbol_print
-  );
-  Object_oti_set(
-    SYMBOL_STRING, 
-    (void (*)(void*))String_del,
-    (void (*)(void*))String_print
-  );
-  Object_oti_set(
-    SYMBOL_NUMBER, 
-    (void (*)(void*))Number_del,
-    (void (*)(void*))Number_print
-  );
-  Object_oti_set(
-    SYMBOL_LIST, 
-    (void (*)(void*))List_del,
-    (void (*)(void*))List_print
-  );
-  Object_oti_set(
-    SYMBOL_ERROR, 
-    (void (*)(void*))Error_del,
-    (void (*)(void*))Error_print
-  );
+  ObjectTypeInfo otiarg_symbol = { 
+    .fn_del   = Symbol_noop, 
+    .fn_print = (void  (*)(void*))Symbol_print,
+    .fn_clone = (void* (*)(void*))Symbol_clone
+  };
+  Object_oti_set(SYMBOL_SYMBOL, otiarg_symbol);
+
+  ObjectTypeInfo otiarg_string = {
+    .fn_del   = (void  (*)(void*))String_del,
+    .fn_print = (void  (*)(void*))String_print,
+    .fn_clone = (void* (*)(void*))String_clone
+  };
+  Object_oti_set(SYMBOL_STRING, otiarg_string);
+
+  ObjectTypeInfo otiarg_number = {
+    .fn_del   = (void  (*)(void*))Number_del,
+    .fn_print = (void  (*)(void*))Number_print,
+    .fn_clone = (void* (*)(void*))Number_clone
+  };
+  Object_oti_set(SYMBOL_NUMBER, otiarg_number);
+
+  ObjectTypeInfo otiarg_list = {
+    .fn_del =   (void   (*)(void*))List_del,
+    .fn_print = (void   (*)(void*))List_print,
+    .fn_clone = (void*  (*)(void*))List_clone
+  };
+  Object_oti_set(SYMBOL_LIST, otiarg_list);
+
+  ObjectTypeInfo otiarg_error = {
+    .fn_del   = (void  (*)(void*))Error_del,
+    .fn_print = (void  (*)(void*))Error_print,
+    .fn_clone = (void* (*)(void*))Error_clone
+  };
+  Object_oti_set(SYMBOL_ERROR, otiarg_error);
 
   object_system->init_called = 1;
   object_system->done_called = 0;
@@ -196,11 +202,17 @@ void Object_del(Object* self) {
 
   ObjectTypeInfo* oti = Object_oti_get(self->type);
   if(!oti) {
-    printf("FATAL: unknown ObjectTypeInfo for type: ");
+    printf("FATAL: unknown ObjectTypeInfo oti for type ");
     Symbol_print(self->type);
     exit(1);
   }
-  oti->del(self->impl);
+  if(oti->fn_del == NULL) {
+    printf("FATAL: ObjectTypeInfo oti for type ");
+    Symbol_print(self->type);
+    printf(" is missing fn_del\n");
+    exit(1);
+  }
+  oti->fn_del(self->impl);
   /*printf("Object_del(%p). calling free on self.\n", self);*/
   free(self);
 }
@@ -262,12 +274,30 @@ void Object_rc_decr(Object* self) {
 void Object_print(Object* self) {
   ObjectTypeInfo* oti = Object_oti_get(self->type);
   if(oti == NULL) {
-    return;
+    printf("FATAL: unknown ObjectTypeInfo oti for type ");
+    Symbol_print(self->type);
+    exit(1);
   }
-  if(oti->print == NULL) {
-    return;
+  // Or you might want to have a default print.
+  if(oti->fn_print == NULL) {
+    printf("FATAL: ObjectTypeInfo oti for type ");
+    Symbol_print(self->type);
+    printf(" is missing fn_del\n");
+    exit(1);
   }
-  oti->print(self->impl);
+  oti->fn_print(self->impl);
+}
+
+Object* Object_clone(Object* self) {
+  ObjectTypeInfo* oti = Object_oti_get(self->type);
+  if(oti == NULL) {
+    return Object_new(SYMBOL_ERROR, 0, Error_new("Missing oti for Object Type"));
+  }
+  if(oti->fn_clone == NULL) {
+    return Object_new(SYMBOL_ERROR, 0, Error_new("Missing clone for Object Type"));
+  }
+  void* rawobj = oti->fn_clone(self->impl);
+  return Object_new(self->type, 0, rawobj);
 }
 
 int Object_cmp(Object* a, Object* b) {

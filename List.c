@@ -98,3 +98,12 @@ void List_print(List* self) {
   }
   printf("]");
 }
+
+List* List_clone(List* self) {
+  List* clone = List_new();
+  ListNode* iter = self->head;
+  while(iter != NULL) {
+    List_push(clone, Object_clone(iter->data));
+  }
+  return clone;
+}

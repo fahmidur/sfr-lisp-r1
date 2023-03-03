@@ -34,8 +34,9 @@ struct ObjectTypeInfo {
   ObjectTypeInfo* prev;
   ObjectTypeInfo* next;
   // vtable
-  void (*del)(void* s); 
-  void (*print)(void* s);
+  void  (*fn_del)(void* s); 
+  void  (*fn_print)(void* s);
+  void* (*fn_clone)(void* s);
 };
 
 typedef struct ObjectSystem ObjectSystem;
@@ -55,14 +56,14 @@ struct ObjectSystem {
 
 char Object_oti_set(
   Symbol* type, 
-  void (*)(void* s),
-  void (*)(void* s)
+  ObjectTypeInfo otiarg
 );
 ObjectTypeInfo* Object_oti_get(Symbol* type);
 
 Object* Object_new(Symbol* type, int rc, void* impl);
 void Object_add_to_system(Object* self);
 void Object_del(Object* self);
+Object* Object_clone(Object* self);
 Symbol* Object_type(Object* self);
 int Object_cmp(Object* a, Object* b);
 void Object_print(Object* self);
