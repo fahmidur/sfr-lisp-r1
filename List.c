@@ -52,7 +52,7 @@ size_t List_push(List* self, Object* data) {
     self->tail->next = datanode;
   }
   return self->size++;
-};
+}
 
 Object* List_pop(List* self) {
   if(self->size == 0) {
