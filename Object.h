@@ -24,6 +24,7 @@ struct Object {
   Object* prev;
   void*   impl;
   int     rc;
+  int     gc_skipped;
 };
 
 typedef struct ObjectTypeInfo ObjectTypeInfo;

@@ -50,6 +50,7 @@ size_t List_push(List* self, Object* thing) {
   } 
   else {
     self->tail->next = listnode;
+    self->tail = listnode;
   }
   Object_rc_incr(thing);
   return self->size++;

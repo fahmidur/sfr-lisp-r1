@@ -128,6 +128,7 @@ Object* Object_new(Symbol* type, int rc, void* impl) {
   self->type = type;
   self->impl = impl;
   self->rc = rc;
+  self->gc_skipped = 0;
 
   Object_add_to_system(self);
   
@@ -223,6 +224,13 @@ void Object_system_done() {
   object_system->done_called = 1;
   // delete all objects
   while(object_system->size > 0) {
+    /*Object* iter = object_system->head;*/
+    /*Object* next = NULL;*/
+    /*while(iter != NULL) {*/
+      /*next = iter->next;*/
+      /*Object_rc_decr(iter);*/
+      /*iter = next;*/
+    /*}*/
     Object_del(object_system->head);
   }
   // delete type information
@@ -253,10 +261,19 @@ Symbol* Object_type(Object* self) {
 
 void Object_rc_incr(Object* self) {
   self->rc++;
+  self->gc_skipped = 0;
 }
 
 void Object_gc(Object* self) {
   if(self->rc <= 0) {
+    /*if(self->rc == 0 && self->gc_skipped <= 3) {*/
+      /*// we really do not know if the object*/
+      /*// is assigned, so do not delete it until*/
+      /*// the next gc cycle. */
+      /*self->gc_skipped++;*/
+      /*[>printf("--- gc_skipped=%d\n", self->gc_skipped);<]*/
+      /*return;*/
+    /*}*/
     Object_del(self);
   }
 }

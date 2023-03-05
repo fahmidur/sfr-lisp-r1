@@ -55,4 +55,6 @@ void Tokenizer_dprint(Tokenizer* self);
 char Tokenizer_nq_cstr1(Tokenizer* self, char* str);
 Token Tokenizer_dq(Tokenizer* self);
 
+char Token_cmp_cstr(Token tok, char* str);
+
 #endif
