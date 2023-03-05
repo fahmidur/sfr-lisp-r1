@@ -19,9 +19,6 @@ Symbol* SYMBOL_NUMBER;
 Symbol* SYMBOL_ERROR;
 Symbol* SYMBOL_LIST;
 
-  /*void    (*del)(void* s),*/
-  /*void    (*print)(void* s),*/
-  /*void* (*clone)(void* s)*/
 char Object_oti_set(Symbol* type, ObjectTypeInfo otiarg) {
   printf("Object_oti_set("); Symbol_print(type); printf(")\n");
   size_t hash = type->hash;
