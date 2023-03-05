@@ -26,7 +26,7 @@ int main(int argc, char** argv) {
 
   Object* listobj = Object_new(Symbol_new("List"), 1, List_new());
   List_push(listobj->impl, hello);
-  printf("--- listobj=");
+  printf("--- listobj = ");
   Object_print(listobj);
   printf("\n");
 

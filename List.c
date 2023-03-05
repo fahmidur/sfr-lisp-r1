@@ -42,15 +42,16 @@ size_t List_size(List* self) {
   return self->size;
 }
 
-size_t List_push(List* self, Object* data) {
-  ListNode* datanode = ListNode_new(data);
+size_t List_push(List* self, Object* thing) {
+  ListNode* listnode = ListNode_new(thing);
   if(self->size == 0) {
-    self->head = datanode;
-    self->tail = datanode;
+    self->head = listnode;
+    self->tail = listnode;
   } 
   else {
-    self->tail->next = datanode;
+    self->tail->next = listnode;
   }
+  Object_rc_incr(thing);
   return self->size++;
 }
 
