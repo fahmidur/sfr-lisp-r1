@@ -152,6 +152,11 @@ file build('Util_test') => [*testdeps, 'Util_test.c', build('Util.o')] do
   sh "#{cc} #{cflags} -o #{build('Util_test')} Util_test.c #{build('Util.o')}"
 end
 
+desc "Build sfr-lisp program"
+file build('sfr-lisp') => ['sfr-lisp.c', build('Object.o'), *obj_ofiles, build('Util.o'), build('Tokenizer.o')] do
+  sh "#{cc} #{cflags} -o #{build('sfr-lisp')} sfr-lisp.c #{build('Object.o')} #{obj_ofiles.join(' ')} #{build('Util.o')} #{build('Tokenizer.o')}"
+end
+
 desc "Run all tests"
 task :test => :build do
   sh "ruby ./test/all.rb"
