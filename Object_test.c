@@ -103,8 +103,8 @@ int main(int argc, char** argv) {
   nassert(Object_type(sum_invalid) == Symbol_new("Error"));
   
   heading(0, "NUMBER OPERATIONS");
-
   //===========================================================================
+
   heading(1, "RUNTIME DONE");
   Object_system_done();
   Symbol_system_done();
