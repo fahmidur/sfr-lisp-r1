@@ -50,6 +50,7 @@ size_t List_push(List* self, Object* thing) {
   } 
   else {
     self->tail->next = listnode;
+    listnode->prev = self->tail;
     self->tail = listnode;
   }
   Object_rc_incr(thing);
@@ -70,6 +71,10 @@ Object* List_pop(List* self) {
   else {
     node = self->tail;
     self->tail = node->prev;
+  }
+  if(node == NULL) {
+    printf("FATAL: List_pop. node is NULL\n");
+    exit(1);
   }
   node->prev = NULL;
   node->next = NULL;

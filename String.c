@@ -56,6 +56,7 @@ void String_del(String* self) {
   printf("String_del(%p). buf=%s\n", self, self->buf);
   if(self->buf != NULL) {
     free(self->buf);
+    self->buf = NULL;
   }
   free(self);
 }
