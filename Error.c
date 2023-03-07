@@ -11,7 +11,10 @@ Error* Error_new(char* msg) {
 }
 
 void Error_del(Error* self) {
-  free(self->msg);
+  if(self->msg != NULL) {
+    free(self->msg);
+    self->msg = NULL;
+  }
   free(self);
 }
 
