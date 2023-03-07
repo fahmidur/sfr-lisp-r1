@@ -264,7 +264,7 @@ void Object_gc(Object* self) {
       /*// is assigned, so do not delete it until*/
       /*// the next gc cycle. */
       /*self->gc_skipped++;*/
-      /*[>printf("--- gc_skipped=%d\n", self->gc_skipped);<]*/
+      /*printf("--- gc_skipped=%d\n", self->gc_skipped);*/
       /*return;*/
     /*}*/
     Object_del(self);
