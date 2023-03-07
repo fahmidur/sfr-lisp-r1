@@ -224,13 +224,6 @@ void Object_system_done() {
   object_system->done_called = 1;
   // delete all objects
   while(object_system->size > 0) {
-    /*Object* iter = object_system->head;*/
-    /*Object* next = NULL;*/
-    /*while(iter != NULL) {*/
-      /*next = iter->next;*/
-      /*Object_rc_decr(iter);*/
-      /*iter = next;*/
-    /*}*/
     Object_del(object_system->head);
   }
   // delete type information
