@@ -24,7 +24,8 @@ struct Object {
   Object* prev;
   void*   impl;
   int     rc;
-  int     gc_skipped;
+  //int     gc_skipped;
+  char    returning;
 };
 
 // unused for now
@@ -79,6 +80,9 @@ void Object_print(Object* self);
 void Object_rc_incr(Object* self);
 void Object_rc_decr(Object* self);
 void Object_gc(Object* self);
+Object* Object_return(Object* self);
+Object* Object_accept(Object* self);
+Object* Object_reject(Object* self);
 
 Object* Object_bop_add(Object* a, Object* b);
 Object* Object_bop_sub(Object* a, Object* b);

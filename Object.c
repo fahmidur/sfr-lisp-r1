@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <assert.h>
 #include <string.h>
 #include "Symbol.h"
 #include "String.h"
@@ -128,11 +129,29 @@ Object* Object_new(Symbol* type, int rc, void* impl) {
   self->type = type;
   self->impl = impl;
   self->rc = rc;
-  self->gc_skipped = 0;
+  /*self->gc_skipped = 0;*/
+  self->returning = 0;
 
   Object_add_to_system(self);
   
   return self;
+}
+
+Object* Object_return(Object* self) {
+  self->returning = 1;
+  return self;
+}
+
+Object* Object_accept(Object* self) {
+  self->returning = 0;
+  Object_rc_incr(self);
+  return self;
+}
+
+Object* Object_reject(Object* self) {
+  self->returning = 0;
+  Object_gc(self);
+  return NULL;
 }
 
 size_t Object_system_size() {
@@ -163,10 +182,9 @@ void Object_add_to_system(Object* self) {
     self->next = NULL;
   } 
   else {
-    Object* old_head = object_system->head;
-    object_system->head = self;
-    self->next = old_head;
-    old_head->prev = self;
+    Object* old_tail = object_system->tail;
+    old_tail->next = self; self->prev = old_tail;
+    object_system->tail = self;
   }
   object_system->size++;
 }
@@ -182,6 +200,8 @@ void Object_del(Object* self) {
   }
   Object* new_head;
   Object* new_tail;
+  Object* prev;
+  Object* next;
   if(self == object_system->head && self == object_system->tail) {
     object_system->head = NULL;
     object_system->tail = NULL;
@@ -189,18 +209,29 @@ void Object_del(Object* self) {
   else
   if(self == object_system->head) {
     new_head = self->next;
-    object_system->head = new_head;
+    assert(new_head != NULL);
     new_head->prev = NULL;
+    self->next = NULL;
+    object_system->head = new_head;
   }
   else
   if(self == object_system->tail) {
     new_tail = self->prev;
-    object_system->tail = new_tail;
+    assert(new_tail != NULL);
     new_tail->next = NULL;
+    self->prev = NULL;
+    object_system->tail = new_tail;
+  }
+  else {
+    prev = self->prev;
+    next = self->next;
+    assert(prev != NULL);
+    assert(next != NULL);
+    self->next = NULL;
+    self->prev = NULL;
+    prev->next = next; next->prev = prev;
   }
   object_system->size--;
-  self->next = NULL;
-  self->prev = NULL;
 
   ObjectTypeInfo* oti = Object_oti_get(self->type);
   if(!oti) {
@@ -265,7 +296,7 @@ Symbol* Object_type(Object* self) {
 
 void Object_rc_incr(Object* self) {
   self->rc++;
-  self->gc_skipped = 0;
+  /*self->gc_skipped = 0;*/
 }
 
 void Object_gc(Object* self) {
@@ -278,6 +309,10 @@ void Object_gc(Object* self) {
       /*printf("--- gc_skipped=%d\n", self->gc_skipped);*/
       /*return;*/
     /*}*/
+    if(self->returning) {
+      printf("Object_gc(%p). Object is returning. -SKIPPED-\n", self);
+      return;
+    }
     Object_del(self);
   }
 }
@@ -369,7 +404,7 @@ void Object_system_print() {
   Object* iter = object_system->head;
   int i = 0;
   while(iter != NULL) {
-    printf("[i=%03d] || Object(p=%p, rc=%03d) || ", i, iter, iter->rc);
+    printf("[i=%03d] || Object(p=%p, rc=%03d, rt=%03d) || ", i, iter, iter->rc, iter->returning);
     Object_print(iter);
     printf("\n");
     iter = iter->next;

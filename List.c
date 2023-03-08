@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <assert.h>
 #include "List.h"
 #include "Object.h"
 
@@ -42,8 +43,8 @@ size_t List_size(List* self) {
   return self->size;
 }
 
-size_t List_push(List* self, Object* thing) {
-  ListNode* listnode = ListNode_new(thing);
+size_t List_push(List* self, Object* obj) {
+  ListNode* listnode = ListNode_new(obj);
   if(self->size == 0) {
     self->head = listnode;
     self->tail = listnode;
@@ -53,47 +54,53 @@ size_t List_push(List* self, Object* thing) {
     listnode->prev = self->tail;
     self->tail = listnode;
   }
-  Object_rc_incr(thing);
+  Object_rc_incr(obj);
   return self->size++;
 }
 
 Object* List_pop(List* self) {
+  printf("List_pop(%p).\n", self);
   if(self->size == 0) {
     return NULL;
   }
   ListNode* node;
-  void* ret;
+  ListNode* new_tail;
+  Object* ret;
   if(self->size == 1) {
+    assert(self->tail == self->head);
     node = self->tail;
     self->head = NULL;
     self->tail = NULL;
   }
   else {
     node = self->tail;
-    self->tail = node->prev;
+    new_tail = node->prev;
+    new_tail->next = NULL; node->prev = NULL;
+    self->tail = new_tail;
+    assert(node->next == NULL);
   }
-  if(node == NULL) {
-    printf("FATAL: List_pop. node is NULL\n");
-    exit(1);
-  }
-  node->prev = NULL;
-  node->next = NULL;
+  assert(node != NULL);
+  // detach node
+  node->prev = NULL; node->next = NULL;
   self->size--;
-  ret = node->data;
+  ret = Object_return(node->data);
   ListNode_del(node);
+  printf("List_pop(%p). size=%zu\n", self, self->size);
   return ret;
 }
 
 void List_del(List* self) {
+  printf("{ List_del(%p) {\n", self);
   while(self->size > 0) {
-    List_pop(self);
+    Object_reject(List_pop(self));
   }
   free(self);
+  printf("} List_del(%p) }\n", self);
 }
 
 void List_print(List* self) {
   ListNode* iter = self->head;
-  printf("[");
+  printf("List(");
   int i = 0;
   while(iter != NULL) {
     if(i > 0) {
@@ -103,7 +110,7 @@ void List_print(List* self) {
     iter = iter->next;
     i++;
   }
-  printf("]");
+  printf(")");
 }
 
 List* List_clone(List* self) {

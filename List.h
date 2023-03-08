@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <assert.h>
 #include "Object.h"
 
 typedef struct ListNode ListNode;
