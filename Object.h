@@ -27,6 +27,14 @@ struct Object {
   int     gc_skipped;
 };
 
+// unused for now
+typedef struct ObjectPtrNode ObjectPtrNode;
+struct ObjectPtrNode {
+  ObjectPtrNode* prev;
+  ObjectPtrNode* next;
+  void* object;
+};
+
 typedef struct ObjectTypeInfo ObjectTypeInfo;
 struct ObjectTypeInfo {
   Symbol* type;
@@ -80,6 +88,7 @@ Object* Object_bop_div(Object* a, Object* b);
 void    Object_system_init();
 size_t  Object_system_size();
 void    Object_system_done();
+void    Object_system_print();
 void    Object_system_gc();
 
 // Composits

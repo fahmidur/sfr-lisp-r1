@@ -172,7 +172,11 @@ void Object_add_to_system(Object* self) {
 }
 
 void Object_del(Object* self) {
-  printf("Object_del(%p). type = ", self); Symbol_print(Object_type(self)); printf("\n");
+  printf("Object_del(%p). type = ", self); 
+    Symbol_print(Object_type(self)); 
+    /*printf(" || ");*/
+    /*Object_print(self);*/
+  printf("\n");
   if(object_system->size == 0) {
     return;
   }
@@ -224,7 +228,14 @@ void Object_system_done() {
   object_system->done_called = 1;
   // delete all objects
   while(object_system->size > 0) {
-    Object_del(object_system->head);
+    /*Object_del(object_system->head);*/
+    Object* iter = object_system->head;
+    Object* next = NULL;
+    while(iter != NULL) {
+      next = iter->next; 
+      Object_rc_decr(iter);
+      iter = next;
+    }
   }
   // delete type information
   ObjectTypeInfo* iter;
@@ -351,6 +362,22 @@ Object* Object_bop_div(Object* a, Object* b) {
     return Object_new(SYMBOL_NUMBER, 0, Number_div(a->impl, b->impl));
   }
   return Object_new(SYMBOL_ERROR, 0, Error_new("Invalid types for bop_div"));
+}
+
+void Object_system_print() {
+  printf("--- { Object_system_print(). BEG { ---\n");
+  Object* iter = object_system->head;
+  int i = 0;
+  while(iter != NULL) {
+    printf("[i=%03d] || Object(p=%p, rc=%03d) || ", i, iter, iter->rc);
+    Object_print(iter);
+    printf("\n");
+    iter = iter->next;
+    i++;
+  }
+  printf("--------------------------------------\n");
+  printf("SIZE: %zu\n", object_system->size);
+  printf("--- } Object_system_print(). END } ---\n");
 }
 
 

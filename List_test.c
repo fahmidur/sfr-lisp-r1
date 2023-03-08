@@ -41,6 +41,7 @@ int main(int argc, char** argv) {
   printf("--- listobj = "); Object_print(listobj); printf("\n");
 
   //--- cleanup
+  Object_system_print();
   Object_system_done();
   Symbol_system_done();
   List_del(list1);
