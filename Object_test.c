@@ -47,6 +47,7 @@ int main(int argc, char** argv) {
   Object_system_gc();
   nassert(objsize - Object_system_size() >= 3);
   Object* tmp1 = Object_new(SYMBOL_STRING, 0, String_new("This too will pass."));
+  tmp1->returning = 0; // manually mark it as no longer returning
   nassert(tmp1->rc == 0);
   nassert(objsize - Object_system_size() >= 4);
   objsize = Object_system_size();
@@ -64,7 +65,7 @@ int main(int argc, char** argv) {
 
   Object* str_hello = Object_new(SYMBOL_STRING, 1, String_new("Hello"));
   Object* str_there = Object_new(SYMBOL_STRING, 1, String_new("There"));
-  Object* str_conc1 = Object_bop_add(str_hello, str_there);
+  Object* str_conc1 = Object_accept(Object_bop_add(str_hello, str_there));
   Object* str_conc1_exp = Object_new(SYMBOL_STRING, 1, String_new("HelloThere"));
   nassert(Object_cmp(str_conc1, str_conc1_exp) == 0);
 
@@ -77,28 +78,28 @@ int main(int argc, char** argv) {
   Object* num2 = Object_new(SYMBOL_NUMBER, 1, Number_new(4));
 
   printf("Test Number + Number ...\n");
-  Object* res1 = Object_bop_add(num1, num2);
+  Object* res1 = Object_accept(Object_bop_add(num1, num2));
   Object* res1_expected = Object_new(SYMBOL_NUMBER, 1, Number_new(7));
   nassert(Object_cmp(res1, res1_expected) == 0);
   printf("res1 = "); Object_print(res1); printf("\n");
 
   printf("Test Number - Number ...\n");
-  Object* res2 = Object_bop_sub(num1, num2);
+  Object* res2 = Object_accept(Object_bop_sub(num1, num2));
   Object* res2_expected = Object_new(SYMBOL_NUMBER, 1, Number_new(-1));
   nassert(Object_cmp(res2, res2_expected) == 0);
 
   printf("Test Number * Number ...\n");
-  Object* res3 = Object_bop_mul(num1, num2);
+  Object* res3 = Object_accept(Object_bop_mul(num1, num2));
   Object* res3_expected = Object_new(SYMBOL_NUMBER, 1, Number_new(12));
   nassert(Object_cmp(res3, res3_expected) == 0);
 
   printf("Test Number / Number ...\n");
-  Object* res4 = Object_bop_div(num1, num2);
+  Object* res4 = Object_accept(Object_bop_div(num1, num2));
   Object* res4_expected = Object_new(SYMBOL_NUMBER, 1, Number_new(0.75));
   nassert(Object_cmp(res4, res4_expected) == 0);
 
   printf("Test String + Number ...\n");
-  Object* sum_invalid = Object_bop_add(str1, num2);
+  Object* sum_invalid = Object_accept(Object_bop_add(str1, num2));
   Object_print(sum_invalid); printf("\n");
   nassert(Object_type(sum_invalid) == Symbol_new("Error"));
   

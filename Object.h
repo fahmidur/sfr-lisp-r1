@@ -50,8 +50,8 @@ struct ObjectTypeInfo {
 
 typedef struct ObjectSystem ObjectSystem;
 struct ObjectSystem {
-  size_t           init_called;
-  size_t           done_called;
+  char             init_called;
+  char             done_called;
   Object*          head;
   Object*          tail;
   size_t           size;
@@ -82,6 +82,11 @@ void Object_gc(Object* self);
 Object* Object_return(Object* self);
 Object* Object_accept(Object* self);
 Object* Object_reject(Object* self);
+// rcincr
+// rcdecr
+// return
+// accept
+// reject
 
 Object* Object_bop_add(Object* a, Object* b);
 Object* Object_bop_sub(Object* a, Object* b);
