@@ -27,7 +27,7 @@ void ListNode_unlink(ListNode* self) {
 
 void ListNode_del(ListNode* self) {
   ListNode_unlink(self);
-  Object_rc_decr(self->data);
+  self->data = Object_rc_decr(self->data);
   free(self);
 }
 

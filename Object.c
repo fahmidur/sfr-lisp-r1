@@ -21,6 +21,8 @@ Symbol* SYMBOL_ERROR;
 Symbol* SYMBOL_LIST;
 
 char Object_oti_set(Symbol* type, ObjectTypeInfo otiarg) {
+  assert(type != NULL);
+
   printf("Object_oti_set("); Symbol_print(type); printf(")\n");
   size_t hash = type->hash;
   size_t key = hash % OBJECT_TYPES_BUCKETS_SIZE;
@@ -44,6 +46,8 @@ char Object_oti_set(Symbol* type, ObjectTypeInfo otiarg) {
 }
 
 ObjectTypeInfo* Object_oti_get(Symbol* type) {
+  assert(type != NULL);
+
   size_t hash = type->hash;
   size_t key = hash % OBJECT_TYPES_BUCKETS_SIZE;
   ObjectTypeInfo* oti = object_system->types[key];
@@ -124,6 +128,10 @@ void Object_system_init() {
 }
 
 Object* Object_new(Symbol* type, int rc, void* impl) {
+  assert(type != NULL);
+  assert(rc == 0 || rc == 1);
+  assert(impl != NULL);
+
   Object* self = calloc(1, sizeof(Object));
 
   self->type = type;
@@ -142,17 +150,23 @@ Object* Object_new(Symbol* type, int rc, void* impl) {
 }
 
 Object* Object_return(Object* self) {
+  assert(self != NULL);
+
   self->returning = 1;
   return self;
 }
 
 Object* Object_accept(Object* self) {
+  assert(self != NULL);
+
   self->returning = 0;
   Object_rc_incr(self);
   return self;
 }
 
 Object* Object_reject(Object* self) {
+  assert(self != NULL);
+
   self->returning = 0;
   Object_gc(self);
   return NULL;
@@ -170,7 +184,7 @@ void Object_system_gc() {
   Object* next = NULL;
   while(iter != NULL) {
     next = iter->next;
-    Object_gc(iter);
+    iter = Object_gc(iter);
     iter = next;
   }
 }
@@ -179,6 +193,8 @@ void Object_system_gc() {
 // May need to change object storage
 // from List to Hash
 void Object_add_to_system(Object* self) {
+  assert(self != NULL);
+
   if(object_system->size == 0) {
     object_system->head = self;
     object_system->tail = self;
@@ -194,6 +210,8 @@ void Object_add_to_system(Object* self) {
 }
 
 void Object_del(Object* self) {
+  assert(self != NULL);
+
   printf("Object_del(%p). type = ", self); 
     Symbol_print(Object_type(self)); 
     /*printf(" || ");*/
@@ -272,7 +290,7 @@ void Object_system_done() {
         printf("WARNING: Object_system_done. Object at %p 'returning'\n", iter);
         iter->returning = 0;
       }
-      Object_rc_decr(iter);
+      iter = Object_rc_decr(iter);
       iter = next;
     }
   }
@@ -299,31 +317,42 @@ void Object_system_done() {
 }
 
 Symbol* Object_type(Object* self) {
+  assert(self != NULL);
   return self->type;
 }
 
-void Object_rc_incr(Object* self) {
+Object* Object_rc_incr(Object* self) {
+  assert(self != NULL);
   self->rc++;
+  return self;
 }
 
-void Object_gc(Object* self) {
+Object* Object_gc(Object* self) {
+  assert(self != NULL);
   if(self->rc <= 0) {
     if(self->returning) {
       printf("Object_gc(%p). Object is returning. -SKIPPED-\n", self);
-      return;
+      return self;
     }
     Object_del(self);
+    return NULL;
   }
+  return self;
 }
 
-void Object_rc_decr(Object* self) {
+Object* Object_rc_decr(Object* self) {
+  assert(self != NULL);
   if(self->rc >= 1) {
     self->rc--;
   }
-  Object_gc(self);
+  return Object_gc(self);
 }
 
 void Object_print(Object* self) {
+  if(self == NULL) {
+    printf("(NULL)");
+    return;
+  }
   ObjectTypeInfo* oti = Object_oti_get(self->type);
   if(oti == NULL) {
     printf("FATAL: unknown ObjectTypeInfo oti for type ");
@@ -341,6 +370,7 @@ void Object_print(Object* self) {
 }
 
 Object* Object_clone(Object* self) {
+  assert(self != NULL);
   ObjectTypeInfo* oti = Object_oti_get(self->type);
   if(oti == NULL) {
     return Object_return(Object_new(SYMBOL_ERROR, 0, Error_new("Missing oti for Object Type")));
@@ -353,6 +383,7 @@ Object* Object_clone(Object* self) {
 }
 
 int Object_cmp(Object* a, Object* b) {
+  assert(a != NULL); assert(b != NULL);
   if(Object_type(a) == SYMBOL_NUMBER && Object_type(b) == SYMBOL_NUMBER) {
     return Number_cmp(a->impl, b->impl);
   }
@@ -368,6 +399,7 @@ int Object_cmp(Object* a, Object* b) {
 }
 
 Object* Object_bop_add(Object* a, Object* b) {
+  assert(a != NULL); assert(b != NULL);
   if(Object_type(a) == SYMBOL_NUMBER && Object_type(b) == SYMBOL_NUMBER) {
     return Object_return(Object_new(SYMBOL_NUMBER, 0, Number_add(a->impl, b->impl)));
   }
@@ -378,6 +410,7 @@ Object* Object_bop_add(Object* a, Object* b) {
 }
 
 Object* Object_bop_sub(Object* a, Object* b) {
+  assert(a != NULL); assert(b != NULL);
   if(Object_type(a) == SYMBOL_NUMBER && Object_type(b) == SYMBOL_NUMBER) {
     return Object_return(Object_new(SYMBOL_NUMBER, 0, Number_sub(a->impl, b->impl)));
   }
@@ -385,6 +418,7 @@ Object* Object_bop_sub(Object* a, Object* b) {
 }
 
 Object* Object_bop_mul(Object* a, Object* b) {
+  assert(a != NULL); assert(b != NULL);
   if(Object_type(a) == SYMBOL_NUMBER && Object_type(b) == SYMBOL_NUMBER) {
     return Object_return(Object_new(SYMBOL_NUMBER, 0, Number_mul(a->impl, b->impl)));
   }
@@ -392,6 +426,7 @@ Object* Object_bop_mul(Object* a, Object* b) {
 }
 
 Object* Object_bop_div(Object* a, Object* b) {
+  assert(a != NULL); assert(b != NULL);
   if(Object_type(a) == SYMBOL_NUMBER && Object_type(b) == SYMBOL_NUMBER) {
     return Object_return(Object_new(SYMBOL_NUMBER, 0, Number_div(a->impl, b->impl)));
   }
@@ -399,6 +434,7 @@ Object* Object_bop_div(Object* a, Object* b) {
 }
 
 Object* Object_bop_push(Object* a, Object* b) {
+  assert(a != NULL); assert(b != NULL);
   if(Object_type(a) == SYMBOL_LIST) {
     List_push(a->impl, b);
     return Object_return(a);
@@ -421,6 +457,4 @@ void Object_system_print() {
   printf("SIZE: %zu\n", object_system->size);
   printf("--- } Object_system_print(). END } ---\n");
 }
-
-
 

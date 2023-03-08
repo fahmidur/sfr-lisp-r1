@@ -54,6 +54,10 @@ int main(int argc, char** argv) {
   Object_system_gc();
   nassert(objsize - Object_system_size() == 1);
 
+  Object* tmp2 = Object_new(SYMBOL_STRING, 1, String_new("So long and thanks for all the fish."));
+  printf("BEF. tmp2 = "); Object_print(tmp2); printf("\n");
+  tmp2 = Object_rc_decr(tmp2);
+  printf("AFT. tmp2 = "); Object_print(tmp2); printf("\n");
 
   Object* stralike1 = Object_new(SYMBOL_STRING, 1, String_new("John Doe"));
   Object* stralike2 = Object_new(SYMBOL_STRING, 1, String_new("John Doe"));
