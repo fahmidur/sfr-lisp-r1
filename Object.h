@@ -102,4 +102,10 @@ void    Object_system_gc();
 // Composits
 #include "List.h"
 
+//#define OBJ_RETURN(expr) do { \
+  //return Object_return(expr); \
+//} while(0);
+//#define OBJ_ACCEPT(x) Object_accept(x)
+//#define OBJ_REJECT(x) Object_reject(x)
+
 #endif

@@ -136,8 +136,9 @@ Object* Object_new(Symbol* type, int rc, void* impl) {
   
   if(rc == 0) {
     return Object_return(self);
+  } else {
+    return self;
   }
-  return self;
 }
 
 Object* Object_return(Object* self) {
