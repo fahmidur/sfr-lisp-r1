@@ -34,12 +34,12 @@ int main(int argc, char** argv) {
   nassert(hstr1->rc == 3);
 
   Object* str1 = Object_new(SYMBOL_STRING, 1, String_new("str1"));
-  /*Object* str2 = Object_new(SYMBOL_STRING, 1, String_new("str2"));*/
-  /*Object* str3 = Object_new(SYMBOL_STRING, 1, String_new("str3"));*/
+  Object* str2 = Object_new(SYMBOL_STRING, 1, String_new("str2"));
+  Object* str3 = Object_new(SYMBOL_STRING, 1, String_new("str3"));
 
   List_push(listobj->impl, str1);
-  /*List_push(listobj->impl, str2);*/
-  /*List_push(listobj->impl, str3);*/
+  List_push(listobj->impl, str2);
+  List_push(listobj->impl, str3);
 
   /*nassert(List_size(listobj->impl) == 4);*/
 
