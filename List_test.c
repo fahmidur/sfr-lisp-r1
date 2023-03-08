@@ -41,7 +41,7 @@ int main(int argc, char** argv) {
   List_push(listobj->impl, str2);
   List_push(listobj->impl, str3);
 
-  /*nassert(List_size(listobj->impl) == 4);*/
+  nassert(List_size(listobj->impl) == 4);
 
   printf("--- listobj = "); Object_print(listobj); printf("\n");
 
