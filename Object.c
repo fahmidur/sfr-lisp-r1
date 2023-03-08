@@ -398,6 +398,14 @@ Object* Object_bop_div(Object* a, Object* b) {
   return Object_return(Object_new(SYMBOL_ERROR, 0, Error_new("Invalid types for bop_div")));
 }
 
+Object* Object_bop_push(Object* a, Object* b) {
+  if(Object_type(a) == SYMBOL_LIST) {
+    List_push(a->impl, b);
+    return Object_return(a);
+  } 
+  return Object_return(Object_new(SYMBOL_ERROR, 0, Error_new("Invalid types for bop_push")));
+}
+
 void Object_system_print() {
   printf("--- { Object_system_print(). BEG { ---\n");
   Object* iter = object_system->head;

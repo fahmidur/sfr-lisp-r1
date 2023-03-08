@@ -88,10 +88,14 @@ Object* Object_reject(Object* self);
 // accept
 // reject
 
+// Mainly Number Ops
 Object* Object_bop_add(Object* a, Object* b);
 Object* Object_bop_sub(Object* a, Object* b);
 Object* Object_bop_mul(Object* a, Object* b);
 Object* Object_bop_div(Object* a, Object* b);
+
+// Mainly List Ops
+Object* Object_bop_push(Object* a, Object* b);
 
 void    Object_system_init();
 size_t  Object_system_size();
