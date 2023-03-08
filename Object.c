@@ -296,19 +296,10 @@ Symbol* Object_type(Object* self) {
 
 void Object_rc_incr(Object* self) {
   self->rc++;
-  /*self->gc_skipped = 0;*/
 }
 
 void Object_gc(Object* self) {
   if(self->rc <= 0) {
-    /*if(self->rc == 0 && self->gc_skipped <= 3) {*/
-      /*// we really do not know if the object*/
-      /*// is assigned, so do not delete it until*/
-      /*// the next gc cycle. */
-      /*self->gc_skipped++;*/
-      /*printf("--- gc_skipped=%d\n", self->gc_skipped);*/
-      /*return;*/
-    /*}*/
     if(self->returning) {
       printf("Object_gc(%p). Object is returning. -SKIPPED-\n", self);
       return;

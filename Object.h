@@ -24,7 +24,6 @@ struct Object {
   Object* prev;
   void*   impl;
   int     rc;
-  //int     gc_skipped;
   char    returning;
 };
 
