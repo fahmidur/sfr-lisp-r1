@@ -72,6 +72,7 @@ int main(int argc, char** argv) {
   heading(0, "STRING OPERATIONS");
 
   //===========================================================================
+
   heading(1, "NUMBER OPERATIONS");
 
   Object* num1 = Object_new(SYMBOL_NUMBER, 1, Number_new(3));
@@ -104,9 +105,16 @@ int main(int argc, char** argv) {
   nassert(Object_type(sum_invalid) == Symbol_new("Error"));
   
   heading(0, "NUMBER OPERATIONS");
+
+  //===========================================================================
+  
+  heading(1, "LIST OPERATIONS");
+  heading(0, "LIST OPERATIONS");
+
   //===========================================================================
 
   heading(1, "RUNTIME DONE");
+  Object_system_print();
   Object_system_done();
   Symbol_system_done();
   heading(0, "RUNTIME DONE");
