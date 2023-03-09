@@ -22,7 +22,6 @@ Symbol* SYMBOL_LIST;
 
 char Object_oti_set(Symbol* type, ObjectTypeInfo otiarg) {
   assert(type != NULL);
-
   printf("Object_oti_set("); Symbol_print(type); printf(")\n");
   size_t hash = type->hash;
   size_t key = hash % OBJECT_TYPES_BUCKETS_SIZE;
@@ -47,7 +46,6 @@ char Object_oti_set(Symbol* type, ObjectTypeInfo otiarg) {
 
 ObjectTypeInfo* Object_oti_get(Symbol* type) {
   assert(type != NULL);
-
   size_t hash = type->hash;
   size_t key = hash % OBJECT_TYPES_BUCKETS_SIZE;
   ObjectTypeInfo* oti = object_system->types[key];
@@ -151,14 +149,12 @@ Object* Object_new(Symbol* type, int rc, void* impl) {
 
 Object* Object_return(Object* self) {
   assert(self != NULL);
-
   self->returning = 1;
   return self;
 }
 
 Object* Object_accept(Object* self) {
   assert(self != NULL);
-
   self->returning = 0;
   Object_rc_incr(self);
   return self;
@@ -166,7 +162,6 @@ Object* Object_accept(Object* self) {
 
 Object* Object_reject(Object* self) {
   assert(self != NULL);
-
   self->returning = 0;
   Object_gc(self);
   return NULL;
@@ -194,7 +189,6 @@ void Object_system_gc() {
 // from List to Hash
 void Object_add_to_system(Object* self) {
   assert(self != NULL);
-
   if(object_system->size == 0) {
     object_system->head = self;
     object_system->tail = self;
@@ -211,7 +205,6 @@ void Object_add_to_system(Object* self) {
 
 void Object_del(Object* self) {
   assert(self != NULL);
-
   printf("Object_del(%p). type = ", self); 
     Symbol_print(Object_type(self)); 
     /*printf(" || ");*/

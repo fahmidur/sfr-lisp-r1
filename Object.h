@@ -28,12 +28,12 @@ struct Object {
 };
 
 // unused for now
-typedef struct ObjectPtrNode ObjectPtrNode;
-struct ObjectPtrNode {
-  ObjectPtrNode* prev;
-  ObjectPtrNode* next;
-  void* object;
-};
+//typedef struct ObjectPtrNode ObjectPtrNode;
+//struct ObjectPtrNode {
+  //ObjectPtrNode* prev;
+  //ObjectPtrNode* next;
+  //void* object;
+//};
 
 typedef struct ObjectTypeInfo ObjectTypeInfo;
 struct ObjectTypeInfo {
@@ -82,11 +82,6 @@ Object* Object_gc(Object* self);
 Object* Object_return(Object* self);
 Object* Object_accept(Object* self);
 Object* Object_reject(Object* self);
-// rcincr
-// rcdecr
-// return
-// accept
-// reject
 
 // Mainly Number Ops
 Object* Object_bop_add(Object* a, Object* b);
