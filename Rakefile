@@ -1,8 +1,3 @@
-require 'set'
-
-#TODO
-#- Simplify the targets.
-
 $git_sha = `git rev-parse HEAD`.strip
 $version = `git describe --tags HEAD`.strip
 
@@ -62,7 +57,6 @@ task :build do
     Rake::Task[target].invoke
   end
 end
-
 
 desc "Build leaky test program."
 file build('leaky') => ['leaky.c', 'nassert.h'] do
@@ -177,4 +171,16 @@ end
 desc "Run all tests"
 task :test => :build do
   sh "ruby ./test/all.rb"
+end
+
+$build_targets.each do |k, path|
+  next if File.extname(path) == ".o"
+  desc "Build => Run #{path}"
+  task "run/#{path}" => [path] do
+    unless File.exist?(path)
+      puts "ERROR: Expecting file: #{path}"
+      exit 1
+    end
+    sh "#{path}"
+  end
 end
