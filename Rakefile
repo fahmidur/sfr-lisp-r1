@@ -15,6 +15,7 @@ def env_truthy?(name)
 end
 
 $build_targets = {}
+$deps_by_path = {}
 def build(name)
   if $build_targets.has_key?(name)
     return $build_targets[name]
@@ -43,6 +44,17 @@ if debug
   cflags << "-D DEBUG"
 end
 cflags = cflags.join(' ')
+
+def bfile(hash)
+  if hash.size > 1
+    raise "ERROR: cannot contain more than one hash"
+  end
+  path, deps = hash.first
+  $deps_by_path[path] = deps
+  task path => deps do
+    yield
+  end
+end
 
 task :default => :build
 
