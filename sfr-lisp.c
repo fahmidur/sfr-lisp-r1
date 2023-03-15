@@ -4,12 +4,13 @@
 #include "Tokenizer.h"
 #include "String.h"
 
-const char* VER = "0.0.1";
-
 void print_banner() {
-  printf("-----------------------------------------------\n");
-  printf("---              sfr-lisp v%s\n", VER);
-  printf("-----------------------------------------------\n");
+  printf("+----------------------------------------------\n");
+  printf("| SFR-LISP \n");
+  printf("+----------------------------------------------\n");
+  printf("| VERSION: %s\n", VERSION);
+  printf("| GIT_SHA: %s\n", GIT_SHA);
+  printf("+----------------------------------------------\n");
   printf("\n");
 }
 
@@ -87,7 +88,7 @@ int main(int argc, char** argv) {
     }
     else
     if(strcmp_onedash(argv[1], "-version", "-v") == 0) {
-      printf("%s\n", VER);
+      printf("%s\n", VERSION);
     }
     else
     if(file_exists(argv[1])) {
