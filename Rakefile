@@ -3,6 +3,9 @@ require 'set'
 #TODO
 #- Simplify the targets.
 
+$git_sha = `git rev-parse HEAD`.strip
+$version = `git describe --tags HEAD`.strip
+
 def runc(command)
   command = command.gsub(/\s+/m, ' ')
   sh(command)
@@ -157,19 +160,13 @@ file build('Util_test') => [*testdeps, 'Util_test.c', build('Util.o')] do
   sh "#{cc} #{cflags} -o #{build('Util_test')} Util_test.c #{build('Util.o')}"
 end
 
-def git_sha
-  `git rev-parse HEAD`.strip
-end
-def version
-  `git describe --tags HEAD`.strip
-end
 desc "Build sfr-lisp program"
 file build('sfr-lisp') => ['sfr-lisp.c', build('Object.o'), *obj_ofiles, build('Util.o'), build('Tokenizer.o')] do
   runc <<~EOF
     #{cc} #{cflags}  
     -o #{build('sfr-lisp')} sfr-lisp.c 
-    -DVERSION='"#{version}"'
-    -DGIT_SHA='"#{git_sha}"'
+    -DVERSION='"#{$version}"'
+    -DGIT_SHA='"#{$git_sha}"'
     #{build('Object.o')} 
     #{obj_ofiles.join(' ')} 
     #{build('Util.o')} 
