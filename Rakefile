@@ -125,33 +125,33 @@ file build('nassert_test') => [*testdeps, 'nassert_test.c'] do
 end
 
 desc "Build Symbol_test program"
-file build('Symbol_test') => [*testdeps, 'Symbol_test.c', build('Symbol.o')] do
+file build('Symbol_test') => [*testdeps, build('Util.o'), 'Symbol_test.c', build('Symbol.o')] do
   sh "#{cc} #{cflags} -o #{build('Symbol_test')} Symbol_test.c #{build('Symbol.o')} #{build('Util.o')}"
 end
 
 desc "Build String_test program"
-file build('String_test') => [*testdeps, 'String_test.c', build('String.o')] do
+file build('String_test') => [*testdeps, build('Util.o'), 'String_test.c', build('String.o')] do
   sh "#{cc} #{cflags} -o #{build('String_test')} String_test.c #{build('String.o')} #{build('Util.o')}"
 end
 
 desc "Build Number_test program"
-file build("Number_test") => [*testdeps, 'Number_test.c', build('Number.o')] do
+file build("Number_test") => [*testdeps, build('Util.o'), 'Number_test.c', build('Number.o')] do
   sh "#{cc} #{cflags} -o #{build('Number_test')} Number_test.c #{build('Number.o')}"
 end
 
 desc "Build Object_test program" 
-file build('Object_test') => [*testdeps, 'Object_test.c', build('Object.o'), *obj_ofiles] do
+file build('Object_test') => [*testdeps, build('Util.o'), 'Object_test.c', build('Object.o'), *obj_ofiles] do
   sh "#{cc} #{cflags} -o #{build('Object_test')} Object_test.c #{build('Object.o')} #{obj_ofiles.join(' ')} #{build('Util.o')}"
 end
 
 desc "Build List_test program"
 atom_types = ['Symbol', 'String', 'Number', 'Error'].map {|e| build("#{e}.o") }
-file build('List_test') => [*testdeps, 'List_test.c', build('List.o'), *atom_types, build('Object.o'), build('Util.o')] do
+file build('List_test') => [*testdeps, build('Util.o'), 'List_test.c', build('List.o'), *atom_types, build('Object.o')] do
   sh "#{cc} #{cflags} -o #{build('List_test')} List_test.c #{build('List.o')} #{atom_types.join(' ')} #{build('Util.o')} #{build('Object.o')}"
 end
 
 desc "Build Tokenizer_test program"
-file build('Tokenizer_test') => [*testdeps, 'Tokenizer_test.c', build('Tokenizer.o')] do
+file build('Tokenizer_test') => [*testdeps, build('Util.o'), 'Tokenizer_test.c', build('Tokenizer.o')] do
   sh "#{cc} #{cflags} -o #{build('Tokenizer_test')} Tokenizer_test.c #{build('Tokenizer.o')}"
 end
 
@@ -161,7 +161,7 @@ file build('Util_test') => [*testdeps, 'Util_test.c', build('Util.o')] do
 end
 
 desc "Build sfr-lisp program"
-file build('sfr-lisp') => ['sfr-lisp.c', build('Object.o'), *obj_ofiles, build('Util.o'), build('Tokenizer.o')] do
+file build('sfr-lisp') => ['sfr-lisp.c', build('Util.o'), build('Object.o'), *obj_ofiles, build('Tokenizer.o')] do
   runc <<~EOF
     #{cc} #{cflags}  
     -o #{build('sfr-lisp')} sfr-lisp.c 
