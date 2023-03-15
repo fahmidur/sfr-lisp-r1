@@ -24,8 +24,20 @@ def build(name)
   return target
 end
 
+def which(x)
+  out = `which #{x}`.strip
+  return out if out && out.size > 0
+  return nil
+end
+
 debug = env_truthy?(:debug) ? true : false
-cc = ENV['CC'] || "clang"
+compilers = [ENV['CC'], "clang", "gcc"].compact
+cc = nil; compilers.each {|e| cc=which(e); break if cc; }
+unless cc
+  puts "ERROR: failed to find a compiler in list: #{compilers}"
+  exit 1
+end
+
 cflags = ["-g", "-I."]
 if debug
   cflags << "-D DEBUG"
@@ -33,6 +45,12 @@ end
 cflags = cflags.join(' ')
 
 task :default => :build
+
+desc "Print build information"
+task "print" do
+  puts "compilers=#{compilers}"
+  puts "cc=#{cc}"
+end
 
 desc "Clean all build artifacts"
 task :clean do
@@ -175,7 +193,7 @@ end
 
 $build_targets.each do |k, path|
   next if File.extname(path) == ".o"
-  desc "Build => Run #{path}"
+  desc "Build then Run #{path}"
   task "run/#{path}" => [path] do
     unless File.exist?(path)
       puts "ERROR: Expecting file: #{path}"
