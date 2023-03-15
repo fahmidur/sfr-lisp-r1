@@ -37,6 +37,14 @@ int main(int argc, char** argv) {
   nassert(Symbol_new("List") == SYMBOL_LIST);
 
   //===========================================================================
+  heading(1, "SYMBOL OPERATIONS");
+
+  Object* sym1 = QSYMBOL_NEW1("hammer_and_sickle");
+  nassert(Object_type(sym1) == SYMBOL_SYMBOL);
+
+  heading(0, "SYMBOL OPERATIONS");
+
+  //===========================================================================
   heading(1, "STRING OPERATIONS");
 
   int objsize = Object_system_size();
