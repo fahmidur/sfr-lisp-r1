@@ -107,4 +107,11 @@ void    Object_system_gc();
 //#define OBJ_ACCEPT(x) Object_accept(x)
 //#define OBJ_REJECT(x) Object_reject(x)
 
+#define QSYMBOL_NEW1(x) Object_new(SYMBOL_SYMBOL, 1, Symbol_new(x))
+#define QSYMBOL_NEW0(x) Object_new(SYMBOL_SYMBOL, 0, Symbol_new(x))
+#define QSTRING_NEW1(x) Object_new(SYMBOL_STRING, 1, String_new(x))
+#define QSTRING_NEW0(x) Object_new(SYMBOL_STRING, 0, String_new(x))
+#define QNUMBER_NEW1(x) Object_new(SYMBOL_NUMBER, 1, Number_new_from_double(x))
+#define QNUMBER_NEW0(x) Object_new(SYMBOL_NUMBER, 0, Number_new_from_double(x))
+
 #endif

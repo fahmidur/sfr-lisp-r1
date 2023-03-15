@@ -73,6 +73,10 @@ int main(int argc, char** argv) {
   Object* str_conc1_exp = Object_new(SYMBOL_STRING, 1, String_new("HelloThere"));
   nassert(Object_cmp(str_conc1, str_conc1_exp) == 0);
 
+  Object* qstr1 = QSTRING_NEW1("the quick brown fox");
+  nassert(Object_type(qstr1) == SYMBOL_STRING);
+  Object_print(qstr1); printf("\n");
+
   heading(0, "STRING OPERATIONS");
 
   //===========================================================================
@@ -107,6 +111,10 @@ int main(int argc, char** argv) {
   Object* sum_invalid = Object_accept(Object_bop_add(str1, num2));
   Object_print(sum_invalid); printf("\n");
   nassert(Object_type(sum_invalid) == Symbol_new("Error"));
+
+  Object* qnum1 = QNUMBER_NEW1(3.14);
+  nassert(Object_type(qnum1) == SYMBOL_NUMBER);
+
   
   heading(0, "NUMBER OPERATIONS");
 
