@@ -120,6 +120,11 @@ file build('Object.o') => ['Object.h', 'Object.c', *obj_hfiles] do
   sh "#{cc} #{cflags} -c -o #{build('Object.o')} Object.c"
 end
 
+desc "Build Runtime object"
+file build('Runtime.o') => [build('Object.o')] do
+  sh "#{cc} #{cflags} -c -o #{build('Runtime.o')} Runtime.c"
+end
+
 desc "Build Tokenizer object"
 file build('Tokenizer.o') => ['Tokenizer.c', 'Tokenizer.h'] do
   sh "#{cc} #{cflags} -c -o #{build('Tokenizer.o')} Tokenizer.c"
@@ -154,6 +159,11 @@ end
 desc "Build Object_test program" 
 file build('Object_test') => [*testdeps, build('Util.o'), 'Object_test.c', build('Object.o'), *obj_ofiles] do
   sh "#{cc} #{cflags} -o #{build('Object_test')} Object_test.c #{build('Object.o')} #{obj_ofiles.join(' ')} #{build('Util.o')}"
+end
+
+desc "Build Runtime_test program"
+file build('Runtime_test') => [*testdeps, build('Util.o'), 'Runtime_test.c', build('Runtime.o'), build('Util.o'), build('Object.o'), *obj_ofiles] do
+  sh "#{cc} #{cflags} -o #{build('Runtime_test')} Runtime_test.c #{build('Runtime.o')} #{build('Object.o')} #{obj_ofiles.join(' ')} #{build('Util.o')}"
 end
 
 desc "Build List_test program"
