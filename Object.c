@@ -125,6 +125,13 @@ void Object_system_init() {
   printf("--- END. Object_system_init() ---\n");
 }
 
+/**
+ * Create a new Object. 
+ * Everything in this Runtime is an Object. 
+ * TODO: ensure that there are no other objects with
+ * the same impl pointer. Currently, it assumes
+ * all void* impl pointers are unique. 
+ */
 Object* Object_new(Symbol* type, int rc, void* impl) {
   assert(type != NULL);
   assert(rc == 0 || rc == 1);
@@ -184,9 +191,10 @@ void Object_system_gc() {
   }
 }
 
-// TODO: make this idempotent.
-// May need to change object storage
-// from List to Hash
+/**
+ * TODO: make this idempotent.
+ * May need to change object storage from List to Hash
+ */
 void Object_add_to_system(Object* self) {
   assert(self != NULL);
   if(object_system->size == 0) {
@@ -435,6 +443,10 @@ Object* Object_bop_push(Object* a, Object* b) {
   return Object_return(Object_new(SYMBOL_ERROR, 0, Error_new("Invalid types for bop_push")));
 }
 
+/**
+ * Print all the objects in the object_system.
+ * Mainly for debugging. 
+ */
 void Object_system_print() {
   printf("--- { Object_system_print(). BEG { ---\n");
   Object* iter = object_system->head;
