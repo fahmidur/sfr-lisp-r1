@@ -27,13 +27,13 @@ void Tokenizer_ptoken(Tokenizer* self, Token tok) {
       printf("<ParenEnd");
       hasbody = 1;
       break;
-    case tt_Symbol:
-      printf("<Symbol");
-      break;
-    case tt_Operator:
-      printf("<Operator");
-      hasbody = 1;
-      break;
+    /*case tt_Symbol:*/
+      /*printf("<Symbol");*/
+      /*break;*/
+    /*case tt_Operator:*/
+      /*printf("<Operator");*/
+      /*hasbody = 1;*/
+      /*break;*/
     case tt_BareWord:
       printf("<BareWord");
       hasbody = 1;

@@ -6,8 +6,8 @@ enum TokenType {
   tt_ParenBeg,
   tt_ParenEnd,
   tt_BareWord,
-  tt_Operator, // deprecated
-  tt_Symbol,
+  //tt_Operator, // deprecated
+  //tt_Symbol,
   tt_String,
   tt_Number,
   tt_Unknown,
