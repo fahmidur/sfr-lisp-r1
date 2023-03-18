@@ -25,6 +25,12 @@ void ListNode_unlink(ListNode* self) {
   }
 }
 
+int ListNode_cmp(ListNode* a, ListNode* b) {
+  assert(a != NULL);
+  assert(b != NULL);
+  return Object_cmp(a->data, b->data);
+}
+
 void ListNode_del(ListNode* self) {
   ListNode_unlink(self);
   self->data = Object_rc_decr(self->data);
@@ -120,4 +126,22 @@ List* List_clone(List* self) {
     List_push(clone, Object_accept(Object_clone(iter->data)));
   }
   return clone;
+}
+
+int List_cmp(List* self, List* other) {
+  if(self->size != other->size) {
+    return 1;
+  }
+  ListNode* a = self->head;
+  ListNode* b = other->head;
+  int tcmp;
+  while(a != NULL && b != NULL) {
+    tcmp = ListNode_cmp(a, b);
+    if(tcmp != 0) {
+      return tcmp;
+    }
+    a = a->next;
+    b = b->next;
+  }
+  return 0;
 }
