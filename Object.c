@@ -396,6 +396,10 @@ int Object_cmp(Object* a, Object* b) {
   if(Object_type(a) == SYMBOL_SYMBOL && Object_type(b) == SYMBOL_SYMBOL) {
     return Symbol_cmp(a->impl, b->impl);
   }
+  else
+  if(Object_type(a) == SYMBOL_LIST && Object_type(b) == SYMBOL_LIST) {
+    return List_cmp(a->impl, b->impl);
+  }
   return -9;
 }
 
