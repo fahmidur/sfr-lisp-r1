@@ -372,15 +372,28 @@ void Object_print(Object* self) {
 
 Object* Object_clone(Object* self) {
   assert(self != NULL);
+  Object_rc_incr(self);
+
   ObjectTypeInfo* oti = Object_oti_get(self->type);
+
+  Object* ret = NULL;
+
   if(oti == NULL) {
-    return Object_return(Object_new(SYMBOL_ERROR, 0, Error_new("Missing oti for Object Type")));
+    ret = Object_return(Object_new(SYMBOL_ERROR, 0, Error_new("Missing oti for Object Type")));
+    goto _return;
   }
   if(oti->fn_clone == NULL) {
-    return Object_return(Object_new(SYMBOL_ERROR, 0, Error_new("Missing clone for Object Type")));
+    ret = Object_return(Object_new(SYMBOL_ERROR, 0, Error_new("Missing clone for Object Type")));
+    goto _return;
   }
+
   void* rawobj = oti->fn_clone(self->impl);
-  return Object_return(Object_new(self->type, 0, rawobj));
+  ret = Object_return(Object_new(self->type, 0, rawobj));
+
+_return:
+  assert(ret != NULL);
+  Object_rc_decr(self);
+  return ret;
 }
 
 int Object_cmp(Object* a, Object* b) {
@@ -426,35 +439,59 @@ Object* Object_bop_add(Object* a, Object* b) {
 
 Object* Object_bop_sub(Object* a, Object* b) {
   assert(a != NULL); assert(b != NULL);
+  Object_rc_incr(a); Object_rc_incr(b);
+  Object* ret;
   if(Object_type(a) == SYMBOL_NUMBER && Object_type(b) == SYMBOL_NUMBER) {
-    return Object_return(Object_new(SYMBOL_NUMBER, 0, Number_sub(a->impl, b->impl)));
+    ret = Object_return(Object_new(SYMBOL_NUMBER, 0, Number_sub(a->impl, b->impl)));
+  } 
+  else {
+    ret = Object_return(Object_new(SYMBOL_ERROR, 0, Error_new("Invalid types for bop_sub")));
   }
-  return Object_return(Object_new(SYMBOL_ERROR, 0, Error_new("Invalid types for bop_sub")));
+  Object_rc_decr(a); Object_rc_decr(b);
+  return ret;
 }
 
 Object* Object_bop_mul(Object* a, Object* b) {
   assert(a != NULL); assert(b != NULL);
+  Object_rc_incr(a); Object_rc_incr(b);
+  Object* ret; 
   if(Object_type(a) == SYMBOL_NUMBER && Object_type(b) == SYMBOL_NUMBER) {
-    return Object_return(Object_new(SYMBOL_NUMBER, 0, Number_mul(a->impl, b->impl)));
+    ret = Object_return(Object_new(SYMBOL_NUMBER, 0, Number_mul(a->impl, b->impl)));
+  } 
+  else {
+    ret = Object_return(Object_new(SYMBOL_ERROR, 0, Error_new("Invalid types for bop_mul")));
   }
-  return Object_return(Object_new(SYMBOL_ERROR, 0, Error_new("Invalid types for bop_mul")));
+  Object_rc_decr(a); Object_rc_decr(b);
+  return ret;
 }
 
 Object* Object_bop_div(Object* a, Object* b) {
   assert(a != NULL); assert(b != NULL);
+  Object_rc_incr(a); Object_rc_incr(b);
+  Object* ret;
   if(Object_type(a) == SYMBOL_NUMBER && Object_type(b) == SYMBOL_NUMBER) {
-    return Object_return(Object_new(SYMBOL_NUMBER, 0, Number_div(a->impl, b->impl)));
+    ret = Object_return(Object_new(SYMBOL_NUMBER, 0, Number_div(a->impl, b->impl)));
   }
-  return Object_return(Object_new(SYMBOL_ERROR, 0, Error_new("Invalid types for bop_div")));
+  else {
+    ret = Object_return(Object_new(SYMBOL_ERROR, 0, Error_new("Invalid types for bop_div")));
+  }
+  Object_rc_decr(a); Object_rc_decr(b);
+  return ret;
 }
 
 Object* Object_bop_push(Object* a, Object* b) {
   assert(a != NULL); assert(b != NULL);
+  Object_rc_incr(a); Object_rc_incr(b);
+  Object* ret;
   if(Object_type(a) == SYMBOL_LIST) {
     List_push(a->impl, b);
-    return Object_return(a);
+    ret = Object_return(a);
   } 
-  return Object_return(Object_new(SYMBOL_ERROR, 0, Error_new("Invalid types for bop_push")));
+  else {
+    ret = Object_return(Object_new(SYMBOL_ERROR, 0, Error_new("Invalid types for bop_push")));
+  }
+  Object_rc_decr(a); Object_rc_decr(b);
+  return ret;
 }
 
 /**
