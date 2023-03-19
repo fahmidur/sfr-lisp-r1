@@ -129,8 +129,13 @@ int main(int argc, char** argv) {
   //===========================================================================
   
   heading(1, "LIST OPERATIONS");
-  Object *list1 = Object_new(SYMBOL_LIST, 1, List_new());
-  // TODO
+  Object* list1 = Object_new(SYMBOL_LIST, 1, List_new());
+  Object* member1 = Object_new(SYMBOL_NUMBER, 1, Number_new_from_double(5.0));
+  Object* member2 = Object_new(SYMBOL_NUMBER, 1, Number_new_from_double(6.0));
+  Object_bop_push(list1, member1);
+  Object_bop_push(list1, member2);
+  printf("list1 = "); Object_print(list1); printf("\n");
+  // TODO;
   heading(0, "LIST OPERATIONS");
 
   //===========================================================================
