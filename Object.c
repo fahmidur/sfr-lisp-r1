@@ -385,33 +385,43 @@ Object* Object_clone(Object* self) {
 
 int Object_cmp(Object* a, Object* b) {
   assert(a != NULL); assert(b != NULL);
+  Object_rc_incr(a); Object_rc_incr(b);
+  int ret = -9;
   if(Object_type(a) == SYMBOL_NUMBER && Object_type(b) == SYMBOL_NUMBER) {
-    return Number_cmp(a->impl, b->impl);
+    ret = Number_cmp(a->impl, b->impl);
   }
   else
   if(Object_type(a) == SYMBOL_STRING && Object_type(b) == SYMBOL_STRING) {
-    return String_cmp(a->impl, b->impl);
+    ret = String_cmp(a->impl, b->impl);
   }
   else
   if(Object_type(a) == SYMBOL_SYMBOL && Object_type(b) == SYMBOL_SYMBOL) {
-    return Symbol_cmp(a->impl, b->impl);
+    ret = Symbol_cmp(a->impl, b->impl);
   }
   else
   if(Object_type(a) == SYMBOL_LIST && Object_type(b) == SYMBOL_LIST) {
-    return List_cmp(a->impl, b->impl);
+    ret = List_cmp(a->impl, b->impl);
   }
-  return -9;
+  Object_rc_decr(a); Object_rc_decr(b);
+  return ret;
 }
 
 Object* Object_bop_add(Object* a, Object* b) {
   assert(a != NULL); assert(b != NULL);
+  Object_rc_incr(a); Object_rc_incr(b);
+  Object* ret;
   if(Object_type(a) == SYMBOL_NUMBER && Object_type(b) == SYMBOL_NUMBER) {
-    return Object_return(Object_new(SYMBOL_NUMBER, 0, Number_add(a->impl, b->impl)));
+    ret = Object_return(Object_new(SYMBOL_NUMBER, 0, Number_add(a->impl, b->impl)));
   }
+  else
   if(Object_type(a) == SYMBOL_STRING && Object_type(b) == SYMBOL_STRING) {
-    return Object_return(Object_new(SYMBOL_STRING, 0, String_add(a->impl, b->impl)));
+    ret = Object_return(Object_new(SYMBOL_STRING, 0, String_add(a->impl, b->impl)));
+  } 
+  else {
+    ret = Object_return(Object_new(SYMBOL_ERROR, 0, Error_new("Invalid types bop_add")));
   }
-  return Object_return(Object_new(SYMBOL_ERROR, 0, Error_new("Invalid types bop_add")));
+  Object_rc_decr(a); Object_rc_decr(b);
+  return ret;
 }
 
 Object* Object_bop_sub(Object* a, Object* b) {
