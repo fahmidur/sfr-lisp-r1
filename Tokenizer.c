@@ -155,8 +155,6 @@ Token Tokenizer_dq(Tokenizer* self) {
   unsigned int idx;
   char is_buf_present = 0;
 
-  char quote_hitted = 0;
-
   while(self->buf_curp < self->buf_endp) {
     is_buf_present = 1;
     idx = self->buf_curp++;
