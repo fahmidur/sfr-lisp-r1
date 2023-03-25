@@ -523,12 +523,12 @@ void Object_system_print() {
 void ObjectUtil_eprintf_sig(int SIGSIZE, char** sigptr, int* sigposptr, va_list argv) {
   /*printf("--- ObjectUtil_eprintf_sig ---\n");*/
   char* sig = *sigptr;
-  /*printf("sig=|%s|\n", sig);*/
+  /*printf("[sig=|%s|]", sig);*/
   if(strcmp(sig, "%v") == 0) {
     Object_print(va_arg(argv, void*));
   }
   else {
-    vfprintf(stdout, *sigptr, argv);
+    vprintf(*sigptr, argv);
   }
   memset(*sigptr, 0, SIGSIZE);
   *sigposptr = 0;
@@ -603,15 +603,15 @@ void ObjectUtil_eprintf(char* fmt, ...) {
 
 size_t Object_len(Object* self) {
   assert(self != NULL);
-  Object_rc_incr(self);
+  /*Object_rc_incr(self);*/
   size_t ret = 0;
   if(Object_type(self) == SYMBOL_LIST) {
-    ret = Object_len(self->impl);
+    ret = List_len(self->impl);
   }
   else
   if(Object_type(self) == SYMBOL_STRING) {
-    ret = Object_len(self->impl);
+    ret = String_len(self->impl);
   }
-  Object_rc_decr(self);
+  /*Object_rc_decr(self);*/
   return ret;
 }

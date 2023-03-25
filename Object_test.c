@@ -135,6 +135,7 @@ int main(int argc, char** argv) {
   Object_bop_push(list1, member1);
   Object_bop_push(list1, member2);
   printf("list1 = "); Object_print(list1); printf("\n");
+  nassert(Object_len(list1) == 2);
   
   Object* list2 = Object_new(SYMBOL_LIST, 1, List_new());
   Object_bop_push(list2, member1);
@@ -143,7 +144,7 @@ int main(int argc, char** argv) {
   printf("--- again with eprintf ---\n");
   ObjectUtil_eprintf("list2 = %v\n", list2);
   ObjectUtil_eprintf("list2, which equals %v, is great!\n", list2);
-  ObjectUtil_eprintf("list2, which equals %v, contains %d elements\n", list2, Object_len(list2));
+  ObjectUtil_eprintf("list2, which equals %v, contains %d elements.\n", list2, Object_len(list2));
 
   heading(0, "LIST OPERATIONS");
 
