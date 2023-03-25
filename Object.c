@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <string.h>
+#include <stdarg.h>
 #include "Symbol.h"
 #include "String.h"
 #include "Number.h"
@@ -519,3 +520,83 @@ void Object_system_print() {
   printf("--- } Object_system_print(). END } ---\n");
 }
 
+void ObjectUtil_eprintf_sig(int SIGSIZE, char** sigptr, int* sigposptr, va_list argv) {
+  /*printf("--- ObjectUtil_eprintf_sig ---\n");*/
+  char* sig = *sigptr;
+  /*printf("sig=|%s|\n", sig);*/
+  if(strcmp(sig, "v") == 0) {
+    Object_print(va_arg(argv, void*));
+  }
+  else {
+  }
+  memset(*sigptr, 0, SIGSIZE);
+  *sigposptr = 0;
+}
+
+void ObjectUtil_eprintf_buf(int BUFSIZE, char** bufptr, int* bufposptr, va_list argv) {
+  /*printf("--- ObjectUtil_eprintf_buf ---\n");*/
+  if(*bufposptr > 0) {
+    fputs(*bufptr, stdout);
+  } else {
+    vfprintf(stdout, *bufptr, argv);
+  }
+  memset(*bufptr, 0, BUFSIZE);
+  *bufposptr = 0;
+}
+
+void ObjectUtil_eprintf(char* fmt, ...) {
+  /*printf("ObjectUtil_eprintf. fmt=%s\n", fmt);*/
+  int i, j;
+  int argc = 0;
+  va_list argv;
+  size_t fmt_len = strlen(fmt);
+  char ch;
+  for(i = 0; i < fmt_len; i++) {
+    ch = fmt[i];
+    if(ch == '%') {
+      argc++;
+    }
+  }
+  va_start(argv, fmt);
+  int   BUFSIZE = fmt_len+1;
+  char* buf = calloc(1, fmt_len+1);
+  int   bufpos = 0;
+  int   SIGSIZE = 20; 
+  char* sig = calloc(1, SIGSIZE);
+  int   sigpos = 0;
+  char  insig = 0;
+  int   argpos = 0;
+  for(i = 0; i < fmt_len; i++) {
+    ch = fmt[i];
+    if(insig) {
+      if((ch >= 'a' && ch <= 'z') || (ch >= '0' && ch <= '9')) {
+        sig[sigpos++] = ch;
+      }
+      else {
+        ObjectUtil_eprintf_sig(SIGSIZE, &sig, &sigpos, argv);
+        insig = 0;
+        if(i > 0) { i--; }
+      }
+    }
+    else
+    if(ch == '%') {
+      insig = 1;
+      sigpos = 0;
+      ObjectUtil_eprintf_buf(BUFSIZE, &buf, &bufpos, argv);
+    }
+    else {
+      buf[bufpos++] = ch;
+      /*printf("bufpos=%d / BUFSIZE=%d || buf=%s\n", bufpos, BUFSIZE, buf);*/
+    }
+  }
+  if(insig && sigpos > 0) {
+    ObjectUtil_eprintf_sig(SIGSIZE, &sig, &sigpos, argv);
+  }
+  else
+  if(bufpos > 0) {
+    ObjectUtil_eprintf_buf(BUFSIZE, &buf, &bufpos, argv);
+  }
+  free(buf);
+  free(sig);
+  va_end(argv);
+}

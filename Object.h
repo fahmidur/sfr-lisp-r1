@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdarg.h>
 
 #include "Symbol.h"
 #include "String.h"
@@ -91,6 +92,8 @@ Object* Object_bop_div(Object* a, Object* b);
 
 // Mainly List Ops
 Object* Object_bop_push(Object* a, Object* b);
+
+void ObjectUtil_eprintf(char* fmt, ...);
 
 void    Object_system_init();
 size_t  Object_system_size();
