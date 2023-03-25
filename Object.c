@@ -524,21 +524,20 @@ void ObjectUtil_eprintf_sig(int SIGSIZE, char** sigptr, int* sigposptr, va_list 
   /*printf("--- ObjectUtil_eprintf_sig ---\n");*/
   char* sig = *sigptr;
   /*printf("sig=|%s|\n", sig);*/
-  if(strcmp(sig, "v") == 0) {
+  if(strcmp(sig, "%v") == 0) {
     Object_print(va_arg(argv, void*));
   }
   else {
+    vfprintf(stdout, *sigptr, argv);
   }
   memset(*sigptr, 0, SIGSIZE);
   *sigposptr = 0;
 }
 
-void ObjectUtil_eprintf_buf(int BUFSIZE, char** bufptr, int* bufposptr, va_list argv) {
+void ObjectUtil_eprintf_buf(int BUFSIZE, char** bufptr, int* bufposptr) {
   /*printf("--- ObjectUtil_eprintf_buf ---\n");*/
   if(*bufposptr > 0) {
     fputs(*bufptr, stdout);
-  } else {
-    vfprintf(stdout, *bufptr, argv);
   }
   memset(*bufptr, 0, BUFSIZE);
   *bufposptr = 0;
@@ -581,8 +580,9 @@ void ObjectUtil_eprintf(char* fmt, ...) {
     else
     if(ch == '%') {
       insig = 1;
-      sigpos = 0;
-      ObjectUtil_eprintf_buf(BUFSIZE, &buf, &bufpos, argv);
+      sig[0] = '%';
+      sigpos = 1;
+      ObjectUtil_eprintf_buf(BUFSIZE, &buf, &bufpos);
     }
     else {
       buf[bufpos++] = ch;
@@ -594,9 +594,24 @@ void ObjectUtil_eprintf(char* fmt, ...) {
   }
   else
   if(bufpos > 0) {
-    ObjectUtil_eprintf_buf(BUFSIZE, &buf, &bufpos, argv);
+    ObjectUtil_eprintf_buf(BUFSIZE, &buf, &bufpos);
   }
   free(buf);
   free(sig);
   va_end(argv);
+}
+
+size_t Object_len(Object* self) {
+  assert(self != NULL);
+  Object_rc_incr(self);
+  size_t ret = 0;
+  if(Object_type(self) == SYMBOL_LIST) {
+    ret = Object_len(self->impl);
+  }
+  else
+  if(Object_type(self) == SYMBOL_STRING) {
+    ret = Object_len(self->impl);
+  }
+  Object_rc_decr(self);
+  return ret;
 }

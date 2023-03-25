@@ -143,6 +143,7 @@ int main(int argc, char** argv) {
   printf("--- again with eprintf ---\n");
   ObjectUtil_eprintf("list2 = %v\n", list2);
   ObjectUtil_eprintf("list2, which equals %v, is great!\n", list2);
+  ObjectUtil_eprintf("list2, which equals %v, contains %d elements\n", list2, Object_len(list2));
 
   heading(0, "LIST OPERATIONS");
 

@@ -49,6 +49,10 @@ size_t List_size(List* self) {
   return self->size;
 }
 
+size_t List_len(List* self) {
+  return self->size;
+}
+
 size_t List_push(List* self, Object* obj) {
   ListNode* listnode = ListNode_new(obj);
   if(self->size == 0) {

@@ -92,6 +92,7 @@ Object* Object_bop_div(Object* a, Object* b);
 
 // Mainly List Ops
 Object* Object_bop_push(Object* a, Object* b);
+size_t Object_len(Object* self);
 
 void ObjectUtil_eprintf(char* fmt, ...);
 
