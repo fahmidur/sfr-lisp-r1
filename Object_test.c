@@ -99,33 +99,38 @@ int main(int argc, char** argv) {
 
   printf("Test Number + Number ...\n");
   Object* res1 = Object_accept(Object_bop_add(num1, num2));
+  ObjectUtil_eprintf("%v + %v = %v\n", num1, num2, res1);
   Object* res1_expected = Object_new(SYMBOL_NUMBER, 1, Number_new(7));
   nassert(Object_cmp(res1, res1_expected) == 0);
-  printf("res1 = "); Object_print(res1); printf("\n");
+  /*printf("res1 = "); Object_print(res1); printf("\n");*/
+  ObjectUtil_eprintf("res1 = %v\n", res1);
 
   printf("Test Number - Number ...\n");
   Object* res2 = Object_accept(Object_bop_sub(num1, num2));
+  ObjectUtil_eprintf("%v - %v = %v\n", num1, num2, res2);
   Object* res2_expected = Object_new(SYMBOL_NUMBER, 1, Number_new(-1));
   nassert(Object_cmp(res2, res2_expected) == 0);
 
   printf("Test Number * Number ...\n");
   Object* res3 = Object_accept(Object_bop_mul(num1, num2));
+  ObjectUtil_eprintf("%v * %v = %v\n", num1, num2, res3);
   Object* res3_expected = Object_new(SYMBOL_NUMBER, 1, Number_new(12));
   nassert(Object_cmp(res3, res3_expected) == 0);
 
   printf("Test Number / Number ...\n");
   Object* res4 = Object_accept(Object_bop_div(num1, num2));
+  ObjectUtil_eprintf("%v / %v = %v\n", num1, num2, res4);
   Object* res4_expected = Object_new(SYMBOL_NUMBER, 1, Number_new(0.75));
   nassert(Object_cmp(res4, res4_expected) == 0);
 
   printf("Test String + Number ...\n");
   Object* sum_invalid = Object_accept(Object_bop_add(str1, num2));
+  ObjectUtil_eprintf("%v + %v = %v\n", str1, num2, sum_invalid);
   Object_print(sum_invalid); printf("\n");
   nassert(Object_type(sum_invalid) == Symbol_new("Error"));
 
   Object* qnum1 = QNUMBER_NEW1(3.14);
   nassert(Object_type(qnum1) == SYMBOL_NUMBER);
-
   
   heading(0, "NUMBER OPERATIONS");
 
