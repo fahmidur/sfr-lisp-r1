@@ -520,6 +520,21 @@ void Object_system_print() {
   printf("--- } Object_system_print(). END } ---\n");
 }
 
+size_t Object_len(Object* self) {
+  assert(self != NULL);
+  Object_rc_incr(self);
+  size_t ret = 0;
+  if(Object_type(self) == SYMBOL_LIST) {
+    ret = List_len(self->impl);
+  }
+  else
+  if(Object_type(self) == SYMBOL_STRING) {
+    ret = String_len(self->impl);
+  }
+  Object_rc_decr(self);
+  return ret;
+}
+
 void ObjectUtil_eprintf_sig(int SIGSIZE, char** sigptr, int* sigposptr, va_list argv) {
   /*printf("--- ObjectUtil_eprintf_sig ---\n");*/
   char* sig = *sigptr;
@@ -601,17 +616,3 @@ void ObjectUtil_eprintf(char* fmt, ...) {
   va_end(argv);
 }
 
-size_t Object_len(Object* self) {
-  assert(self != NULL);
-  /*Object_rc_incr(self);*/
-  size_t ret = 0;
-  if(Object_type(self) == SYMBOL_LIST) {
-    ret = List_len(self->impl);
-  }
-  else
-  if(Object_type(self) == SYMBOL_STRING) {
-    ret = String_len(self->impl);
-  }
-  /*Object_rc_decr(self);*/
-  return ret;
-}
