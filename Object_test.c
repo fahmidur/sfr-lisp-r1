@@ -63,9 +63,11 @@ int main(int argc, char** argv) {
   nassert(objsize - Object_system_size() == 1);
 
   Object* tmp2 = Object_new(SYMBOL_STRING, 1, String_new("So long and thanks for all the fish."));
-  printf("BEF. tmp2 = "); Object_print(tmp2); printf("\n");
+  /*printf("BEF. tmp2 = "); Object_print(tmp2); printf("\n");*/
+  ObjectUtil_eprintf("BEF. tmp2 = %v\n", tmp2);
   tmp2 = Object_rc_decr(tmp2);
-  printf("AFT. tmp2 = "); Object_print(tmp2); printf("\n");
+  /*printf("AFT. tmp2 = "); Object_print(tmp2); printf("\n");*/
+  ObjectUtil_eprintf("AFT. tmp2 = %v\n", tmp2);
 
   Object* stralike1 = Object_new(SYMBOL_STRING, 1, String_new("John Doe"));
   Object* stralike2 = Object_new(SYMBOL_STRING, 1, String_new("John Doe"));
@@ -83,7 +85,8 @@ int main(int argc, char** argv) {
 
   Object* qstr1 = QSTRING_NEW1("the quick brown fox");
   nassert(Object_type(qstr1) == SYMBOL_STRING);
-  Object_print(qstr1); printf("\n");
+  /*Object_print(qstr1); printf("\n");*/
+  ObjectUtil_eprintf("qstr1 = %v\n", qstr1);
 
   heading(0, "STRING OPERATIONS");
 
