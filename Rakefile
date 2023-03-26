@@ -1,3 +1,5 @@
+require 'fileutils'
+
 $git_sha = `git rev-parse HEAD`.strip
 $version = `git describe --tags HEAD`.strip
 
@@ -20,7 +22,11 @@ def build(name)
   if $build_targets.has_key?(name)
     return $build_targets[name]
   end
-  target = "build/#{name}"
+  odir = 'build'
+  unless Dir.exist?(odir)
+    FileUtils.mkdir_p(odir)
+  end
+  target = File.join(odir, name)
   $build_targets[name] = target
   return target
 end
