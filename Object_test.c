@@ -140,8 +140,8 @@ int main(int argc, char** argv) {
   Object* list1 = Object_new(SYMBOL_LIST, 1, List_new());
   Object* member1 = Object_new(SYMBOL_NUMBER, 1, Number_new_from_double(5.0));
   Object* member2 = Object_new(SYMBOL_NUMBER, 1, Number_new_from_double(6.0));
-  Object_bop_push(list1, member1);
-  Object_bop_push(list1, member2);
+  Object_reject(Object_bop_push(list1, member1));
+  Object_reject(Object_bop_push(list1, member2));
   printf("list1 = "); Object_print(list1); printf("\n");
   nassert(Object_len(list1) == 2);
   
