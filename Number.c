@@ -67,6 +67,7 @@ Number* Number_div(Number* self, Number* other) {
 }
 
 void Number_del(Number* self) {
+  printf("Number_del(%p). rep=%f\n", self, self->rep);
   if(self == NULL) {
     return;
   }

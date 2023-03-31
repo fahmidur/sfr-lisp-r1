@@ -120,6 +120,8 @@ void Object_system_init() {
   };
   Object_oti_set(SYMBOL_ERROR, otiarg_error);
 
+  object_system->null_object = Object_new(SYMBOL_SYMBOL, 1, Symbol_new("NULL"));
+
   object_system->init_called = 1;
   object_system->done_called = 0;
 
@@ -153,6 +155,21 @@ Object* Object_new(Symbol* type, int rc, void* impl) {
   } else {
     return self;
   }
+}
+
+/**
+ * Return the special NULL object which is an object
+ * of type Symbol.
+ */
+Object* Object_new_null() {
+  return object_system->null_object;
+}
+
+char Object_is_null(Object* x) {
+  if(x == NULL || x == object_system->null_object) {
+    return 1;
+  }
+  return 0;
 }
 
 Object* Object_return(Object* self) {
@@ -214,7 +231,7 @@ void Object_add_to_system(Object* self) {
 
 void Object_del(Object* self) {
   assert(self != NULL);
-  printf("Object_del(%p). type = ", self); 
+  printf("Object_del(%p). rc=%d. type=", self, self->rc); 
     Symbol_print(Object_type(self)); 
     /*printf(" || ");*/
     /*Object_print(self);*/
@@ -333,7 +350,8 @@ Object* Object_gc(Object* self) {
   assert(self != NULL);
   if(self->rc <= 0) {
     if(self->returning) {
-      printf("Object_gc(%p). Object is returning. -SKIPPED-\n", self);
+      /*printf("Object_gc(%p). Object is returning. -SKIPPED-\n", self);*/
+      ObjectUtil_eprintf("Object_gc(%p). SKIPPED returning object: %v\n", self, self);
       return self;
     }
     Object_del(self);
@@ -491,11 +509,26 @@ Object* Object_bop_push(Object* a, Object* b) {
   if(Object_type(a) == SYMBOL_LIST) {
     List_push(a->impl, b);
     ret = Object_return(a);
-  } 
+  }
   else {
     ret = Object_return(Object_new(SYMBOL_ERROR, 0, Error_new("Invalid types for bop_push")));
   }
   Object_rc_decr(a); Object_rc_decr(b);
+  assert(ret != NULL);
+  return ret;
+}
+
+Object* Object_uop_pop(Object* a) {
+  assert(a != NULL);
+  Object_rc_incr(a);
+  Object* ret;
+  if(Object_type(a) == SYMBOL_LIST) {
+    ret = Object_return(List_pop(a->impl));
+  }
+  else {
+    ret = Object_return(Object_new(SYMBOL_ERROR, 0, Error_new("Invalid type for uop_pop")));
+  }
+  Object_rc_decr(a);
   assert(ret != NULL);
   return ret;
 }

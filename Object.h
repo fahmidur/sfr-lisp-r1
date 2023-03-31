@@ -57,6 +57,7 @@ struct ObjectSystem {
   Object*          tail;
   size_t           size;
   ObjectTypeInfo*  types[OBJECT_TYPES_BUCKETS_SIZE];
+  Object*          null_object;
 };
 //   [head]                        [tail]
 //   |                             |
@@ -71,6 +72,7 @@ char Object_oti_set(
 ObjectTypeInfo* Object_oti_get(Symbol* type);
 
 Object* Object_new(Symbol* type, int rc, void* impl);
+Object* Object_new_null();
 void Object_add_to_system(Object* self);
 void Object_del(Object* self);
 Object* Object_clone(Object* self);
@@ -83,6 +85,7 @@ Object* Object_gc(Object* self);
 Object* Object_return(Object* self);
 Object* Object_accept(Object* self);
 Object* Object_reject(Object* self);
+char Object_is_null(Object* self);
 
 // Mainly Number Ops
 Object* Object_bop_add(Object* a, Object* b);
@@ -93,6 +96,7 @@ Object* Object_bop_div(Object* a, Object* b);
 // Mainly List Ops
 Object* Object_bop_push(Object* a, Object* b);
 size_t Object_len(Object* self);
+Object* Object_uop_pop(Object* a);
 
 void ObjectUtil_eprintf(char* fmt, ...);
 
