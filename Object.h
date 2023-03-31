@@ -87,6 +87,7 @@ Object* Object_return(Object* self);
 Object* Object_accept(Object* self);
 Object* Object_reject(Object* self);
 char Object_is_null(Object* self);
+char Object_is_error(Object* self);
 
 // Mainly Number Ops
 Object* Object_bop_add(Object* a, Object* b);

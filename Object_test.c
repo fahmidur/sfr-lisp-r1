@@ -156,6 +156,15 @@ int main(int argc, char** argv) {
   ObjectUtil_eprintf("list2, which equals %v, is great!\n", list2);
   ObjectUtil_eprintf("list2, which equals %v, contains %d elements.\n", list2, Object_len(list2));
 
+  printf("popping from list2 into popres1\n");
+  Object* popres1 = Object_accept(Object_uop_pop(list2));
+  nassert(Object_is_error(popres1) == 0);
+  nassert(Object_is_null(popres1) == 0);
+  ObjectUtil_eprintf("list2 = %v AND popres1=%v\n", list2, popres1);
+  nassert(Object_len(list2) == 1);
+  nassert(Object_cmp(popres1, member2) == 0);
+  nassert(Object_cmp(popres1, member1) != 0);
+
   heading(0, "LIST OPERATIONS");
 
   //===========================================================================

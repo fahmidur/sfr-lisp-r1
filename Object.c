@@ -167,6 +167,12 @@ Object* Object_new_null() {
   return object_system->null_object;
 }
 
+/**
+ * Helper function to check if the object is 
+ * the system null_object.
+ * Raw NULL pointer should be avoided.
+ * This allows us to keep accept/reject/rc semantics.
+ */
 char Object_is_null(Object* x) {
   return (
     x == object_system->null_object ||
@@ -174,6 +180,17 @@ char Object_is_null(Object* x) {
      Object_type(x) == SYMBOL_SYMBOL &&
      x->impl == SYMBOL_NULL
     )
+  );
+}
+
+/**
+ * Helper function to check if Object is an
+ * Error type object.
+ */
+char Object_is_error(Object* x) {
+  assert(x != NULL);
+  return (
+    Object_type(x) == SYMBOL_ERROR
   );
 }
 
