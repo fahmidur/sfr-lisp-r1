@@ -20,6 +20,7 @@ Symbol* SYMBOL_STRING;
 Symbol* SYMBOL_NUMBER;
 Symbol* SYMBOL_ERROR;
 Symbol* SYMBOL_LIST;
+Symbol* SYMBOL_NULL;
 
 char Object_oti_set(Symbol* type, ObjectTypeInfo otiarg) {
   assert(type != NULL);
@@ -80,6 +81,7 @@ void Object_system_init() {
   SYMBOL_STRING = Symbol_new("String");
   SYMBOL_NUMBER = Symbol_new("Number");
   SYMBOL_ERROR  = Symbol_new("Error");
+  SYMBOL_NULL   = Symbol_new("NULL");
   // Composit Types
   SYMBOL_LIST = Symbol_new("List");
 
@@ -158,18 +160,21 @@ Object* Object_new(Symbol* type, int rc, void* impl) {
 }
 
 /**
- * Return the special NULL object which is an object
- * of type Symbol.
+ * Return the special null_object which is an object
+ * of type Symbol = NULL
  */
 Object* Object_new_null() {
   return object_system->null_object;
 }
 
 char Object_is_null(Object* x) {
-  if(x == NULL || x == object_system->null_object) {
-    return 1;
-  }
-  return 0;
+  return (
+    x == object_system->null_object ||
+    (
+     Object_type(x) == SYMBOL_SYMBOL &&
+     x->impl == SYMBOL_NULL
+    )
+  );
 }
 
 Object* Object_return(Object* self) {
@@ -523,7 +528,12 @@ Object* Object_uop_pop(Object* a) {
   Object_rc_incr(a);
   Object* ret;
   if(Object_type(a) == SYMBOL_LIST) {
-    ret = Object_return(List_pop(a->impl));
+    ret = List_pop(a->impl);
+    if(ret == NULL) {
+      // translate the raw NULL to Object-System's null_object.
+      ret = Object_new_null();
+    }
+    ret = Object_return(ret);
   }
   else {
     ret = Object_return(Object_new(SYMBOL_ERROR, 0, Error_new("Invalid type for uop_pop")));
