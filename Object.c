@@ -168,6 +168,23 @@ Object* Object_new_null() {
 }
 
 /**
+ * A helper function to make rc_decr and assign easier.
+ */
+void Object_assign(Object** targetptr, Object* source) {
+  assert(targetptr != NULL);
+  assert(source != NULL);
+  if(*targetptr != NULL) {
+    Object_rc_decr(*targetptr);
+  }
+  if(source == NULL) {
+    *targetptr = Object_new_null();
+  }
+  else {
+    *targetptr = Object_accept(source);
+  }
+}
+
+/**
  * Helper function to check if the object is 
  * the system null_object.
  * Raw NULL pointer should be avoided.

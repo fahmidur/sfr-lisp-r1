@@ -89,6 +89,10 @@ Object* Object_reject(Object* self);
 char Object_is_null(Object* self);
 char Object_is_error(Object* self);
 
+
+// Helper to make assignments with rc easier.
+void Object_assign(Object** targetptr, Object* source);
+
 // Mainly Number Ops
 Object* Object_bop_add(Object* a, Object* b);
 Object* Object_bop_sub(Object* a, Object* b);

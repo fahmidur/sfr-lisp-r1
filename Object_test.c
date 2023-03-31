@@ -166,11 +166,13 @@ int main(int argc, char** argv) {
   nassert(Object_cmp(popres1, member1) != 0);
 
   printf("popping from list2 into popres1 again ...\n");
-  Object_rc_decr(popres1);
-  popres1 = Object_accept(Object_uop_pop(list2));
+  /*Object_rc_decr(popres1);*/
+  /*popres1 = Object_accept(Object_uop_pop(list2));*/
+  Object_assign(&popres1, Object_uop_pop(list2));
   nassert(!Object_is_error(popres1) && !Object_is_null(popres1));
   nassert(Object_len(list2) == 0);
-  ObjectUtil_eprintf("list2 = %v AND popres1 = %v\n", list1, popres1);
+  nassert(Object_cmp(popres1, member1) == 0);
+  ObjectUtil_eprintf("list2 = %v AND popres1 = %v\n", list2, popres1);
 
   heading(0, "LIST OPERATIONS");
 
