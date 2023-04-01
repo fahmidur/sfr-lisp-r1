@@ -560,7 +560,7 @@ Object* Object_bop_push(Object* a, Object* b) {
 Object* Object_uop_pop(Object* a) {
   assert(a != NULL);
   Object_rc_incr(a);
-  Object* ret;
+  Object* ret = NULL;
   if(Object_type(a) == SYMBOL_LIST) {
     ret = List_pop(a->impl);
     if(ret == NULL) {
@@ -571,6 +571,42 @@ Object* Object_uop_pop(Object* a) {
   }
   else {
     ret = Object_return(Object_new(SYMBOL_ERROR, 0, Error_new("Invalid type for uop_pop")));
+  }
+  Object_rc_decr(a);
+  assert(ret != NULL);
+  return ret;
+}
+
+Object* Object_bop_unshift(Object* a, Object* b) {
+  assert(a != NULL); assert(b != NULL);
+  Object_rc_incr(a); Object_rc_incr(b);
+  Object* ret = NULL;
+  if(Object_type(a) == SYMBOL_LIST) {
+    List_unshift(a->impl, b);
+    ret = Object_return(a);
+  }
+  else {
+    ret = Object_return(Object_new(SYMBOL_ERROR, 0, Error_new("Invalid types for bop_unshift")));
+  }
+  Object_rc_decr(a); Object_rc_decr(b);
+  assert(ret != NULL);
+  return ret;
+}
+
+Object* Object_uop_shift(Object* a) {
+  assert(a != NULL);
+  Object_rc_incr(a);
+  Object* ret = NULL;
+  if(Object_type(a) == SYMBOL_LIST) {
+    ret = List_shift(a->impl);
+    if(ret == NULL) {
+      // translate raw NULL to null_object.
+      ret = Object_new_null();
+    }
+    ret = Object_return(ret);
+  }
+  else {
+    ret = Object_return(Object_new(SYMBOL_ERROR, 0, Error_new("Invalid types for bop_shift")));
   }
   Object_rc_decr(a);
   assert(ret != NULL);

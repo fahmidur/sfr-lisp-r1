@@ -103,6 +103,8 @@ Object* Object_bop_div(Object* a, Object* b);
 Object* Object_bop_push(Object* a, Object* b);
 size_t Object_len(Object* self);
 Object* Object_uop_pop(Object* a);
+Object* Object_bop_unshift(Object* a, Object* b);
+Object* Object_uop_shift(Object* self);
 
 void ObjectUtil_eprintf(char* fmt, ...);
 
