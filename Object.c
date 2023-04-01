@@ -633,6 +633,9 @@ void Object_system_print() {
   printf("--- } Object_system_print(). END } ---\n");
 }
 
+/**
+ * Return the length of Object. 
+ */
 size_t Object_len(Object* self) {
   assert(self != NULL);
   Object_rc_incr(self);
