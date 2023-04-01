@@ -38,4 +38,11 @@ Object*   List_pop(List* self);
 size_t    List_unshift(List* self, Object* data);
 Object*   List_shift(List* self);
 
+/**
+ * Get the nth element of the list.
+ * zero element. 
+ * AKA the nth function in Lisp.
+ */
+Object*   List_at(List* self, size_t idx);
+
 #endif

@@ -53,11 +53,16 @@ int main(int argc, char** argv) {
   nassert(List_size(listobj->impl) == 5);
   printf("--- listobj = "); Object_print(listobj); printf("\n");
 
-  printf("calling listobj.shift() ...");
+  printf("calling listobj.shift() ...\n");
   Object* str4_shifted = Object_accept(List_shift(listobj->impl));
   printf("--- listobj = "); Object_print(listobj); printf("\n");
   nassert(str4_shifted == str4);
   nassert(str4_shifted->returning == 0);
+
+  printf("calling listobj.at(1) ...\n");
+  Object* atx = Object_accept(List_at(listobj->impl, 1));
+  printf("atx = "); Object_print(atx); printf("\n");
+  nassert(atx == str1);
 
   //--- cleanup
   Object_system_print();

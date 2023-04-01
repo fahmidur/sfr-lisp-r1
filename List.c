@@ -146,6 +146,26 @@ Object* List_shift(List* self) {
   return ret;
 }
 
+Object* List_at(List* self, size_t idx) {
+  if(self->size == 0) {
+    return NULL;
+  }
+  if(idx >= self->size) {
+    // out of bounds.
+    return NULL;
+  }
+  ListNode* iter = self->head;
+  size_t i = 0;
+  while(iter != NULL) {
+    if(i == idx) {
+      return Object_return(iter->data);
+    }
+    iter = iter->next;
+    i++;
+  }
+  return NULL;
+}
+
 void List_del(List* self) {
   printf("{ List_del(%p) {\n", self);
   while(self->size > 0) {
