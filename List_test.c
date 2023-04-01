@@ -21,7 +21,7 @@ int main(int argc, char** argv) {
   nassert(List_size(list1) == 1);
   printf("--- list1 = "); List_print(list1); printf("\n");
 
-  printf("popping from list1...\n");
+  printf("Calling list1.pop() ...\n");
   Object* hstr1_popped = Object_accept(List_pop(list1));
   nassert(hstr1_popped == hstr1);
   nassert(hstr1_popped->returning == 0);
@@ -42,8 +42,22 @@ int main(int argc, char** argv) {
   List_push(listobj->impl, str3);
 
   nassert(List_size(listobj->impl) == 4);
-
   printf("--- listobj = "); Object_print(listobj); printf("\n");
+
+  Object* str4 = Object_new(SYMBOL_STRING, 1, String_new("str4"));
+  Object* str5 = Object_new(SYMBOL_STRING, 1, String_new("str5"));
+  Object* str6 = Object_new(SYMBOL_STRING, 1, String_new("str6"));
+
+  List_unshift(listobj->impl, str4);
+  
+  nassert(List_size(listobj->impl) == 5);
+  printf("--- listobj = "); Object_print(listobj); printf("\n");
+
+  printf("calling listobj.shift() ...");
+  Object* str4_shifted = Object_accept(List_shift(listobj->impl));
+  printf("--- listobj = "); Object_print(listobj); printf("\n");
+  nassert(str4_shifted == str4);
+  nassert(str4_shifted->returning == 0);
 
   //--- cleanup
   Object_system_print();

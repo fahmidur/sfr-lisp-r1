@@ -65,7 +65,8 @@ size_t List_push(List* self, Object* obj) {
     self->tail = listnode;
   }
   Object_rc_incr(obj);
-  return self->size++;
+  self->size++;
+  return self->size;
 }
 
 Object* List_pop(List* self) {
@@ -96,6 +97,52 @@ Object* List_pop(List* self) {
   ret = Object_return(node->data);
   ListNode_del(node);
   printf("List_pop(%p). size=%zu\n", self, self->size);
+  return ret;
+}
+
+size_t List_unshift(List* self, Object* obj) {
+  ListNode* listnode = ListNode_new(obj);
+  if(self->size == 0) {
+    self->head = listnode;
+    self->tail = listnode;
+  }
+  else {
+    self->head->prev = listnode;
+    listnode->next = self->head;
+    self->head = listnode;
+  }
+  Object_rc_incr(obj);
+  self->size++;
+  return self->size;
+}
+
+Object* List_shift(List* self) {
+  printf("List_shift(%p).\n", self);
+  if(self->size == 0) {
+    return NULL;
+  }
+  ListNode* node;
+  ListNode* new_head;
+  Object* ret;
+  if(self->size == 1) {
+    assert(self->head == self->tail);
+    node = self->head;
+    self->head = NULL;
+    self->tail = NULL;
+  }
+  else {
+    node = self->head;
+    new_head = node->next;
+    new_head->prev = NULL; node->next = NULL;
+    self->head = new_head;
+    assert(node->prev == NULL);
+  }
+  assert(node != NULL);
+  // detach node
+  node->prev = NULL; node->next = NULL;
+  self->size--;
+  ret = Object_return(node->data);
+  ListNode_del(node);
   return ret;
 }
 
