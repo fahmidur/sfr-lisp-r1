@@ -541,6 +541,21 @@ Object* Object_bop_div(Object* a, Object* b) {
   return ret;
 }
 
+Object* Object_bop_at(Object* self, size_t idx) {
+  assert(self != NULL);
+  Object* ret = NULL;
+  Object_rc_incr(self);
+  if(Object_type(self) == SYMBOL_LIST) {
+    ret = List_at(self->impl, idx);
+  } 
+  else {
+    ret = Object_new(SYMBOL_ERROR, 0, Error_new("Invalid types for bop_at"));
+  }
+  Object_rc_decr(self);
+  assert(ret != NULL);
+  return Object_return(ret);
+}
+
 Object* Object_bop_push(Object* a, Object* b) {
   assert(a != NULL); assert(b != NULL);
   Object_rc_incr(a); Object_rc_incr(b);

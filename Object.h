@@ -105,6 +105,7 @@ size_t Object_len(Object* self);
 Object* Object_uop_pop(Object* a);
 Object* Object_bop_unshift(Object* a, Object* b);
 Object* Object_uop_shift(Object* self);
+Object* Object_bop_at(Object* self, size_t idx);
 
 void ObjectUtil_eprintf(char* fmt, ...);
 

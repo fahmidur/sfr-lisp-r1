@@ -197,6 +197,11 @@ int main(int argc, char** argv) {
   ObjectUtil_eprintf("list2 = %v\n", list2);
   nassert(Object_cmp(shifted1, mem3) == 0);
 
+  printf("Calling list.at(1) --> tmp3 ...\n");
+  Object* tmp3 = Object_accept(Object_bop_at(list2, 1));
+  ObjectUtil_eprintf("tmp3 = %v\n", tmp3);
+  nassert(Object_cmp(tmp3, mem1) == 0);
+
   heading(0, "LIST OPERATIONS");
 
   //===========================================================================
