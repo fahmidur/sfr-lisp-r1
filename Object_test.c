@@ -140,20 +140,20 @@ int main(int argc, char** argv) {
 
   // List.push
   Object* list1 = Object_new(SYMBOL_LIST, 1, List_new());
-  Object* member1 = Object_new(SYMBOL_NUMBER, 1, Number_new_from_double(5.0));
-  Object* member2 = Object_new(SYMBOL_NUMBER, 1, Number_new_from_double(6.0));
-  printf("Calling list1.push(member1) ...\n");
-  Object_reject(Object_bop_push(list1, member1));
-  printf("Calling list1.push(member2) ...\n");
-  Object_reject(Object_bop_push(list1, member2));
+  Object* mem1 = Object_new(SYMBOL_NUMBER, 1, Number_new_from_double(5.0));
+  Object* mem2 = Object_new(SYMBOL_NUMBER, 1, Number_new_from_double(6.0));
+  printf("Calling list1.push(mem1) ...\n");
+  Object_reject(Object_bop_push(list1, mem1));
+  printf("Calling list1.push(mem2) ...\n");
+  Object_reject(Object_bop_push(list1, mem2));
   printf("list1 = "); Object_print(list1); printf("\n");
   nassert(Object_len(list1) == 2);
 
   Object* list2 = Object_new(SYMBOL_LIST, 1, List_new());
-  printf("Calling list2.push(member1) ...\n");
-  Object_reject(Object_bop_push(list2, member1));
-  printf("Calling list2.push(member2) ...\n");
-  Object_reject(Object_bop_push(list2, member2));
+  printf("Calling list2.push(mem1) ...\n");
+  Object_reject(Object_bop_push(list2, mem1));
+  printf("Calling list2.push(mem2) ...\n");
+  Object_reject(Object_bop_push(list2, mem2));
   printf("list2 = "); Object_print(list2); printf("\n");
   printf("--- again with eprintf ---\n");
   ObjectUtil_eprintf("list2 = %v\n", list2);
@@ -166,8 +166,8 @@ int main(int argc, char** argv) {
   nassert(Object_is_null(popres1) == 0);
   ObjectUtil_eprintf("list2 = %v AND popres1 = %v\n", list2, popres1);
   nassert(Object_len(list2) == 1);
-  nassert(Object_cmp(popres1, member2) == 0);
-  nassert(Object_cmp(popres1, member1) != 0);
+  nassert(Object_cmp(popres1, mem2) == 0);
+  nassert(Object_cmp(popres1, mem1) != 0);
 
   printf("Calling list2.pop() --> popres1 (again) ...\n");
   /*Object_rc_decr(popres1);*/
@@ -176,8 +176,26 @@ int main(int argc, char** argv) {
   Object_assign(&popres1, Object_uop_pop(list2));
   nassert(!Object_is_error(popres1) && !Object_is_null(popres1));
   nassert(Object_len(list2) == 0);
-  nassert(Object_cmp(popres1, member1) == 0);
+  nassert(Object_cmp(popres1, mem1) == 0);
   ObjectUtil_eprintf("list2 = %v AND popres1 = %v\n", list2, popres1);
+
+  printf("Calling list2.unshift(mem1) ...\n");
+  Object_bop_unshift(list2, mem1);
+  ObjectUtil_eprintf("list2 = %v\n", list2);
+  printf("Calling list2.unshift(mem2) ...\n");
+  Object_bop_unshift(list2, mem2);
+  ObjectUtil_eprintf("list2 = %v\n", list2);
+  Object* mem3 = Object_new(SYMBOL_STRING, 1, String_new("mem3"));
+  ObjectUtil_eprintf("mem3 = %v\n", mem3);
+  printf("Calling list2.unshift(mem3) ...\n");
+  Object_reject(Object_bop_unshift(list2, mem3));
+  ObjectUtil_eprintf("list2 = %v\n", list2);
+  
+  printf("Calling list2.shift() --> shifted1 ...\n");
+  Object* shifted1 = Object_accept(Object_uop_shift(list2));
+  ObjectUtil_eprintf("shifted1 = %v\n", shifted1);
+  ObjectUtil_eprintf("list2 = %v\n", list2);
+  nassert(Object_cmp(shifted1, mem3) == 0);
 
   heading(0, "LIST OPERATIONS");
 
