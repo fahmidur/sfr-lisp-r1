@@ -201,7 +201,7 @@ List* List_clone(List* self) {
 
 int List_cmp(List* self, List* other) {
   if(self->size != other->size) {
-    return 1;
+    return 1; 
   }
   ListNode* a = self->head;
   ListNode* b = other->head;

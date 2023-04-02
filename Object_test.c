@@ -142,13 +142,17 @@ int main(int argc, char** argv) {
   Object* list1 = Object_new(SYMBOL_LIST, 1, List_new());
   Object* member1 = Object_new(SYMBOL_NUMBER, 1, Number_new_from_double(5.0));
   Object* member2 = Object_new(SYMBOL_NUMBER, 1, Number_new_from_double(6.0));
+  printf("Calling list1.push(member1) ...\n");
   Object_reject(Object_bop_push(list1, member1));
+  printf("Calling list1.push(member2) ...\n");
   Object_reject(Object_bop_push(list1, member2));
   printf("list1 = "); Object_print(list1); printf("\n");
   nassert(Object_len(list1) == 2);
 
   Object* list2 = Object_new(SYMBOL_LIST, 1, List_new());
+  printf("Calling list2.push(member1) ...\n");
   Object_reject(Object_bop_push(list2, member1));
+  printf("Calling list2.push(member2) ...\n");
   Object_reject(Object_bop_push(list2, member2));
   printf("list2 = "); Object_print(list2); printf("\n");
   printf("--- again with eprintf ---\n");
@@ -156,7 +160,7 @@ int main(int argc, char** argv) {
   ObjectUtil_eprintf("list2, which equals %v, is great!\n", list2);
   ObjectUtil_eprintf("list2, which equals %v, contains %d elements.\n", list2, Object_len(list2));
 
-  printf("popping from list2 into popres1 ...\n");
+  printf("Calling list2.pop() --> popres1 ...\n");
   Object* popres1 = Object_accept(Object_uop_pop(list2));
   nassert(Object_is_error(popres1) == 0);
   nassert(Object_is_null(popres1) == 0);
@@ -165,9 +169,10 @@ int main(int argc, char** argv) {
   nassert(Object_cmp(popres1, member2) == 0);
   nassert(Object_cmp(popres1, member1) != 0);
 
-  printf("popping from list2 into popres1 again ...\n");
+  printf("Calling list2.pop() --> popres1 (again) ...\n");
   /*Object_rc_decr(popres1);*/
   /*popres1 = Object_accept(Object_uop_pop(list2));*/
+  // Object_assign(...) is better
   Object_assign(&popres1, Object_uop_pop(list2));
   nassert(!Object_is_error(popres1) && !Object_is_null(popres1));
   nassert(Object_len(list2) == 0);

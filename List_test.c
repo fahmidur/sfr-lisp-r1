@@ -48,6 +48,7 @@ int main(int argc, char** argv) {
   Object* str5 = Object_new(SYMBOL_STRING, 1, String_new("str5"));
   Object* str6 = Object_new(SYMBOL_STRING, 1, String_new("str6"));
 
+  printf("calling listobj.unshift(str4) ...\n");
   List_unshift(listobj->impl, str4);
   
   nassert(List_size(listobj->impl) == 5);
