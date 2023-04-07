@@ -54,16 +54,31 @@ Number* Number_sub(Number* self, Number* other) {
   return clone;
 }
 
+Number* Number_subx(Number* self, Number* other) {
+  self->rep = self->rep - other->rep;
+  return self;
+}
+
 Number* Number_mul(Number* self, Number* other) {
   Number* clone = Number_clone(self);
   clone->rep = clone->rep * other->rep;
   return clone;
 }
 
+Number* Number_mulx(Number* self, Number* other) {
+  self->rep = self->rep * other->rep;
+  return self;
+}
+
 Number* Number_div(Number* self, Number* other) {
   Number* clone = Number_clone(self);
   clone->rep = clone->rep / other->rep;
   return clone;
+}
+
+Number* Number_divx(Number* self, Number* other) {
+  self->rep = self->rep / other->rep;
+  return self;
 }
 
 void Number_del(Number* self) {
