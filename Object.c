@@ -177,6 +177,8 @@ void Object_assign(Object** targetptr, Object* source) {
     Object_rc_decr(*targetptr);
   }
   if(source == NULL) {
+    // helps ensure that the object system uses null_object
+    // instead of raw NULL.
     *targetptr = Object_new_null();
   }
   else {
