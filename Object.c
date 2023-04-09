@@ -424,7 +424,7 @@ void Object_print(Object* self) {
   if(oti->fn_print == NULL) {
     printf("FATAL: ObjectTypeInfo oti for type ");
     Symbol_print(self->type);
-    printf(" is missing fn_del\n");
+    printf(" is missing fn_print\n");
     exit(1);
   }
   oti->fn_print(self->impl);
