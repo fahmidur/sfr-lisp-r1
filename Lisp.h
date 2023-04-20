@@ -7,7 +7,16 @@
 #include "util.h"
 #include "object.h"
 
+// Tokenize a String object into flat List of objects.
 Object* Lisp_tokenize(Object* string);
-Object* Lisp_parse(Object* tokenlist);
-Object* Lisp_parsestr(Object* string);
+
+// Parse a flat List of objects (tokens) into a 
+// nested List representing Lisp code.
+Object* Lisp_parse_tokens(Object* tokenlist);
+
+// Parse a String representing Lisp code directly to 
+// nested List representing Lisp code.
+// Mainly a helper function
+// Lisp_parse_string(x) = Lisp_parse_tokens(Lisp_tokenize(x))
+Object* Lisp_parse_string(Object* string);
 
