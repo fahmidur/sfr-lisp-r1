@@ -37,5 +37,6 @@ void Symbol_print(Symbol* self);
 Symbol* Symbol_clone(Symbol* self);
 void Symbol_noop(void* self);
 int Symbol_cmp(Symbol* self, Symbol* other);
+size_t Symbol_hash(Symbol* self);
 
 #endif

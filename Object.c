@@ -631,6 +631,28 @@ Object* Object_uop_shift(Object* a) {
 }
 
 /**
+ * Get the hash of the object for use in Hash tables
+ * or anywhere else that a hash might be needed.
+ */
+size_t Object_hash(Object* self) {
+  assert(self != NULL);
+  Object_rc_incr(self); 
+  size_t ret = 0;
+  if(Object_type(self) == SYMBOL_SYMBOL) {
+    ret = Symbol_hash(self->impl);
+  }
+  else
+  if(Object_type(self) == SYMBOL_STRING) {
+    ret = String_hash(self->impl);
+  }
+  else {
+    printf("ERROR: Object_hash called on unsupported type");
+  }
+  Object_rc_decr(self);
+  return ret;
+}
+
+/**
  * Print all the objects in the object_system.
  * Mainly for debugging. 
  */

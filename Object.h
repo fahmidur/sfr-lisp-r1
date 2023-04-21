@@ -45,9 +45,9 @@ struct ObjectTypeInfo {
   ObjectTypeInfo* prev;
   ObjectTypeInfo* next;
   // vtable
-  void  (*fn_del)(void* s); 
-  void  (*fn_print)(void* s);
-  void* (*fn_clone)(void* s);
+  void   (*fn_del)(void* s); 
+  void   (*fn_print)(void* s);
+  void*  (*fn_clone)(void* s);
 };
 
 typedef struct ObjectSystem ObjectSystem;
@@ -92,6 +92,9 @@ char Object_is_error(Object* self);
 
 // Helper to make assignments with rc easier.
 void Object_assign(Object** targetptr, Object* source);
+
+// Return the hash of the object for use in Hash tables.
+size_t Object_hash(Object* self);
 
 // Mainly Number Ops
 Object* Object_bop_add(Object* a, Object* b);

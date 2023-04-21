@@ -192,6 +192,10 @@ Symbol* Symbol_new(char* str) {
   return self;
 }
 
+size_t Symbol_hash(Symbol* self) {
+  return self->hash;
+}
+
 // Symbols have a trivial clone.
 Symbol* Symbol_clone(Symbol* self) {
   return self;

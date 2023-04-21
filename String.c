@@ -19,6 +19,10 @@ String* String_new(char* istr) {
   return self;
 }
 
+size_t String_hash(String* self) {
+  return Util_cstr_hash_djb2(self->buf);
+}
+
 String* String_clone(String* self) {
   String* clone = calloc(1, sizeof(String));
   clone->len = self->len;
