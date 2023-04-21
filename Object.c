@@ -20,6 +20,7 @@ Symbol* SYMBOL_STRING;
 Symbol* SYMBOL_NUMBER;
 Symbol* SYMBOL_ERROR;
 Symbol* SYMBOL_LIST;
+Symbol* SYMBOL_HASH;
 Symbol* SYMBOL_NULL;
 
 char Object_oti_set(Symbol* type, ObjectTypeInfo otiarg) {
@@ -81,9 +82,11 @@ void Object_system_init() {
   SYMBOL_STRING = Symbol_new("String");
   SYMBOL_NUMBER = Symbol_new("Number");
   SYMBOL_ERROR  = Symbol_new("Error");
-  SYMBOL_NULL   = Symbol_new("NULL");
   // Composit Types
   SYMBOL_LIST = Symbol_new("List");
+  SYMBOL_HASH = Symbol_new("Hash");
+  // The NULL Type
+  SYMBOL_NULL = Symbol_new("NULL");
 
   printf("\n\n");
 
