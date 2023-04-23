@@ -4,15 +4,22 @@
 #ifndef _SFR_HASH
 #define _SFR_HASH
 
+#define HASH_BUCKET_SIZE 2048
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "Object.h"
 
-typedef struct Hash Hash;
+typedef struct HashNode HashNode;
+struct HashNode {
+  Object* data;
+  HashNode* next;
+};
 
+typedef struct Hash Hash;
 struct Hash {
   size_t size;
-  void** buckets;
+  HashNode* buckets;
 };
 
 Hash*   Hash_new();
