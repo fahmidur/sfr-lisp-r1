@@ -12,19 +12,20 @@
 
 typedef struct HashNode HashNode;
 struct HashNode {
-  Object* data;
   HashNode* next;
+  Object* key;
+  Object* val;
 };
 
 typedef struct Hash Hash;
 struct Hash {
   size_t size;
-  HashNode* buckets;
+  HashNode** buckets;
 };
 
 Hash*   Hash_new();
-size_t  Hash_set(Object* key, Object* val);
-Object* Hash_get(Object* key);
+size_t  Hash_kv_set(Object* key, Object* val);
+Object* Hash_kv_get(Object* key);
 void    Hash_del(Hash* self);
 
 #endif
