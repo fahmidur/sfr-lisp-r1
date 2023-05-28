@@ -463,6 +463,10 @@ int Object_cmp(Object* a, Object* b) {
   assert(a != NULL); assert(b != NULL);
   Object_rc_incr(a); Object_rc_incr(b);
   int ret = -9;
+  if(a == b) {
+    ret = 0;
+  }
+  else
   if(Object_type(a) == SYMBOL_NUMBER && Object_type(b) == SYMBOL_NUMBER) {
     ret = Number_cmp(a->impl, b->impl);
   }

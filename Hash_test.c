@@ -10,11 +10,16 @@ int main(int argc, char** argv) {
   Symbol_system_init();
   Object_system_init();
 
-
   Object* apple = QSYMBOL_NEW1("apple");
   Object* red = QSTRING_NEW1("red");
   Hash* h1 = Hash_new();
-  Hash_kv_set(h1, apple, red);
+  Hash_set(h1, apple, red);
+  nassert(Hash_len(h1) == 1);
+
+  Object* apple_color = NULL;
+  apple_color = Hash_get(h1, apple);
+  nassert(apple_color == red);
+  nassert(Object_cmp(apple_color, red) == 0);
 
   Symbol_system_done();
   Object_system_done();

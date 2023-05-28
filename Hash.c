@@ -35,6 +35,15 @@ void HashNode_del(HashNode* self) {
   free(self);
 }
 
+void HashNode_set_key(HashNode* self, Object* key) {
+  Object_rc_incr(key);
+  if(self->key != NULL) {
+    Object_rc_decr(key);
+    self->key = NULL;
+  }
+  self->key = key;
+}
+
 void HashNode_set_val(HashNode* self, Object* val) {
   Object_rc_incr(val);
   if(self->val != NULL) {
@@ -68,24 +77,29 @@ void Hash_del(Hash* self) {
   free(self);
 }
 
-size_t Hash_len(Hash* self) {
-  size_t i = 0;
-  size_t len = 0;
-  size_t bi;
-  HashNode* iter = NULL;
-  for(i = 0; i < HASH_BUCKET_SIZE; i++) {
-    iter = self->buckets[i];
-    bi = 0;
-    while(iter != NULL) {
-      bi++;
-      iter = iter->next;
-    }
-    len += bi;
-  }
-  return len;
+size_t Hash_size(Hash* self) {
+  return self->size;
 }
 
-size_t Hash_kv_set(Hash* self, Object* key, Object* val) {
+size_t Hash_len(Hash* self) {
+  return self->size;
+  /* size_t i = 0; */
+  /* size_t len = 0; */
+  /* size_t bi; */
+  /* HashNode* iter = NULL; */
+  /* for(i = 0; i < HASH_BUCKET_SIZE; i++) { */
+  /*   iter = self->buckets[i]; */
+  /*   bi = 0; */
+  /*   while(iter != NULL) { */
+  /*     bi++; */
+  /*     iter = iter->next; */
+  /*   } */
+  /*   len += bi; */
+  /* } */
+  /* return len; */
+}
+
+size_t Hash_set(Hash* self, Object* key, Object* val) {
   Object_rc_incr(key);
   Object_rc_incr(val);
 
@@ -97,6 +111,8 @@ size_t Hash_kv_set(Hash* self, Object* key, Object* val) {
   if(node == NULL) {
     node = HashNode_new(key, val);
     self->buckets[index] = node;
+    self->size++;
+    printf("** donuts ** size=%zu\n", self->size);
   }
   else {
     iter = node;
@@ -116,26 +132,26 @@ size_t Hash_kv_set(Hash* self, Object* key, Object* val) {
       node = HashNode_new(key, val);
       iter_prev->next = node;
       node->prev = iter_prev;
+      self->size++;
     }
   }
 
   Object_rc_decr(key);
   Object_rc_decr(val);
 
-  self->size++;
   return self->size;
 }
 
-Object* Hash_kv_get(Hash* self, Object* key) {
+Object* Hash_get(Hash* self, Object* key) {
   Object_rc_incr(key);
   size_t index = Object_hash(key) % HASH_BUCKET_SIZE;
   Object* ret = NULL;
   HashNode* iter = self->buckets[index];
   while(iter != NULL) {
-    iter = iter->next;
-    if(iter->key == key) {
+    if(Object_cmp(iter->key, key) == 0) {
       ret = iter->val;
     }
+    iter = iter->next;
   }
   Object_rc_decr(key);
   return ret;
