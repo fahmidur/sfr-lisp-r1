@@ -16,6 +16,34 @@ HashNode* HashNode_new(Object* key, Object* val) {
   return self;
 }
 
+// Can only handle delete from the 
+// front. 
+void HashNode_del(HashNode* self) {
+  if(self->next) {
+    HashNode_del(self->next);
+  }
+  self->next = NULL;
+  // TODO: what if key == val
+  if(self->key != NULL) {
+    self->key = Object_rc_decr(self->key);
+  }
+  if(self->val != NULL) {
+    self->key = Object_rc_decr(self->val);
+  }
+  self->key = NULL;
+  self->val = NULL;
+  free(self);
+}
+
+void HashNode_set_val(HashNode* self, Object* val) {
+  Object_rc_incr(val);
+  if(self->val != NULL) {
+    Object_rc_decr(self->val);
+    self->val = NULL;
+  }
+  self->val = val;
+}
+
 Hash* Hash_new() {
   Hash* self = malloc(sizeof(Hash));
   self->size = 0;
@@ -27,6 +55,36 @@ Hash* Hash_new() {
   return self;
 }
 
+void Hash_del(Hash* self) {
+  size_t i;
+  HashNode* node;
+  for(i = 0; i < HASH_BUCKET_SIZE; i++) {
+    node = self->buckets[i];
+    if(node != NULL) {
+      HashNode_del(node);
+    }
+  }
+  free(self->buckets);
+  free(self);
+}
+
+size_t Hash_len(Hash* self) {
+  size_t i = 0;
+  size_t len = 0;
+  size_t bi;
+  HashNode* iter = NULL;
+  for(i = 0; i < HASH_BUCKET_SIZE; i++) {
+    iter = self->buckets[i];
+    bi = 0;
+    while(iter != NULL) {
+      bi++;
+      iter = iter->next;
+    }
+    len += bi;
+  }
+  return len;
+}
+
 size_t Hash_kv_set(Hash* self, Object* key, Object* val) {
   Object_rc_incr(key);
   Object_rc_incr(val);
@@ -34,17 +92,31 @@ size_t Hash_kv_set(Hash* self, Object* key, Object* val) {
   size_t index = Object_hash(key) % HASH_BUCKET_SIZE;
   HashNode* node = self->buckets[index];
   HashNode* iter = NULL;
+  HashNode* iter_prev = NULL;
+  char clash = 0;
   if(node == NULL) {
     node = HashNode_new(key, val);
     self->buckets[index] = node;
-  } 
+  }
   else {
     iter = node;
-    while(iter->next != NULL) {
+    while(iter != NULL) {
+      if(Object_cmp(iter->key, key) == 0) {
+        clash = 1;
+        node = iter;
+        break;
+      }
+      iter_prev = iter;
       iter = iter->next;
     }
-    node = HashNode_new(key, val);
-    iter->next = node;
+    if(clash) {
+      HashNode_set_val(node, val);
+    } 
+    else {
+      node = HashNode_new(key, val);
+      iter_prev->next = node;
+      node->prev = iter_prev;
+    }
   }
 
   Object_rc_decr(key);
