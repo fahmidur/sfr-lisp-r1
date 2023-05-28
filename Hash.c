@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "Object.h"
 #include "Hash.h"
 
 HashNode* HashNode_new(Object* key, Object* val) {
@@ -16,9 +17,9 @@ HashNode* HashNode_new(Object* key, Object* val) {
 }
 
 Hash* Hash_new() {
-  Hash* self = malloc(sizeof Hash);
+  Hash* self = malloc(sizeof(Hash));
   self->size = 0;
-  self->buckets = calloc(HASH_BUCKET_SIZE, sizeof(*HashNode));
+  self->buckets = calloc(HASH_BUCKET_SIZE, sizeof(HashNode*));
   int i = 0;
   for(i = 0; i < HASH_BUCKET_SIZE; i++) {
     self->buckets[i] = NULL;
@@ -26,11 +27,11 @@ Hash* Hash_new() {
   return self;
 }
 
-size_t Hash_kv_set(Object* key, Object* val) {
+size_t Hash_kv_set(Hash* self, Object* key, Object* val) {
   Object_rc_incr(key);
   Object_rc_incr(val);
 
-  size_t index = = Object_hash(key) % HASH_BUCKET_SIZE;
+  size_t index = Object_hash(key) % HASH_BUCKET_SIZE;
   HashNode* node = self->buckets[index];
   HashNode* iter = NULL;
   if(node == NULL) {
@@ -47,13 +48,13 @@ size_t Hash_kv_set(Object* key, Object* val) {
   }
 
   Object_rc_decr(key);
-  Object_rc_dect(val);
+  Object_rc_decr(val);
 
   self->size++;
   return self->size;
 }
 
-Object* Hash_kv_get(Object* key) {
+Object* Hash_kv_get(Hash* self, Object* key) {
   Object_rc_incr(key);
   size_t index = Object_hash(key) % HASH_BUCKET_SIZE;
   Object* ret = NULL;

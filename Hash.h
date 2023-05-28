@@ -12,6 +12,7 @@
 
 typedef struct HashNode HashNode;
 struct HashNode {
+  HashNode* prev;
   HashNode* next;
   Object* key;
   Object* val;
@@ -24,8 +25,8 @@ struct Hash {
 };
 
 Hash*   Hash_new();
-size_t  Hash_kv_set(Object* key, Object* val);
-Object* Hash_kv_get(Object* key);
+size_t  Hash_kv_set(Hash* self, Object* key, Object* val);
+Object* Hash_kv_get(Hash* self, Object* key);
 void    Hash_del(Hash* self);
 
 #endif
