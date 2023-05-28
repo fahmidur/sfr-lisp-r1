@@ -51,6 +51,24 @@ if debug
 end
 cflags = cflags.join(' ')
 
+$cc = cc
+$cflags = cflags
+def compile(type, ofile, sources)
+  com = "#{$cc} #{$cflags} "
+  if type == :program 
+    com += ""
+  elsif type == :object 
+    com += " -c "
+  else
+    raise "Compile. Invalid type=#{type}"
+  end
+  com += " -o #{ofile} "
+  sources = sources.flatten
+  sources = sources.uniq
+  com += sources.join(' ')
+  runc(com)
+end
+
 def bfile(hash)
   if hash.size > 1
     raise "ERROR: cannot contain more than one hash"
@@ -205,7 +223,18 @@ file build('Hash_test') => [
   build('Object.o'),
   build('List.o')
 ] do
-  sh "#{cc} #{cflags} -o #{build('Hash_test')} Hash_test.c #{build('Hash.o')} #{atom_types.join(' ')} #{build('Util.o')} #{build('Object.o')} #{build('List.o')}"
+  compile(
+    :program, 
+    build('Hash_test'),
+    [
+      'Hash_test.c',
+      atom_types,
+      build('Hash.o'),
+      build('Util.o'),
+      build('Object.o'),
+      build('List.o')
+    ]
+  )
 end
 
 desc "Build Tokenizer_test program"
