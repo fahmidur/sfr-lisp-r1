@@ -197,3 +197,10 @@ Object* Hash_get(Hash* self, Object* key) {
   return ret;
 }
 
+void Hash_print(Hash* self) {
+  // TODO
+}
+
+Hash* Hash_clone(Hash* self) {
+  // TODO
+}

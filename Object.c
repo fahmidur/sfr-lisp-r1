@@ -118,6 +118,10 @@ void Object_system_init() {
   };
   Object_oti_set(SYMBOL_LIST, otiarg_list);
 
+  //ObjectTypeInfo otiarg_hash = {
+  //  .fn_del = Hash_del,
+  //};
+
   ObjectTypeInfo otiarg_error = {
     .fn_del   = (void  (*)(void*))Error_del,
     .fn_print = (void  (*)(void*))Error_print,

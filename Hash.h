@@ -31,5 +31,7 @@ size_t  Hash_rem(Hash* self, Object* key);
 void    Hash_del(Hash* self);
 size_t  Hash_len(Hash* self);
 size_t  Hash_size(Hash* self);
+void    Hash_print(Hash* self);
+Hash*    Hash_clone(Hash* self);
 
 #endif
