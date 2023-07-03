@@ -25,8 +25,8 @@ struct Hash {
 };
 
 Hash*   Hash_new();
-size_t  Hash_set(Hash* self, Object* key, Object* val);
 Object* Hash_get(Hash* self, Object* key);
+size_t  Hash_set(Hash* self, Object* key, Object* val);
 size_t  Hash_rem(Hash* self, Object* key);
 void    Hash_del(Hash* self);
 size_t  Hash_len(Hash* self);
