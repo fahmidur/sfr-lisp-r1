@@ -34,6 +34,15 @@ int main(int argc, char** argv) {
   nassert(banana_color == yellow);
   nassert(Object_cmp(banana_color, yellow) == 0);
 
+  Hash_set(h1, apple, red);
+  printf("Printing hash h1 ... \n");
+  Hash_print(h1);
+
+  Object* green = QSTRING_NEW1("green");
+  Hash_set(h1, apple, green);
+  printf("print hash h1 again ...\n");
+  Hash_print(h1);
+
   //manual cleanup
   Hash_del(h1);
 

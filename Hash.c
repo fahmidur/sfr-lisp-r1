@@ -17,6 +17,10 @@ HashNode* HashNode_new(Object* key, Object* val) {
   return self;
 }
 
+void HashNode_print(HashNode* self) {
+  ObjectUtil_eprintf("HashNode(%v => %v)", self->key, self->val);
+}
+
 // TODO: what if key == val
 void HashNode_del(HashNode* self) {
   if(self->prev != NULL && self->next != NULL) {
@@ -198,9 +202,25 @@ Object* Hash_get(Hash* self, Object* key) {
 }
 
 void Hash_print(Hash* self) {
-  // TODO
+  HashNode* iter = NULL;
+  size_t i = 0;
+  printf("Hash(\n");
+  size_t printed = 0;
+  for(i = 0; i < HASH_BUCKET_SIZE; i++) {
+    iter = self->buckets[i];
+    while(iter != NULL) {
+      if(printed > 0) {
+        printf(",\n");
+      }
+      printf("  "); HashNode_print(iter);
+      printed++;
+      iter = iter->next;
+    }
+  }
+  printf("\n)\n");
 }
 
 Hash* Hash_clone(Hash* self) {
   // TODO
+  return NULL;
 }
