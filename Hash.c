@@ -323,12 +323,15 @@ char HashIter_at_end(HashIter* self) {
 
 Hash* Hash_clone(Hash* self) {
   Hash* clone = Hash_new();
-  // TODO
+  Object* key = NULL;
+  Object* val = NULL;
   // We need some nice way of iterating through our Hash.
   HashIter* iter = HashIter_new(self);
   for(HashIter_head(iter); !HashIter_at_end(iter); HashIter_next(iter)) {
+    key = HashIter_get_key(iter);
+    val = HashIter_get_val(iter);
+    Hash_set(clone, key, val);
   }
-
-  return NULL;
+  return clone;
 }
 
