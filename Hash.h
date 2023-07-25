@@ -25,14 +25,16 @@ struct Hash {
 };
 
 enum HashIterPos {
-  HASH_ITER_POS_BEG, // before the 'head' element.
-  HASH_ITER_POS_MID, // within collection of elements.
-  Hash_ITER_POS_END  // after the 'tail' element.
+  HASH_ITER_POS_NIL, // In limbo.
+  HASH_ITER_POS_BEG, // Before the 'head' element.
+  HASH_ITER_POS_INN, // Within collection of elements.
+  HASH_ITER_POS_END, // After the 'tail' element.
 };
 
 typedef struct HashIter HashIter;
 struct HashIter {
   Hash* hash;
+  enum HashIterPos at_pos;
   char at_beg;
   char at_end;
   size_t cbucket;

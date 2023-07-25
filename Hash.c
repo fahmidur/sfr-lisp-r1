@@ -223,8 +223,7 @@ void Hash_print(Hash* self) {
 HashIter* HashIter_new(Hash* hash) {
   HashIter* self = calloc(1, sizeof(HashIter));
   self->hash = hash;
-  self->at_beg = 0;
-  self->at_end = 0;
+  self->at_pos = HASH_ITER_POS_NIL;
   self->cbucket = 0;
   self->cnode = NULL;
   return self;
@@ -234,8 +233,7 @@ HashIter* HashIter_new(Hash* hash) {
 // Define 'head': The first element of Iterable
 HashIter* HashIter_head(HashIter* self) {
   Hash* hash = self->hash;
-  self->at_beg = 1;
-  self->at_end = 0;
+  self->at_pos = HASH_ITER_POS_BEG;
   self->cbucket = 0;
   self->cnode = NULL;
 
@@ -243,20 +241,20 @@ HashIter* HashIter_head(HashIter* self) {
   while(self->cbucket < HASH_BUCKET_SIZE && hash->buckets[self->cbucket] == NULL) {
     self->cbucket++;
   }
-  self->at_beg = 0;
+  //self->at_beg = 0;
+  self->at_pos = HASH_ITER_POS_INN;
   // cbucket is the first non-empty bucket index.
   // OR 
   // you have reached the end.
   if(self->cbucket == HASH_BUCKET_SIZE) {
-    self->at_end = 1;
-    return NULL;
+    self->at_pos = HASH_ITER_POS_END;
+    return self;
   }
   self->cnode = hash->buckets[self->cbucket];
   return self;
 }
 
 HashIter* HashIter_next(HashIter* self) {
-  // TODO: work in progress.
   Hash* hash = self->hash;
 
   /* if(self->at_beg == 0 && self->at_end == 0) { */
@@ -269,12 +267,12 @@ HashIter* HashIter_next(HashIter* self) {
   if(self->at_end) {
     // You have reached the end. 
     // The only way out of this position is with head and tail methods.
-    return NULL;
+    return self;
   }
 
   // Special position 'beg' denotes a place before even the first element.
   // Automatically go to the head element and stop.
-  if(self->at_beg) {
+  if(self->at_pos == HASH_ITER_POS_BEG) {
     return HashIter_head(self);
   }
 
@@ -291,8 +289,8 @@ HashIter* HashIter_next(HashIter* self) {
     self->cbucket++;
   }
   if(self->cbucket == HASH_BUCKET_SIZE) {
-    self->at_end = 1;
-    return NULL;
+    self->at_pos = HASH_ITER_POS_END;
+    return self;
   }
   self->cnode = hash->buckets[self->cbucket];
   return self;
@@ -313,11 +311,13 @@ Object* HashIter_get_val(HashIter* self) {
 }
 
 char HashIter_at_beg(HashIter* self) {
-  return self->at_beg;
+  //return self->at_beg;
+  return self->at_pos == HASH_ITER_POS_BEG;
 }
 
 char HashIter_at_end(HashIter* self) {
-  return self->at_end;
+  //return self->at_end;
+  return self->at_pos == HASH_ITER_POS_END;
 }
 
 Hash* Hash_clone(Hash* self) {
@@ -327,7 +327,7 @@ Hash* Hash_clone(Hash* self) {
   // We need some nice way of iterating through our Hash.
   HashIter* iter = HashIter_new(self);
   HashIter_head(iter);
-  while(HashIter_at_end(iter) != 1) {
+  while(!HashIter_at_end(iter)) {
     /* printf("----\n"); */
     /* printf("iter=%p\n", iter); */
     /* printf("cnode=%p\n",iter->cnode); */
