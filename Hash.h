@@ -24,6 +24,12 @@ struct Hash {
   HashNode** buckets;
 };
 
+enum HashIterPos {
+  HASH_ITER_POS_BEG, // before the 'head' element.
+  HASH_ITER_POS_MID, // within collection of elements.
+  Hash_ITER_POS_END  // after the 'tail' element.
+};
+
 typedef struct HashIter HashIter;
 struct HashIter {
   Hash* hash;
