@@ -35,8 +35,6 @@ typedef struct HashIter HashIter;
 struct HashIter {
   Hash* hash;
   enum HashIterPos at_pos;
-  char at_beg;
-  char at_end;
   size_t cbucket;
   HashNode* cnode;
 };

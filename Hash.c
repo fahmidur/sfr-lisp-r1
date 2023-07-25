@@ -241,7 +241,6 @@ HashIter* HashIter_head(HashIter* self) {
   while(self->cbucket < HASH_BUCKET_SIZE && hash->buckets[self->cbucket] == NULL) {
     self->cbucket++;
   }
-  //self->at_beg = 0;
   self->at_pos = HASH_ITER_POS_INN;
   // cbucket is the first non-empty bucket index.
   // OR 
@@ -257,14 +256,15 @@ HashIter* HashIter_head(HashIter* self) {
 HashIter* HashIter_next(HashIter* self) {
   Hash* hash = self->hash;
 
-  /* if(self->at_beg == 0 && self->at_end == 0) { */
+  if(self->at_pos == HASH_ITER_POS_NIL) { 
     // You are in limbo, neither the beginning or the end.
-    // Treat this position as the beginning.
-    /* self->at_beg = 1; */
-  /* } */
+    // Treat this position as the 'beg'.
+    // The user most likely forgot to call: HashIter_head(iter)
+    self->at_pos = HASH_ITER_POS_BEG;
+  }
 
   // Special position 'end' denotes a place after the last element.
-  if(self->at_end) {
+  if(self->at_pos == HASH_ITER_POS_END) {
     // You have reached the end. 
     // The only way out of this position is with head and tail methods.
     return self;
@@ -311,12 +311,10 @@ Object* HashIter_get_val(HashIter* self) {
 }
 
 char HashIter_at_beg(HashIter* self) {
-  //return self->at_beg;
   return self->at_pos == HASH_ITER_POS_BEG;
 }
 
 char HashIter_at_end(HashIter* self) {
-  //return self->at_end;
   return self->at_pos == HASH_ITER_POS_END;
 }
 
