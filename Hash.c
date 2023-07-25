@@ -221,6 +221,8 @@ void Hash_print(Hash* self) {
 }
 
 Hash* Hash_clone(Hash* self) {
+  Hash* clone = Hash_new();
   // TODO
+  // We need some nice way of iterating through our Hash.
   return NULL;
 }
