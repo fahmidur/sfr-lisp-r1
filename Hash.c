@@ -71,7 +71,7 @@ void HashNode_set_val(HashNode* self, Object* val) {
 }
 
 Hash* Hash_new() {
-  Hash* self = malloc(sizeof(Hash));
+  Hash* self = calloc(1, sizeof(Hash));
   self->size = 0;
   self->buckets = calloc(HASH_BUCKET_SIZE, sizeof(HashNode*));
   int i = 0;
@@ -220,9 +220,115 @@ void Hash_print(Hash* self) {
   printf("\n)\n");
 }
 
+HashIter* HashIter_new(Hash* hash) {
+  HashIter* self = calloc(1, sizeof(HashIter));
+  self->hash = hash;
+  self->at_beg = 0;
+  self->at_end = 0;
+  self->cbucket = 0;
+  self->cnode = NULL;
+  return self;
+}
+
+// Go to the first element.
+// Define 'head': The first element of Iterable
+HashIter* HashIter_head(HashIter* self) {
+  Hash* hash = self->hash;
+  self->at_beg = 1;
+  self->at_end = 0;
+  self->cbucket = 0;
+  self->cnode = NULL;
+
+  // Look for the first non-empty bucket
+  while(self->cbucket < HASH_BUCKET_SIZE && hash->buckets[self->cbucket] == NULL) {
+    self->cbucket++;
+  }
+  self->at_beg = 0;
+  // cbucket is the first non-empty bucket index.
+  // OR 
+  // you have reached the end.
+  if(self->cbucket == HASH_BUCKET_SIZE) {
+    self->at_end = 1;
+    return NULL;
+  }
+  self->cnode = hash->buckets[self->cbucket];
+  return self;
+}
+
+
+HashIter* HashIter_next(HashIter* self) {
+  // TODO: work in progress.
+  Hash* hash = self->hash;
+
+  if(self->at_beg == 0 && self->at_end == 0) {
+    // You are in limbo, neither the beginning or the end.
+    // Treat this position as the beginning.
+    self->at_beg = 1;
+  }
+
+  // Special position 'end' denotes a place after the last element.
+  if(self->at_end) {
+    // You have reached the end. 
+    // The only way out of this position is with head and tail methods.
+    return NULL;
+  }
+
+  // Special position 'beg' denotes a place before even the first element.
+  if(self->at_beg) {
+    return HashIter_head(self);
+  }
+
+  // Go to next node if there is one.
+  if(self->cnode != NULL && self->cnode->next != NULL) {
+    self->cnode = self->cnode->next;
+    return self;
+  } 
+
+  // Look for the next non-empty bucket
+  self->cnode = NULL;
+  while(self->cbucket < HASH_BUCKET_SIZE && hash->buckets[self->cbucket] == NULL) {
+    self->cbucket++;
+  }
+  if(self->cbucket == HASH_BUCKET_SIZE) {
+    self->at_end = 1;
+    return NULL;
+  }
+  self->cnode = hash->buckets[self->cbucket];
+
+  return self;
+}
+
+Object* HashIter_get_key(HashIter* self) {
+  if(self->cnode == NULL) {
+    return NULL;
+  }
+  return self->cnode->key;
+}
+
+Object* HashIter_get_val(HashIter* self) {
+  if(self->cnode == NULL) {
+    return NULL;
+  }
+  return self->cnode->key;
+}
+
+char HashIter_at_beg(HashIter* self) {
+  return self->at_beg;
+}
+
+char HashIter_at_end(HashIter* self) {
+  return self->at_end;
+}
+
+
 Hash* Hash_clone(Hash* self) {
   Hash* clone = Hash_new();
   // TODO
   // We need some nice way of iterating through our Hash.
+  HashIter* iter = HashIter_new(self);
+  for(HashIter_head(iter); !HashIter_at_end(iter); HashIter_next(iter)) {
+  }
+
   return NULL;
 }
+

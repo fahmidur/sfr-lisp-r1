@@ -24,6 +24,19 @@ struct Hash {
   HashNode** buckets;
 };
 
+typedef struct HashIter HashIter;
+struct HashIter {
+  Hash* hash;
+  char at_beg;
+  char at_end;
+  size_t cbucket;
+  HashNode* cnode;
+};
+// head = first element
+// tail = last element
+// beg  = special position before head
+// end  = special position before tail
+
 Hash*   Hash_new();
 Object* Hash_get(Hash* self, Object* key);
 size_t  Hash_set(Hash* self, Object* key, Object* val);
@@ -33,5 +46,7 @@ size_t  Hash_len(Hash* self);
 size_t  Hash_size(Hash* self);
 void    Hash_print(Hash* self);
 Hash*   Hash_clone(Hash* self);
+
+HashIter* HashIter_new(Hash* self);
 
 #endif
