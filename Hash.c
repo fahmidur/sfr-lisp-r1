@@ -255,16 +255,15 @@ HashIter* HashIter_head(HashIter* self) {
   return self;
 }
 
-
 HashIter* HashIter_next(HashIter* self) {
   // TODO: work in progress.
   Hash* hash = self->hash;
 
-  if(self->at_beg == 0 && self->at_end == 0) {
+  /* if(self->at_beg == 0 && self->at_end == 0) { */
     // You are in limbo, neither the beginning or the end.
     // Treat this position as the beginning.
-    self->at_beg = 1;
-  }
+    /* self->at_beg = 1; */
+  /* } */
 
   // Special position 'end' denotes a place after the last element.
   if(self->at_end) {
@@ -274,6 +273,7 @@ HashIter* HashIter_next(HashIter* self) {
   }
 
   // Special position 'beg' denotes a place before even the first element.
+  // Automatically go to the head element and stop.
   if(self->at_beg) {
     return HashIter_head(self);
   }
@@ -286,6 +286,7 @@ HashIter* HashIter_next(HashIter* self) {
 
   // Look for the next non-empty bucket
   self->cnode = NULL;
+  self->cbucket++;
   while(self->cbucket < HASH_BUCKET_SIZE && hash->buckets[self->cbucket] == NULL) {
     self->cbucket++;
   }
@@ -294,7 +295,6 @@ HashIter* HashIter_next(HashIter* self) {
     return NULL;
   }
   self->cnode = hash->buckets[self->cbucket];
-
   return self;
 }
 
@@ -309,7 +309,7 @@ Object* HashIter_get_val(HashIter* self) {
   if(self->cnode == NULL) {
     return NULL;
   }
-  return self->cnode->key;
+  return self->cnode->val;
 }
 
 char HashIter_at_beg(HashIter* self) {
@@ -320,17 +320,34 @@ char HashIter_at_end(HashIter* self) {
   return self->at_end;
 }
 
-
 Hash* Hash_clone(Hash* self) {
   Hash* clone = Hash_new();
   Object* key = NULL;
   Object* val = NULL;
   // We need some nice way of iterating through our Hash.
   HashIter* iter = HashIter_new(self);
-  for(HashIter_head(iter); !HashIter_at_end(iter); HashIter_next(iter)) {
+  HashIter_head(iter);
+  while(HashIter_at_end(iter) != 1) {
+    /* printf("----\n"); */
+    /* printf("iter=%p\n", iter); */
+    /* printf("cnode=%p\n",iter->cnode); */
     key = HashIter_get_key(iter);
     val = HashIter_get_val(iter);
+    ObjectUtil_eprintf("iter. key=%v val=%v\n", key, val);
+    /* if(iter->cnode == NULL) { */
+    /*   printf("cnode IS NULL\n"); */
+    /* }  */
+    /* else { */
+    /*   if(iter->cnode->next == NULL) { */
+    /*     printf("cnode->next IS NULL\n"); */
+    /*   } */
+    /*   else { */
+    /*     printf("cnode->next IS NOT NULL\n"); */
+    /*   } */
+    /* } */
     Hash_set(clone, key, val);
+    //---
+    HashIter_next(iter);
   }
   return clone;
 }
