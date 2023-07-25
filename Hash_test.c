@@ -43,15 +43,15 @@ int main(int argc, char** argv) {
   printf("print hash h1 again ...\n");
   Hash_print(h1);
 
-  /* printf("Cloning h1 into h1_clone ...\n"); */
-  /* Hash* h1_clone = Hash_clone(h1); */
-  /**/
-  /* printf("Printing h1_clone ...\n"); */
-  /* Hash_print(h1_clone); */
+  printf("Cloning h1 into h1_clone ...\n");
+  Hash* h1_clone = Hash_clone(h1);
+
+  printf("Printing h1_clone ...\n");
+  Hash_print(h1_clone);
 
   //manual cleanup
   Hash_del(h1);
-  /* Hash_del(h1_clone); */
+  Hash_del(h1_clone);
 
   Object_system_print();
   Object_system_done();
