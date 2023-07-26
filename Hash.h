@@ -54,5 +54,11 @@ void    Hash_print(Hash* self);
 Hash*   Hash_clone(Hash* self);
 
 HashIter* HashIter_new(Hash* self);
+HashIter* HashIter_head(HashIter* self);
+HashIter* HashIter_next(HashIter* self);
+Object*   HashIter_get_key(HashIter* self);
+Object*   HashIter_get_val(HashIter* self);
+char      HashIter_at_beg(HashIter* self);
+char      HashIter_at_end(HashIter* self);
 
 #endif
