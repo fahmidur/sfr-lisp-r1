@@ -322,27 +322,12 @@ Hash* Hash_clone(Hash* self) {
   Hash* clone = Hash_new();
   Object* key = NULL;
   Object* val = NULL;
-  // We need some nice way of iterating through our Hash.
   HashIter* iter = HashIter_new(self);
   HashIter_head(iter);
   while(!HashIter_at_end(iter)) {
-    /* printf("----\n"); */
-    /* printf("iter=%p\n", iter); */
-    /* printf("cnode=%p\n",iter->cnode); */
     key = HashIter_get_key(iter);
     val = HashIter_get_val(iter);
     ObjectUtil_eprintf("iter. key=%v val=%v\n", key, val);
-    /* if(iter->cnode == NULL) { */
-    /*   printf("cnode IS NULL\n"); */
-    /* }  */
-    /* else { */
-    /*   if(iter->cnode->next == NULL) { */
-    /*     printf("cnode->next IS NULL\n"); */
-    /*   } */
-    /*   else { */
-    /*     printf("cnode->next IS NOT NULL\n"); */
-    /*   } */
-    /* } */
     Hash_set(clone, key, val);
     //---
     HashIter_next(iter);
