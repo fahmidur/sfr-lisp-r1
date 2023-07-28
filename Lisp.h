@@ -20,3 +20,11 @@ Object* Lisp_parse_tokens(Object* tokenlist);
 // Lisp_parse_string(x) = Lisp_parse_tokens(Lisp_tokenize(x))
 Object* Lisp_parse_string(Object* string);
 
+// Eval the code given. 
+// Code is represented as an S-Expression.
+Object* Lisp_eval_code(Object* s_exp);
+
+// Eval the given string 
+// Lisp_eval_string(x) = Lisp_eval_code(Lisp_parse_string(x))
+Object* Lisp_eval_string(Object* string);
+
