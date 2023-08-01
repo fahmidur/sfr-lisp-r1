@@ -22,7 +22,7 @@ Object* Lisp_parse_string(Object* string);
 
 // Eval the code given. 
 // Code is represented as an S-Expression.
-Object* Lisp_eval_code(Object* s_exp);
+Object* Lisp_eval_sexp(Object* sexp);
 
 // Eval the given string 
 // Lisp_eval_string(x) = Lisp_eval_code(Lisp_parse_string(x))
