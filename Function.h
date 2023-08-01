@@ -6,14 +6,17 @@
 #include "Symbol.h"
 #include "Object.h"
 
+// TODO: work on this.
+
 typedef struct Function Function;
 struct Function {
   int arity;
-  Symbol* retwrap_type;
-  Object* (impl*)(List* args);
+  Symbol* ret_type;
+  // args must be of type List or Hash
+  Object* (impl*)(Object* args);
 };
 
-Function* Function_new(int arity, Symbol* retwrap_type) {
+Function* Function_new(int arity, Symbol* ret_type) {
 }
 
 #endif
