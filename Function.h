@@ -19,20 +19,11 @@ struct Function {
   Object* (impl*)(Object* args);
 };
 
-Function* Function_new(Object* (impl*)(Object* args)) {
-  Function* self = calloc(1, sizeof(Function));
-  return self;
-}
+Function* Function_new(Object* (impl*)(Object* args), int arity);
 
-Object* Function_call(Function* self, Object* args) {
-  if(Object_type(args) != SYMBOL_LIST) {
-    return Object_return(Object_new(SYMBOL_ERROR, 0, Error_new("Function expecting args of type SYMBOL_LIST")))
-  }
-  if(self->arity != -1 && self->arity != Object_len(args)) {
-    return Object_return(Object_new(SYMBOL_ERROR, 0, Error_new("Function args length arity mismatch")));
-  }
-  // TODO
-  return NULL;
-}
+Object* Function_call_n(Function* self, Object* args);
+Object* Function_call_1(Function* self, Object* arg1);
+Object* Function_call_2(Function* self, Object* arg1, Object* arg2);
 
 #endif
+
