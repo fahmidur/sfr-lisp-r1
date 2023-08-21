@@ -7,7 +7,8 @@
 #include "util.h"
 #include "object.h"
 
-// Tokenize a String object into flat List of objects.
+// Tokenize a String object into flat List of objects
+// where each Object is a Symbol, String, or Number
 Object* Lisp_tokenize(Object* string);
 
 // Parse a flat List of objects (tokens) into a 
