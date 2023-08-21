@@ -25,7 +25,7 @@ Function* Function_new(Object* (impl*)(Object* args), int arity);
 // Uses varargs from stdarg. 
 // Every argument is expected to be Object*
 // The argument length is taken from self->arity
-Object* Function_call_n(Function* self, ...);
+Object* Function_call(Function* self, ...);
 
 // Common for unary operator functions.
 Object* Function_call_1(Function* self, Object* arg1);
@@ -35,7 +35,7 @@ Object* Function_call_2(Function* self, Object* arg1, Object* arg2);
 
 // Call function for an Object.List args
 // Downside: Requires allocation of an Object.List for the args
-Object* Function_apply_n(Function* self, Object* args);
+Object* Function_apply(Function* self, Object* args);
 
 #endif
 
