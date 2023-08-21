@@ -13,7 +13,7 @@ Object* Function_apply(Function* self, Object* args) {
   if(self->arity < 0 && self->arity != Object_len(args)) {
     return Object_return(Object_new(SYMBOL_ERROR, 0, Error_new("Function args length arity mismatch")));
   }
-  // TODO
+  // TODO: finish this
   return NULL;
 }
 
