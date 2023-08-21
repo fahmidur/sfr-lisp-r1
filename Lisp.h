@@ -24,14 +24,17 @@ Object* Lisp_parse_string(Object* string);
 typedef struct LispEnv LispEnv;
 struct LispEnv {
   LispEnv* parent;
+  Hash* map;
 };
 
-// Eval the code given. 
+LispEnv* LispEnv_new(LispEnv* parent);
+void LispEnv_del(LispEnv* self);
+
+// Eval the code in the sexp.
 // Code is represented as an S-Expression.
 Object* Lisp_eval_sexp(Object* sexp, LispEnv* env);
 
 // Eval the given string 
 // Lisp_eval_string(x) = Lisp_eval_code(Lisp_parse_string(x))
 Object* Lisp_eval_string(Object* string, LispEnv* env);
-
 

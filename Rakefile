@@ -161,10 +161,10 @@ file build('Object.o') => ['Object.h', 'Object.c', *obj_hfiles] do
   sh "#{cc} #{cflags} -c -o #{build('Object.o')} Object.c"
 end
 
-desc "Build Function object"
-file build('Function.o') => ['Function.h', 'Function.c'] do
-  sh "#{cc} #{cflags} -c -o #{build('Function.o')} Function.c"
-end
+#desc "Build Function object"
+#file build('Function.o') => ['Function.h', 'Function.c'] do
+  #sh "#{cc} #{cflags} -c -o #{build('Function.o')} Function.c"
+#end
 
 desc "Build Runtime object"
 file build('Runtime.o') => [build('Object.o')] do
