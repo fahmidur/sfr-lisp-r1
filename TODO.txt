@@ -1,4 +1,4 @@
-- Create memory.h/memory.c to export
-  void* memory_safe_malloc(size_t)
-  void* memory_safe_calloc(size_t)
-  void  memory_safe_free(void* ptr)
+- Create memsafe.h/memsafe.c to export
+  void* memsafe_malloc(size_t)
+  void* memsafe_calloc(size_t)
+  void  memsafe_free(void* ptr)
