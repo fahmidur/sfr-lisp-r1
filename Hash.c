@@ -229,6 +229,13 @@ HashIter* HashIter_new(Hash* hash) {
   return self;
 }
 
+void HashIter_del(HashIter* self) {
+  if(self == NULL) {
+    return;
+  }
+  free(self);
+}
+
 // Go to the first element.
 // Define 'head': The first element of Iterable
 HashIter* HashIter_head(HashIter* self) {
@@ -332,6 +339,7 @@ Hash* Hash_clone(Hash* self) {
     //---
     HashIter_next(iter);
   }
+  HashIter_del(iter);
   return clone;
 }
 
