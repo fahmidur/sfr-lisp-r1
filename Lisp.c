@@ -6,7 +6,8 @@
 
 Object* Lisp_tokenize(Object* string) {
   size_t string_len = Object_len(string);
-  return NULL;
+  Object* ret = QLIST_NEW1();
+  return ret;
 }
 
 Object* Lisp_parse_tokens(Object* tokenlist) {

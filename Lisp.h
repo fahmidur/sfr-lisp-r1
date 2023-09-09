@@ -1,3 +1,11 @@
+/**
+ * The idea here is that Lisp.h will
+ * define everything needed to go from our
+ * crude reference counted runtime to Lisp.
+ * We will define a simple tokenizer, parser,
+ * and evaluater based on LispEnv.
+ * @author Syed Reza
+ */
 #ifndef _SFR_LISP_H
 #define _SFR_LISP_H
 
