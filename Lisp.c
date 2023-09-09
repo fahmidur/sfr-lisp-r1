@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "util.h"
-#include "object.h"
+#include "Util.h"
+#include "Object.h"
 #include "Lisp.h"
 
 Object* Lisp_tokenize(Object* string) {

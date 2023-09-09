@@ -1,10 +1,13 @@
+#ifndef _SFR_LISP_H
+#define _SFR_LISP_H
+
 // - Should use the new object system.
 // - We no longer care about partial tokenization.
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "util.h"
-#include "object.h"
+#include "Util.h"
+#include "Object.h"
 
 // Tokenize a String object into flat List of objects
 // where each Object is a Symbol, String, or Number
@@ -38,3 +41,4 @@ Object* Lisp_parse_string(Object* string);
 // Lisp_eval_string(x) = Lisp_eval_code(Lisp_parse_string(x))
 //Object* Lisp_eval_string(Object* string, LispEnv* env);
 
+#endif

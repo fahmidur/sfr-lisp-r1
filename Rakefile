@@ -171,6 +171,11 @@ file build('Runtime.o') => [build('Object.o')] do
   sh "#{cc} #{cflags} -c -o #{build('Runtime.o')} Runtime.c"
 end
 
+desc "Build Lisp.o object"
+file build('Lisp.o') => ['Lisp.c', 'Lisp.h'] do
+  sh "#{cc} #{cflags} -c -o #{build('Lisp.o')} Lisp.c"
+end
+
 desc "Build Tokenizer object"
 file build('Tokenizer.o') => ['Tokenizer.c', 'Tokenizer.h'] do
   sh "#{cc} #{cflags} -c -o #{build('Tokenizer.o')} Tokenizer.c"
