@@ -1,5 +1,5 @@
-#ifndef __SYMBOL
-#define __SYMBOL
+#ifndef _SFR_SYMBOL_H
+#define _SFR_SYMBOL_H
 
 #define SYMBOL_BUCKET_SIZE 2048
 #define SYMBOLVECTOR_ISIZE 32

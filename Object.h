@@ -1,5 +1,5 @@
-#ifndef _SFR_OBJECT
-#define _SFR_OBJECT
+#ifndef _SFR_OBJECT_H
+#define _SFR_OBJECT_H
 
 #include <stdio.h>
 #include <stdlib.h>

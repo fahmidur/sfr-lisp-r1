@@ -1,5 +1,5 @@
-#ifndef __SFR_UTIL
-#define __SFR_UTIL
+#ifndef __SFR_UTIL_H
+#define __SFR_UTIL_H
 
 #include <stdio.h>
 #include <stdlib.h>

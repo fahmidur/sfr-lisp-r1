@@ -1,5 +1,5 @@
-#ifndef _SFR_LIST
-#define _SFR_LIST
+#ifndef _SFR_LIST_H
+#define _SFR_LIST_H
 
 #include <stdio.h>
 #include <stdlib.h>

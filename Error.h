@@ -1,5 +1,5 @@
-#ifndef _SFR_ERROR
-#define _SFR_ERROR
+#ifndef _SFR_ERROR_H
+#define _SFR_ERROR_H
 
 #include <stdio.h>
 #include <stdlib.h>

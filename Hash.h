@@ -1,8 +1,7 @@
 // A simple hash map class
 
-
-#ifndef _SFR_HASH
-#define _SFR_HASH
+#ifndef _SFR_HASH_H
+#define _SFR_HASH_H
 
 #define HASH_BUCKET_SIZE 2048
 
