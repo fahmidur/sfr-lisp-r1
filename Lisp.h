@@ -1,6 +1,5 @@
 // - Should use the new object system.
-// - We no longer care about partial tokenization,
-//   just give me an Object of type List.
+// - We no longer care about partial tokenization.
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -22,20 +21,20 @@ Object* Lisp_parse_tokens(Object* tokenlist);
 Object* Lisp_parse_string(Object* string);
 
 // TODO: define LispEnv
-typedef struct LispEnv LispEnv;
-struct LispEnv {
-  LispEnv* parent;
-  Hash* map;
-};
+//typedef struct LispEnv LispEnv;
+//struct LispEnv {
+  //LispEnv* parent;
+  //Hash* map;
+//};
 
-LispEnv* LispEnv_new(LispEnv* parent);
-void LispEnv_del(LispEnv* self);
+//LispEnv* LispEnv_new(LispEnv* parent);
+//void LispEnv_del(LispEnv* self);
 
 // Eval the code in the sexp.
 // Code is represented as an S-Expression.
-Object* Lisp_eval_sexp(Object* sexp, LispEnv* env);
+//Object* Lisp_eval_sexp(Object* sexp, LispEnv* env);
 
 // Eval the given string 
 // Lisp_eval_string(x) = Lisp_eval_code(Lisp_parse_string(x))
-Object* Lisp_eval_string(Object* string, LispEnv* env);
+//Object* Lisp_eval_string(Object* string, LispEnv* env);
 
