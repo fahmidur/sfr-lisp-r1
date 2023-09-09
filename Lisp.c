@@ -5,6 +5,7 @@
 #include "Lisp.h"
 
 Object* Lisp_tokenize(Object* string) {
+  size_t string_len = Object_len(string);
   return NULL;
 }
 

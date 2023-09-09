@@ -135,4 +135,6 @@ void    Object_system_gc();
 #define QNUMBER_NEW1(x) Object_new(SYMBOL_NUMBER, 1, Number_new_from_double(x))
 #define QNUMBER_NEW0(x) Object_new(SYMBOL_NUMBER, 0, Number_new_from_double(x))
 
+#define QLIST_NEW1() Object_new(SYMBOL_LIST, 1, List_new())
+
 #endif

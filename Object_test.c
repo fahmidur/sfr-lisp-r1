@@ -187,6 +187,10 @@ int main(int argc, char** argv) {
   ObjectUtil_eprintf("tmp3 = %v\n", tmp3);
   nassert(Object_cmp(tmp3, mem1) == 0);
 
+  printf("Creating list3 with QLIST_NEW1() ...\n");
+  Object* list3 = QLIST_NEW1();
+  ObjectUtil_eprintf("list3 = %v\n", list3);
+
   Util_heading1(0, "LIST OPERATIONS");
 
   //===========================================================================
