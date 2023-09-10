@@ -179,8 +179,9 @@ end
 common_test_files = ['nassert.h']
 
 desc "Build nassert_test program"
-file build('nassert_test') => [*common_test_files, 'nassert_test.c'] do
-  sh "#{cc} #{cflags} -o #{build('nassert_test')} nassert_test.c"
+nassert_test_deps = [*common_test_files, 'nassert_test.c']
+file build('nassert_test') =>  nassert_test_deps do
+  compile(:program, build('nassert_test'), nassert_test_deps)
 end
 
 desc "Build leaky test program."
