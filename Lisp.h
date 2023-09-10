@@ -15,7 +15,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "Util.h"
+#include "Symbol.h"
 #include "Object.h"
+#include "Runtime.h"
 
 // Tokenize a String object into flat List of objects
 // where each Object is a Symbol, String, or Number
