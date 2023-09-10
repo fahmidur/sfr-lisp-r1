@@ -108,11 +108,6 @@ task :build do
   end
 end
 
-desc "Build leaky test program."
-file build('leaky') => ['leaky.c', 'nassert.h'] do
-  sh "#{cc} #{cflags} -o #{build('leaky')} leaky.c"
-end
-
 desc "Build Util object"
 file build("Util.o") => ["Util.h", "Util.c"] do
   sh "#{cc} #{cflags} -c -o #{build('Util.o')} Util.c"
@@ -181,35 +176,41 @@ end
 # Test Programs
 #=================
 
-nassert_hfile = ['nassert.h']
+common_test_files = ['nassert.h']
 
 desc "Build nassert_test program"
-file build('nassert_test') => [*nassert_hfile, 'nassert_test.c'] do
+file build('nassert_test') => [*common_test_files, 'nassert_test.c'] do
   sh "#{cc} #{cflags} -o #{build('nassert_test')} nassert_test.c"
 end
 
+desc "Build leaky test program."
+leaky_deps = deps([*common_test_files, 'leaky.c'])
+file build('leaky') => leaky_deps do
+  compile(:program, build('leaky'), leaky_deps)
+end
+
 desc "Build Symbol_test program"
-file build('Symbol_test') => [*nassert_hfile, build('Util.o'), 'Symbol_test.c', build('Symbol.o')] do
+file build('Symbol_test') => [*common_test_files, build('Util.o'), 'Symbol_test.c', build('Symbol.o')] do
   sh "#{cc} #{cflags} -o #{build('Symbol_test')} Symbol_test.c #{build('Symbol.o')} #{build('Util.o')}"
 end
 
 desc "Build String_test program"
-file build('String_test') => [*nassert_hfile, build('Util.o'), 'String_test.c', build('String.o')] do
+file build('String_test') => [*common_test_files, build('Util.o'), 'String_test.c', build('String.o')] do
   sh "#{cc} #{cflags} -o #{build('String_test')} String_test.c #{build('String.o')} #{build('Util.o')}"
 end
 
 desc "Build Number_test program"
-file build("Number_test") => [*nassert_hfile, build('Util.o'), 'Number_test.c', build('Number.o')] do
+file build("Number_test") => [*common_test_files, build('Util.o'), 'Number_test.c', build('Number.o')] do
   sh "#{cc} #{cflags} -o #{build('Number_test')} Number_test.c #{build('Number.o')}"
 end
 
 desc "Build Object_test program" 
-file build('Object_test') => [*nassert_hfile, build('Util.o'), 'Object_test.c', build('Object.o'), *obj_ofiles] do
+file build('Object_test') => [*common_test_files, build('Util.o'), 'Object_test.c', build('Object.o'), *obj_ofiles] do
   sh "#{cc} #{cflags} -o #{build('Object_test')} Object_test.c #{build('Object.o')} #{obj_ofiles.join(' ')} #{build('Util.o')}"
 end
 
 desc "Build Runtime_test program"
-file build('Runtime_test') => [*nassert_hfile, build('Util.o'), 'Runtime_test.c', build('Runtime.o'), build('Util.o'), build('Object.o'), *obj_ofiles] do
+file build('Runtime_test') => [*common_test_files, build('Util.o'), 'Runtime_test.c', build('Runtime.o'), build('Util.o'), build('Object.o'), *obj_ofiles] do
   sh "#{cc} #{cflags} -o #{build('Runtime_test')} Runtime_test.c #{build('Runtime.o')} #{build('Object.o')} #{obj_ofiles.join(' ')} #{build('Util.o')}"
 end
 
@@ -222,13 +223,13 @@ runtime_ofiles = [
 
 desc "Build List_test program"
 atom_types = ['Symbol', 'String', 'Number', 'Error'].map {|e| build("#{e}.o") }
-file build('List_test') => [*nassert_hfile, build('Util.o'), 'List_test.c', build('List.o'), *atom_types, build('Object.o')] do
+file build('List_test') => [*common_test_files, build('Util.o'), 'List_test.c', build('List.o'), *atom_types, build('Object.o')] do
   sh "#{cc} #{cflags} -o #{build('List_test')} List_test.c #{build('List.o')} #{atom_types.join(' ')} #{build('Util.o')} #{build('Object.o')}"
 end
 
 desc "Build Hash_test program"
 hash_test_deps = deps([
-  *nassert_hfile, 
+  *common_test_files, 
   build('Util.o'), 
   'Hash_test.c', 
   build('Hash.o'), 
@@ -242,19 +243,19 @@ end
 
 # SFR: Marked for deletion.
 desc "Build Tokenizer_test program"
-file build('Tokenizer_test') => [*nassert_hfile, build('Util.o'), 'Tokenizer_test.c', build('Tokenizer.o')] do
+file build('Tokenizer_test') => [*common_test_files, build('Util.o'), 'Tokenizer_test.c', build('Tokenizer.o')] do
   sh "#{cc} #{cflags} -o #{build('Tokenizer_test')} Tokenizer_test.c #{build('Tokenizer.o')}"
 end
 
 desc "Build Util_test program"
-util_test_deps = deps([*nassert_hfile, 'Util_test.c', build('Util.o')])
+util_test_deps = deps([*common_test_files, 'Util_test.c', build('Util.o')])
 file build('Util_test') =>  util_test_deps do
   #sh "#{cc} #{cflags} -o #{build('Util_test')} Util_test.c #{build('Util.o')}"
   compile(:program, build('Util_test'), util_test_deps)
 end
 
 desc "Build Lisp_test program"
-lisp_test_deps = deps([*nassert_hfile, 'Lisp_test.c', build('Lisp.o'), *runtime_ofiles])
+lisp_test_deps = deps([*common_test_files, 'Lisp_test.c', build('Lisp.o'), *runtime_ofiles])
 file build("Lisp_test") =>  lisp_test_deps do
   compile(:program, build('Lisp_test'), lisp_test_deps)
 end
