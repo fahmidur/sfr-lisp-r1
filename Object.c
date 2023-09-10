@@ -553,6 +553,17 @@ Object* Object_bop_div(Object* a, Object* b) {
   return ret;
 }
 
+char Object_bop_charat(Object* self, size_t idx) {
+  assert(self != NULL);
+  char ret = '\0';
+  Object_rc_incr(self);
+  if(Object_type(self) == SYMBOL_STRING) {
+    ret = String_charat(self->impl, idx);
+  }
+ Object_rc_decr(self);
+ return ret;
+}
+
 Object* Object_bop_at(Object* self, size_t idx) {
   assert(self != NULL);
   Object* ret = NULL;

@@ -19,6 +19,17 @@ String* String_new(char* istr) {
   return self;
 }
 
+char String_charat(String* self, size_t idx) {
+  if(idx < 0 || idx >= self->len) {
+    return '\0'; 
+  }
+  return self->buf[idx];
+}
+
+char String_charat_unsafe(String* self, size_t idx) {
+  return self->buf[idx];
+}
+
 size_t String_hash(String* self) {
   return Util_cstr_hash_djb2(self->buf);
 }
