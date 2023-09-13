@@ -28,7 +28,14 @@ int main(int argc, char** argv) {
   String* hello = String_new("Hello");
   String* there = String_new("There");
   String* conc1 = String_add(hello, there);
+  printf("conc1->buf = %s\n", conc1->buf);
   nassert(strcmp(conc1->buf, "HelloThere") == 0);
+
+  String* hello2 = String_new("General");
+  String* there2 = String_new("Kenobi");
+  String_addx(hello2, there2);
+  printf("hello2->buf = %s\n", hello2->buf);
+  nassert(strcmp(hello2->buf, "GeneralKenobi") == 0);
 
   String_del(str0);
   String_del(str1);
@@ -38,6 +45,8 @@ int main(int argc, char** argv) {
   String_del(hello);
   String_del(there);
   String_del(conc1);
+  String_del(hello2);
+  String_del(there2);
 
   nassert_report();
   return nassert_exit_code();

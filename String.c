@@ -47,6 +47,9 @@ String* String_clone(String* self) {
   return clone;
 }
 
+/**
+ * Add two strings a and b, returning a new String
+ */
 String* String_add(String* a, String* b) {
   String* clone = calloc(1, sizeof(String));
   clone->len = a->len + b->len;
@@ -62,6 +65,30 @@ String* String_add(String* a, String* b) {
     clone->buf[alen+i] = b->buf[i];
   }
   return clone;
+}
+
+/**
+ * Add a string to this string, modifying this string.
+ */
+String* String_addx(String* self, String* other) {
+  size_t new_len = self->len + other->len;
+  size_t new_buf_size = new_len + 1;
+  self->buf = realloc(self->buf, new_buf_size);
+  if(self->buf == NULL) {
+    return NULL;
+  }
+  self->buf_size = new_buf_size;
+  size_t i;
+  size_t self_len = self->len;
+  for(i = self_len; i < new_buf_size; i++) {
+    self->buf[i] = '\0';
+  }
+  size_t other_len = other->len;
+  for(i = 0; i < other_len; i++) {
+    self->buf[i+self_len] = other->buf[i];
+  }
+  self->len = new_len;
+  return self;
 }
 
 void String_del(String* self) {

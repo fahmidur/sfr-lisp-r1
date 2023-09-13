@@ -20,6 +20,8 @@ struct String {
 String* String_new(char* buf);
 String* String_clone(String* self);
 String* String_add(String* a, String* b);
+String* String_addx(String* self, String* other);
+//String* String_addx_char(String* self, char ch);
 ssize_t String_getline(struct String* self, FILE *stream);
 void String_zero(String* self);
 void String_del(String* self);
@@ -30,5 +32,6 @@ void String_print(String* self);
 size_t String_hash(String* self);
 char String_charat(String* self, size_t idx);
 char String_charat_unsafe(String* self, size_t idx);
+
 
 #endif

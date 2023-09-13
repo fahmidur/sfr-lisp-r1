@@ -43,6 +43,7 @@ Object* Lisp_tokenize(Object* string) {
   Object* paren_end = QSYMBOL_NEW1(")");
 
   Object* tmp = NULL;
+  Object* tmp_str = QSTRING_NEW1("");
 
   for(i = 0; i < string_len; i++) {
     ch = Object_bop_charat(string, i);
@@ -62,6 +63,8 @@ Object* Lisp_tokenize(Object* string) {
       }
     }
   }
+
+  Object_rc_decr(tmp_str);
 
   return ret;
 }
