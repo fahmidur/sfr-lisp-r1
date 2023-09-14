@@ -76,11 +76,13 @@ int main(int argc, char** argv) {
   printf("list2 ="); List_print(list2); printf("\n");
   nassert(List_len(list2) == 0);
 
-  //--- cleanup
+  //--- manual cleanup ---
+  List_del(list1);
+  List_del(list2);
+
   Object_system_print();
   Object_system_done();
   Symbol_system_done();
-  List_del(list1);
 
   nassert_report();
   return nassert_exit_code();

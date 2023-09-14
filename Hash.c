@@ -204,7 +204,10 @@ Object* Hash_get(Hash* self, Object* key) {
 void Hash_print(Hash* self) {
   HashNode* iter = NULL;
   size_t i = 0;
-  printf("Hash(\n");
+  printf("Hash(");
+  if(self->size > 0) {
+    printf("\n");
+  }
   size_t printed = 0;
   for(i = 0; i < HASH_BUCKET_SIZE; i++) {
     iter = self->buckets[i];
@@ -217,7 +220,28 @@ void Hash_print(Hash* self) {
       iter = iter->next;
     }
   }
-  printf("\n)\n");
+  if(self->size > 0) {
+    printf("\n");
+  }
+  printf(")\n");
+}
+
+/**
+ * Reset this hash to the empty hash
+ * deleting everything
+ */
+void Hash_zero(Hash* self) {
+  assert(self != NULL);
+  HashNode* iter = NULL;
+  size_t i = 0;
+  for(i = 0; i < HASH_BUCKET_SIZE; i++) {
+    iter = self->buckets[i];
+    if(iter != NULL) {
+      HashNode_del_fwd(iter);
+    }
+    self->buckets[i] = NULL;
+  }
+  self->size = 0;
 }
 
 HashIter* HashIter_new(Hash* hash) {

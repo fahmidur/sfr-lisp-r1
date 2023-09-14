@@ -49,9 +49,20 @@ int main(int argc, char** argv) {
   printf("Printing h1_clone ...\n");
   Hash_print(h1_clone);
 
-  //manual cleanup
+  Hash* h3 = Hash_new();
+  Hash_set(h3, apple, green);
+  Hash_set(h3, banana, yellow);
+  printf("h3 = "); Hash_print(h3); printf("\n");
+  nassert(Hash_len(h3) == 2);
+  printf("Hash_zero(h3)\n");
+  Hash_zero(h3);
+  printf("h3 = "); Hash_print(h3); printf("\n");
+  nassert(Hash_len(h3) == 0);
+
+  //--- manual cleanup ---
   Hash_del(h1);
   Hash_del(h1_clone);
+  Hash_del(h3);
 
   Object_system_print();
   Object_system_done();
