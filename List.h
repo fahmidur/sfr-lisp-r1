@@ -28,6 +28,7 @@ void ListNode_del(ListNode* self);
 List*     List_new();
 void      List_del(List* self);
 void      List_print(List* self);
+void      List_zero(List* self);
 List*     List_clone(List* self);
 int       List_cmp(List* self, List* other);
 

@@ -45,6 +45,13 @@ List* List_new() {
   return self;
 }
 
+void List_zero(List* self) {
+  assert(self != NULL);
+  while(List_len(self) > 0) {
+    Object_reject(List_pop(self));
+  }
+}
+
 size_t List_size(List* self) {
   return self->size;
 }

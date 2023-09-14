@@ -65,6 +65,17 @@ int main(int argc, char** argv) {
   printf("atx = "); Object_print(atx); printf("\n");
   nassert(atx == str1);
 
+  List* list2 = List_new();
+  List_push(list2, str1);
+  List_push(list2, str2);
+  List_push(list2, str3);
+  printf("list2 ="); List_print(list2); printf("\n");
+  nassert(List_len(list2) == 3);
+  printf("List_zero(list2)\n");
+  List_zero(list2);
+  printf("list2 ="); List_print(list2); printf("\n");
+  nassert(List_len(list2) == 0);
+
   //--- cleanup
   Object_system_print();
   Object_system_done();
