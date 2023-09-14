@@ -21,7 +21,7 @@ String* String_new(char* buf);
 String* String_clone(String* self);
 String* String_add(String* a, String* b);
 String* String_addx(String* self, String* other);
-//String* String_addx_char(String* self, char ch);
+String* String_addx_char(String* self, char ch);
 ssize_t String_getline(struct String* self, FILE *stream);
 void String_zero(String* self);
 void String_del(String* self);

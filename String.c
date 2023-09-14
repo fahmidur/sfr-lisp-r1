@@ -80,13 +80,31 @@ String* String_addx(String* self, String* other) {
   self->buf_size = new_buf_size;
   size_t i;
   size_t self_len = self->len;
-  for(i = self_len; i < new_buf_size; i++) {
-    self->buf[i] = '\0';
-  }
+  /*for(i = self_len; i < new_buf_size; i++) {*/
+    /*self->buf[i] = '\0';*/
+  /*}*/
   size_t other_len = other->len;
   for(i = 0; i < other_len; i++) {
     self->buf[i+self_len] = other->buf[i];
   }
+  self->buf[new_buf_size - 1] = '\0';
+  self->len = new_len;
+  return self;
+}
+
+/**
+ * Add a character to the end of this string.
+ */
+String* String_addx_char(String* self, char ch) {
+  size_t new_len = self->len + 1;
+  size_t new_buf_size = new_len + 1;
+  self->buf = realloc(self->buf, new_buf_size);
+  if(self->buf == NULL) {
+    return NULL;
+  }
+  self->buf_size = new_buf_size;
+  self->buf[new_len - 1] = ch;
+  self->buf[new_buf_size - 1] = '\0';
   self->len = new_len;
   return self;
 }

@@ -37,6 +37,20 @@ int main(int argc, char** argv) {
   printf("hello2->buf = %s\n", hello2->buf);
   nassert(strcmp(hello2->buf, "GeneralKenobi") == 0);
 
+  String* target1 = String_new("abc");
+  String_addx_char(target1, 'd');
+  printf("target1->buf = %s\n", target1->buf);
+  nassert(String_len(target1) == 4);
+  nassert(strcmp(target1->buf, "abcd") == 0);
+  int i;
+  char buf[] = "efghi";
+  for(i = 0; i < 5; i++) {
+    String_addx_char(target1, buf[i]);
+  }
+  printf("target1->buf = %s\n", target1->buf);
+  nassert(String_len(target1) == 9);
+  nassert(strcmp(target1->buf, "abcdefghi") == 0);
+
   String_del(str0);
   String_del(str1);
   String_del(str2);
@@ -47,6 +61,7 @@ int main(int argc, char** argv) {
   String_del(conc1);
   String_del(hello2);
   String_del(there2);
+  String_del(target1);
 
   nassert_report();
   return nassert_exit_code();
