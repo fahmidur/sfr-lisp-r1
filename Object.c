@@ -498,15 +498,32 @@ Object* Object_bop_addx(Object* a, Object* b) {
   Object* ret = NULL;
   if(Object_type(a) == SYMBOL_NUMBER && Object_type(b) == SYMBOL_NUMBER) {
     Number_addx(a->impl, b->impl);
+    ret = a;
   }
   else
   if(Object_type(a) == SYMBOL_STRING && Object_type(b) == SYMBOL_STRING) {
     String_addx(a->impl, b->impl);
+    ret = a;
   }
   else {
     ret = Object_return(Object_new(SYMBOL_ERROR, 0, Error_new("Invalid types bop_addx")));
   }
   Object_rc_decr(a); Object_rc_decr(b);
+  return ret;
+}
+
+Object* Object_bop_addx_char(Object* a, char ch) {
+  assert(a != NULL); assert(ch != '\0');
+  Object_rc_incr(a);
+  Object* ret = NULL;
+  if(Object_type(a) == SYMBOL_STRING) {
+    String_addx_char(a->impl, ch);
+    ret = a;
+  }
+  else {
+    ret = Object_return(Object_new(SYMBOL_ERROR, 0, Error_new("Invalid types bop_addx")));
+  }
+  Object_rc_decr(a);
   return ret;
 }
 
