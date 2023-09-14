@@ -93,7 +93,7 @@ String* String_addx(String* self, String* other) {
 }
 
 /**
- * Add a character to the end of this string.
+ * Add a single character to the end of this string.
  */
 String* String_addx_char(String* self, char ch) {
   size_t new_len = self->len + 1;

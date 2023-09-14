@@ -103,9 +103,8 @@ Object* Object_bop_sub(Object* a, Object* b);
 Object* Object_bop_mul(Object* a, Object* b);
 Object* Object_bop_div(Object* a, Object* b);
 
-// TODO
-Object* Object_bop_addx(Object* self, Object* other);
-Object* Object_bop_addx_char(Object* self, char ch);
+Object* Object_bop_addx(Object* a, Object* b);
+//Object* Object_bop_addx_char(Object* a, char ch);
 
 // Mainly List Ops
 size_t  Object_len(Object* self);

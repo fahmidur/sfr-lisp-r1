@@ -73,6 +73,12 @@ int main(int argc, char** argv) {
   /*Object_print(qstr1); printf("\n");*/
   ObjectUtil_eprintf("qstr1 = %v\n", qstr1);
 
+  Object* str_hello2 = QSTRING_NEW1("General");
+  Object* str_there2 = QSTRING_NEW1("Kenobi");
+  Object* str_conc2_exp = QSTRING_NEW1("GeneralKenobi");
+  Object_bop_addx(str_hello2, str_there2);
+  nassert(Object_cmp(str_hello2, str_conc2_exp) == 0);
+
   Util_heading1(0, "STRING OPERATIONS");
 
   //===========================================================================
@@ -82,6 +88,12 @@ int main(int argc, char** argv) {
   Object* num1 = Object_new(SYMBOL_NUMBER, 1, Number_new(3));
   Object* num2 = Object_new(SYMBOL_NUMBER, 1, Number_new(4));
 
+  Object* vnum1 = QNUMBER_NEW1(5);
+  Object* vnum2 = QNUMBER_NEW1(7);
+  Object* vnumx = QNUMBER_NEW1(12);
+  Object_bop_addx(vnum1, vnum2);
+  nassert(Object_cmp(vnum1, vnumx) == 0);
+
   printf("Test Number + Number ...\n");
   Object* res1 = Object_accept(Object_bop_add(num1, num2));
   ObjectUtil_eprintf("%v + %v = %v\n", num1, num2, res1);
@@ -89,6 +101,7 @@ int main(int argc, char** argv) {
   nassert(Object_cmp(res1, res1_expected) == 0);
   /*printf("res1 = "); Object_print(res1); printf("\n");*/
   ObjectUtil_eprintf("res1 = %v\n", res1);
+
 
   printf("Test Number - Number ...\n");
   Object* res2 = Object_accept(Object_bop_sub(num1, num2));
