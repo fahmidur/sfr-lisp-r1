@@ -49,6 +49,7 @@ struct ObjectTypeInfo {
   void   (*fn_del)(void* s); 
   void   (*fn_print)(void* s);
   void*  (*fn_clone)(void* s);
+  void   (*fn_zero)(void* s);
 };
 
 typedef struct ObjectSystem ObjectSystem;
@@ -97,7 +98,11 @@ void Object_assign(Object** targetptr, Object* source);
 // Return the hash of the object for use in Hash tables.
 size_t Object_hash(Object* self);
 
+// General ops
+Object* Object_zero(Object* self);
+
 // Mainly Number Ops
+size_t  Object_len(Object* self);
 Object* Object_bop_add(Object* a, Object* b);
 Object* Object_bop_sub(Object* a, Object* b);
 Object* Object_bop_mul(Object* a, Object* b);
@@ -107,7 +112,6 @@ Object* Object_bop_addx(Object* a, Object* b);
 //Object* Object_bop_addx_char(Object* a, char ch);
 
 // Mainly List Ops
-size_t  Object_len(Object* self);
 Object* Object_bop_push(Object* a, Object* b);
 Object* Object_uop_pop(Object* a);
 Object* Object_bop_unshift(Object* a, Object* b);
@@ -116,7 +120,6 @@ Object* Object_bop_at(Object* self, size_t idx);
 
 // Mainly String ops
 char    Object_bop_charat(Object* self, size_t idx);
-
 
 void ObjectUtil_eprintf(char* fmt, ...);
 

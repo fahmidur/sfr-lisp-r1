@@ -7,6 +7,7 @@
 #include "String.h"
 #include "Number.h"
 #include "List.h"
+#include "Hash.h"
 #include "Error.h"
 #include "Object.h"
 
@@ -100,27 +101,33 @@ void Object_system_init() {
   ObjectTypeInfo otiarg_string = {
     .fn_del   = (void  (*)(void*))String_del,
     .fn_print = (void  (*)(void*))String_print,
-    .fn_clone = (void* (*)(void*))String_clone
+    .fn_clone = (void* (*)(void*))String_clone,
+    .fn_zero  = (void  (*)(void*))String_zero
   };
   Object_oti_set(SYMBOL_STRING, otiarg_string);
 
   ObjectTypeInfo otiarg_number = {
     .fn_del   = (void  (*)(void*))Number_del,
     .fn_print = (void  (*)(void*))Number_print,
-    .fn_clone = (void* (*)(void*))Number_clone
+    .fn_clone = (void* (*)(void*))Number_clone,
+    .fn_zero  = (void (*)(void*))Number_zero
   };
   Object_oti_set(SYMBOL_NUMBER, otiarg_number);
 
   ObjectTypeInfo otiarg_list = {
-    .fn_del =   (void   (*)(void*))List_del,
+    .fn_del   = (void   (*)(void*))List_del,
     .fn_print = (void   (*)(void*))List_print,
-    .fn_clone = (void*  (*)(void*))List_clone
+    .fn_clone = (void*  (*)(void*))List_clone,
+    .fn_zero  = (void   (*)(void*))List_zero
   };
   Object_oti_set(SYMBOL_LIST, otiarg_list);
 
-  // ObjectTypeInfo otiarg_hash = {
-  //   .fn_del = (void (*)(void*)) Hash_del,
-  // };
+   ObjectTypeInfo otiarg_hash = {
+    .fn_del   = (void  (*)(void*))Hash_del,
+    .fn_print = (void  (*)(void*))Hash_print,
+    .fn_clone = (void* (*)(void*))Hash_clone,
+    .fn_zero  = (void  (*)(void*))Hash_zero
+   };
 
   ObjectTypeInfo otiarg_error = {
     .fn_del   = (void  (*)(void*))Error_del,
@@ -460,6 +467,32 @@ _return:
   assert(ret != NULL);
   Object_rc_decr(self);
   return ret;
+}
+
+/**
+ * Reset this object to the zero object.
+ */
+Object* Object_zero(Object* self) {
+  assert(self != NULL);
+  Object_rc_incr(self);
+  Symbol* self_type = Object_type(self);
+  if(self_type == SYMBOL_NUMBER) {
+    Number_zero(self->impl);
+  }
+  else
+  if(self_type == SYMBOL_STRING) {
+    String_zero(self->impl);
+  }
+  else
+  if(self_type == SYMBOL_LIST) {
+    List_zero(self->impl);
+  }
+  else
+  if(self_type == SYMBOL_HASH) {
+    Hash_zero(self->impl);
+  }
+  Object_rc_decr(self);
+  return self;
 }
 
 int Object_cmp(Object* a, Object* b) {

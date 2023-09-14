@@ -223,9 +223,13 @@ runtime_ofiles = [
 ].flatten.uniq
 
 desc "Build List_test program"
-atom_types = ['Symbol', 'String', 'Number', 'Error'].map {|e| build("#{e}.o") }
-file build('List_test') => [*test_files, build('Util.o'), 'List_test.c', build('List.o'), *atom_types, build('Object.o')] do
-  sh "#{cc} #{cflags} -o #{build('List_test')} List_test.c #{build('List.o')} #{atom_types.join(' ')} #{build('Util.o')} #{build('Object.o')}"
+atom_ofiles = ['Symbol', 'String', 'Number', 'Error'].map {|e| build("#{e}.o") }
+list_test_deps = deps([runtime_ofiles, 'List_test.c'])
+#file build('List_test') => [*test_files, build('Util.o'), 'List_test.c', build('List.o'), *atom_ofiles, build('Object.o')] do
+  #sh "#{cc} #{cflags} -o #{build('List_test')} List_test.c #{build('List.o')} #{atom_ofiles.join(' ')} #{build('Util.o')} #{build('Object.o')}"
+#end
+file build('List_test') => list_test_deps do
+  compile(:program, build('List_test'), list_test_deps)
 end
 
 desc "Build Hash_test program"
@@ -234,7 +238,7 @@ hash_test_deps = deps([
   build('Util.o'), 
   'Hash_test.c', 
   build('Hash.o'), 
-  *atom_types, 
+  *atom_ofiles, 
   build('Object.o'),
   build('List.o')
 ])
