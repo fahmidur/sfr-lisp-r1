@@ -222,12 +222,10 @@ runtime_ofiles = [
   build('Runtime.o'),
 ].flatten.uniq
 
-desc "Build List_test program"
 atom_ofiles = ['Symbol', 'String', 'Number', 'Error'].map {|e| build("#{e}.o") }
+
+desc "Build List_test program"
 list_test_deps = deps([runtime_ofiles, 'List_test.c'])
-#file build('List_test') => [*test_files, build('Util.o'), 'List_test.c', build('List.o'), *atom_ofiles, build('Object.o')] do
-  #sh "#{cc} #{cflags} -o #{build('List_test')} List_test.c #{build('List.o')} #{atom_ofiles.join(' ')} #{build('Util.o')} #{build('Object.o')}"
-#end
 file build('List_test') => list_test_deps do
   compile(:program, build('List_test'), list_test_deps)
 end
