@@ -126,8 +126,13 @@ void String_del(String* self) {
   free(self);
 }
 
+/**
+ * Reset this string to the zero state --
+ * the empty string.
+ */
 void String_zero(String* self) {
   memset(self->buf, 0, self->buf_size);
+  self->len = 0;
   #ifdef STRING_RETURN_MEMORY
     if(self->buf_size > String_MBUFSIZE) {
       self->buf = realloc(self->buf, String_IBUFSIZE);

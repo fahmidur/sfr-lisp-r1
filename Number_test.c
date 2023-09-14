@@ -4,6 +4,7 @@
 #include "Number.h"
 
 int main(int argc, char** argv) {
+  Number* n0 = Number_new_from_int(0);
   Number* n1 = Number_new_from_int(1);
   nassert(n1->rep == 1);
 
@@ -24,6 +25,10 @@ int main(int argc, char** argv) {
   nassert(dolly1->rep == dolly2->rep);
   nassert(dolly1 != dolly2);
 
+  Number_zero(n1);
+  nassert(Number_cmp(n1, n0) == 0);
+
+  Number_del(n0);
   Number_del(n1);
   Number_del(n2);
   Number_del(res1);

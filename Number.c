@@ -35,6 +35,10 @@ Number* Number_new(double x) {
   return Number_new_from_double(x);
 }
 
+void Number_zero(Number* self) {
+  self->rep = 0;
+}
+
 Number* Number_clone(Number* self) {
   Number* clone = calloc(1, sizeof(Number));
   clone->rep = self->rep;
