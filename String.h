@@ -33,5 +33,4 @@ size_t String_hash(String* self);
 char String_charat(String* self, size_t idx);
 char String_charat_unsafe(String* self, size_t idx);
 
-
 #endif
