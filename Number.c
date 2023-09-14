@@ -23,7 +23,11 @@ Number* Number_new_from_double(double x) {
 
 Number* Number_new_from_cstr(char* cstr) {
   Number* self = calloc(1, sizeof(Number));
-  self->rep = atof(cstr);
+  char* endptr;
+  self->rep = strtod(cstr, &endptr);
+  if(*endptr != '\0') {
+    return NULL;
+  }
   return self;
 }
 

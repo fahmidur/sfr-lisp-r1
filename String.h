@@ -33,4 +33,11 @@ size_t String_hash(String* self);
 char String_charat(String* self, size_t idx);
 char String_charat_unsafe(String* self, size_t idx);
 
+// TODO
+double String_to_double(String* self);
+float  String_to_float(String* self);
+long   String_to_long(String* self);
+int    String_to_int(String* self);
+char   String_to_char(String* self);
+
 #endif
