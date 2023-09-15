@@ -38,6 +38,7 @@ char Object_oti_set(Symbol* type, ObjectTypeInfo otiarg) {
   oti->fn_del   = otiarg.fn_del;
   oti->fn_print = otiarg.fn_print;
   oti->fn_clone = otiarg.fn_clone;
+  oti->fn_zero  = otiarg.fn_zero;
   ObjectTypeInfo* oti_old = object_system->types[oti->key];
   /*printf("oti_old=%p\n", oti_old);*/
   oti->next = oti_old;
@@ -475,21 +476,16 @@ _return:
 Object* Object_zero(Object* self) {
   assert(self != NULL);
   Object_rc_incr(self);
+
+  Object* ret = NULL;
   Symbol* self_type = Object_type(self);
-  if(self_type == SYMBOL_NUMBER) {
-    Number_zero(self->impl);
-  }
-  else
-  if(self_type == SYMBOL_STRING) {
-    String_zero(self->impl);
-  }
-  else
-  if(self_type == SYMBOL_LIST) {
-    List_zero(self->impl);
-  }
-  else
-  if(self_type == SYMBOL_HASH) {
-    Hash_zero(self->impl);
+  ObjectTypeInfo* oti = Object_oti_get(self_type);
+  
+  if(oti != NULL && oti->fn_zero != NULL) {
+    oti->fn_zero(self->impl);
+    ret = self;
+  } else {
+    ret = Object_return(Object_new(SYMBOL_ERROR, 0, Error_new("Missing zero for Object Type")));
   }
   Object_rc_decr(self);
   return self;

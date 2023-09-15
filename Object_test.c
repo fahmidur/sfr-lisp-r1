@@ -127,8 +127,18 @@ int main(int argc, char** argv) {
   Object_print(sum_invalid); printf("\n");
   nassert(Object_type(sum_invalid) == Symbol_new("Error"));
 
+  Object* qnum0 = QNUMBER_NEW1(0);
+
   Object* qnum1 = QNUMBER_NEW1(3.14);
   nassert(Object_type(qnum1) == SYMBOL_NUMBER);
+
+  Object* qnum2 = QNUMBER_NEW1(2.718);
+  nassert(Object_type(qnum2) == SYMBOL_NUMBER);
+  ObjectUtil_eprintf("qnum2 = %v\n", qnum2);
+  printf("Object_zero(qnum2) ...\n");
+  Object_zero(qnum2);
+  ObjectUtil_eprintf("qnum2 = %v\n", qnum2);
+  nassert(Object_cmp(qnum2, qnum0) == 0);
   
   Util_heading1(0, "NUMBER OPERATIONS");
 
