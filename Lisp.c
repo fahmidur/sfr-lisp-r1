@@ -83,7 +83,7 @@ Object* Lisp_tokenize(Object* string) {
         Object_bop_addx_char(tmp_str, ch);
       }
       else {
-        /*Object_bop_push(ret, Object_new(String_to_double(tmp_str)));*/
+        Object_bop_push(ret, Object_to_number(tmp_str));
         state = ts_Init;
         i--;
       }
