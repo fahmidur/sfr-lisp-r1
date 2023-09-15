@@ -79,6 +79,12 @@ int main(int argc, char** argv) {
   Object_bop_addx(str_hello2, str_there2);
   nassert(Object_cmp(str_hello2, str_conc2_exp) == 0);
 
+  Object* qstr0 = QSTRING_NEW1("");
+  Object* qstr5 = QSTRING_NEW1("a non-empty string");
+  ObjectUtil_eprintf("qstr5 = %v\n", qstr5);
+  Object_zero(qstr5);
+  nassert(Object_cmp(qstr0, qstr5) == 0);
+
   Util_heading1(0, "STRING OPERATIONS");
 
   //===========================================================================
