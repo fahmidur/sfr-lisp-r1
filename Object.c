@@ -200,6 +200,21 @@ void Object_assign(Object** targetptr, Object* source) {
   }
 }
 
+Object* Object_to_number(Object* self) {
+  assert(self != NULL);
+  Object_rc_incr(self);
+  Object* ret = NULL;
+  if(Object_type(self) == SYMBOL_STRING) {
+    ret = Object_new(SYMBOL_NUMBER, 0, Number_new(String_to_double(self->impl)));
+  }
+  else
+  if(Object_type(self) == SYMBOL_NUMBER) {
+    ret = Object_clone(self);
+  }
+  Object_rc_decr(self);
+  return Object_return(ret);
+}
+
 /**
  * Helper function to check if the object is 
  * the system null_object.

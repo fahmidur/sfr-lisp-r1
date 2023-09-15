@@ -71,7 +71,8 @@ size_t List_push(List* self, Object* obj) {
     listnode->prev = self->tail;
     self->tail = listnode;
   }
-  Object_rc_incr(obj);
+  /*Object_rc_incr(obj);*/
+  Object_accept(obj);
   self->size++;
   return self->size;
 }
@@ -201,7 +202,8 @@ List* List_clone(List* self) {
   List* clone = List_new();
   ListNode* iter = self->head;
   while(iter != NULL) {
-    List_push(clone, Object_accept(Object_clone(iter->data)));
+    /*List_push(clone, Object_accept(Object_clone(iter->data)));*/
+    List_push(clone, Object_clone(iter->data));
   }
   return clone;
 }

@@ -100,6 +100,7 @@ size_t Object_hash(Object* self);
 
 // General ops
 Object* Object_zero(Object* self);
+Object* Object_to_number(Object* self);
 
 // Mainly Number Ops
 size_t  Object_len(Object* self);
@@ -109,7 +110,7 @@ Object* Object_bop_mul(Object* a, Object* b);
 Object* Object_bop_div(Object* a, Object* b);
 
 Object* Object_bop_addx(Object* a, Object* b);
-//Object* Object_bop_addx_char(Object* a, char ch);
+Object* Object_bop_addx_char(Object* a, char ch);
 
 // Mainly List Ops
 Object* Object_bop_push(Object* a, Object* b);

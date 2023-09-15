@@ -42,7 +42,6 @@ Object* Lisp_tokenize(Object* string) {
   Object* paren_beg = QSYMBOL_NEW1("(");
   Object* paren_end = QSYMBOL_NEW1(")");
 
-  Object* tmp = NULL;
   Object* tmp_str = QSTRING_NEW1("");
 
   for(i = 0; i < string_len; i++) {
@@ -59,7 +58,34 @@ Object* Lisp_tokenize(Object* string) {
       else
       if(TokenizerUtil_isdigit(ch)) {
         state = ts_InNumber;
-        // TODO
+        Object_bop_addx_char(tmp_str, ch);
+      }
+    }
+    else
+    if(state == ts_InNumber) {
+      if(TokenizerUtil_isdigit(ch)) {
+        Object_bop_addx_char(tmp_str, ch);
+      }
+      else
+      if(ch == '.') {
+        Object_bop_addx_char(tmp_str, ch);
+        state = ts_InNumberFloat;
+      }
+      else {
+        Object_bop_push(ret, Object_to_number(tmp_str));
+        state = ts_Init;
+        i--;
+      }
+    }
+    else
+    if(state == ts_InNumberFloat) {
+      if(TokenizerUtil_isdigit(ch)) {
+        Object_bop_addx_char(tmp_str, ch);
+      }
+      else {
+        /*Object_bop_push(ret, Object_new(String_to_double(tmp_str)));*/
+        state = ts_Init;
+        i--;
       }
     }
   }
