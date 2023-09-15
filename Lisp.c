@@ -52,12 +52,17 @@ Object* Lisp_tokenize(Object* string) {
         Object_bop_push(ret, paren_beg);
       }
       else
-      if(ch == '(') {
+      if(ch == ')') {
         Object_bop_push(ret, paren_end);
       }
       else
       if(TokenizerUtil_isdigit(ch)) {
         state = ts_InNumber;
+        Object_bop_addx_char(tmp_str, ch);
+      }
+      else
+      if(TokenizerUtil_wordlike(ch)) {
+        state = ts_InBareWord;
         Object_bop_addx_char(tmp_str, ch);
       }
     }
@@ -75,6 +80,7 @@ Object* Lisp_tokenize(Object* string) {
         Object_bop_push(ret, Object_to_number(tmp_str));
         state = ts_Init;
         i--;
+        Object_zero(tmp_str);
       }
     }
     else
@@ -88,9 +94,30 @@ Object* Lisp_tokenize(Object* string) {
         i--;
       }
     }
+    else
+    if(state == ts_InBareWord) {
+      if(TokenizerUtil_wordlike(ch)) {
+        Object_bop_addx_char(tmp_str, ch);
+      }
+      else {
+        // TODO: uh oh here we need to differentiate between
+        // a String and BareWord. So we may need a LispToken 
+        // type after-all.
+        Object_bop_push(ret, Object_clone(tmp_str));
+        state = ts_Init;
+        i--;
+      }
+    }
+  }
+
+  if(state == ts_InNumber || state == ts_InNumberFloat) {
+    Object_bop_push(ret, Object_to_number(tmp_str));
+    Object_zero(tmp_str);
   }
 
   Object_rc_decr(tmp_str);
+  Object_return(ret);
+  Object_rc_decr(ret);
 
   return ret;
 }
