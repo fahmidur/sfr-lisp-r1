@@ -39,5 +39,6 @@ long   String_to_long(String* self);
 long   String_to_long_b(String* self, int base);
 char   String_to_char(String* self);
 int    String_to_int(String* self);
+char*  String_cstr(String* self);
 
 #endif

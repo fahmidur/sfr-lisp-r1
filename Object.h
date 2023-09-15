@@ -101,6 +101,8 @@ size_t Object_hash(Object* self);
 // General ops
 Object* Object_zero(Object* self);
 Object* Object_to_number(Object* self);
+Object* Object_to_symbol(Object* self);
+Object* Object_to_string(Object* self);
 
 // Mainly Number Ops
 size_t  Object_len(Object* self);

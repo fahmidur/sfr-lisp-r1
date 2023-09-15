@@ -242,3 +242,7 @@ int String_cmp(String* self, String* other) {
 void String_print(String* self) {
   printf("String(%s)", self->buf);
 }
+
+char* String_cstr(String* self) {
+  return self->buf;
+}

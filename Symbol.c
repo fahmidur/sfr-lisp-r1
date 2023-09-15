@@ -216,3 +216,7 @@ int Symbol_cmp(Symbol* self, Symbol* other) {
   }
   return strcmp(self->str, other->str);
 }
+
+char* Symbol_cstr(Symbol* self) {
+  return self->str;
+}
