@@ -19,6 +19,27 @@ String* String_new(char* istr) {
   return self;
 }
 
+/**
+ * Convert String to double using strtod.
+ */
+double String_to_double(String* self) {
+  char* endptr;
+  double ret = strtod(self->buf, &endptr);
+  if(*endptr != '\0') {
+    return 0;
+  }
+  return ret;
+}
+
+/**
+ * Convert string to char.
+ * It only makes sense to do this to strings
+ * of length 1.
+ */
+char String_to_char(String* self) {
+  return String_charat(self, 0);
+}
+
 char String_charat(String* self, size_t idx) {
   if(idx < 0 || idx >= self->len) {
     return '\0'; 
