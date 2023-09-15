@@ -26,9 +26,9 @@ long String_to_long(String* self) {
   char* endptr;
   // TODO: infer base based on format of string
   long ret = strtol(self->buf, &endptr, 10);
-  if(*endptr != '\0') {
-    return 0;
-  }
+  /*if(*endptr != '\0') {*/
+    /*return 0;*/
+  /*}*/
   return ret;
 }
 
@@ -39,9 +39,9 @@ long String_to_long_b(String* self, int base) {
   char* endptr;
   // TODO: infer base based on format of string
   long ret = strtol(self->buf, &endptr, base);
-  if(*endptr != '\0') {
-    return 0;
-  }
+  /*if(*endptr != '\0') {*/
+    /*return 0;*/
+  /*}*/
   return ret;
 }
 
@@ -55,9 +55,9 @@ int String_to_int(String* self) {
 double String_to_double(String* self) {
   char* endptr;
   double ret = strtod(self->buf, &endptr);
-  if(*endptr != '\0') {
-    return 0;
-  }
+  /*if(*endptr != '\0') {*/
+    /*return 0;*/
+  /*}*/
   return ret;
 }
 

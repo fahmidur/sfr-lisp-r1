@@ -51,6 +51,15 @@ int main(int argc, char** argv) {
   nassert(String_len(target1) == 9);
   nassert(strcmp(target1->buf, "abcdefghi") == 0);
 
+  String* numeric1 = String_new("1337.5");
+  nassert(String_to_double(numeric1) == 1337.5);
+  nassert(String_to_float(numeric1) == 1337.5f);
+  nassert(String_to_long(numeric1) == 1337L);
+  nassert(String_to_int(numeric1) == 1337);
+
+  String* single_char = String_new("x");
+  nassert(String_to_char(single_char) == 'x');
+
   String_del(str0);
   String_del(str1);
   String_del(str2);
@@ -62,6 +71,8 @@ int main(int argc, char** argv) {
   String_del(hello2);
   String_del(there2);
   String_del(target1);
+  String_del(numeric1);
+  String_del(single_char);
 
   nassert_report();
   return nassert_exit_code();
