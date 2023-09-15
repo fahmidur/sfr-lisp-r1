@@ -20,7 +20,37 @@ String* String_new(char* istr) {
 }
 
 /**
- * Convert String to double using strtod.
+ * Convert this string to a long.
+ */
+long String_to_long(String* self) {
+  char* endptr;
+  // TODO: infer base based on format of string
+  long ret = strtol(self->buf, &endptr, 10);
+  if(*endptr != '\0') {
+    return 0;
+  }
+  return ret;
+}
+
+/**
+ * Convert this string to a long with a given base.
+ */
+long String_to_long_b(String* self, int base) {
+  char* endptr;
+  // TODO: infer base based on format of string
+  long ret = strtol(self->buf, &endptr, base);
+  if(*endptr != '\0') {
+    return 0;
+  }
+  return ret;
+}
+
+int String_to_int(String* self) {
+  return (int) String_to_long(self);
+}
+
+/**
+ * Convert this string to double using strtod.
  */
 double String_to_double(String* self) {
   char* endptr;
@@ -32,9 +62,20 @@ double String_to_double(String* self) {
 }
 
 /**
+ * Convert this string to a float.
+ */
+float String_to_float(String* self) {
+  char* endptr;
+  double ret = strtof(self->buf, &endptr);
+  if(*endptr != '\0') {
+    return 0;
+  }
+  return ret;
+}
+
+/**
  * Convert string to char.
- * It only makes sense to do this to strings
- * of length 1.
+ * It only makes sense to do this to strings of length 1.
  */
 char String_to_char(String* self) {
   return String_charat(self, 0);
