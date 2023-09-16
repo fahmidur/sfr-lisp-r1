@@ -47,9 +47,11 @@ Object* Lisp_tokenize(Object* string) {
   for(i = 0; i < string_len; i++) {
     ch = Object_bop_charat(string, i);
     printf("Lisp_tokenize. ch=%c\n", ch);
+    printf("debug. state=ts_Init\n");
     if(state == ts_Init) {
       if(ch == '-') {
         state = ts_InNumberNegMaybe;
+        printf("debug. state=ts_InNumberNegMaybe\n");
         Object_bop_addx_char(tmp_str, ch);
       }
       if(ch == ' ') {
@@ -66,11 +68,13 @@ Object* Lisp_tokenize(Object* string) {
       else
       if(TokenizerUtil_isdigit(ch)) {
         state = ts_InNumber;
+        printf("debug. state=ts_InNumber\n");
         Object_bop_addx_char(tmp_str, ch);
       }
       else
       if(TokenizerUtil_wordlike(ch)) {
         state = ts_InBareWord;
+        printf("debug. state=ts_InBareWord\n");
         Object_bop_addx_char(tmp_str, ch);
       }
     }
@@ -82,6 +86,7 @@ Object* Lisp_tokenize(Object* string) {
       else
       if(ch == '.') {
         state = ts_InNumberFloat;
+        printf("debug. state=ts_InNumberFloat\n");
         Object_bop_addx_char(tmp_str, ch);
       }
       else {
@@ -89,6 +94,7 @@ Object* Lisp_tokenize(Object* string) {
         Object_zero(tmp_str);
         i--;
         state = ts_Init;
+        printf("debug. state=ts_Init\n");
       }
     }
     else
@@ -101,6 +107,7 @@ Object* Lisp_tokenize(Object* string) {
         Object_zero(tmp_str);
         i--;
         state = ts_Init;
+        printf("debug. state=ts_Init\n");
       }
     }
     else
@@ -113,19 +120,21 @@ Object* Lisp_tokenize(Object* string) {
         Object_zero(tmp_str);
         i--;
         state = ts_Init;
+        printf("debug. state=ts_Init\n");
       }
     }
     else
     if(state == ts_InNumberNegMaybe) {
       if(TokenizerUtil_isdigit(ch)) {
         state = ts_InNumber;
-        Object_bop_addx_char(tmp_str, '-');
+        Object_bop_addx_char(tmp_str, ch);
       }
       else {
-        // the '-' will be treated as BareWord
-        Object_bop_addx_char(tmp_str, '-');
+        // the previous '-' will be treated as BareWord
+        //Object_bop_addx_char(tmp_str, '-');
         i--;
         state = ts_InBareWord;
+        printf("debug. state=ts_InBareWord\n");
       }
     }
   }
