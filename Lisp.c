@@ -48,6 +48,14 @@ Object* Lisp_tokenize(Object* string) {
     ch = Object_bop_charat(string, i);
     printf("Lisp_tokenize. ch=%c\n", ch);
     if(state == ts_Init) {
+      if(ch == '-') {
+        state = ts_InNumberNegMaybe;
+        Object_bop_addx_char(tmp_str, ch);
+      }
+      if(ch == ' ') {
+        // eat it
+      }
+      else
       if(ch == '(') {
         Object_bop_push(ret, paren_beg);
       }
@@ -73,14 +81,14 @@ Object* Lisp_tokenize(Object* string) {
       }
       else
       if(ch == '.') {
-        Object_bop_addx_char(tmp_str, ch);
         state = ts_InNumberFloat;
+        Object_bop_addx_char(tmp_str, ch);
       }
       else {
         Object_bop_push(ret, Object_to_number(tmp_str));
-        state = ts_Init;
-        i--;
         Object_zero(tmp_str);
+        i--;
+        state = ts_Init;
       }
     }
     else
@@ -90,8 +98,9 @@ Object* Lisp_tokenize(Object* string) {
       }
       else {
         Object_bop_push(ret, Object_to_number(tmp_str));
-        state = ts_Init;
+        Object_zero(tmp_str);
         i--;
+        state = ts_Init;
       }
     }
     else
@@ -100,12 +109,23 @@ Object* Lisp_tokenize(Object* string) {
         Object_bop_addx_char(tmp_str, ch);
       }
       else {
-        // TODO: uh oh here we need to differentiate between
-        // a String and BareWord. So we may need a LispToken 
-        // type after-all.
         Object_bop_push(ret, Object_to_symbol(tmp_str));
-        state = ts_Init;
+        Object_zero(tmp_str);
         i--;
+        state = ts_Init;
+      }
+    }
+    else
+    if(state == ts_InNumberNegMaybe) {
+      if(TokenizerUtil_isdigit(ch)) {
+        state = ts_InNumber;
+        Object_bop_addx_char(tmp_str, '-');
+      }
+      else {
+        // the '-' will be treated as BareWord
+        Object_bop_addx_char(tmp_str, '-');
+        i--;
+        state = ts_InBareWord;
       }
     }
   }
