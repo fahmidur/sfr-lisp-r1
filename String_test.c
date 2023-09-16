@@ -57,6 +57,12 @@ int main(int argc, char** argv) {
   nassert(String_to_long(numeric1) == 1337L);
   nassert(String_to_int(numeric1) == 1337);
 
+  String* numeric2 = String_new("-217.15");
+  nassert(String_to_double(numeric2) == -217.15);
+  nassert(String_to_float(numeric2) == -217.15f);
+  nassert(String_to_long(numeric2) == -217L);
+  nassert(String_to_int(numeric2) == -217);
+
   String* single_char = String_new("x");
   nassert(String_to_char(single_char) == 'x');
 
@@ -72,6 +78,7 @@ int main(int argc, char** argv) {
   String_del(there2);
   String_del(target1);
   String_del(numeric1);
+  String_del(numeric2);
   String_del(single_char);
 
   nassert_report();
