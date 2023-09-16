@@ -205,12 +205,15 @@ Object* Object_to_number(Object* self) {
   Object_rc_incr(self);
   Object* ret = NULL;
   if(Object_type(self) == SYMBOL_STRING) {
+    // String to Number
     ret = Object_return(Object_new(SYMBOL_NUMBER, 0, Number_new(String_to_double(self->impl))));
   }
   else
   if(Object_type(self) == SYMBOL_NUMBER) {
+    // Number to Number
     ret = Object_return(Object_clone(self));
   }
+  //TODO: what about Symbol to Number?
   Object_rc_decr(self);
   return ret;
 }
@@ -220,14 +223,17 @@ Object* Object_to_string(Object* self) {
   Object_rc_incr(self);
   Object* ret = NULL;
   if(Object_type(self) == SYMBOL_SYMBOL) {
+    // Symbol to String
     ret = Object_return(
       Object_new(SYMBOL_STRING, 0, String_new(Symbol_cstr(self->impl)))
     );
   }
   else
   if(Object_type(self) == SYMBOL_STRING) {
+    // String to String
     ret = Object_clone(self);
   }
+  // TODO: what about Number to String?
   Object_rc_decr(self);
   return ret;
 }
