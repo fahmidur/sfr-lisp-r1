@@ -85,6 +85,20 @@ int main(int argc, char** argv) {
   Object_zero(qstr5);
   nassert(Object_cmp(qstr0, qstr5) == 0);
 
+  // Test conversion of String -> Symbol
+  Object* qstr6 = QSTRING_NEW1("+");
+  ObjectUtil_eprintf("qstr6 = %v\n", qstr6);
+  nassert(Object_type(qstr6) == SYMBOL_STRING);
+  Object* qstr6_symbol = Object_accept(Object_to_symbol(qstr6));
+  nassert(Object_is_returning(qstr6_symbol) == 0);
+  ObjectUtil_eprintf("qstr6_symbol = %v\n", qstr6_symbol);
+  nassert(Object_type(qstr6_symbol) == SYMBOL_SYMBOL);
+  Object* plus_symbol = QSYMBOL_NEW1("+");
+  nassert(Object_cmp(plus_symbol, qstr6_symbol) == 0);
+
+  // Test conversion of String -> Number
+  // TODO
+
   Util_heading1(0, "STRING OPERATIONS");
 
   //===========================================================================

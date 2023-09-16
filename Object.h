@@ -90,6 +90,7 @@ Object* Object_accept(Object* self);
 Object* Object_reject(Object* self);
 char Object_is_null(Object* self);
 char Object_is_error(Object* self);
+char Object_is_returning(Object* self);
 
 
 // Helper to make assignments with rc easier.

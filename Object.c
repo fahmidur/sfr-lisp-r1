@@ -239,12 +239,11 @@ Object* Object_to_symbol(Object* self) {
   Object* ret = NULL;
   if(Object_type(self) == SYMBOL_STRING) {
     ret = Object_return(
-      Object_new(SYMBOL_STRING, 0, Symbol_new(String_cstr(self->impl)))
+      Object_new(SYMBOL_SYMBOL, 0, Symbol_new(String_cstr(self->impl)))
     );
   }
   else
   if(Object_type(self) == SYMBOL_SYMBOL) {
-    // a symbol is always itself, no cloning
     ret = self;
   }
   Object_rc_decr(self);
@@ -282,6 +281,11 @@ Object* Object_return(Object* self) {
   assert(self != NULL);
   self->returning = 1;
   return self;
+}
+
+char Object_is_returning(Object* self) {
+  assert(self != NULL);
+  return self->returning;
 }
 
 Object* Object_accept(Object* self) {
