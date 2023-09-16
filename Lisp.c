@@ -103,7 +103,7 @@ Object* Lisp_tokenize(Object* string) {
         // TODO: uh oh here we need to differentiate between
         // a String and BareWord. So we may need a LispToken 
         // type after-all.
-        Object_bop_push(ret, Object_clone(tmp_str));
+        Object_bop_push(ret, Object_to_symbol(tmp_str));
         state = ts_Init;
         i--;
       }
