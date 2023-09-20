@@ -20,6 +20,10 @@ int main(int argc, char** argv) {
   Object* tc3_tokens = Object_accept(Lisp_tokenize(tc3_string));
   ObjectUtil_eprintf("tc3_tokens = %v\n", tc3_tokens);
 
+  Object* tc4_string = QSTRING_NEW1("(+ 5 -9)");
+  Object* tc4_tokens = Object_accept(Lisp_tokenize(tc4_string));
+  ObjectUtil_eprintf("tc4_tokens = %v\n", tc4_tokens);
+
   Runtime_done();
 
   //----
