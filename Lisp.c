@@ -85,6 +85,7 @@ Object* Lisp_tokenize(Object* string) {
         /*printf("debug. state=ts_InNumberNegMaybe\n");*/
         /*Object_bop_addx_char(tmp_str, ch);*/
       }
+      else
       if(ch == ' ') {
         // eat it
       }
@@ -157,9 +158,11 @@ Object* Lisp_tokenize(Object* string) {
     else
     if(state == ts_InNumberNegMaybe) {
       if(TokenizerUtil_isdigit(ch)) {
-        state = ts_InNumber;
         Object_bop_addx_char(tmp_str, '-');
-        Object_bop_addx_char(tmp_str, ch);
+        i--;
+        state = ts_InNumber;
+        // now we handle the rest as we would any other number.
+        /*Object_bop_addx_char(tmp_str, ch);*/
       }
       else {
         // the previous '-' will be treated as BareWord
