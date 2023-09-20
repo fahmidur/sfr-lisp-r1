@@ -16,10 +16,12 @@ int main(int argc, char** argv) {
   /*Object* tc2_tokens = Object_accept(Lisp_tokenize(tc2_string));*/
   /*ObjectUtil_eprintf("tc2_tokens = %v\n", tc2_tokens);*/
 
+  printf("\n=== === tc3_string === ===\n");
   Object* tc3_string = QSTRING_NEW1("(- 123 23)");
   Object* tc3_tokens = Object_accept(Lisp_tokenize(tc3_string));
   ObjectUtil_eprintf("tc3_tokens = %v\n", tc3_tokens);
 
+  printf("\n=== === tc4 ===  ===\n");
   Object* tc4_string = QSTRING_NEW1("(+ 5 -9)");
   Object* tc4_tokens = Object_accept(Lisp_tokenize(tc4_string));
   ObjectUtil_eprintf("tc4_tokens = %v\n", tc4_tokens);
