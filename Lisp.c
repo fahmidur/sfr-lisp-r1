@@ -59,6 +59,11 @@ void print_TokenizerState(TokenizerState x) {
   }
 }
 
+void set_state(TokenizerState* state_ptr, TokenizerState new_state) {
+  *state_ptr = new_state;
+  printf("state="); print_TokenizerState(*state_ptr); printf("\n");
+}
+
 Object* Lisp_tokenize(Object* string) {
   size_t string_len = Object_len(string);
   Object* ret = QLIST_NEW1();
@@ -74,16 +79,12 @@ Object* Lisp_tokenize(Object* string) {
 
   for(i = 0; i < string_len; i++) {
     ch = Object_bop_charat(string, i);
-    /*printf("Lisp_tokenize. ch=|%c|\n", ch);*/
-    printf("\n---\n");
+    printf("---\n");
     printf("state="); print_TokenizerState(state); printf("\n");
     ObjectUtil_eprintf("Lisp_tokenizer. ch=|%c| tmp_str=%v\n", ch, tmp_str);
     if(state == ts_Init) {
-      /*printf("debug. state=ts_Init\n");*/
       if(ch == '-') {
         state = ts_InNumberNegMaybe;
-        /*printf("debug. state=ts_InNumberNegMaybe\n");*/
-        /*Object_bop_addx_char(tmp_str, ch);*/
       }
       else
       if(ch == ' ') {
@@ -100,13 +101,11 @@ Object* Lisp_tokenize(Object* string) {
       else
       if(TokenizerUtil_isdigit(ch)) {
         state = ts_InNumber;
-        /*printf("debug. state=ts_InNumber\n");*/
         Object_bop_addx_char(tmp_str, ch);
       }
       else
       if(TokenizerUtil_wordlike(ch)) {
         state = ts_InBareWord;
-        /*printf("debug. state=ts_InBareWord\n");*/
         Object_bop_addx_char(tmp_str, ch);
       }
     }
@@ -118,7 +117,6 @@ Object* Lisp_tokenize(Object* string) {
       else
       if(ch == '.') {
         state = ts_InNumberFloat;
-        /*printf("debug. state=ts_InNumberFloat\n");*/
         Object_bop_addx_char(tmp_str, ch);
       }
       else {
@@ -126,7 +124,6 @@ Object* Lisp_tokenize(Object* string) {
         Object_zero(tmp_str);
         i--;
         state = ts_Init;
-        /*printf("debug. state=ts_Init\n");*/
       }
     }
     else
@@ -139,7 +136,6 @@ Object* Lisp_tokenize(Object* string) {
         Object_zero(tmp_str);
         i--;
         state = ts_Init;
-        /*printf("debug. state=ts_Init\n");*/
       }
     }
     else
@@ -152,7 +148,6 @@ Object* Lisp_tokenize(Object* string) {
         Object_zero(tmp_str);
         i--;
         state = ts_Init;
-        /*printf("debug. state=ts_Init\n");*/
       }
     }
     else
@@ -162,27 +157,33 @@ Object* Lisp_tokenize(Object* string) {
         i--;
         state = ts_InNumber;
         // now we handle the rest as we would any other number.
-        /*Object_bop_addx_char(tmp_str, ch);*/
       }
       else {
         // the previous '-' will be treated as BareWord
         Object_bop_addx_char(tmp_str, '-');
         i--;
         state = ts_InBareWord;
-        /*printf("debug. state=ts_InBareWord\n");*/
       }
     }
-
-    //---
+    //--- end of forloop-body
     ObjectUtil_eprintf("Lisp_tokenizer. ch=|%c| tmp_str=%v\n", ch, tmp_str);
     printf("state="); print_TokenizerState(state); printf("\n");
   }
-  printf("\n---\n"); print_TokenizerState(state); printf("\n---\n");
 
-  if(state == ts_InNumber || state == ts_InNumberFloat) {
+  printf("--- end-of-forloop ---\n"); 
+  printf("state="); print_TokenizerState(state); printf("\n");
+  ObjectUtil_eprintf("tmp_str=%v\n", tmp_str);
+  if(state == ts_InNumber) {
     Object_bop_push(ret, Object_to_number(tmp_str));
     Object_zero(tmp_str);
   }
+  else
+  if(state == ts_InNumberFloat) {
+    Object_bop_push(ret, Object_to_number(tmp_str));
+    Object_zero(tmp_str);
+  }
+  ObjectUtil_eprintf("tmp_str=%v\n", tmp_str);
+  printf("---\n");
 
   Object_rc_decr(tmp_str);
   Object_return(ret);
