@@ -76,7 +76,7 @@ Object* Lisp_tokenize(Object* string) {
     ch = Object_bop_charat(string, i);
     /*printf("Lisp_tokenize. ch=|%c|\n", ch);*/
     printf("\n---\n");
-    print_TokenizerState(state); printf("\n");
+    printf("state="); print_TokenizerState(state); printf("\n");
     ObjectUtil_eprintf("Lisp_tokenizer. ch=|%c| tmp_str=%v\n", ch, tmp_str);
     if(state == ts_Init) {
       /*printf("debug. state=ts_Init\n");*/
@@ -172,6 +172,7 @@ Object* Lisp_tokenize(Object* string) {
 
     //---
     ObjectUtil_eprintf("Lisp_tokenizer. ch=|%c| tmp_str=%v\n", ch, tmp_str);
+    printf("state="); print_TokenizerState(state); printf("\n");
   }
   printf("\n---\n"); print_TokenizerState(state); printf("\n---\n");
 
