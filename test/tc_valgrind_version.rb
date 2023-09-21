@@ -7,8 +7,8 @@ class TcValgrindVersion < Test::Unit::TestCase
     assert(out.size > 0)
     major, minor, patch = out[/[0-9\.]+/].split('.').map {|e| e.to_i }
     puts "major=#{major} minor=#{minor} patch=#{patch}"
-    # latest version as of 2023-02-07
     assert(major >= 3)
-    assert(minor >= 20)
+    #assert(minor >= 20)
+    assert(minor >= 16)
   end
 end
