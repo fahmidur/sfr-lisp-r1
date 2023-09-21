@@ -95,7 +95,8 @@ void Object_system_init() {
   ObjectTypeInfo otiarg_symbol = { 
     .fn_del   = Symbol_noop, 
     .fn_print = (void  (*)(void*))Symbol_print,
-    .fn_clone = (void* (*)(void*))Symbol_clone
+    .fn_clone = (void* (*)(void*))Symbol_clone,
+    .fn_zero  = (void  (*)(void*))Symbol_noop
   };
   Object_oti_set(SYMBOL_SYMBOL, otiarg_symbol);
 
