@@ -240,7 +240,24 @@ int String_cmp(String* self, String* other) {
 }
 
 void String_print(String* self) {
-  printf("String(%s)", self->buf);
+  /*printf("String(%s)", self->buf);*/
+  char bchar = 92; // The backslash character
+  char wchar = '"';
+  printf("String(%c", wchar);
+  size_t str_len = strlen(self->buf);
+  size_t i;
+  char ch;
+  for(i = 0; i < str_len; i++) {
+    ch = self->buf[i];
+    if(ch == wchar) {
+      putc(bchar, stdout);
+    } 
+    if(ch == bchar) {
+      putc(bchar, stdout);
+    }
+    putc(ch, stdout);
+  }
+  printf("%c)", wchar);
 }
 
 char* String_cstr(String* self) {
