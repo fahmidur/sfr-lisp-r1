@@ -97,7 +97,7 @@ end
 
 def compile_file_task(type, target, deplist)
   basename = File.basename(target)
-  desc "Build #{type}: #{basename}"
+  desc "-- Build #{type}: #{basename}"
   deplist = deps(deplist)
   file target => deplist do
     compile(type, target, deplist)
@@ -177,23 +177,27 @@ file build('leaky') => leaky_test_deps do
   compile(:program, build('leaky'), leaky_test_deps)
 end
 
-desc "Build Symbol_test program"
-symbol_test_deps = deps([*test_files, build('Util.o'), 'Symbol_test.c', build('Symbol.o')])
-file build('Symbol_test') =>  symbol_test_deps do
-  compile(:program, build('Symbol_test'), symbol_test_deps)
+['Symbol', 'String', 'Number'].map do |name|
+  compile_file_task(:program, build(name+'_test.o'), [name+'_test.c', build('Util.o'), build(name+'.o')])
 end
 
-desc "Build String_test program"
-string_test_deps = deps([*test_files, build('Util.o'), 'String_test.c', build('String.o')])
-file build('String_test') => string_test_deps do
-  compile(:program, build('String_test'), string_test_deps)
-end
+#desc "Build Symbol_test program"
+#symbol_test_deps = deps([*test_files, build('Util.o'), 'Symbol_test.c', build('Symbol.o')])
+#file build('Symbol_test') =>  symbol_test_deps do
+  #compile(:program, build('Symbol_test'), symbol_test_deps)
+#end
 
-desc "Build Number_test program"
-number_test_deps = [*test_files, build('Util.o'), 'Number_test.c', build('Number.o')]
-file build("Number_test") => number_test_deps do
-  compile(:program, build('Number_test'), number_test_deps)
-end
+#desc "Build String_test program"
+#string_test_deps = deps([*test_files, build('Util.o'), 'String_test.c', build('String.o')])
+#file build('String_test') => string_test_deps do
+  #compile(:program, build('String_test'), string_test_deps)
+#end
+
+#desc "Build Number_test program"
+#number_test_deps = [*test_files, build('Util.o'), 'Number_test.c', build('Number.o')]
+#file build("Number_test") => number_test_deps do
+  #compile(:program, build('Number_test'), number_test_deps)
+#end
 
 desc "Build Object_test program" 
 object_test_deps = [*test_files, build('Util.o'), 'Object_test.c', *obj_ofiles]
