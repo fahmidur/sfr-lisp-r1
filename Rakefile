@@ -185,14 +185,16 @@ file build('nassert_test') =>  nassert_test_deps do
 end
 
 desc "Build leaky test program."
-leaky_deps = deps([*test_files, 'leaky.c'])
-file build('leaky') => leaky_deps do
-  compile(:program, build('leaky'), leaky_deps)
+leaky_test_deps = deps([*test_files, 'leaky.c'])
+file build('leaky') => leaky_test_deps do
+  compile(:program, build('leaky'), leaky_test_deps)
 end
 
 desc "Build Symbol_test program"
-file build('Symbol_test') => [*test_files, build('Util.o'), 'Symbol_test.c', build('Symbol.o')] do
-  sh "#{cc} #{cflags} -o #{build('Symbol_test')} Symbol_test.c #{build('Symbol.o')} #{build('Util.o')}"
+symbol_test_deps = deps([*test_files, build('Util.o'), 'Symbol_test.c', build('Symbol.o')])
+file build('Symbol_test') =>  symbol_test_deps do
+  #sh "#{cc} #{cflags} -o #{build('Symbol_test')} Symbol_test.c #{build('Symbol.o')} #{build('Util.o')}"
+  compile(:program, build('Symbol_test'), symbol_test_deps)
 end
 
 desc "Build String_test program"

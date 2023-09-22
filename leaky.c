@@ -6,6 +6,8 @@
  */
 int main(int argc, char** argv) {
   printf("--- leaky ---\n");
-  malloc(16);
+  char* bytes = malloc(16);
+  // We are intentionally not calling free on the bytes
+  // allocated above.
   return 0;
 }

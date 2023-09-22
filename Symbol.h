@@ -1,6 +1,11 @@
 #ifndef _SFR_SYMBOL_H
 #define _SFR_SYMBOL_H
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "Util.h"
+
 #define SYMBOL_BUCKET_SIZE 2048
 #define SYMBOLVECTOR_ISIZE 32
 
