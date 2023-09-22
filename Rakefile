@@ -16,8 +16,22 @@ def env_truthy?(name)
   return false
 end
 
-def deps(x)
-  return x.flatten.uniq
+def mimetype(fpath)
+  name, mimetype = `file --mime-type #{fpath}`.split(/\s*\:\s*/)
+  return mimetype
+end
+
+def deps(fnames)
+  fnames = fnames.flatten.uniq
+  #fnames.each do |name|
+    #if File.exist?(name)
+      #fpath = File.absolute_path(name)
+      #fpath_mimetype = mimetype(fpath)
+      #puts "  fpath=#{fpath}"
+      #puts "  mimetype=#{fpath_mimetype}"
+    #end
+  #end
+  return fnames
 end
 
 $build_targets = {}
