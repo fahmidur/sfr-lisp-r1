@@ -1,4 +1,5 @@
 require 'fileutils'
+require 'pry'
 
 $git_sha = `git rev-parse HEAD`.strip
 $version = `git describe --tags HEAD`.strip
@@ -32,6 +33,58 @@ def deps(fnames)
     #end
   #end
   return fnames
+end
+
+class Deps
+
+  KNOWN_EXTS = ['.h', '.c']
+
+  def initialize(names)
+    @names = []
+    if names.is_a?(String) || names.is_a?(Symbol)
+      names = [names.to_s]
+    end
+    
+    names.each do |e|
+      if File.exist?(e)
+        @names << e
+      else
+        basename = File.basename(e)
+        candidates = KNOWN_EXTS.map {|ext| e+ext}
+        hit = false
+        candidates.each do |c|
+          next unless File.exist?(c)
+          @names << c 
+          hit = true
+        end
+        unless hit
+          raise "Deps. Could not resolve '#{e}'"
+        end
+      end
+    end
+    @names.uniq!
+  end
+
+  def ext(x)
+    ext = ".#{x}".gsub(/\.+/, '.')
+    Deps.new(@names.map do |e|
+      xfile = File.basename(e, File.extname(e)) + ext
+      if File.exist?(xfile)
+        xfile
+      else
+        nil
+      end
+    end.compact.uniq)
+  end
+
+  def method_missing(meth, *args, &block)
+    ext(meth)
+  end
+
+  def to_a
+    @names
+  end
+
 end
 
 $build_targets = {}
@@ -148,6 +201,8 @@ obj_ofiles = obj_basenames.map {|e| build("#{e}.o") }
 file build('Object.o') => ['Object.h', 'Object.c', *obj_hfiles] do
   sh "#{cc} #{cflags} -c -o #{build('Object.o')} Object.c"
 end
+
+binding.pry
 
 #desc "Build Function object"
 #file build('Function.o') => ['Function.h', 'Function.c'] do
