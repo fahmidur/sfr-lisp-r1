@@ -165,20 +165,22 @@ compile_file_task(:object, build('Tokenizer.o'), ['Tokenizer.c', 'Tokenizer.h'])
 
 test_files = ['nassert.h']
 
-desc "Build nassert_test program"
-nassert_test_deps = [*test_files, 'nassert_test.c']
-file build('nassert_test') =>  nassert_test_deps do
-  compile(:program, build('nassert_test'), nassert_test_deps)
-end
+compile_file_task(:program, build('nassert_test'), ['nassert.h', 'nassert_test.c'])
+#desc "Build nassert_test program"
+#nassert_test_deps = [*test_files, 'nassert_test.c']
+#file build('nassert_test') =>  nassert_test_deps do
+  #compile(:program, build('nassert_test'), nassert_test_deps)
+#end
 
-desc "Build leaky test program."
-leaky_test_deps = deps([*test_files, 'leaky.c'])
-file build('leaky') => leaky_test_deps do
-  compile(:program, build('leaky'), leaky_test_deps)
-end
+compile_file_task(:program, build('leaky'), ['leaky.c'])
+#desc "Build leaky test program."
+#leaky_test_deps = deps([*test_files, 'leaky.c'])
+#file build('leaky') => leaky_test_deps do
+  #compile(:program, build('leaky'), leaky_test_deps)
+#end
 
 ['Symbol', 'String', 'Number'].map do |name|
-  compile_file_task(:program, build(name+'_test.o'), [name+'_test.c', build('Util.o'), build(name+'.o')])
+  compile_file_task(:program, build(name+'_test'), [name+'_test.c', build('Util.o'), build(name+'.o')])
 end
 
 #desc "Build Symbol_test program"
