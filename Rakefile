@@ -148,26 +148,16 @@ obj_hfiles = deps(['Object.h', basic_hfiles])
 obj_ofiles = deps([build('Object.o'), basic_ofiles])
 compile_file_task(:object, build('Object.o'), ['Object.c', *obj_hfiles])
 
+runtime_ofiles = deps([build('Util.o'), obj_ofiles, build('Runtime.o')])
 compile_file_task(:object, build('Runtime.o'), ['Runtime.c'])
-#desc "Build Runtime object"
-#file build('Runtime.o') => [build('Object.o')] do
-  #sh "#{cc} #{cflags} -c -o #{build('Runtime.o')} Runtime.c"
-#end
 
 compile_file_task(:object, build('Lisp.o'), ['Lisp.c'])
-#desc "Build Lisp.o object"
-#file build('Lisp.o') => ['Lisp.c', 'Lisp.h'] do
-  #sh "#{cc} #{cflags} -c -o #{build('Lisp.o')} Lisp.c"
-#end
 
-desc "Build Tokenizer object"
-file build('Tokenizer.o') => ['Tokenizer.c', 'Tokenizer.h'] do
-  sh "#{cc} #{cflags} -c -o #{build('Tokenizer.o')} Tokenizer.c"
-end
+compile_file_task(:object, build('Tokenizer.o'), ['Tokenizer.c', 'Tokenizer.h'])
 
-#=================
+#=========================================================
 # Test Programs
-#=================
+#==========================================================
 
 test_files = ['nassert.h']
 
@@ -190,35 +180,31 @@ file build('Symbol_test') =>  symbol_test_deps do
 end
 
 desc "Build String_test program"
-file build('String_test') => [*test_files, build('Util.o'), 'String_test.c', build('String.o')] do
-  sh "#{cc} #{cflags} -o #{build('String_test')} String_test.c #{build('String.o')} #{build('Util.o')}"
+string_test_deps = deps([*test_files, build('Util.o'), 'String_test.c', build('String.o')])
+file build('String_test') => string_test_deps do
+  compile(:program, build('String_test'), string_test_deps)
 end
 
 desc "Build Number_test program"
-file build("Number_test") => [*test_files, build('Util.o'), 'Number_test.c', build('Number.o')] do
-  sh "#{cc} #{cflags} -o #{build('Number_test')} Number_test.c #{build('Number.o')}"
+number_test_deps = [*test_files, build('Util.o'), 'Number_test.c', build('Number.o')]
+file build("Number_test") => number_test_deps do
+  compile(:program, build('Number_test'), number_test_deps)
 end
 
 desc "Build Object_test program" 
-file build('Object_test') => [*test_files, build('Util.o'), 'Object_test.c', *obj_ofiles] do
-  sh "#{cc} #{cflags} -o #{build('Object_test')} Object_test.c #{obj_ofiles.join(' ')} #{build('Util.o')}"
+object_test_deps = [*test_files, build('Util.o'), 'Object_test.c', *obj_ofiles]
+file build('Object_test') => object_test_deps do
+  compile(:program, build('Object_test'), object_test_deps)
 end
 
 desc "Build Runtime_test program"
-file build('Runtime_test') => [*test_files, build('Util.o'), 'Runtime_test.c', build('Runtime.o'), build('Util.o'), *obj_ofiles] do
-  sh "#{cc} #{cflags} -o #{build('Runtime_test')} Runtime_test.c #{build('Runtime.o')} #{obj_ofiles.join(' ')} #{build('Util.o')}"
+runtime_test_deps = deps([*test_files, build('Util.o'), 'Runtime_test.c', build('Runtime.o'), *obj_ofiles])
+file build('Runtime_test') =>  runtime_test_deps do
+  compile(:program, build('Runtime_test'), runtime_test_deps)
 end
 
-runtime_ofiles = [
-  build('Util.o'),
-  obj_ofiles,
-  build('Runtime.o'),
-].flatten.uniq
-
-atom_ofiles = ['Symbol', 'String', 'Number', 'Error'].map {|e| build("#{e}.o") }
-
 desc "Build List_test program"
-list_test_deps = deps([runtime_ofiles, 'List_test.c'])
+list_test_deps = deps([*test_files, runtime_ofiles, 'List_test.c'])
 file build('List_test') => list_test_deps do
   compile(:program, build('List_test'), list_test_deps)
 end
@@ -228,10 +214,7 @@ hash_test_deps = deps([
   *test_files, 
   build('Util.o'), 
   'Hash_test.c', 
-  build('Hash.o'), 
-  *atom_ofiles, 
-  build('Object.o'),
-  build('List.o')
+  obj_ofiles,
 ])
 file build('Hash_test') => hash_test_deps do
   compile(:program, build('Hash_test'), hash_test_deps)
@@ -239,8 +222,9 @@ end
 
 # SFR: Marked for deletion.
 desc "Build Tokenizer_test program"
-file build('Tokenizer_test') => [*test_files, build('Util.o'), 'Tokenizer_test.c', build('Tokenizer.o')] do
-  sh "#{cc} #{cflags} -o #{build('Tokenizer_test')} Tokenizer_test.c #{build('Tokenizer.o')}"
+tokenizer_test_deps = deps([*test_files, build('Util.o'), 'Tokenizer_test.c', build('Tokenizer.o')])
+file build('Tokenizer_test') => tokenizer_test_deps do
+  compile(:program, build('Tokenizer_test'), tokenizer_test_deps)
 end
 
 desc "Build Util_test program"
@@ -273,6 +257,7 @@ task :test => :build do
   sh "ruby ./test/all.rb"
 end
 
+#==============================================================================
 # These are artificial Rake targets to build and run the test programs.  These
 # hardly get used and add noise to our list of real Rake targets.
 #$build_targets.each do |k, path|
