@@ -39,6 +39,9 @@ class Deps
 
   KNOWN_EXTS = ['.h', '.c']
 
+  attr_reader :names
+  attr_reader :basenames
+
   def initialize(names)
     @names = []
     if names.is_a?(String) || names.is_a?(Symbol)
@@ -63,6 +66,7 @@ class Deps
       end
     end
     @names.uniq!
+    @basenames = @names.map {|e| File.basename(e, File.extname(e)) }.uniq
   end
 
   def ext(x)
@@ -83,6 +87,10 @@ class Deps
 
   def to_a
     @names
+  end
+
+  def inspect
+    "Deps(#{@names})"
   end
 
 end
