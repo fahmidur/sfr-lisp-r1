@@ -11,7 +11,7 @@ end
 
 def env_truthy?(name)
   name = name.to_s
-  val = ENV[name] || ENV[name.downcase]
+  val = ENV[name] || ENV[name.downcase] || ENV[name.upcase]
   return true if val == '1' || val == 't'
   return true if val =~ /true/i
   return false
@@ -73,7 +73,11 @@ cflags = cflags.join(' ')
 $cc = cc
 $cflags = cflags
 def compile(type, ofile, sources)
-  com = "#{$cc} #{$cflags} "
+  com = <<~EOS
+    #{$cc} #{$cflags}
+    -DVERSION='"#{$version}"'
+    -DGIT_SHA='"#{$git_sha}"'
+  EOS
   if type == :program 
     com += ""
   elsif type == :object 
