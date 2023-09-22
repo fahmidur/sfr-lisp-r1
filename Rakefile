@@ -76,6 +76,14 @@ def compile(type, ofile, sources)
   runc(com)
 end
 
+def compile_file_task(type, target, deplist)
+  desc "Build #{type}: #{target}"
+  deplist = deps(deplist)
+  file target => deplist do
+    compile(type, target, deplist)
+  end
+end
+
 task :default => :build
 
 desc "Print build information"
@@ -108,11 +116,13 @@ task :build do
   end
 end
 
-desc "Build Util object"
-util_o_deps = deps(["Util.h", "Util.c"])
-file build("Util.o") => util_o_deps do
-  compile(:object, build("Util.o"), util_o_deps)
-end
+#desc "Build Util object"
+#util_o_deps = deps(["Util.h", "Util.c"])
+#file build("Util.o") => util_o_deps do
+  #compile(:object, build("Util.o"), util_o_deps)
+#end
+
+compile_file_task(:object, build("Util.o"), ["Util.h", "Util.c"])
 
 desc "Build Symbol object"
 file build('Symbol.o') =>  ['Symbol.c', 'Symbol.h', 'Util.h'] do
