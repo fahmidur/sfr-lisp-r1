@@ -254,7 +254,6 @@ end
 desc "Build Util_test program"
 util_test_deps = deps([*test_files, 'Util_test.c', build('Util.o')])
 file build('Util_test') =>  util_test_deps do
-  #sh "#{cc} #{cflags} -o #{build('Util_test')} Util_test.c #{build('Util.o')}"
   compile(:program, build('Util_test'), util_test_deps)
 end
 
