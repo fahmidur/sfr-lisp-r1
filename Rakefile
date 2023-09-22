@@ -111,7 +111,6 @@ end
 desc "Build Util object"
 util_o_deps = deps(["Util.h", "Util.c"])
 file build("Util.o") => util_o_deps do
-  #sh "#{cc} #{cflags} -c -o #{build('Util.o')} Util.c"
   compile(:object, build("Util.o"), util_o_deps)
 end
 
