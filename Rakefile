@@ -237,9 +237,6 @@ file build('Object.o') => ['Object.h', 'Object.c', *obj_hfiles] do
   sh "#{cc} #{cflags} -c -o #{build('Object.o')} Object.c"
 end
 
-x = Deps.new(basic_types)
-binding.pry
-
 #desc "Build Function object"
 #file build('Function.o') => ['Function.h', 'Function.c'] do
   #sh "#{cc} #{cflags} -c -o #{build('Function.o')} Function.c"
