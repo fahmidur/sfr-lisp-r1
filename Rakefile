@@ -109,15 +109,16 @@ task :build do
 end
 
 desc "Build Util object"
-file build("Util.o") => ["Util.h", "Util.c"] do
-  sh "#{cc} #{cflags} -c -o #{build('Util.o')} Util.c"
+util_o_deps = deps(["Util.h", "Util.c"])
+file build("Util.o") => util_o_deps do
+  #sh "#{cc} #{cflags} -c -o #{build('Util.o')} Util.c"
+  compile(:object, build("Util.o"), util_o_deps)
 end
 
 desc "Build Symbol object"
 file build('Symbol.o') =>  ['Symbol.c', 'Symbol.h', 'Util.h'] do
   sh "#{cc} #{cflags} -c -o #{build('Symbol.o')} Symbol.c"
 end
-
 
 desc "Build Number object"
 file build('Number.o') => ['Number.c', 'Number.h'] do
