@@ -91,7 +91,8 @@ def compile(type, ofile, sources)
 end
 
 def compile_file_task(type, target, deplist)
-  desc "Build #{type}: #{target}"
+  basename = File.basename(target)
+  desc "Build #{type} #{basename}"
   deplist = deps(deplist)
   file target => deplist do
     compile(type, target, deplist)
@@ -130,42 +131,14 @@ task :build do
   end
 end
 
-#desc "Build Util object"
-#util_o_deps = deps(["Util.h", "Util.c"])
-#file build("Util.o") => util_o_deps do
-  #compile(:object, build("Util.o"), util_o_deps)
-#end
-
-compile_file_task(:object, build("Util.o"), ["Util.h", "Util.c"])
-
-desc "Build Symbol object"
-file build('Symbol.o') =>  ['Symbol.c', 'Symbol.h', 'Util.h'] do
-  sh "#{cc} #{cflags} -c -o #{build('Symbol.o')} Symbol.c"
+util_names = ['Util']
+util_names.each do |name|
+  compile_file_task(:object, build(name+'.o'), [name+'.h', name+'.c'])
 end
 
-desc "Build Number object"
-file build('Number.o') => ['Number.c', 'Number.h'] do
-  sh "#{cc} #{cflags} -c -o #{build('Number.o')} Number.c"
-end
-
-desc "Build String object"
-file build('String.o') => ['String.c', 'String.h', 'Util.h'] do
-  sh "#{cc} #{cflags} -c -o #{build('String.o')} String.c"
-end
-
-desc "Build Error object"
-file build('Error.o') => ['Error.h', 'Error.c', 'Util.h'] do
-  sh "#{cc} #{cflags} -c -o #{build('Error.o')} Error.c"
-end
-
-desc "Build List object"
-file build('List.o') => ['List.h', 'List.c'] do
-  sh "#{cc} #{cflags} -c -o #{build('List.o')} List.c"
-end
-
-desc "build Hash object"
-file build('Hash.o') => ['Hash.h', 'Hash.c'] do
-  sh "#{cc} #{cflags} -c -o #{build('Hash.o')} Hash.c"
+basic_types = ['Symbol', 'Number', 'String', 'Error', 'List', 'Hash']
+basic_types.each do |name|
+  compile_file_task(:object, build(name+'.o'), [name+'.c', name+'.h', 'Util.h'])
 end
 
 desc "Build Object object"
