@@ -43,6 +43,7 @@ class Deps
   attr_reader :basenames
 
   def initialize(names)
+
     @names = []
     if names.is_a?(String) || names.is_a?(Symbol)
       names = [names.to_s]
@@ -69,20 +70,30 @@ class Deps
     @basenames = @names.map {|e| File.basename(e, File.extname(e)) }.uniq
   end
 
+  def _normalize_ext(x)
+    return ".#{x}".gsub(/\.+/, '.')
+  end
+
   def ext(x)
-    ext = ".#{x}".gsub(/\.+/, '.')
-    Deps.new(@names.map do |e|
-      xfile = File.basename(e, File.extname(e)) + ext
-      if File.exist?(xfile)
-        xfile
-      else
-        nil
-      end
-    end.compact.uniq)
+    x = _normalize_ext(x)
+    Deps.new(@names.select {|e| File.extname(e) == x})
+  end
+
+  def extnot(x)
+    x = _normalize_ext(x)
+    Deps.new(@names.select {|e| File.extname(e) != x })
   end
 
   def method_missing(meth, *args, &block)
     ext(meth)
+  end
+
+  def to_s
+    if @names.size == 1
+      @names.first
+    else
+      @names.to_s
+    end
   end
 
   def to_a
@@ -91,6 +102,22 @@ class Deps
 
   def inspect
     "Deps(#{@names})"
+  end
+
+  def root
+    @basenames
+  end
+
+  def +(other)
+    arr = []
+    if other.is_a?(::Deps)
+      arr = other.names
+    elsif other.is_a?(Array)
+      arr = other
+    else
+      raise ArgumentError.new("Dep. Invalid type for operator +")
+    end
+    Deps.new(@names + arr)
   end
 
 end
@@ -210,6 +237,7 @@ file build('Object.o') => ['Object.h', 'Object.c', *obj_hfiles] do
   sh "#{cc} #{cflags} -c -o #{build('Object.o')} Object.c"
 end
 
+x = Deps.new(basic_types)
 binding.pry
 
 #desc "Build Function object"
