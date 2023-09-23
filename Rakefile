@@ -163,65 +163,66 @@ compile_file_task(:object, build('Tokenizer.o'), ['Tokenizer.c', 'Tokenizer.h'])
 # Test Programs
 #==========================================================
 
-test_files = ['nassert.h']
+test_hfiles = ['nassert.h']
 
 compile_file_task(:program, build('nassert_test'), ['nassert.h', 'nassert_test.c'])
 #desc "Build nassert_test program"
-#nassert_test_deps = [*test_files, 'nassert_test.c']
+#nassert_test_deps = [*test_hfiles, 'nassert_test.c']
 #file build('nassert_test') =>  nassert_test_deps do
   #compile(:program, build('nassert_test'), nassert_test_deps)
 #end
 
 compile_file_task(:program, build('leaky'), ['leaky.c'])
 #desc "Build leaky test program."
-#leaky_test_deps = deps([*test_files, 'leaky.c'])
+#leaky_test_deps = deps([*test_hfiles, 'leaky.c'])
 #file build('leaky') => leaky_test_deps do
   #compile(:program, build('leaky'), leaky_test_deps)
 #end
 
 ['Symbol', 'String', 'Number'].map do |name|
-  compile_file_task(:program, build(name+'_test'), [name+'_test.c', build('Util.o'), build(name+'.o')])
+  compile_file_task(:program, build(name+'_test'), [*test_hfiles, name+'_test.c', build('Util.o'), build(name+'.o')])
 end
 
 #desc "Build Symbol_test program"
-#symbol_test_deps = deps([*test_files, build('Util.o'), 'Symbol_test.c', build('Symbol.o')])
+#symbol_test_deps = deps([*test_hfiles, build('Util.o'), 'Symbol_test.c', build('Symbol.o')])
 #file build('Symbol_test') =>  symbol_test_deps do
   #compile(:program, build('Symbol_test'), symbol_test_deps)
 #end
 
 #desc "Build String_test program"
-#string_test_deps = deps([*test_files, build('Util.o'), 'String_test.c', build('String.o')])
+#string_test_deps = deps([*test_hfiles, build('Util.o'), 'String_test.c', build('String.o')])
 #file build('String_test') => string_test_deps do
   #compile(:program, build('String_test'), string_test_deps)
 #end
 
 #desc "Build Number_test program"
-#number_test_deps = [*test_files, build('Util.o'), 'Number_test.c', build('Number.o')]
+#number_test_deps = [*test_hfiles, build('Util.o'), 'Number_test.c', build('Number.o')]
 #file build("Number_test") => number_test_deps do
   #compile(:program, build('Number_test'), number_test_deps)
 #end
 
-desc "Build Object_test program" 
-object_test_deps = [*test_files, build('Util.o'), 'Object_test.c', *obj_ofiles]
-file build('Object_test') => object_test_deps do
-  compile(:program, build('Object_test'), object_test_deps)
-end
+compile_file_task(:program, build('Object_test'), [*test_hfiles, build('Util.o'), 'Object_test.c', *obj_ofiles])
+#desc "Build Object_test program" 
+#object_test_deps = [*test_hfiles, build('Util.o'), 'Object_test.c', *obj_ofiles]
+#file build('Object_test') => object_test_deps do
+  #compile(:program, build('Object_test'), object_test_deps)
+#end
 
 desc "Build Runtime_test program"
-runtime_test_deps = deps([*test_files, build('Util.o'), 'Runtime_test.c', build('Runtime.o'), *obj_ofiles])
+runtime_test_deps = deps([*test_hfiles, build('Util.o'), 'Runtime_test.c', build('Runtime.o'), *obj_ofiles])
 file build('Runtime_test') =>  runtime_test_deps do
   compile(:program, build('Runtime_test'), runtime_test_deps)
 end
 
 desc "Build List_test program"
-list_test_deps = deps([*test_files, runtime_ofiles, 'List_test.c'])
+list_test_deps = deps([*test_hfiles, runtime_ofiles, 'List_test.c'])
 file build('List_test') => list_test_deps do
   compile(:program, build('List_test'), list_test_deps)
 end
 
 desc "Build Hash_test program"
 hash_test_deps = deps([
-  *test_files, 
+  *test_hfiles, 
   build('Util.o'), 
   'Hash_test.c', 
   obj_ofiles,
@@ -232,19 +233,19 @@ end
 
 # SFR: Marked for deletion.
 desc "Build Tokenizer_test program"
-tokenizer_test_deps = deps([*test_files, build('Util.o'), 'Tokenizer_test.c', build('Tokenizer.o')])
+tokenizer_test_deps = deps([*test_hfiles, build('Util.o'), 'Tokenizer_test.c', build('Tokenizer.o')])
 file build('Tokenizer_test') => tokenizer_test_deps do
   compile(:program, build('Tokenizer_test'), tokenizer_test_deps)
 end
 
 desc "Build Util_test program"
-util_test_deps = deps([*test_files, 'Util_test.c', build('Util.o')])
+util_test_deps = deps([*test_hfiles, 'Util_test.c', build('Util.o')])
 file build('Util_test') =>  util_test_deps do
   compile(:program, build('Util_test'), util_test_deps)
 end
 
 desc "Build Lisp_test program"
-lisp_test_deps = deps([*test_files, 'Lisp_test.c', build('Lisp.o'), *runtime_ofiles])
+lisp_test_deps = deps([*test_hfiles, 'Lisp_test.c', build('Lisp.o'), *runtime_ofiles])
 file build("Lisp_test") =>  lisp_test_deps do
   compile(:program, build('Lisp_test'), lisp_test_deps)
 end
