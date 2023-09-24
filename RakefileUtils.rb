@@ -97,3 +97,11 @@ def compile_file_task(type, target, deplist)
     compile(type, target, deplist)
   end
 end
+
+desc "Build everything"
+task :build do
+  $build_targets.each do |name, target|
+    Rake::Task[target].invoke
+  end
+end
+

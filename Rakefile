@@ -27,12 +27,9 @@ task :clean do
   end
 end
 
-desc "Build everything"
-task :build do
-  $build_targets.each do |name, target|
-    Rake::Task[target].invoke
-  end
-end
+#=========================================================
+# Objects
+#==========================================================
 
 util_bnames = ['Util']
 util_hfiles = util_bnames.map {|e| e+'.h' }
