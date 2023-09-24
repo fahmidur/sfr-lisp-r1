@@ -105,3 +105,10 @@ task :build do
   end
 end
 
+desc "Print build information"
+task "print" do
+  puts "compilers=#{$compilers}"
+  puts "cc=#{$cc}"
+end
+
+

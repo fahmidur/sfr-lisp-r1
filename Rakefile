@@ -4,12 +4,6 @@ require_relative './RakefileUtils.rb'
 
 task :default => :build
 
-desc "Print build information"
-task "print" do
-  puts "compilers=#{$compilers}"
-  puts "cc=#{$cc}"
-end
-
 desc "Clean all build artifacts"
 task :clean do
   puts "clean. cleaning..."
