@@ -140,8 +140,10 @@ task :build do
   end
 end
 
-util_names = ['Util']
-util_names.each do |name|
+util_bnames = ['Util']
+util_hfiles = util_bnames.map {|e| e+'.h' }
+util_ofiles = util_bnames.map {|e| build(e+'.o') }
+util_bnames.each do |name|
   compile_file_task(:object, build(name+'.o'), [name+'.h', name+'.c'])
 end
 
@@ -149,7 +151,7 @@ basic_bnames = ['Symbol', 'String', 'Number', 'Error', 'List', 'Hash']
 basic_ofiles = basic_bnames.map {|e| build(e+'.o') }
 basic_hfiles = basic_bnames.map {|e| e+'.h' }
 basic_bnames.each do |name|
-  compile_file_task(:object, build(name+'.o'), [name+'.c', name+'.h', 'Util.h'])
+  compile_file_task(:object, build(name+'.o'), [name+'.c', name+'.h', util_hfiles])
 end
 
 obj_hfiles = deps(['Object.h', basic_hfiles])
