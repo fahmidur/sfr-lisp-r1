@@ -161,7 +161,7 @@ compile_file_task(:object, build('Object.o'), ['Object.c', *obj_hfiles])
 runtime_ofiles = deps([build('Util.o'), obj_ofiles, build('Runtime.o')])
 compile_file_task(:object, build('Runtime.o'), ['Runtime.c'])
 
-compile_file_task(:object, build('Lisp.o'), ['Lisp.c'])
+compile_file_task(:object, build('Lisp.o'), ['Lisp.h', 'Lisp.c'])
 
 compile_file_task(:object, build('Tokenizer.o'), ['Tokenizer.c', 'Tokenizer.h'])
 
@@ -169,31 +169,27 @@ compile_file_task(:object, build('Tokenizer.o'), ['Tokenizer.c', 'Tokenizer.h'])
 # Test Programs
 #==========================================================
 
+compile_file_task(:program, build('leaky'), ['leaky.c'])
+
 test_hfiles = ['nassert.h']
 test_common = [*test_hfiles, build('Util.o')]
 
 compile_file_task(:program, build('nassert_test'), ['nassert.h', 'nassert_test.c'])
 
-compile_file_task(:program, build('leaky'), ['leaky.c'])
+compile_file_task(:program, build('Util_test'), ['Util_test.c', build('Util.o'), test_common])
 
-['Symbol', 'String', 'Number'].map do |name|
+['Symbol', 'String', 'Number'].each do |name|
   compile_file_task(:program, build(name+'_test'), [name+'_test.c', build(name+'.o'), test_common])
 end
-
-compile_file_task(:program, build('Object_test'), ['Object_test.c', obj_ofiles, test_common])
+['Object', 'List', 'Hash'].each do |name|
+  compile_file_task(:program, build(name+'_test'), [name+'_test.c', obj_ofiles, test_common])
+end
 
 compile_file_task(:program, build('Runtime_test'), ['Runtime_test.c', runtime_ofiles, test_common])
 
-compile_file_task(:program, build('List_test'), ['List_test.c', obj_ofiles, test_common])
-
-compile_file_task(:program, build('Hash_test'), ['Hash_test.c', obj_ofiles, test_common])
-
-compile_file_task(:program, build('Tokenizer_test'), ['Tokenizer_test.c', build('Tokenizer.o'), test_common])
-
-compile_file_task(:program, build('Util_test'), ['Util_test.c', build('Util.o'), test_common])
-
 compile_file_task(:program, build('Lisp_test'), ['Lisp_test.c', build('Lisp.o'), runtime_ofiles, test_common])
 
+compile_file_task(:program, build('Tokenizer_test'), ['Tokenizer_test.c', build('Tokenizer.o'), test_common])
 compile_file_task(:program, build('sfr-lisp'), ['sfr-lisp.c', runtime_ofiles, build('Tokenizer.o'), test_common])
 
 desc "Run all tests"
