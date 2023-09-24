@@ -38,6 +38,10 @@ end
 $build_targets = {}
 $deps_by_path = {}
 def build(name)
+  name_ext = File.extname(name)
+  unless ['.o', ''].member?(name_ext)
+    raise "Invalid build file name: #{name}"
+  end
   if $build_targets.has_key?(name)
     return $build_targets[name]
   end
@@ -249,7 +253,7 @@ compile_file_task(:program, build('Tokenizer_test'), ['Tokenizer_test.c', build(
 #file build('Util_test') =>  util_test_deps do
   #compile(:program, build('Util_test'), util_test_deps)
 #end
-compile_file_task(:program, build('Util_test.c'), ['Util_test.c', build('Util.o'), test_common])
+compile_file_task(:program, build('Util_test'), ['Util_test.c', build('Util.o'), test_common])
 
 #desc "Build Lisp_test program"
 #lisp_test_deps = deps([*test_hfiles, 'Lisp_test.c', build('Lisp.o'), *runtime_ofiles])
