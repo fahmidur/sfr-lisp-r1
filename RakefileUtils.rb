@@ -49,7 +49,7 @@ def which(x)
   return nil
 end
 
-debug = env_truthy?(:debug) ? true : false
+$debug = env_truthy?(:debug) ? true : false
 $compilers = [ENV['CC'], "clang", "gcc"].compact
 $cc = $compilers.find {|e| which(e) }
 unless $cc
@@ -58,7 +58,7 @@ unless $cc
 end
 
 $cflags = ["-g", "-I."]
-if debug
+if $debug
   $cflags << "-D DEBUG"
 end
 $cflags = $cflags.join(' ')
@@ -74,7 +74,7 @@ def compile(type, ofile, sources)
   elsif type == :object 
     com += " -c "
   else
-    raise "Compile. Invalid type=#{type}"
+    raise "compile(). Invalid type=#{type}"
   end
   com += " -o #{ofile} "
   sources = sources.flatten.uniq
@@ -91,7 +91,7 @@ def compile_file_task(type, target, deplist)
   typename = sprintf("%-9s", type);
   desc "Build #{typename} : #{basename}"
   deplist = deps(deplist)
-  file target => deplist do
+  file(target => deplist) do
     compile(type, target, deplist)
   end
 end
