@@ -53,7 +53,7 @@ $debug = env_truthy?(:debug) ? true : false
 $compilers = [ENV['CC'], "clang", "gcc"].compact
 $cc = $compilers.find {|e| which(e) }
 unless $cc
-  puts "ERROR: failed to find a compiler in list: #{compilers}"
+  puts "ERROR: failed to find a compiler in list: #{$compilers}"
   exit 1
 end
 
