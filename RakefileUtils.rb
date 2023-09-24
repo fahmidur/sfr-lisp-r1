@@ -91,6 +91,8 @@ def compile_file_task(type, target, deplist)
   typename = sprintf("%-9s", type);
   desc "Build #{typename} : #{basename}"
   deplist = deps(deplist)
+  # ensure that target is not itself in the deplist
+  deplist = deplist - [target]
   file(target => deplist) do
     compile(type, target, deplist)
   end

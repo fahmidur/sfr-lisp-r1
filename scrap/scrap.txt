@@ -99,3 +99,4 @@ Object* res = Object_send(a, Symbol_new("add"), b);
 ---
 
 Object_assign(&ptr, val);
+
