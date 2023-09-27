@@ -16,15 +16,21 @@ int main(int argc, char** argv) {
   /*Object* tc2_tokens = Object_accept(Lisp_tokenize(tc2_string));*/
   /*ObjectUtil_eprintf("tc2_tokens = %v\n", tc2_tokens);*/
 
-  printf("\n=== === tc3 === ===\n");
-  Object* tc3_string = QSTRING_NEW1("(- 123 23)");
-  Object* tc3_tokens = Object_accept(Lisp_tokenize(tc3_string));
-  ObjectUtil_eprintf("tc3_tokens = %v\n", tc3_tokens);
+  /*printf("\n=== === tc3 === ===\n");*/
+  /*Object* tc3_string = QSTRING_NEW1("(- 123 23)");*/
+  /*Object* tc3_tokens = Object_accept(Lisp_tokenize(tc3_string));*/
+  /*ObjectUtil_eprintf("tc3_tokens = %v\n", tc3_tokens);*/
 
-  printf("\n=== === tc4 ===  ===\n");
-  Object* tc4_string = QSTRING_NEW1("(+ 5 -9)");
-  Object* tc4_tokens = Object_accept(Lisp_tokenize(tc4_string));
-  ObjectUtil_eprintf("tc4_tokens = %v\n", tc4_tokens);
+  /*printf("\n=== === tc4 ===  ===\n");*/
+  /*Object* tc4_string = QSTRING_NEW1("(+ 5 -9)");*/
+  /*Object* tc4_tokens = Object_accept(Lisp_tokenize(tc4_string));*/
+  /*ObjectUtil_eprintf("tc4_tokens = %v\n", tc4_tokens);*/
+
+  printf("\n=== === tc5 === ===\n");
+  Object* tc5_string = QSTRING_NEW1("(print \"hello world\")");
+  ObjectUtil_eprintf("tc5_string = %v\n", tc5_string);
+  /*Object* tc5_tokens = Object_accept(Lisp_tokenize(tc5_tokens));*/
+  /*ObjectUtil_eprintf("tc5_tokens = %v\n", tc5_tokens);*/
 
   Runtime_done();
 

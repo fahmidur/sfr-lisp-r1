@@ -76,7 +76,9 @@ Object* Lisp_tokenize(Object* string) {
   Object* paren_end = QSYMBOL_NEW1(")");
 
   Object* tmp_str = QSTRING_NEW1("");
+  ObjectUtil_eprintf("tmp_str=%v\n", tmp_str);
 
+  printf("--- beg-of-forloop ---\n"); 
   for(i = 0; i < string_len; i++) {
     ch = Object_bop_charat(string, i);
     printf("---\n");
@@ -89,6 +91,10 @@ Object* Lisp_tokenize(Object* string) {
       else
       if(ch == ' ') {
         // eat it
+      }
+      else
+      if(ch == '"') {
+        state = ts_InString;
       }
       else
       if(ch == '(') {
@@ -165,12 +171,32 @@ Object* Lisp_tokenize(Object* string) {
         state = ts_InBareWord;
       }
     }
+    else
+    if(state == ts_InString) {
+      if(ch == '\\') {
+        state = ts_InStringEscaped;
+      }
+      else
+      if(ch == '"') {
+        Object_bop_push(ret, Object_clone(tmp_str));
+        Object_zero(tmp_str);
+        state = ts_Init;
+      }
+      else {
+        Object_bop_addx_char(tmp_str, ch);
+      }
+    }
+    else
+    if(state == ts_InStringEscaped) {
+      Object_bop_addx_char(tmp_str, ch);
+      state = ts_InString;
+    }
     //--- end of forloop-body
     ObjectUtil_eprintf("Lisp_tokenizer. ch=|%c| tmp_str=%v\n", ch, tmp_str);
     printf("state="); print_TokenizerState(state); printf("\n");
   }
-
   printf("--- end-of-forloop ---\n"); 
+
   printf("state="); print_TokenizerState(state); printf("\n");
   ObjectUtil_eprintf("tmp_str=%v\n", tmp_str);
   if(state == ts_InNumber) {
