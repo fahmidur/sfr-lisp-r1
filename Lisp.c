@@ -65,8 +65,13 @@ void set_state(TokenizerState* state_ptr, TokenizerState new_state) {
 }
 
 Object* Lisp_tokenize(Object* string) {
+  assert(string != NULL);
+  Object_rc_incr(string);
+  assert(Object_type(string) == SYMBOL_STRING);
+
   size_t string_len = Object_len(string);
   Object* ret = QLIST_NEW1();
+  printf("string_len = %ld\n", string_len);
 
   size_t i = 0;
   TokenizerState state = ts_Init;
@@ -211,6 +216,7 @@ Object* Lisp_tokenize(Object* string) {
   ObjectUtil_eprintf("tmp_str=%v\n", tmp_str);
   printf("---\n");
 
+  Object_rc_decr(string);
   Object_rc_decr(tmp_str);
   Object_return(ret);
   Object_rc_decr(ret);

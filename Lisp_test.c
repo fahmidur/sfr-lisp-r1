@@ -29,8 +29,8 @@ int main(int argc, char** argv) {
   printf("\n=== === tc5 === ===\n");
   Object* tc5_string = QSTRING_NEW1("(print \"hello world\")");
   ObjectUtil_eprintf("tc5_string = %v\n", tc5_string);
-  /*Object* tc5_tokens = Object_accept(Lisp_tokenize(tc5_tokens));*/
-  /*ObjectUtil_eprintf("tc5_tokens = %v\n", tc5_tokens);*/
+  Object* tc5_tokens = Object_accept(Lisp_tokenize(tc5_string));
+  ObjectUtil_eprintf("tc5_tokens = %v\n", tc5_tokens);
 
   Runtime_done();
 
