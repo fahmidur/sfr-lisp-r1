@@ -109,5 +109,10 @@ int Number_cmp(Number* self, Number* other) {
 }
 
 void Number_print(Number* self) {
-  printf("Number(%f)", self->rep);
+  /*printf("Number(%f)", self->rep);*/
+  printf("Number(");
+  printf("\033[93m");
+  printf("%f", self->rep);
+  printf("\033[0m");
+  printf(")");
 }

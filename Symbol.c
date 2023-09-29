@@ -163,7 +163,12 @@ Symbol* Symbol_find(char* str) {
 }
 
 void Symbol_print(Symbol* self) {
-  printf("Symbol(%s)", self->str);
+  /*printf("Symbol(%s)", self->str);*/
+  printf("Symbol(");
+  printf("\033[35m");
+  Util_cstr_print(self->str);
+  printf("\033[0m");
+  printf(")");
 }
 
 Symbol* Symbol_new(char* str) {
