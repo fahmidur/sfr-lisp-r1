@@ -235,7 +235,7 @@ int main(int argc, char** argv) {
   ObjectUtil_eprintf("list3 = %v\n", list3);
 
   printf("Creating list4 with Object_new_list ...\n");
-  Object* list4 = Object_new_list(1, 3, QSTRING_NEW1("one"), QSTRING_NEW1("two"), QSTRING_NEW1("three"));
+  Object* list4 = Object_new_list(1, 3, QSTRING_NEW0("ql-a"), QSTRING_NEW0("ql-b"), QSTRING_NEW0("ql-c"));
   ObjectUtil_eprintf("list4 = %v\n", list4);
 
   Util_heading1(0, "LIST OPERATIONS");

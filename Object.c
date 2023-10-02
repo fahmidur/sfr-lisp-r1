@@ -176,12 +176,14 @@ Object* Object_new(Symbol* type, int rc, void* impl) {
 }
 
 Object* Object_new_list(int rc, size_t len, ...) {
+  assert(rc >= 0);
+  assert(len >= 0);
   va_list argv;
   va_start(argv, len);
   Object* list = Object_new(SYMBOL_LIST, rc, List_new());
-  if(rc == 0) {
-    Object_return(list);
-  }
+  /*if(rc == 0) {*/
+    /*Object_return(list);*/
+  /*}*/
   int i;
   Object* tmp;
   for(i = 0; i < len; i++) {
@@ -189,8 +191,12 @@ Object* Object_new_list(int rc, size_t len, ...) {
     if(tmp == NULL) {
       tmp = Object_new_null();
     }
+    assert(tmp != NULL);
+    tmp->returning = 0;
+    Object_rc_incr(tmp);
     ObjectUtil_eprintf("debug. pushing into list. bef. tmp= %v rc=%d\n", tmp, tmp->rc);
     Object_bop_push(list, tmp);
+    Object_rc_decr(tmp);
     ObjectUtil_eprintf("debug. pushing into list. aft. tmp= %v rc=%d\n---\n", tmp, tmp->rc);
   }
   va_end(argv);
@@ -371,7 +377,7 @@ void Object_add_to_system(Object* self) {
 
 void Object_del(Object* self) {
   assert(self != NULL);
-  printf("Object_del(%p). rc=%d. type=", self, self->rc); 
+  printf("Object_del(%p). rc=%d. rt=%d. type=", self, self->rc, self->returning); 
     Symbol_print(Object_type(self)); 
     /*printf(" || ");*/
     /*Object_print(self);*/
