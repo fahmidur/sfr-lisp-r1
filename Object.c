@@ -175,6 +175,29 @@ Object* Object_new(Symbol* type, int rc, void* impl) {
   }
 }
 
+Object* Object_new_list(int rc, size_t len, ...) {
+  va_list argv;
+  va_start(argv, len);
+  Object* list = Object_new(SYMBOL_LIST, rc, List_new());
+  if(rc == 0) {
+    Object_return(list);
+  }
+  int i;
+  Object* tmp;
+  for(i = 0; i < len; i++) {
+    tmp = va_arg(argv, void*);
+    if(tmp == NULL) {
+      tmp = Object_new_null();
+    }
+    ObjectUtil_eprintf("debug. pushing into list. bef. tmp= %v rc=%d\n", tmp, tmp->rc);
+    Object_bop_push(list, tmp);
+    ObjectUtil_eprintf("debug. pushing into list. aft. tmp= %v rc=%d\n---\n", tmp, tmp->rc);
+  }
+  va_end(argv);
+  ObjectUtil_eprintf("debug. returning list = %v | rc=%d\n", list, list->rc);
+  return list;
+}
+
 /**
  * Return the special null_object which is an object
  * of type Symbol = NULL
