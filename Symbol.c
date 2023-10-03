@@ -212,6 +212,7 @@ void Symbol_del(Symbol* self) {
 }
 
 void Symbol_noop(void* self) {
+  printf("Symbol_noop(%p)\n", self);
   return;
 }
 

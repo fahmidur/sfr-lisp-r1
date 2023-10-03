@@ -380,12 +380,19 @@ void Object_add_to_system(Object* self) {
   object_system->size++;
 }
 
+char Object_is_composite(Object* self) {
+  Symbol* self_type = Object_type(self);
+  return (self_type == SYMBOL_LIST || self_type == SYMBOL_HASH);
+}
+
 void Object_del(Object* self) {
   assert(self != NULL);
   printf("Object_del(%p). rc=%d. rt=%d. type=", self, self->rc, self->returning); 
     Symbol_print(Object_type(self)); 
-    /*printf(" || ");*/
-    /*Object_print(self);*/
+    if(!Object_is_composite(self)) {
+      printf(" || ");
+      Object_print(self);
+    }
   printf("\n");
   if(object_system->size == 0) {
     return;
@@ -469,6 +476,7 @@ void Object_system_done() {
   }
   printf("--- { Object_system_done() { ---\n");
   object_system->done_called = 1;
+  Object_system_print();
 
   Object* obj_curr = NULL;
   Object* obj_next = NULL;
@@ -488,6 +496,7 @@ void Object_system_done() {
   // Above should guarantee that all container objects
   // get deleted before the things they contain. 
 
+  printf("--- { Object_system_done || OSDK { ---\n");
   // delete all objects
   while(object_system->size > 0) {
     /*Object_del(object_system->head);*/
@@ -495,14 +504,23 @@ void Object_system_done() {
     obj_next = NULL;
     while(obj_curr != NULL) {
       obj_next = obj_curr->next; 
-      if(obj_curr->returning) {
-        printf("WARNING: Object_system_done. Object at %p 'returning'\n", obj_curr);
-        obj_curr->returning = 0;
+      if(obj_curr->rc <= 1) {
+        if(Object_is_composite(obj_curr)) {
+          ObjectUtil_eprintf("[OSDK] || Object(p=%p) || type=%s || COMPOSITE", obj_curr, Object_type(obj_curr)->str);
+        } else {
+          ObjectUtil_eprintf("[OSDK] || Object(p=%p) || %v", obj_curr, obj_curr);
+        }
+        if(obj_curr->returning) {
+          printf(" || RT_WARNING");
+          obj_curr->returning = 0;
+        }
+        printf("\n");
       }
       obj_curr = Object_rc_decr(obj_curr);
       obj_curr = obj_next;
     }
   }
+  printf("--- } Object_system_done || OSDK } ---\n");
 
   // delete type information
   ObjectTypeInfo* oti_curr;
@@ -881,7 +899,7 @@ size_t Object_hash(Object* self) {
  * Mainly for debugging. 
  */
 void Object_system_print() {
-  printf("--- { Object_system_print(). BEG { ---\n");
+  printf("--- { Object_system_print() { ---\n");
   Object* iter = object_system->head;
   int i = 0;
   while(iter != NULL) {
@@ -893,7 +911,7 @@ void Object_system_print() {
   }
   printf("--------------------------------------\n");
   printf("SIZE: %zu\n", object_system->size);
-  printf("--- } Object_system_print(). END } ---\n");
+  printf("--- } Object_system_print() } ---\n");
 }
 
 /**
