@@ -4,6 +4,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
+#define MAX(a, b) ((a) > (b) ? (a) : (b))
+#define MIN(a, b) ((a) < (b) ? (a) : (b))
+
 // Not guaranteed to be unique for all strings.
 // This is not a cryptographically strong hash.
 size_t Util_cstr_hash_djb2(char* str);

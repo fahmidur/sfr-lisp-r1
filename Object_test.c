@@ -185,8 +185,8 @@ int main(int argc, char** argv) {
   printf("list2 = "); Object_print(list2); printf("\n");
   printf("--- again with eprintf ---\n");
   ObjectUtil_eprintf("list2 = %v\n", list2);
-  ObjectUtil_eprintf("list2, which equals %v, is great!\n", list2);
-  ObjectUtil_eprintf("list2, which equals %v, contains %d elements.\n", list2, Object_len(list2));
+  ObjectUtil_eprintf("list2, which is %v, is great!\n", list2);
+  ObjectUtil_eprintf("list2, which is %v, contains %d elements.\n", list2, Object_len(list2));
 
   printf("Calling list2.pop() --> popres1 ...\n");
   Object* popres1 = Object_accept(Object_uop_pop(list2));
@@ -235,7 +235,7 @@ int main(int argc, char** argv) {
   ObjectUtil_eprintf("list3 = %v\n", list3);
 
   printf("Creating list4 with Object_new_list ...\n");
-  Object* list4 = Object_new_list(1, 3, QSTRING_NEW0("ql-a"), QSTRING_NEW0("ql-b"), QSTRING_NEW0("ql-c"));
+  Object* list4 = Object_new_list(1, 1, QSTRING_NEW0("quick-1"));
   ObjectUtil_eprintf("list4 = %v\n", list4);
 
   Util_heading1(0, "LIST OPERATIONS");

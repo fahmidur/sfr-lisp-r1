@@ -85,6 +85,7 @@ int Object_cmp(Object* a, Object* b);
 void Object_print(Object* self);
 Object* Object_rc_incr(Object* self);
 Object* Object_rc_decr(Object* self);
+void    Object_rc_done(Object* self, int parent_rc);
 Object* Object_gc(Object* self);
 Object* Object_return(Object* self);
 Object* Object_accept(Object* self);
@@ -136,6 +137,7 @@ void    Object_system_gc();
 
 // Composits
 #include "List.h"
+#include "Hash.h"
 
 //#define OBJ_RETURN(expr) do { \
   //return Object_return(expr); \
@@ -145,10 +147,15 @@ void    Object_system_gc();
 
 #define QSYMBOL_NEW1(x) Object_new(SYMBOL_SYMBOL, 1, Symbol_new(x))
 #define QSYMBOL_NEW0(x) Object_new(SYMBOL_SYMBOL, 0, Symbol_new(x))
+#define QSYMBOL(x) Object_new(SYMBOL_SYMBOL, 0, Symbol_new(x))
+
 #define QSTRING_NEW1(x) Object_new(SYMBOL_STRING, 1, String_new(x))
 #define QSTRING_NEW0(x) Object_new(SYMBOL_STRING, 0, String_new(x))
+#define QSTRING(x) Object_new(SYMBOL_STRING, 0, String_new(x))
+
 #define QNUMBER_NEW1(x) Object_new(SYMBOL_NUMBER, 1, Number_new_from_double(x))
 #define QNUMBER_NEW0(x) Object_new(SYMBOL_NUMBER, 0, Number_new_from_double(x))
+#define QNUMBER(x) Object_new(SYMBOL_NUMBER, 0, Number_new_from_double(x))
 
 #define QLIST_NEW1() Object_new(SYMBOL_LIST, 1, List_new())
 

@@ -61,6 +61,9 @@ size_t List_len(List* self) {
 }
 
 size_t List_push(List* self, Object* obj) {
+  assert(self != NULL);
+  assert(obj != NULL);
+  assert(obj->impl != self);
   ListNode* listnode = ListNode_new(obj);
   if(self->size == 0) {
     self->head = listnode;

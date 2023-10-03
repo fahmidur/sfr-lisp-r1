@@ -180,27 +180,34 @@ Object* Object_new_list(int rc, size_t len, ...) {
   assert(len >= 0);
   va_list argv;
   va_start(argv, len);
-  Object* list = Object_new(SYMBOL_LIST, rc, List_new());
+  Object* list = Object_new(SYMBOL_LIST, 1, List_new());
+  ObjectUtil_eprintf("debug. list. rt=%d\n", list->returning);
   /*if(rc == 0) {*/
     /*Object_return(list);*/
   /*}*/
   int i;
   Object* tmp;
   for(i = 0; i < len; i++) {
+    printf("debug. --- i=%d ---\n", i);
     tmp = va_arg(argv, void*);
     if(tmp == NULL) {
       tmp = Object_new_null();
     }
     assert(tmp != NULL);
-    tmp->returning = 0;
-    Object_rc_incr(tmp);
-    ObjectUtil_eprintf("debug. pushing into list. bef. tmp= %v rc=%d\n", tmp, tmp->rc);
-    Object_bop_push(list, tmp);
-    Object_rc_decr(tmp);
-    ObjectUtil_eprintf("debug. pushing into list. aft. tmp= %v rc=%d\n---\n", tmp, tmp->rc);
+    Object_rc_incr(tmp); // our reference to it in the args to this function
+    ObjectUtil_eprintf("debug. pushing into list. bef. tmp= %v tmp.rc=%d\n", tmp, tmp->rc);
+    Object_reject(Object_bop_push(list, tmp)); // push into this object, ignore error
+    Object_rc_decr(tmp); // we are done with tmp
+    ObjectUtil_eprintf("debug. pushing into list. aft. tmp= %v tmp.rc=%d\n", tmp, tmp->rc);
+    ObjectUtil_eprintf("debug. list. rt=%d\n", list->returning);
+    printf("debug. ---- --- \n");
   }
   va_end(argv);
-  ObjectUtil_eprintf("debug. returning list = %v | rc=%d\n", list, list->rc);
+  list->rc = rc;
+  if(rc == 0) {
+    Object_return(list);
+  }
+  ObjectUtil_eprintf("debug. returning list %x = %v | rc=%d | rt=%d\n", list, list, list->rc, list->returning);
   return list;
 }
 
@@ -437,44 +444,84 @@ void Object_del(Object* self) {
   free(self);
 }
 
+void Object_rc_done(Object* self, int parent_rc) {
+  assert(self != NULL);
+  int i = 0;
+  Object* tmp;
+  if(Object_type(self) == SYMBOL_LIST) {
+    int list_size = Object_len(self);
+    for(i = 0; i < list_size; i++) {
+      tmp = Object_bop_at(self, i);
+      self->rc = MAX(parent_rc+1, self->rc);
+      Object_rc_done(tmp, self->rc);
+    }
+  }
+  else
+  if(Object_type(self) == SYMBOL_HASH) {
+    // TODO
+  }
+  else {
+    self->rc = MAX(parent_rc+1, self->rc);
+  }
+}
+
 void Object_system_done() {
   if(object_system->done_called) {
     return;
   }
   printf("--- { Object_system_done() { ---\n");
-  int i;
   object_system->done_called = 1;
+
+  Object* obj_curr = NULL;
+  Object* obj_next = NULL;
+  int i;
+
+  // Ensure that the rc of
+  // simple nested objects is higher than
+  // that of complex container objects.
+  obj_curr = object_system->head;
+  obj_next = NULL;
+  while(obj_curr != NULL) {
+    obj_next = obj_curr->next;
+    Object_rc_done(obj_curr, 0);
+    obj_curr = obj_next;
+  }
+
+  // Above should guarantee that all container objects
+  // get deleted before the things they contain. 
+
   // delete all objects
   while(object_system->size > 0) {
     /*Object_del(object_system->head);*/
-    Object* iter = object_system->head;
-    Object* next = NULL;
-    while(iter != NULL) {
-      next = iter->next; 
-      if(iter->returning) {
-        printf("WARNING: Object_system_done. Object at %p 'returning'\n", iter);
-        iter->returning = 0;
+    obj_curr = object_system->head;
+    obj_next = NULL;
+    while(obj_curr != NULL) {
+      obj_next = obj_curr->next; 
+      if(obj_curr->returning) {
+        printf("WARNING: Object_system_done. Object at %p 'returning'\n", obj_curr);
+        obj_curr->returning = 0;
       }
-      iter = Object_rc_decr(iter);
-      iter = next;
+      obj_curr = Object_rc_decr(obj_curr);
+      obj_curr = obj_next;
     }
   }
+
   // delete type information
-  ObjectTypeInfo* iter;
-  ObjectTypeInfo* iter_next;
+  ObjectTypeInfo* oti_curr;
+  ObjectTypeInfo* oti_next;
   for(i = 0; i < OBJECT_TYPES_BUCKETS_SIZE; i++) {
-    iter = object_system->types[i];
-    while(iter != NULL) {
-      iter_next = iter->next;
-      if(iter_next != NULL) {
-        iter_next->prev = NULL;
+    oti_curr = object_system->types[i];
+    while(oti_curr != NULL) {
+      oti_next = oti_curr->next;
+      if(oti_next != NULL) {
+        oti_next->prev = NULL;
       }
-      iter->next = NULL;
+      oti_curr->next = NULL;
       //---
-      free(iter);
+      free(oti_curr);
       //---
-      object_system->types[i] = iter_next;
-      iter = iter_next;
+      object_system->types[i] = oti_next;
+      oti_curr = oti_next;
     }
   }
   free(object_system);
@@ -497,7 +544,7 @@ Object* Object_gc(Object* self) {
   if(self->rc <= 0) {
     if(self->returning) {
       /*printf("Object_gc(%p). Object is returning. -SKIPPED-\n", self);*/
-      ObjectUtil_eprintf("Object_gc(%p). SKIPPED returning object: %v\n", self, self);
+      /*ObjectUtil_eprintf("Object_gc(%p). SKIPPED returning object: %v\n", self, self);*/
       return self;
     }
     Object_del(self);
