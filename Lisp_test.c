@@ -10,8 +10,11 @@ int main(int argc, char** argv) {
 
   printf("\n=== === tc1 === ===\n");
   Object* tc1_string = QSTRING_NEW1("(+ 2.718 3.141)");
-  Object* tc1_tokens = Object_accept(Lisp_tokenize(tc1_string));
-  ObjectUtil_eprintf("tc1_tokens = %v\n", tc1_tokens);
+  Object* tc1_tokens_got = Object_accept(Lisp_tokenize(tc1_string));
+  Object* tc1_tokens_exp = Object_new_list(1, 5, QSYMBOL("("), QSYMBOL("+"), QNUMBER(2.718), QNUMBER(3.141), QSYMBOL(")"));
+  ObjectUtil_eprintf("tc1_tokens_got = %v\n", tc1_tokens_got);
+  ObjectUtil_eprintf("tc1_tokens_exp = %v\n", tc1_tokens_exp);
+  nassert(Object_cmp(tc1_tokens_got, tc1_tokens_exp) == 0);
 
   printf("\n=== === tc2 === ===\n");
   Object* tc2_string = QSTRING_NEW1("92.3");
