@@ -93,7 +93,7 @@ Object* Object_reject(Object* self);
 char Object_is_null(Object* self);
 char Object_is_error(Object* self);
 char Object_is_returning(Object* self);
-
+char Object_is_composite(Object* self); // TODO
 
 // Helper to make assignments with rc easier.
 void Object_assign(Object** targetptr, Object* source);

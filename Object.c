@@ -182,9 +182,6 @@ Object* Object_new_list(int rc, size_t len, ...) {
   va_start(argv, len);
   Object* list = Object_new(SYMBOL_LIST, 1, List_new());
   ObjectUtil_eprintf("debug. list. rt=%d\n", list->returning);
-  /*if(rc == 0) {*/
-    /*Object_return(list);*/
-  /*}*/
   int i;
   Object* tmp;
   for(i = 0; i < len; i++) {
@@ -194,11 +191,12 @@ Object* Object_new_list(int rc, size_t len, ...) {
       tmp = Object_new_null();
     }
     assert(tmp != NULL);
+    Object_accept(tmp);
     Object_rc_incr(tmp); // our reference to it in the args to this function
-    ObjectUtil_eprintf("debug. pushing into list. bef. tmp= %v tmp.rc=%d\n", tmp, tmp->rc);
+    ObjectUtil_eprintf("debug. pushing into list. bef. tmp= %v | .rc=%d | .rt=%d\n", tmp, tmp->rc, tmp->returning);
     Object_reject(Object_bop_push(list, tmp)); // push into this object, ignore error
     Object_rc_decr(tmp); // we are done with tmp
-    ObjectUtil_eprintf("debug. pushing into list. aft. tmp= %v tmp.rc=%d\n", tmp, tmp->rc);
+    ObjectUtil_eprintf("debug. pushing into list. aft. tmp= %v | .rc=%d | .rt=%d\n", tmp, tmp->rc, tmp->returning);
     ObjectUtil_eprintf("debug. list. rt=%d\n", list->returning);
     printf("debug. ---- --- \n");
   }
