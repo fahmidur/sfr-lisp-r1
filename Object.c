@@ -496,7 +496,7 @@ void Object_system_done() {
   // Above should guarantee that all container objects
   // get deleted before the things they contain. 
 
-  printf("--- { Object_system_done || OSDK { ---\n");
+  printf("--- { OSDK { ---\n");
   // delete all objects
   while(object_system->size > 0) {
     /*Object_del(object_system->head);*/
@@ -520,7 +520,7 @@ void Object_system_done() {
       obj_curr = obj_next;
     }
   }
-  printf("--- } Object_system_done || OSDK } ---\n");
+  printf("--- } OSDK } ---\n");
 
   // delete type information
   ObjectTypeInfo* oti_curr;
@@ -970,7 +970,7 @@ void ObjectUtil_eprintf(char* fmt, ...) {
   }
   va_start(argv, fmt);
   int   BUFSIZE = fmt_len+1;
-  char* buf = calloc(1, fmt_len+1);
+  char* buf = calloc(1, BUFSIZE);
   int   bufpos = 0;
   int   SIGSIZE = 20; 
   char* sig = calloc(1, SIGSIZE);
