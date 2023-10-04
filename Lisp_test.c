@@ -26,8 +26,11 @@ int main(int argc, char** argv) {
 
   printf("\n=== === tc3 === ===\n");
   Object* tc3_string = QSTRING_NEW1("(- 123 23)");
-  Object* tc3_tokens = Object_accept(Lisp_tokenize(tc3_string));
-  ObjectUtil_eprintf("tc3_tokens = %v\n", tc3_tokens);
+  Object* tc3_tokens_got = Object_accept(Lisp_tokenize(tc3_string));
+  Object* tc3_tokens_exp = Object_new_list(1, 5, QSYMBOL("("), QSYMBOL("-"), QNUMBER(123), QNUMBER(23), QSYMBOL(")"));
+  ObjectUtil_eprintf("tc3_tokens_got = %v\n", tc3_tokens_got);
+  ObjectUtil_eprintf("tc3_tokens_exp = %v\n", tc3_tokens_exp);
+  nassert(Object_cmp(tc3_tokens_got, tc3_tokens_exp) == 0);
 
   printf("\n=== === tc4 ===  ===\n");
   Object* tc4_string = QSTRING_NEW1("(+ 5 -9)");
