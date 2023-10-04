@@ -12,6 +12,10 @@ size_t Util_cstr_hash_djb2(char* str) {
   return hash;
 }
 
+void Util_vt_set(int code) {
+  printf("\033[%dm", code);
+}
+
 size_t Util_sizet_max(size_t a, size_t b) {
   if(a > b) {
     return a;

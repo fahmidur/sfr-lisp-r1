@@ -242,9 +242,9 @@ int String_cmp(String* self, String* other) {
 void String_print(String* self) {
   /*printf("String(%s)", self->buf);*/
   printf("String(");
-  printf("\033[36m");
+  Util_vt_set(VT_COLOR_CYAN_FG);
   Util_cstr_print(self->buf);
-  printf("\033[0m");
+  Util_vt_set(VT_RESET);
   printf(")");
   /*char bchar = 92; // The backslash character*/
   /*char wchar = '"';*/
