@@ -49,6 +49,24 @@ static int failure_count = 0;
     printf("--\n"); \
   } while(0);
 
+#define nassert_obj_eq(a, b) \
+  do { \
+    printf("NASSERT_OBJ_EQ. F=%s L=%05d. || Object_cmp(%s, %s) == 0\n", __FILE__, __LINE__, #a, #b); \
+    general_count++; \
+    ObjectUtil_eprintf("%s = %v\n%s = %v\n", #a, a, #b, b); \
+    if(Object_cmp(a, b) == 0) { \
+      printf("\033[0;32m"); \
+      printf("NASSERT_OBJ_EQ. F=%s L=%05d. || R=SUCCESS\n", __FILE__, __LINE__); \
+      success_count++; \
+    } else { \
+      printf("\033[0;31m"); \
+      printf("NASSERT_OBJ_EQ. F=%s L=%05d. || R=FAILURE\n", __FILE__, __LINE__); \
+      failure_count++; \
+    } \
+    printf("\033[0m"); \
+    printf("--\n"); \
+  } while(0);
+
 void nassert_report() {
   printf("=======.\n");
 
