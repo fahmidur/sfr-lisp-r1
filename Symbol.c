@@ -165,9 +165,9 @@ Symbol* Symbol_find(char* str) {
 void Symbol_print(Symbol* self) {
   /*printf("Symbol(%s)", self->str);*/
   printf("Symbol(");
-  printf("\033[35m");
+  Util_vt_set(VT_COLOR_MAGENTA_FG);
   Util_cstr_print(self->str);
-  printf("\033[0m");
+  Util_vt_set(VT_RESET);
   printf(")");
 }
 

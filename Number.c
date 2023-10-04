@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "Number.h"
+#include "Util.h"
 
 Number* Number_new_from_int(int x) {
   Number* self = calloc(1, sizeof(Number));
@@ -111,8 +112,8 @@ int Number_cmp(Number* self, Number* other) {
 void Number_print(Number* self) {
   /*printf("Number(%f)", self->rep);*/
   printf("Number(");
-  printf("\033[93m");
+  Util_vt_set(VT_COLOR_YELLOW_FG);
   printf("%f", self->rep);
-  printf("\033[0m");
+  Util_vt_set(VT_RESET);
   printf(")");
 }
