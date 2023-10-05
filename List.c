@@ -174,6 +174,9 @@ Object* List_at(List* self, size_t idx) {
     iter = iter->next;
     i++;
   }
+  // TODO we iterate from the head forward
+  // or the tail backward depending on whether
+  // idx is closer to the head or the tail. 
   return NULL;
 }
 

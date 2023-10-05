@@ -800,6 +800,22 @@ Object* Object_bop_at(Object* self, size_t idx) {
   return Object_return(ret);
 }
 
+/**
+ * Return the first element of the list
+ * if it exists or object_null.
+ */
+Object* Object_uop_first(Object* self) {
+  // TODO
+}
+
+/**
+ * Return the last element of the list 
+ * if it exists or object_null.
+ */
+Object* Object_uop_last(Object* self) {
+  // TODO
+}
+
 Object* Object_bop_push(Object* a, Object* b) {
   assert(a != NULL); assert(b != NULL);
   Object_rc_incr(a); Object_rc_incr(b);

@@ -64,6 +64,13 @@ void set_state(TokenizerState* state_ptr, TokenizerState new_state) {
   printf("state="); print_TokenizerState(*state_ptr); printf("\n");
 }
 
+Object* Lisp_parse(Object* tokens) {
+  assert(tokens != NULL);
+  Object_rc_incr(tokens);
+  // TODO
+  Object_rc_decr(tokens);
+}
+
 Object* Lisp_tokenize(Object* string) {
   assert(string != NULL);
   Object_rc_incr(string);
