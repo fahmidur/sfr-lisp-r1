@@ -6,8 +6,6 @@ int main(int argc, char** argv) {
 
   Runtime_init();
 
-  // TODO: add tests here
-
   printf("\n=== === tc1 === ===\n");
   Object* tc1_string = QSTRING_NEW1("(+ 2.718 3.141)");
   Object* tc1_tokens_got = Object_accept(Lisp_tokenize(tc1_string));
