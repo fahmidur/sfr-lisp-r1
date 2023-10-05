@@ -28,14 +28,15 @@ int main(int argc, char** argv) {
 
   printf("\n=== === tc4 ===  ===\n");
   Object* tc4_string = QSTRING_NEW1("(+ 5 -9)");
-  Object* tc4_tokens = Object_accept(Lisp_tokenize(tc4_string));
-  ObjectUtil_eprintf("tc4_tokens = %v\n", tc4_tokens);
+  Object* tc4_tokens_got = Object_accept(Lisp_tokenize(tc4_string));
+  Object* tc4_tokens_exp = Object_new_list(1, 5, QSYMBOL("("), QSYMBOL("+"), QNUMBER(5), QNUMBER(-9), QSYMBOL(")"));
+  nassert_obj_eq(tc4_tokens_got, tc4_tokens_exp);
 
   printf("\n=== === tc5 === ===\n");
   Object* tc5_string = QSTRING_NEW1("(print \"hello world\")");
-  ObjectUtil_eprintf("tc5_string = %v\n", tc5_string);
-  Object* tc5_tokens = Object_accept(Lisp_tokenize(tc5_string));
-  ObjectUtil_eprintf("tc5_tokens = %v\n", tc5_tokens);
+  Object* tc5_tokens_got = Object_accept(Lisp_tokenize(tc5_string));
+  Object* tc5_tokens_exp = Object_new_list(1, 4, QSYMBOL("("), QSYMBOL("print"), QSTRING("hello world"), QSYMBOL(")"));
+  nassert_obj_eq(tc5_tokens_got, tc5_tokens_exp);
 
   Runtime_done();
 
