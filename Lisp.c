@@ -59,11 +59,6 @@ void print_TokenizerState(TokenizerState x) {
   }
 }
 
-void set_state(TokenizerState* state_ptr, TokenizerState new_state) {
-  *state_ptr = new_state;
-  printf("state="); print_TokenizerState(*state_ptr); printf("\n");
-}
-
 Object* Lisp_parse(Object* tokens) {
   assert(tokens != NULL);
   Object_rc_incr(tokens);
@@ -204,13 +199,13 @@ Object* Lisp_tokenize(Object* string) {
       state = ts_InString;
     }
     //--- end of forloop-body
-    ObjectUtil_eprintf("Lisp_tokenizer. ch=|%c| tmp_str=%v\n", ch, tmp_str);
-    printf("state="); print_TokenizerState(state); printf("\n");
+    /*ObjectUtil_eprintf("Lisp_tokenizer. ch=|%c| tmp_str=%v\n", ch, tmp_str);*/
+    /*printf("state="); print_TokenizerState(state); printf("\n");*/
   }
-  printf("--- end-of-forloop ---\n"); 
+  /*printf("--- end-of-forloop ---\n"); */
 
-  printf("state="); print_TokenizerState(state); printf("\n");
-  ObjectUtil_eprintf("tmp_str=%v\n", tmp_str);
+  /*printf("state="); print_TokenizerState(state); printf("\n");*/
+  /*ObjectUtil_eprintf("tmp_str=%v\n", tmp_str);*/
   if(state == ts_InNumber) {
     Object_bop_push(ret, Object_to_number(tmp_str));
     Object_zero(tmp_str);
@@ -220,8 +215,8 @@ Object* Lisp_tokenize(Object* string) {
     Object_bop_push(ret, Object_to_number(tmp_str));
     Object_zero(tmp_str);
   }
-  ObjectUtil_eprintf("tmp_str=%v\n", tmp_str);
-  printf("---\n");
+  /*ObjectUtil_eprintf("tmp_str=%v\n", tmp_str);*/
+  /*printf("---\n");*/
 
   Object_rc_decr(string);
   Object_rc_decr(tmp_str);
