@@ -231,3 +231,7 @@ int List_cmp(List* self, List* other) {
   }
   return 0;
 }
+
+ListIter* ListIter_new() {
+
+}

@@ -20,6 +20,20 @@ struct List {
   ListNode* tail;
 };
 
+enum ListIterPos {
+  LIST_ITER_POS_NIL, // In limbo.
+  LIST_ITER_POS_BEG, // Before the 'head' element.
+  LIST_ITER_POS_INN, // Within collection of elements.
+  LIST_ITER_POS_END, // After the 'tail' element.
+};
+
+typedef struct ListIter ListIter;
+struct ListIter {
+  List* list;
+  enum ListIterPos at_pos;
+  ListNode* cnode;
+};
+
 ListNode* ListNode_new(Object* data);
 void ListNode_unlink(ListNode* self);
 void ListNode_del(ListNode* self);
