@@ -232,6 +232,51 @@ int List_cmp(List* self, List* other) {
   return 0;
 }
 
-ListIter* ListIter_new() {
+ListIter* ListIter_new(List* list) {
+  ListIter* self = calloc(1, sizeof(ListIter));
+  self->list = list;
+  self->at_pos = LIST_ITER_POS_NIL;
+  self->cnode = NULL;
+  return self;
+}
 
+ListIter* ListIter_next(ListIter* self) {
+  if(self->at_pos == LIST_ITER_POS_NIL) {
+    self->at_pos = LIST_ITER_POS_BEG;
+  }
+  List* list = self->list;
+  if(list->size == 0) {
+    self->at_pos = LIST_ITER_POS_END;
+  }
+  else
+  if(self->at_pos == LIST_ITER_POS_BEG) {
+    self->cnode = list->head;
+    self->at_pos = LIST_ITER_POS_INN;
+  }
+  else
+  if(self->at_pos == LIST_ITER_POS_INN) {
+    if(self->cnode->next != NULL) {
+      self->cnode = self->cnode->next;
+    }
+    else {
+      self->cnode = NULL;
+      self->at_pos = LIST_ITER_POS_END;
+    }
+  }
+  return self;
+}
+
+void ListIter_del(ListIter* self) {
+  if(self == NULL) {
+    return;
+  }
+  free(self);
+}
+
+char ListIter_at_beg(ListIter* self) {
+  return self->at_pos == LIST_ITER_POS_BEG;
+}
+
+char ListIter_at_end(ListIter* self) {
+  return self->at_pos == LIST_ITER_POS_END;
 }

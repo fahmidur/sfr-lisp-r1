@@ -34,6 +34,13 @@ struct ListIter {
   ListNode* cnode;
 };
 
+ListIter* ListIter_new(List* list);
+void      ListIter_del(ListIter* self);
+ListIter* ListIter_next(ListIter* self);
+//ListIter* ListIter_prev(ListIter* self);
+char      ListIter_at_beg(ListIter* self);
+char      ListIter_at_end(ListIter* self);
+
 ListNode* ListNode_new(Object* data);
 void ListNode_unlink(ListNode* self);
 void ListNode_del(ListNode* self);
