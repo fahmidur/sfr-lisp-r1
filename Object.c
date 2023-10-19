@@ -806,6 +806,7 @@ Object* Object_bop_at(Object* self, size_t idx) {
  */
 Object* Object_uop_first(Object* self) {
   // TODO
+  return NULL;
 }
 
 /**
@@ -814,6 +815,7 @@ Object* Object_uop_first(Object* self) {
  */
 Object* Object_uop_last(Object* self) {
   // TODO
+  return NULL;
 }
 
 Object* Object_bop_push(Object* a, Object* b) {

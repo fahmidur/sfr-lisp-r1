@@ -64,6 +64,7 @@ Object* Lisp_parse(Object* tokens) {
   Object_rc_incr(tokens);
   // TODO
   Object_rc_decr(tokens);
+  return NULL;
 }
 
 Object* Lisp_tokenize(Object* string) {
