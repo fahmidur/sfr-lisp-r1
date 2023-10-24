@@ -45,7 +45,7 @@ int main(int argc, char** argv) {
   printf("--- listobj = "); Object_print(listobj); printf("\n");
 
   ListIter* iter1 = ListIter_new(listobj->impl);
-  ListIter_goto_head(iter1);
+  ListIter_head(iter1);
   int idx = 0;
   while(!ListIter_at_end(iter1)) {
     printf("iter1. item[%d]= ", idx); Object_print(ListIter_get_val(iter1)); printf("\n");

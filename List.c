@@ -266,24 +266,24 @@ ListIter* ListIter_next(ListIter* self) {
   return self;
 }
 
-char ListIter_goto_head(ListIter* self) {
+ListIter* ListIter_head(ListIter* self) {
   List* list = self->list;
   if(list->size == 0) {
-    return 0; 
+    return self;
   }
   self->cnode = list->head;
   self->at_pos = LIST_ITER_POS_INN;
-  return 1;
+  return self;
 }
 
-char ListIter_goto_tail(ListIter* self) {
+ListIter* ListIter_tail(ListIter* self) {
   List* list = self->list;
   if(list->size == 0) {
-    return 0; 
+    return self;
   }
   self->cnode = list->tail;
   self->at_pos = LIST_ITER_POS_INN;
-  return 1;
+  return self;
 }
 
 Object* ListIter_get_val(ListIter* self) {
