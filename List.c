@@ -266,6 +266,32 @@ ListIter* ListIter_next(ListIter* self) {
   return self;
 }
 
+char ListIter_goto_head(ListIter* self) {
+  List* list = self->list;
+  if(list->size == 0) {
+    return 0; 
+  }
+  self->cnode = list->head;
+  self->at_pos = LIST_ITER_POS_INN;
+  return 1;
+}
+
+char ListIter_goto_tail(ListIter* self) {
+  List* list = self->list;
+  if(list->size == 0) {
+    return 0; 
+  }
+  self->cnode = list->tail;
+  self->at_pos = LIST_ITER_POS_INN;
+  return 1;
+}
+
+Object* ListIter_get_val(ListIter* self) {
+  assert(self != NULL);
+  assert(self->cnode != NULL);
+  return self->cnode->data;
+}
+
 void ListIter_del(ListIter* self) {
   if(self == NULL) {
     return;

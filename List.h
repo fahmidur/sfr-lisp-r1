@@ -40,6 +40,9 @@ ListIter* ListIter_next(ListIter* self);
 //ListIter* ListIter_prev(ListIter* self);
 char      ListIter_at_beg(ListIter* self);
 char      ListIter_at_end(ListIter* self);
+char      ListIter_goto_head(ListIter* self);
+char      ListIter_goto_tail(ListIter* self);
+Object*   ListIter_get_val(ListIter* self);
 
 ListNode* ListNode_new(Object* data);
 void ListNode_unlink(ListNode* self);

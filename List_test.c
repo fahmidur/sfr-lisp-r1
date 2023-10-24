@@ -44,6 +44,16 @@ int main(int argc, char** argv) {
   nassert(List_size(listobj->impl) == 4);
   printf("--- listobj = "); Object_print(listobj); printf("\n");
 
+  ListIter* iter1 = ListIter_new(listobj->impl);
+  ListIter_goto_head(iter1);
+  int idx = 0;
+  while(!ListIter_at_end(iter1)) {
+    printf("iter1. item[%d]= ", idx); Object_print(ListIter_get_val(iter1)); printf("\n");
+    ListIter_next(iter1);
+    idx++;
+  }
+  ListIter_del(iter1);
+
   Object* str4 = Object_new(SYMBOL_STRING, 1, String_new("str4"));
   Object* str5 = Object_new(SYMBOL_STRING, 1, String_new("str5"));
   Object* str6 = Object_new(SYMBOL_STRING, 1, String_new("str6"));
