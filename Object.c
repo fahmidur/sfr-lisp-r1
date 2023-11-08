@@ -21,7 +21,9 @@ Symbol* SYMBOL_STRING;
 Symbol* SYMBOL_NUMBER;
 Symbol* SYMBOL_ERROR;
 Symbol* SYMBOL_LIST;
+Symbol* SYMBOL_LIST_ITER;
 Symbol* SYMBOL_HASH;
+Symbol* SYMBOL_HASH_ITER;
 Symbol* SYMBOL_NULL;
 
 char Object_oti_set(Symbol* type, ObjectTypeInfo otiarg) {

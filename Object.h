@@ -17,7 +17,9 @@ extern Symbol* SYMBOL_STRING;
 extern Symbol* SYMBOL_NUMBER;
 extern Symbol* SYMBOL_ERROR;
 extern Symbol* SYMBOL_LIST;
+extern Symbol* SYMBOL_LIST_ITER;
 extern Symbol* SYMBOL_HASH;
+extern Symbol* SYMBOL_HASH_ITER;
 extern Symbol* SYMBOL_NULL;
 
 typedef struct Object Object;
