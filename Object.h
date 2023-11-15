@@ -79,6 +79,7 @@ ObjectTypeInfo* Object_oti_get(Symbol* type);
 Object* Object_new(Symbol* type, int rc, void* impl);
 Object* Object_new_list(int rc, size_t len, ...);
 Object* Object_new_null();
+Object* Object_new_iter(Object* iterable, int rc);
 void Object_add_to_system(Object* self);
 void Object_del(Object* self);
 Object* Object_clone(Object* self);

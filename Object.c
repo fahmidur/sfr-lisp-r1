@@ -126,6 +126,13 @@ void Object_system_init() {
   };
   Object_oti_set(SYMBOL_LIST, otiarg_list);
 
+  // TODO:
+  // - complete ListIter such that
+  //   core methods are implemented.
+  // - finish and test oti registration.
+  ObjectTypeInfo otiarg_list_iter = {
+  };
+
    ObjectTypeInfo otiarg_hash = {
     .fn_del   = (void  (*)(void*))Hash_del,
     .fn_print = (void  (*)(void*))Hash_print,
@@ -170,6 +177,38 @@ Object* Object_new(Symbol* type, int rc, void* impl) {
 
   Object_add_to_system(self);
   
+  if(rc == 0) {
+    return Object_return(self);
+  } else {
+    return self;
+  }
+}
+
+/**
+ * Return a new iterator Object based on the Iterable
+ * object received: (Object<List> or Object<Hash>)
+ */
+Object* Object_new_iter(Object* iterable, int rc) {
+  assert(iterable != NULL);
+  assert(rc == 0 || rc == 1);
+
+  Object* self = calloc(1, sizeof(Object));
+  if(Object_type(iterable) == SYMBOL_LIST) {
+    self->type = SYMBOL_LIST_ITER;
+    self->impl = ListIter_new(iterable->impl);
+    Object_rc_incr(iterable);
+  }
+  else
+  if(Object_type(iterable) == SYMBOL_HASH) {
+    self->type = SYMBOL_HASH_ITER;;
+    self->impl = HashIter_new(iterable->impl);
+    Object_rc_incr(iterable);
+  }
+  else {
+    fprintf(stderr, "ERROR: Object_new_iter. Received non-iterable object\n");
+    return NULL;
+  }
+
   if(rc == 0) {
     return Object_return(self);
   } else {
