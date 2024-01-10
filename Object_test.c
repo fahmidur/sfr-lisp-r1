@@ -238,6 +238,14 @@ int main(int argc, char** argv) {
   Object* list4 = Object_new_list(1, 2, QSTRING("qlist-1"), QSTRING("qlist-2"));
   ObjectUtil_eprintf("list4 = %v\n", list4);
 
+  printf("Creating nested list nlist1 ...\n");
+  Object* sublist1 = Object_new_list(1, 3, QNUMBER(1), QNUMBER(2), QNUMBER(3));
+  Object* nlist1 = Object_new_list(1, 2, QSTRING("nlist1_e1"), QSTRING("nlist_e2"));
+  Object_bop_push(nlist1, sublist1);
+  Object_bop_push(nlist1, QSTRING("nlist_e4"));
+  ObjectUtil_eprintf("nlist1 = %v\n", nlist1);
+  nassert(Object_len(nlist1) == 4);
+
   Util_heading1(0, "LIST OPERATIONS");
 
   //===========================================================================
