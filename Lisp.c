@@ -4,6 +4,9 @@
 #include "Object.h"
 #include "Lisp.h"
 
+Object* LISP_PAREN_BEG;
+Object* LISP_PAREN_END;
+
 typedef enum TokenizerState TokenizerState;
 enum TokenizerState {
   ts_Init,
@@ -15,6 +18,16 @@ enum TokenizerState {
   ts_InBareWord,
 };
 
+void Lisp_init() {
+  LISP_PAREN_BEG = QSYMBOL_NEW1("(");
+  LISP_PAREN_END = QSYMBOL_NEW1(")");
+}
+
+void Lisp_done() {
+  Object_assign(&LISP_PAREN_BEG, NULL);
+  Object_assign(&LISP_PAREN_END, NULL);
+}
+
 char TokenizerUtil_isdigit(char ch) {
   return (ch >= '0' && ch <= '9');
 }
@@ -24,7 +37,15 @@ char TokenizerUtil_numlike(char ch) {
 }
 
 char TokenizerUtil_wordlike(char ch) {
-  return (ch >= 65 && ch <= 90) || (ch >= 97 && ch <= 122) || (ch == '_') || (ch == '-') || (ch == '+');
+  return (
+    (ch >= 65 && ch <= 90) || 
+    (ch >= 97 && ch <= 122) || 
+    (ch == '_') || 
+    (ch == '-') || 
+    (ch == '+') || 
+    (ch == '*') ||
+    (ch == '/')
+  );
 }
 
 char TokenizerUtil_min_uint(unsigned int a, unsigned int b) {
@@ -227,8 +248,34 @@ Object* Lisp_tokenize(Object* string) {
   return ret;
 }
 
+Object* Lisp_parse_tokens2(Object* tokenlist, Object* ret, int depth) {
+  Object* tmp = NULL;
+  Object* sublist = NULL;
+  while(Object_len(tokenlist) > 0) {
+    tmp = Object_uop_shift(tokenlist);
+    ObjectUtil_eprintf("[%d] Lisp_parse_tokens2. tmp = %v\n", depth, tmp);
+    if(Object_cmp(tmp, LISP_PAREN_BEG) == 0) {
+      // create a sublist to append to ret
+      sublist = QLIST_NEW1();
+      Lisp_parse_tokens2(tokenlist, sublist, depth+1);
+      Object_bop_push(ret, sublist);
+    }
+    else
+    if(Object_cmp(tmp, LISP_PAREN_END) == 0) {
+      return ret;
+    }
+    else {
+      // some sort of atom
+      Object_bop_push(ret, tmp);
+    }
+  }
+  return ret;
+}
+
 Object* Lisp_parse_tokens(Object* tokenlist) {
-  return NULL;
+  Object* ret = QLIST_NEW1();
+  Lisp_parse_tokens2(tokenlist, ret, 0);
+  return ret;
 }
 
 Object* Lisp_parse_string(Object* string) {

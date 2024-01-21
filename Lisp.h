@@ -19,6 +19,12 @@
 #include "Object.h"
 #include "Runtime.h"
 
+extern Object* LISP_PAREN_BEG;
+extern Object* LISP_PAREN_END;
+
+void Lisp_init();
+void Lisp_done();
+
 // Tokenize a String object into flat List of objects
 // where each Object is a Symbol, String, or Number
 Object* Lisp_tokenize(Object* string);

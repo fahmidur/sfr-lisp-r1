@@ -1,16 +1,29 @@
 #include <stdio.h>
+#include "Object.h"
 #include "nassert.h"
 #include "Lisp.h"
 
 int main(int argc, char** argv) {
 
   Runtime_init();
+  Lisp_init();
 
   printf("\n=== === tc1 === ===\n");
   Object* tc1_string = QSTRING_NEW1("(+ 2.718 3.141)");
   Object* tc1_tokens_got = Object_accept(Lisp_tokenize(tc1_string));
   Object* tc1_tokens_exp = Object_new_list(1, 5, QSYMBOL("("), QSYMBOL("+"), QNUMBER(2.718), QNUMBER(3.141), QSYMBOL(")"));
   nassert_obj_eq(tc1_tokens_got, tc1_tokens_exp);
+  Object* tc1_parsed = Object_accept(Lisp_parse_tokens(tc1_tokens_got));
+  ObjectUtil_eprintf("tc1_parsed = %v\n", tc1_parsed);
+
+  printf("\n=== === tc1_2 === ===\n");
+  Object* tc1_2_string = QSTRING_NEW1("(+ 2.718 (* 2 3.141))");
+  Object* tc1_2_tokens_got = Object_accept(Lisp_tokenize(tc1_2_string));
+  Object* tc1_2_tokens_exp = Object_new_list(1, 9, QSYMBOL("("), QSYMBOL("+"), QNUMBER(2.718), QSYMBOL("("), QSYMBOL("*"), QNUMBER(2.0), QNUMBER(3.141), QSYMBOL(")"), QSYMBOL(")"));
+  nassert_obj_eq(tc1_2_tokens_got, tc1_2_tokens_exp);
+  Object* tc1_2_parsed = Object_accept(Lisp_parse_tokens(tc1_2_tokens_got));
+  ObjectUtil_eprintf("tc1_2_parsed = %v\n", tc1_2_parsed);
+  /* Object* tc1_2_tokens_exp = Object_new_list(1, 5, QSYMBOL("("), QSYMBOL("+"), QNUMBER(2.718), Object_new_list(1, 2, QSYMBOL("*"), QNUMBER(2.718), QNUMBER(3.141)), QSYMBOL(")")); */
 
   printf("\n=== === tc2 === ===\n");
   Object* tc2_string = QSTRING_NEW1("92.3");
@@ -36,6 +49,7 @@ int main(int argc, char** argv) {
   Object* tc5_tokens_exp = Object_new_list(1, 4, QSYMBOL("("), QSYMBOL("print"), QSTRING("hello world"), QSYMBOL(")"));
   nassert_obj_eq(tc5_tokens_got, tc5_tokens_exp);
 
+  Lisp_done();
   Runtime_done();
 
   //----

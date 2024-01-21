@@ -62,6 +62,8 @@ size_t    List_push(List* self, Object* data);
 Object*   List_pop(List* self);
 size_t    List_unshift(List* self, Object* data);
 Object*   List_shift(List* self);
+/* Object*   List_first(List* self); */
+/* Object*   List_last(List* self); */
 
 /**
  * Get the nth element of the list.
