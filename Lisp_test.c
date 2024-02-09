@@ -50,6 +50,15 @@ int main(int argc, char** argv) {
   Object* tc5_tokens_exp = Object_new_list(1, 4, QSYMBOL("("), QSYMBOL("print"), QSTRING("hello world"), QSYMBOL(")"));
   nassert_obj_eq(tc5_tokens_got, tc5_tokens_exp);
 
+  printf("\n=== === tc6 === ===\n");
+  Object* tc6_string = QSTRING_NEW1(") invalid1 ()");
+  ObjectUtil_eprintf("tc6_string = %v\n", tc6_string);
+  Object* tc6_tokens = Object_accept(Lisp_tokenize(tc6_string));
+  ObjectUtil_eprintf("tc6_tokens = %v\n", tc6_tokens);
+  Object* tc6_parsed2 = Object_accept(Lisp_parse_string(tc6_string));
+  ObjectUtil_eprintf("tc6_string  = %v\n", tc6_string);
+  ObjectUtil_eprintf("tc6_parsed2 = %v\n", tc6_parsed2);
+
   Lisp_done();
   Runtime_done();
 

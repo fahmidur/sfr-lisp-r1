@@ -249,8 +249,8 @@ Object* Lisp_tokenize(Object* string) {
 }
 
 Object* Lisp_parse_tokens2(Object* tokenlist, Object* ret, int depth) {
-  Object* tmp = NULL;
-  Object* sublist = NULL;
+  Object* tmp = Object_new_null();
+  Object* sublist = Object_new_null();
   int idx = 0;
   char softbreak = 0;
   while(Object_len(tokenlist) > 0) {
@@ -278,14 +278,15 @@ Object* Lisp_parse_tokens2(Object* tokenlist, Object* ret, int depth) {
     idx++;
     if(softbreak) {
       // cleanup
-      if(tmp != NULL) {
-        Object_rc_decr(tmp);
-      }
+      Object_assign(&tmp, NULL);
       break;
     }
   }
   //cleanup
   Object_assign(&sublist, NULL);
+  if(depth == 0 && Object_len(tokenlist) != 0) {
+    ObjectUtil_eprintf("ERROR: ParseError, invalid tokenlist=%v\n", tokenlist);
+  }
   return ret;
 }
 
@@ -295,6 +296,12 @@ Object* Lisp_parse_tokens(Object* tokenlist) {
   return ret;
 }
 
-Object* Lisp_parse_string(Object* string) {
-  return NULL;
+Object* Lisp_parse_string(Object* str) {
+  Object* tokens = Object_accept(Lisp_tokenize(str));
+  if(Object_is_error(tokens)) {
+    return tokens;
+  }
+  Object* parsed = Object_return(Lisp_parse_tokens(tokens));
+  Object_rc_decr(tokens); tokens = NULL;
+  return parsed;
 }
