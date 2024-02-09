@@ -22,8 +22,9 @@ int main(int argc, char** argv) {
   Object* tc1_2_tokens_exp = Object_new_list(1, 9, QSYMBOL("("), QSYMBOL("+"), QNUMBER(2.718), QSYMBOL("("), QSYMBOL("*"), QNUMBER(2.0), QNUMBER(3.141), QSYMBOL(")"), QSYMBOL(")"));
   nassert_obj_eq(tc1_2_tokens_got, tc1_2_tokens_exp);
   Object* tc1_2_parsed = Object_accept(Lisp_parse_tokens(tc1_2_tokens_got));
-  ObjectUtil_eprintf("tc1_2_parsed = %v\n", tc1_2_parsed);
-  /* Object* tc1_2_tokens_exp = Object_new_list(1, 5, QSYMBOL("("), QSYMBOL("+"), QNUMBER(2.718), Object_new_list(1, 2, QSYMBOL("*"), QNUMBER(2.718), QNUMBER(3.141)), QSYMBOL(")")); */
+  ObjectUtil_eprintf("tc1_2_parsed     = %v\n", tc1_2_parsed);
+  Object* tc1_2_parsed_exp = Object_new_list(1, 3, QSYMBOL("+"), QNUMBER(2.718), Object_new_list(1, 3, QSYMBOL("*"), QNUMBER(2.0), QNUMBER(3.141)));
+  ObjectUtil_eprintf("tc1_2_parsed_exp = %v\n", tc1_2_parsed_exp);
 
   printf("\n=== === tc2 === ===\n");
   Object* tc2_string = QSTRING_NEW1("92.3");

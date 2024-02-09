@@ -251,9 +251,15 @@ Object* Lisp_tokenize(Object* string) {
 Object* Lisp_parse_tokens2(Object* tokenlist, Object* ret, int depth) {
   Object* tmp = NULL;
   Object* sublist = NULL;
+  int idx = 0;
+  char softbreak = 0;
   while(Object_len(tokenlist) > 0) {
-    tmp = Object_uop_shift(tokenlist);
+    tmp = Object_accept(Object_uop_shift(tokenlist));
     ObjectUtil_eprintf("[%d] Lisp_parse_tokens2. tmp = %v\n", depth, tmp);
+    if(depth == 0 && idx == 0 && Object_cmp(tmp, LISP_PAREN_BEG) == 0) {
+      // special case of first '(' in the tokenlist
+    }
+    else
     if(Object_cmp(tmp, LISP_PAREN_BEG) == 0) {
       // create a sublist to append to ret
       sublist = QLIST_NEW1();
@@ -262,13 +268,24 @@ Object* Lisp_parse_tokens2(Object* tokenlist, Object* ret, int depth) {
     }
     else
     if(Object_cmp(tmp, LISP_PAREN_END) == 0) {
-      return ret;
+      softbreak = 1;
+      /* return ret; */
     }
     else {
       // some sort of atom
       Object_bop_push(ret, tmp);
     }
+    idx++;
+    if(softbreak) {
+      // cleanup
+      if(tmp != NULL) {
+        Object_rc_decr(tmp);
+      }
+      break;
+    }
   }
+  //cleanup
+  Object_assign(&sublist, NULL);
   return ret;
 }
 
