@@ -248,8 +248,9 @@ Object* Lisp_tokenize(Object* string) {
   return ret;
 }
 
-Object* Lisp_parse_tokens2(Object* tokenlist, Object* ret, int depth) {
+Object* Lisp_parse_tokens2(Object* tokenlist, int depth) {
   Object* tmp = Object_new_null();
+  Object* ret = QLIST_NEW1();
   Object* sublist = Object_new_null();
   int idx = 0;
   char softbreak = 0;
@@ -262,8 +263,7 @@ Object* Lisp_parse_tokens2(Object* tokenlist, Object* ret, int depth) {
     else
     if(Object_cmp(tmp, LISP_PAREN_BEG) == 0) {
       // create a sublist to append to ret
-      sublist = QLIST_NEW1();
-      Lisp_parse_tokens2(tokenlist, sublist, depth+1);
+      sublist = Object_accept(Lisp_parse_tokens2(tokenlist, depth+1));
       Object_bop_push(ret, sublist);
       Object_assign(&sublist, NULL);
     }
@@ -290,13 +290,14 @@ Object* Lisp_parse_tokens2(Object* tokenlist, Object* ret, int depth) {
     // in the tokenlist. 
     ObjectUtil_eprintf("ERROR: ParseError, invalid tokenlist=%v\n", tokenlist);
   }
+  Object_return(ret);
+  Object_rc_decr(ret);
+  assert(ret->rc == 0);
   return ret;
 }
 
 Object* Lisp_parse_tokens(Object* tokenlist) {
-  Object* ret = QLIST_NEW1();
-  Lisp_parse_tokens2(tokenlist, ret, 0);
-  return ret;
+  return Lisp_parse_tokens2(tokenlist, 0);
 }
 
 Object* Lisp_parse_string(Object* str) {
