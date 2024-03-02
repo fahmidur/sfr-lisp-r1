@@ -264,7 +264,12 @@ Object* Object_new_null() {
 void Object_assign(Object** targetptr, Object* source) {
   assert(targetptr != NULL);
   if(*targetptr != NULL) {
-    Object_rc_decr(*targetptr);
+    if(Object_is_null(*targetptr)) {
+      // do nothing
+    }
+    else {
+      Object_rc_decr(*targetptr);
+    }
   }
   if(source == NULL) {
     // helps ensure that the object system uses null_object

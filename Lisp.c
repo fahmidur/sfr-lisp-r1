@@ -265,6 +265,7 @@ Object* Lisp_parse_tokens2(Object* tokenlist, Object* ret, int depth) {
       sublist = QLIST_NEW1();
       Lisp_parse_tokens2(tokenlist, sublist, depth+1);
       Object_bop_push(ret, sublist);
+      Object_assign(&sublist, NULL);
     }
     else
     if(Object_cmp(tmp, LISP_PAREN_END) == 0) {
