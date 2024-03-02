@@ -286,6 +286,8 @@ Object* Lisp_parse_tokens2(Object* tokenlist, Object* ret, int depth) {
   //cleanup
   Object_assign(&sublist, NULL);
   if(depth == 0 && Object_len(tokenlist) != 0) {
+    // at depth 0 we have reached the end with left over tokens 
+    // in the tokenlist. 
     ObjectUtil_eprintf("ERROR: ParseError, invalid tokenlist=%v\n", tokenlist);
   }
   return ret;

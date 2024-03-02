@@ -114,7 +114,7 @@ void Object_system_init() {
     .fn_del   = (void  (*)(void*))Number_del,
     .fn_print = (void  (*)(void*))Number_print,
     .fn_clone = (void* (*)(void*))Number_clone,
-    .fn_zero  = (void (*)(void*))Number_zero
+    .fn_zero  = (void  (*)(void*))Number_zero
   };
   Object_oti_set(SYMBOL_NUMBER, otiarg_number);
 
