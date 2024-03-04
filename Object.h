@@ -9,6 +9,7 @@
 #include "Symbol.h"
 #include "String.h"
 #include "Number.h"
+#include "Error.h"
 
 #define OBJECT_TYPES_BUCKETS_SIZE 128
 
@@ -159,6 +160,9 @@ void    Object_system_gc();
 #define QNUMBER_NEW1(x) Object_new(SYMBOL_NUMBER, 1, Number_new_from_double(x))
 #define QNUMBER_NEW0(x) Object_new(SYMBOL_NUMBER, 0, Number_new_from_double(x))
 #define QNUMBER(x) Object_new(SYMBOL_NUMBER, 0, Number_new_from_double(x))
+
+#define QERROR_NEW0(x) Object_new(SYMBOL_ERROR, 0, Error_new(x))
+#define QERROR_NEW1(x) Object_new(SYMBOL_ERROR, 1, Error_new(x))
 
 #define QLIST_NEW1() Object_new(SYMBOL_LIST, 1, List_new())
 

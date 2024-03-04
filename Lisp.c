@@ -270,7 +270,6 @@ Object* Lisp_parse_tokens2(Object* tokenlist, int depth) {
     else
     if(Object_cmp(tmp, LISP_PAREN_END) == 0) {
       softbreak = 1;
-      /* return ret; */
     }
     else {
       // some sort of atom
@@ -289,9 +288,11 @@ Object* Lisp_parse_tokens2(Object* tokenlist, int depth) {
     // at depth 0 we have reached the end with left over tokens 
     // in the tokenlist. 
     ObjectUtil_eprintf("ERROR: ParseError, invalid tokenlist=%v\n", tokenlist);
+    Object_assign(&ret, NULL);
+    ret = QERROR_NEW1("invalid input tokenlist");
   }
-  Object_return(ret);
-  Object_rc_decr(ret);
+  Object_return(ret);   // mark object for returning
+  Object_rc_decr(ret);  // release the RC in this proc
   assert(ret->rc == 0);
   return ret;
 }
