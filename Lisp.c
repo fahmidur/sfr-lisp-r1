@@ -95,7 +95,7 @@ Object* Lisp_tokenize(Object* string) {
 
   size_t string_len = Object_len(string);
   Object* ret = QLIST_NEW1();
-  printf("string_len = %ld\n", string_len);
+  /* printf("string_len = %ld\n", string_len); */
 
   size_t i = 0;
   TokenizerState state = ts_Init;
@@ -105,14 +105,14 @@ Object* Lisp_tokenize(Object* string) {
   Object* paren_end = QSYMBOL_NEW1(")");
 
   Object* tmp_str = QSTRING_NEW1("");
-  ObjectUtil_eprintf("tmp_str=%v\n", tmp_str);
+  /* ObjectUtil_eprintf("tmp_str=%v\n", tmp_str); */
 
-  printf("--- beg-of-forloop ---\n"); 
+  /* printf("--- beg-of-forloop ---\n"); */ 
   for(i = 0; i < string_len; i++) {
     ch = Object_bop_charat(string, i);
-    printf("---\n");
-    printf("state="); print_TokenizerState(state); printf("\n");
-    ObjectUtil_eprintf("Lisp_tokenizer. ch=|%c| tmp_str=%v\n", ch, tmp_str);
+    /* printf("---\n"); */
+    /* printf("state="); print_TokenizerState(state); printf("\n"); */
+    /* ObjectUtil_eprintf("Lisp_tokenizer. ch=|%c| tmp_str=%v\n", ch, tmp_str); */
     if(state == ts_Init) {
       if(ch == '-') {
         state = ts_InNumberNegMaybe;
@@ -293,6 +293,9 @@ Object* Lisp_parse_tokens2(Object* tokenlist, int depth) {
   }
   Object_return(ret);   // mark object for returning
   Object_rc_decr(ret);  // release the RC in this proc
+
+  // We are returning a constructed object, that must
+  // be accepted or reject with rc=0;
   assert(ret->rc == 0);
   return ret;
 }

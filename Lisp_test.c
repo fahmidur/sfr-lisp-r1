@@ -58,6 +58,7 @@ int main(int argc, char** argv) {
   Object* tc6_parsed = Object_accept(Lisp_parse_string(tc6_string));
   ObjectUtil_eprintf("tc6_string  = %v\n", tc6_string);
   ObjectUtil_eprintf("tc6_parsed = %v\n", tc6_parsed);
+  nassert(Object_is_error(tc6_parsed));
 
   Lisp_done();
   Runtime_done();
