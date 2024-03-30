@@ -313,3 +313,53 @@ Object* Lisp_parse_string(Object* str) {
   Object_rc_decr(tokens); tokens = NULL;
   return parsed;
 }
+
+LispEnv* LispEnv_new(LispEnv* parent) {
+  LispEnv* ret = malloc(sizeof(LispEnv));
+  if(ret == NULL) {
+    // ERROR: unable to reserve memory
+    return ret;
+  }
+  ret->children_head = NULL;
+  ret->children_tail = NULL;
+  ret->sibling_next = NULL;
+  ret->sibling_prev = NULL;
+  if(parent != NULL) {
+    LispEnv_child_add(parent, ret);
+  }
+  return ret;
+}
+
+void LispEnv_child_add(LispEnv* self, LispEnv* child) {
+  assert(self != NULL);
+  assert(child != NULL);
+  assert(child->sibling_next == NULL);
+  assert(child->sibling_prev == NULL);
+  child->parent = self;
+  if(self->children_head == NULL && self->children_tail == NULL) {
+    // first child being added
+    self->children_head = self->children_tail = child;
+    child->sibling_prev = NULL;
+    child->sibling_next = NULL;
+  }
+  else {
+    LispEnv* iter = self->children_head;
+    while(iter != NULL) {
+      if(iter == child) {
+        // the child is already in this list
+        return;
+      }
+      iter = iter->sibling_next;
+    }
+    LispEnv* last_child = self->children_tail;
+    last_child->sibling_next = child;
+    child->sibling_prev = last_child;
+    self->children_tail = child;
+  }
+}
+
+void LispEnv_child_rem(LispEnv* self, LispEnv* child) {
+  assert(self != NULL);
+  assert(child != NULL);
+}
+

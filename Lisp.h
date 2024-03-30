@@ -39,15 +39,26 @@ Object* Lisp_parse_tokens(Object* tokenlist);
 // Lisp_parse_string(x) = Lisp_parse_tokens(Lisp_tokenize(x))
 Object* Lisp_parse_string(Object* string);
 
-// TODO: define LispEnv
-//typedef struct LispEnv LispEnv;
-//struct LispEnv {
-  //LispEnv* parent;
-  //Hash* map;
-//};
+typedef struct LispEnv LispEnv;
+/* typedef struct LispEnvNode LispEnvNode; */
+/* struct LispEnvNode { */
+/*   LispEnv* data; */
+/*   LispEnvNode* next; */
+/*   LispEnvNode* prev; */
+/* }; */
+struct LispEnv {
+  LispEnv* parent;
+  LispEnv* children_head;
+  LispEnv* children_tail;
+  LispEnv* sibling_prev;
+  LispEnv* sibling_next;
+  Object* map;
+};
 
-//LispEnv* LispEnv_new(LispEnv* parent);
-//void LispEnv_del(LispEnv* self);
+LispEnv* LispEnv_new(LispEnv* parent);
+void LispEnv_child_add(LispEnv* self, LispEnv* child);
+void LispEnv_child_rem(LispEnv* self, LispEnv* child);
+void LispEnv_del(LispEnv* self);
 
 // Eval the code in the sexp.
 // Code is represented as an S-Expression.
