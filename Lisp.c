@@ -361,5 +361,6 @@ void LispEnv_child_add(LispEnv* self, LispEnv* child) {
 void LispEnv_child_rem(LispEnv* self, LispEnv* child) {
   assert(self != NULL);
   assert(child != NULL);
+  // TODO
 }
 
