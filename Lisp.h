@@ -40,12 +40,6 @@ Object* Lisp_parse_tokens(Object* tokenlist);
 Object* Lisp_parse_string(Object* string);
 
 typedef struct LispEnv LispEnv;
-/* typedef struct LispEnvNode LispEnvNode; */
-/* struct LispEnvNode { */
-/*   LispEnv* data; */
-/*   LispEnvNode* next; */
-/*   LispEnvNode* prev; */
-/* }; */
 struct LispEnv {
   LispEnv* parent;
   LispEnv* children_head;
