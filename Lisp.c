@@ -80,13 +80,13 @@ void print_TokenizerState(TokenizerState x) {
   }
 }
 
-Object* Lisp_parse(Object* tokens) {
-  assert(tokens != NULL);
-  Object_rc_incr(tokens);
-  // TODO
-  Object_rc_decr(tokens);
-  return NULL;
-}
+/* Object* Lisp_parse(Object* tokens) { */
+/*   assert(tokens != NULL); */
+/*   Object_rc_incr(tokens); */
+/*   // TODO */
+/*   Object_rc_decr(tokens); */
+/*   return NULL; */
+/* } */
 
 Object* Lisp_tokenize(Object* string) {
   assert(string != NULL);

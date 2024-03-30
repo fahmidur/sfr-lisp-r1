@@ -3,7 +3,7 @@
 
 /**
  * A wrapper around C Functions. 
- * (Object.List) --> (FUNC) --> (Object)
+ * (Object<List>* args) --> (Function) --> (Object* ret)
  **/
 
 #include <stdio.h>
