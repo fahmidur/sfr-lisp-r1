@@ -48,10 +48,10 @@ struct LispEnv {
   LispEnv* children_tail;
   LispEnv* sibling_prev;
   LispEnv* sibling_next;
-  Object*  object_map;
+  Object*  objects;
 };
 
-extern LispEnv* LISP_ENV_ROOT;
+extern LispEnv* LispEnv_root;
 
 LispEnv* LispEnv_new(LispEnv* parent);
 void LispEnv_child_add(LispEnv* self, LispEnv* child);

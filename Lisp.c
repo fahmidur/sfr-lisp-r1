@@ -22,12 +22,16 @@ enum TokenizerState {
 void Lisp_init() {
   LISP_PAREN_BEG = QSYMBOL_NEW1("(");
   LISP_PAREN_END = QSYMBOL_NEW1(")");
+  /* LispEnv_root = NULL; */
   LispEnv_root = LispEnv_new(NULL);
 }
 
 void Lisp_done() {
   Object_assign(&LISP_PAREN_BEG, NULL);
   Object_assign(&LISP_PAREN_END, NULL);
+  if(LispEnv_root != NULL) {
+    LispEnv_del(LispEnv_root);
+  }
 }
 
 char TokenizerUtil_isdigit(char ch) {
@@ -317,19 +321,20 @@ Object* Lisp_parse_string(Object* str) {
 }
 
 LispEnv* LispEnv_new(LispEnv* parent) {
-  LispEnv* ret = malloc(sizeof(LispEnv));
-  if(ret == NULL) {
+  LispEnv* self = malloc(sizeof(LispEnv));
+  if(self == NULL) {
     // ERROR: unable to reserve memory
-    return ret;
+    return self;
   }
-  ret->children_head = NULL;
-  ret->children_tail = NULL;
-  ret->sibling_next = NULL;
-  ret->sibling_prev = NULL;
+  self->children_head = NULL;
+  self->children_tail = NULL;
+  self->sibling_next = NULL;
+  self->sibling_prev = NULL;
+  self->objects = Object_new(SYMBOL_HASH, 1, Hash_new());
   if(parent != NULL) {
-    LispEnv_child_add(parent, ret);
+    LispEnv_child_add(parent, self);
   }
-  return ret;
+  return self;
 }
 
 void LispEnv_del(LispEnv* self) {
@@ -348,6 +353,7 @@ void LispEnv_del(LispEnv* self) {
   self->children_tail = NULL;
   self->sibling_next = NULL;
   self->sibling_prev = NULL;
+  Object_assign(&(self->objects), NULL);
   free(self);
 }
 
