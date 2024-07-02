@@ -15,6 +15,7 @@ int main(int argc, char** argv) {
   nassert_obj_eq(tc1_tokens_got, tc1_tokens_exp);
   Object* tc1_parsed = Object_accept(Lisp_parse_tokens(tc1_tokens_got));
   ObjectUtil_eprintf("tc1_parsed = %v\n", tc1_parsed);
+  /* Object* tc1_value = Lisp_eval_sexp(tc1_parsed); */
 
   printf("\n=== === tc1_2 === ===\n");
   Object* tc1_2_string = QSTRING_NEW1("(+ 2.718 (* 2 3.141))");

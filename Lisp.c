@@ -6,6 +6,7 @@
 
 Object* LISP_PAREN_BEG;
 Object* LISP_PAREN_END;
+LispEnv* LispEnv_root;
 
 typedef enum TokenizerState TokenizerState;
 enum TokenizerState {
@@ -21,6 +22,7 @@ enum TokenizerState {
 void Lisp_init() {
   LISP_PAREN_BEG = QSYMBOL_NEW1("(");
   LISP_PAREN_END = QSYMBOL_NEW1(")");
+  LispEnv_root = LispEnv_new(NULL);
 }
 
 void Lisp_done() {
@@ -328,6 +330,25 @@ LispEnv* LispEnv_new(LispEnv* parent) {
     LispEnv_child_add(parent, ret);
   }
   return ret;
+}
+
+void LispEnv_del(LispEnv* self) {
+  assert(self != NULL);
+  LispEnv* curr_child = self->children_head;
+  LispEnv* next_child = NULL;
+  while(curr_child != NULL) {
+    // save the next child
+    next_child = curr_child->sibling_next;
+    LispEnv_del(curr_child);
+    curr_child = next_child;
+  }
+  // unlink everything
+  self->parent = NULL;
+  self->children_head = NULL;
+  self->children_tail = NULL;
+  self->sibling_next = NULL;
+  self->sibling_prev = NULL;
+  free(self);
 }
 
 void LispEnv_child_add(LispEnv* self, LispEnv* child) {

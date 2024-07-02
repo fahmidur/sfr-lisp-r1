@@ -31,12 +31,14 @@ Object* Lisp_tokenize(Object* string);
 
 // Parse a flat List of objects (tokens) into a 
 // nested List representing Lisp code.
+// @return S-Expression
 Object* Lisp_parse_tokens(Object* tokenlist);
 
 // Parse a String representing Lisp code directly to 
 // nested List representing Lisp code.
 // Mainly a helper function
 // Lisp_parse_string(x) = Lisp_parse_tokens(Lisp_tokenize(x))
+// @return S-Expression
 Object* Lisp_parse_string(Object* string);
 
 typedef struct LispEnv LispEnv;
@@ -46,16 +48,19 @@ struct LispEnv {
   LispEnv* children_tail;
   LispEnv* sibling_prev;
   LispEnv* sibling_next;
-  Object* map;
+  Object*  object_map;
 };
+
+extern LispEnv* LISP_ENV_ROOT;
 
 LispEnv* LispEnv_new(LispEnv* parent);
 void LispEnv_child_add(LispEnv* self, LispEnv* child);
 void LispEnv_child_rem(LispEnv* self, LispEnv* child);
 void LispEnv_del(LispEnv* self);
 
-// Eval the code in the sexp.
+// Eval the code in the S-Expression
 // Code is represented as an S-Expression.
+// @return Object
 //Object* Lisp_eval_sexp(Object* sexp, LispEnv* env);
 
 // Eval the given string 
