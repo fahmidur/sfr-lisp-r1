@@ -79,5 +79,6 @@ compile_file_task(:program, build('sfr-lisp'), ['sfr-lisp.c', runtime_ofiles, bu
 
 desc "Run all tests"
 task :test => :build do
-  sh "ruby ./test/all.rb"
+  sh "mkdir -p ./tmp"
+  sh "ruby ./test/all.rb | tee tmp/testresults.txt"
 end

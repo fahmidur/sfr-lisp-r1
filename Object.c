@@ -753,6 +753,9 @@ Object* Object_bop_addx(Object* a, Object* b) {
   return ret;
 }
 
+/**
+ * Add char CH into Object<String> A, modifying A. 
+ **/
 Object* Object_bop_addx_char(Object* a, char ch) {
   assert(a != NULL); assert(ch != '\0');
   Object_rc_incr(a);
@@ -882,10 +885,12 @@ Object* Object_bop_push(Object* a, Object* b) {
   Object* ret = NULL;
   if(Object_type(a) == SYMBOL_LIST) {
     List_push(a->impl, b);
-    /* ret = Object_return(a); */
+    ret = Object_return(a);
+    // above is useful for chaining
+
     // we don't need to return a pointer to 'a' , the caller
     // already has a pointer to a
-    ret = Object_new_null();
+    /* ret = Object_new_null(); */
   }
   else {
     ret = Object_return(Object_new(SYMBOL_ERROR, 0, Error_new("Invalid types for bop_push")));
