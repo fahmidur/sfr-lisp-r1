@@ -166,4 +166,6 @@ void    Object_system_gc();
 
 #define QLIST_NEW1() Object_new(SYMBOL_LIST, 1, List_new())
 
+#define QHASH_NEW1() Object_new(SYMBOL_HASH, 1, Hash_new())
+
 #endif

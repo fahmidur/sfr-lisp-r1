@@ -366,6 +366,10 @@ char Object_is_error(Object* x) {
 
 Object* Object_return(Object* self) {
   assert(self != NULL);
+  if(Object_is_null(self)) {
+    // do nothing to the null object
+    return self;
+  }
   self->returning = 1;
   return self;
 }
@@ -378,6 +382,10 @@ char Object_is_returning(Object* self) {
 Object* Object_accept(Object* self) {
   assert(self != NULL);
   self->returning = 0;
+  if(Object_is_null(self)) {
+    // do nothing to the null object
+    return NULL;
+  }
   Object_rc_incr(self);
   return self;
 }
@@ -385,6 +393,10 @@ Object* Object_accept(Object* self) {
 Object* Object_reject(Object* self) {
   assert(self != NULL);
   self->returning = 0;
+  if(Object_is_null(self)) {
+    // do nothing to the null object
+    return NULL;
+  }
   Object_gc(self);
   return NULL;
 }
@@ -870,7 +882,10 @@ Object* Object_bop_push(Object* a, Object* b) {
   Object* ret = NULL;
   if(Object_type(a) == SYMBOL_LIST) {
     List_push(a->impl, b);
-    ret = Object_return(a);
+    /* ret = Object_return(a); */
+    // we don't need to return a pointer to 'a' , the caller
+    // already has a pointer to a
+    ret = Object_new_null();
   }
   else {
     ret = Object_return(Object_new(SYMBOL_ERROR, 0, Error_new("Invalid types for bop_push")));

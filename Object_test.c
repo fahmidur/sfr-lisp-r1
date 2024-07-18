@@ -208,10 +208,10 @@ int main(int argc, char** argv) {
   ObjectUtil_eprintf("list2 = %v AND popres1 = %v\n", list2, popres1);
 
   printf("Calling list2.unshift(mem1) ...\n");
-  Object_bop_unshift(list2, mem1);
+  Object_reject(Object_bop_unshift(list2, mem1));
   ObjectUtil_eprintf("list2 = %v\n", list2);
   printf("Calling list2.unshift(mem2) ...\n");
-  Object_bop_unshift(list2, mem2);
+  Object_reject(Object_bop_unshift(list2, mem2));
   ObjectUtil_eprintf("list2 = %v\n", list2);
   Object* mem3 = Object_new(SYMBOL_STRING, 1, String_new("mem3"));
   ObjectUtil_eprintf("mem3 = %v\n", mem3);
@@ -241,8 +241,8 @@ int main(int argc, char** argv) {
   printf("Creating nested list nlist1 ...\n");
   Object* sublist1 = Object_new_list(1, 3, QNUMBER(1), QNUMBER(2), QNUMBER(3));
   Object* nlist1 = Object_new_list(1, 2, QSTRING("nlist1_e1"), QSTRING("nlist_e2"));
-  Object_bop_push(nlist1, sublist1);
-  Object_bop_push(nlist1, QSTRING("nlist_e4"));
+  Object_reject(Object_bop_push(nlist1, sublist1));
+  Object_reject(Object_bop_push(nlist1, QSTRING("nlist_e4")));
   ObjectUtil_eprintf("nlist1 = %v\n", nlist1);
   nassert(Object_len(nlist1) == 4);
 
