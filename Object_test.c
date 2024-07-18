@@ -122,7 +122,6 @@ int main(int argc, char** argv) {
   /*printf("res1 = "); Object_print(res1); printf("\n");*/
   ObjectUtil_eprintf("res1 = %v\n", res1);
 
-
   printf("Test Number - Number ...\n");
   Object* res2 = Object_accept(Object_bop_sub(num1, num2));
   ObjectUtil_eprintf("%v - %v = %v\n", num1, num2, res2);

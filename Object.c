@@ -139,6 +139,7 @@ void Object_system_init() {
     .fn_clone = (void* (*)(void*))Hash_clone,
     .fn_zero  = (void  (*)(void*))Hash_zero
    };
+   Object_oti_set(SYMBOL_HASH, otiarg_hash);
 
   ObjectTypeInfo otiarg_error = {
     .fn_del   = (void  (*)(void*))Error_del,
