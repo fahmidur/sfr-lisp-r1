@@ -2,3 +2,5 @@
   void* memsafe_malloc(size_t)
   void* memsafe_calloc(size_t)
   void  memsafe_free(void* ptr)
+
+- Finish Hash, Hash_test, and Hash+Object integration.

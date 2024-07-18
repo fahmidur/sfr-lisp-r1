@@ -863,7 +863,7 @@ Object* Object_bop_at(Object* self, size_t idx) {
  * if it exists or object_null.
  */
 Object* Object_uop_first(Object* self) {
-  // TODO
+  // TODO: finish this
   return NULL;
 }
 
@@ -872,7 +872,7 @@ Object* Object_uop_first(Object* self) {
  * if it exists or object_null.
  */
 Object* Object_uop_last(Object* self) {
-  // TODO
+  // TODO: finish this
   return NULL;
 }
 
