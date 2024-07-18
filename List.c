@@ -64,6 +64,10 @@ size_t List_push(List* self, Object* obj) {
   assert(self != NULL);
   assert(obj != NULL);
   assert(obj->impl != self);
+  // TODO: We cannot rely on assert for
+  // error checking. How do we signal to the caller that this failed?
+  // TODO: we have to check that a composite incoming Object
+  // does not contain any reference to self.
   ListNode* listnode = ListNode_new(obj);
   if(self->size == 0) {
     self->head = listnode;
