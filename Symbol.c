@@ -20,7 +20,7 @@ void Symbol_system_init() {
 }
 
 void Symbol_system_done() {
-  printf("--- Symbol_system_done() ---\n");
+  printf("--- { Symbol_system_done() { ---\n");
   int i;
   SymbolVector* iter;
   for(i = 0; i < SYMBOL_BUCKET_SIZE; i++) {
@@ -29,10 +29,11 @@ void Symbol_system_done() {
       SymbolVector_del(iter);
     }
   }
+  printf("--- } Symbol_system_done() } ---\n");
 }
 
 void Symbol_system_print() {
-  printf("--- { Symbol_system_print(). BEG { ---\n");
+  printf("--- { Symbol_system_print() { ---\n");
   int i, j;
   SymbolVector* av;
   Symbol* atom;
@@ -81,7 +82,7 @@ void Symbol_system_print() {
       }
     }
   }
-  printf("--- } Symbol_system_print(). END } ---\n");
+  printf("--- } Symbol_system_print() } ---\n");
 }
 
 SymbolVector* SymbolVector_new() {
