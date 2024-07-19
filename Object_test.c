@@ -167,20 +167,33 @@ int main(int argc, char** argv) {
 
   // List.push
   Object* list1 = Object_new(SYMBOL_LIST, 1, List_new());
+  nassert(list1->rc == 1);
   Object* mem1 = Object_new(SYMBOL_NUMBER, 1, Number_new_from_double(5.0));
   Object* mem2 = Object_new(SYMBOL_NUMBER, 1, Number_new_from_double(6.0));
+  nassert(mem1->rc == 1);
+  nassert(mem2->rc == 1);
   printf("Calling list1.push(mem1) ...\n");
   Object_reject(Object_bop_push(list1, mem1));
+  nassert(mem1->rc == 2);
+  nassert(list1->rc == 1);
   printf("Calling list1.push(mem2) ...\n");
   Object_reject(Object_bop_push(list1, mem2));
+  nassert(mem2->rc == 2);
+  nassert(list1->rc == 1);
   printf("list1 = "); Object_print(list1); printf("\n");
   nassert(Object_len(list1) == 2);
+  nassert(list1->rc == 1);
 
   Object* list2 = Object_new(SYMBOL_LIST, 1, List_new());
+  nassert(list2->rc == 1);
   printf("Calling list2.push(mem1) ...\n");
   Object_reject(Object_bop_push(list2, mem1));
+  nassert(mem1->rc == 3);
+  nassert(list2->rc == 1);
   printf("Calling list2.push(mem2) ...\n");
   Object_reject(Object_bop_push(list2, mem2));
+  nassert(mem2->rc == 3);
+  nassert(list2->rc == 1);
   printf("list2 = "); Object_print(list2); printf("\n");
   printf("--- again with eprintf ---\n");
   ObjectUtil_eprintf("list2 = %v\n", list2);
@@ -195,12 +208,17 @@ int main(int argc, char** argv) {
   nassert(Object_len(list2) == 1);
   nassert(Object_cmp(popres1, mem2) == 0);
   nassert(Object_cmp(popres1, mem1) != 0);
+  nassert(mem2->rc == 3);
 
   printf("Calling list2.pop() --> popres1 (again) ...\n");
   /*Object_rc_decr(popres1);*/
   /*popres1 = Object_accept(Object_uop_pop(list2));*/
   // Object_assign(...) is better
   Object_assign(&popres1, Object_uop_pop(list2));
+  // mem2 is now referenced only by mem2 and list1
+  nassert(mem2->rc == 2); 
+  // mem1 is now referenced only by mem1, list1, and popres1
+  nassert(mem1->rc == 3);
   nassert(!Object_is_error(popres1) && !Object_is_null(popres1));
   nassert(Object_len(list2) == 0);
   nassert(Object_cmp(popres1, mem1) == 0);
@@ -209,6 +227,8 @@ int main(int argc, char** argv) {
   printf("Calling list2.unshift(mem1) ...\n");
   Object_reject(Object_bop_unshift(list2, mem1));
   ObjectUtil_eprintf("list2 = %v\n", list2);
+  // mem1 is now referenced only by mem1, list1, popres1, and list2
+  nassert(mem1->rc == 4);
   printf("Calling list2.unshift(mem2) ...\n");
   Object_reject(Object_bop_unshift(list2, mem2));
   ObjectUtil_eprintf("list2 = %v\n", list2);
