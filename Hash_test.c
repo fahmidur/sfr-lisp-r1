@@ -60,15 +60,18 @@ int main(int argc, char** argv) {
   nassert(Hash_len(h3) == 0);
 
   Object* err1 = Object_accept(Hash_set(h3, apple, apple));
+  ObjectUtil_eprintf("err1->rc = %d\n", err1->rc);
+  nassert_eq(err1->rc, 1);
   ObjectUtil_eprintf("err1 = %v\n", err1);
   nassert(Object_is_error(err1));
 
-  //TODO: the following leaks, fix it.
-  /* Object* schrodinger_cat = QSTRING_NEW1("schrodinger_cat"); */
-  /* schrodinger_cat->cloneable = 0; */
-  /* Object* err2 = Object_accept(Hash_set(h3, schrodinger_cat, red)); */
-  /* ObjectUtil_eprintf("err2 = %v\n", err2); */
-  /* nassert(Object_is_error(err2)); */
+  Object* schrodinger_cat = QSTRING_NEW1("schrodinger_cat");
+  nassert(schrodinger_cat->rc == 1);
+  schrodinger_cat->cloneable = 0;
+  Object* err2 = Object_accept(Hash_set(h3, schrodinger_cat, red));
+  ObjectUtil_eprintf("err2 = %v\n", err2);
+  nassert(Object_is_error(err2));
+  nassert(schrodinger_cat->rc == 1);
 
   //--- manual cleanup ---
   Hash_del(h1);

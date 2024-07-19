@@ -6,7 +6,8 @@
 
 Result HashNode_new(Object* key, Object* val) {
   Result res = {.err = 0, .ptr = NULL, .msg = "\0" };
-  Object* tmp;
+  HashNode* self = NULL;
+  Object* tmp = NULL;
   if(key == val) {
     res.err = 1;
     res.msg = "HashNode key cannot be equal to value";
@@ -14,22 +15,27 @@ Result HashNode_new(Object* key, Object* val) {
   }
   Object_rc_incr(key);
   Object_rc_incr(val);
-  HashNode* self = calloc(1, sizeof(HashNode));
-  self->prev = NULL;
-  self->next = NULL;
   tmp = Object_accept(Object_clone(key));
   if(Object_is_error(tmp)) {
     ObjectUtil_eprintf("ERROR: HashNode_new failure in Object_clone(key). %v\n", tmp);
     res.err = 1;
-    res.ptr = tmp;
+    res.ptr = Object_return(tmp);
+    printf("donuts tmp->rc = %d\n", tmp->rc);
     goto _return;
   }
+  self = calloc(1, sizeof(HashNode));
+  self->prev = NULL;
+  self->next = NULL;
   self->key = tmp;
   self->val = Object_rc_incr(val);
   res.ptr = self;
 _return:
   Object_rc_decr(key);
   Object_rc_decr(val);
+  /* if(self != NULL && res.ptr != self) { */
+  /*   free(self); */
+  /*   self = NULL; */
+  /* } */
   return res;
 }
 

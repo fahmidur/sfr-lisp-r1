@@ -1025,6 +1025,7 @@ size_t Object_len(Object* self) {
 }
 
 Object* Object_from_result(Result res) {
+  printf("donuts. Object_from_result\n");
   if(res.err == 0) {
     // success -- err == 0
     if(res.ptr != NULL) {
