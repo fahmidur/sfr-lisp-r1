@@ -7,10 +7,10 @@
 #define BUF_ISIZE 4
 
 Tokenizer* Tokenizer_new() {
-  Tokenizer* self = malloc(sizeof(Tokenizer));
+  Tokenizer* self = calloc(1, sizeof(Tokenizer));
   self->buf_curp = 0;
   self->buf_endp = 0;
-  self->buf = malloc(BUF_ISIZE * sizeof(char));
+  self->buf = calloc(1, BUF_ISIZE * sizeof(char));
   self->buf_size = BUF_ISIZE;
   self->state = ts_Init;
   return self;

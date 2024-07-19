@@ -321,7 +321,7 @@ Object* Lisp_parse_string(Object* str) {
 }
 
 LispEnv* LispEnv_new(LispEnv* parent) {
-  LispEnv* self = malloc(sizeof(LispEnv));
+  LispEnv* self = calloc(1, sizeof(LispEnv));
   if(self == NULL) {
     // ERROR: unable to reserve memory
     return self;
