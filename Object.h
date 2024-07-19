@@ -32,6 +32,7 @@ struct Object {
   void*   impl;
   int     rc;
   char    returning;
+  char    cloneable;
 };
 
 // unused for now

@@ -176,6 +176,7 @@ Object* Object_new(Symbol* type, int rc, void* impl) {
   self->rc = rc;
   /*self->gc_skipped = 0;*/
   self->returning = 0;
+  self->cloneable = 1;
 
   Object_add_to_system(self);
   
@@ -672,6 +673,11 @@ Object* Object_clone(Object* self) {
   }
   if(oti->fn_clone == NULL) {
     ret = Object_return(Object_new(SYMBOL_ERROR, 0, Error_new("Missing clone for Object Type")));
+    goto _return;
+  }
+
+  if(!self->cloneable) {
+    ret = Object_return(Object_new(SYMBOL_ERROR, 0, Error_new("Object is not cloneable")));
     goto _return;
   }
 

@@ -7,13 +7,12 @@
 Result HashNode_new(Object* key, Object* val) {
   Result res = {.err = 0, .ptr = NULL, .msg = "\0" };
   Object* tmp;
-  /* assert(key != val); */
   if(key == val) {
     res.err = 1;
     res.msg = "HashNode key cannot be equal to value";
     return res;
   }
-  /* Object_rc_incr(key); */
+  Object_rc_incr(key);
   Object_rc_incr(val);
   HashNode* self = calloc(1, sizeof(HashNode));
   self->prev = NULL;
@@ -23,13 +22,14 @@ Result HashNode_new(Object* key, Object* val) {
     ObjectUtil_eprintf("ERROR: HashNode_new failure in Object_clone(key). %v\n", tmp);
     res.err = 1;
     res.ptr = tmp;
-    return res;
+    goto _return;
   }
   self->key = tmp;
-  self->val = val;
-  // we simply do not rc_decr val because this
-  // HashNode will continue to refer to it.
+  self->val = Object_rc_incr(val);
   res.ptr = self;
+_return:
+  Object_rc_decr(key);
+  Object_rc_decr(val);
   return res;
 }
 
@@ -158,6 +158,13 @@ void Hash_rem(Hash* self, Object* key) {
 }
 
 Object* Hash_set(Hash* self, Object* key, Object* val) {
+  if(key == NULL) {
+    return QERROR_NEW0("key cannot be NULL");
+  }
+  if(val == NULL) {
+    return QERROR_NEW0("val cannot be NULL");
+  }
+
   Object_rc_incr(key);
   Object_rc_incr(val);
 
@@ -173,7 +180,7 @@ Object* Hash_set(Hash* self, Object* key, Object* val) {
     res1 = HashNode_new(key, val);
     if(res1.err != 0) {
       ret = Object_accept(Object_from_result(res1));
-      goto _cleanup;
+      goto _return;
     }
     node = (HashNode*) res1.ptr;
     self->buckets[index] = node;
@@ -197,7 +204,7 @@ Object* Hash_set(Hash* self, Object* key, Object* val) {
       res1 = HashNode_new(key, val);
       if(res1.err != 0) {
         ret = Object_accept(Object_from_result(res1));
-        goto _cleanup;
+        goto _return;
       }
       node = (HashNode*) res1.ptr;
       iter_prev->next = node;
@@ -205,7 +212,7 @@ Object* Hash_set(Hash* self, Object* key, Object* val) {
       self->size++;
     }
   }
-_cleanup:
+_return:
   Object_rc_decr(key);
   Object_rc_decr(val);
   return ret;
