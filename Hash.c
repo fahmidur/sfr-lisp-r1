@@ -2,26 +2,41 @@
 #include <stdlib.h>
 #include "Object.h"
 #include "Hash.h"
+#include "Result.h"
 
-HashNode* HashNode_new(Object* key, Object* val) {
-  Object_rc_incr(key);
+Result HashNode_new(Object* key, Object* val) {
+  Result res = {.err = 0, .ptr = NULL, .msg = "\0" };
+  Object* tmp;
+  /* assert(key != val); */
+  if(key == val) {
+    res.err = 1;
+    res.msg = "HashNode key cannot be equal to value";
+    return res;
+  }
+  /* Object_rc_incr(key); */
   Object_rc_incr(val);
   HashNode* self = calloc(1, sizeof(HashNode));
   self->prev = NULL;
   self->next = NULL;
-  assert(key != val);
-  self->key = key;
+  tmp = Object_accept(Object_clone(key));
+  if(Object_is_error(tmp)) {
+    ObjectUtil_eprintf("ERROR: HashNode_new failure in Object_clone(key). %v\n", tmp);
+    res.err = 1;
+    res.ptr = tmp;
+    return res;
+  }
+  self->key = tmp;
   self->val = val;
   // we simply do not rc_decr val because this
   // HashNode will continue to refer to it.
-  return self;
+  res.ptr = self;
+  return res;
 }
 
 void HashNode_print(HashNode* self) {
   ObjectUtil_eprintf("HashNode(%v => %v)", self->key, self->val);
 }
 
-// TODO: what if key == val
 void HashNode_del(HashNode* self) {
   if(self->prev != NULL && self->next != NULL) {
     HashNode* prev = self->prev;
@@ -116,7 +131,7 @@ size_t Hash_len(Hash* self) {
   /* return len; */
 }
 
-size_t Hash_rem(Hash* self, Object* key) {
+void Hash_rem(Hash* self, Object* key) {
   Object_rc_incr(key);
   size_t index = Object_hash(key) % HASH_BUCKET_SIZE;
   HashNode* iter = self->buckets[index];
@@ -140,23 +155,29 @@ size_t Hash_rem(Hash* self, Object* key) {
     }
   }
   Object_rc_decr(key);
-  return self->size;
 }
 
-size_t Hash_set(Hash* self, Object* key, Object* val) {
+Object* Hash_set(Hash* self, Object* key, Object* val) {
   Object_rc_incr(key);
   Object_rc_incr(val);
 
   size_t index = Object_hash(key) % HASH_BUCKET_SIZE;
+
+  Object* ret = NULL;
+  Result res1;
   HashNode* node = self->buckets[index];
   HashNode* iter = NULL;
   HashNode* iter_prev = NULL;
   char clash = 0;
   if(node == NULL) {
-    node = HashNode_new(key, val);
+    res1 = HashNode_new(key, val);
+    if(res1.err != 0) {
+      ret = Object_accept(Object_from_result(res1));
+      goto _cleanup;
+    }
+    node = (HashNode*) res1.ptr;
     self->buckets[index] = node;
     self->size++;
-    /* printf("** donuts ** size=%zu\n", self->size); */
   }
   else {
     iter = node;
@@ -173,17 +194,21 @@ size_t Hash_set(Hash* self, Object* key, Object* val) {
       HashNode_set_val(node, val);
     } 
     else {
-      node = HashNode_new(key, val);
+      res1 = HashNode_new(key, val);
+      if(res1.err != 0) {
+        ret = Object_accept(Object_from_result(res1));
+        goto _cleanup;
+      }
+      node = (HashNode*) res1.ptr;
       iter_prev->next = node;
       node->prev = iter_prev;
       self->size++;
     }
   }
-
+_cleanup:
   Object_rc_decr(key);
   Object_rc_decr(val);
-
-  return self->size;
+  return ret;
 }
 
 Object* Hash_get(Hash* self, Object* key) {

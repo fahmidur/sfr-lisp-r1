@@ -25,7 +25,7 @@ end
 # Objects
 #==========================================================
 
-util_bnames = ['Util']
+util_bnames = ['Util', 'Result']
 util_hfiles = util_bnames.map {|e| e+'.h' }
 util_ofiles = util_bnames.map {|e| build(e+'.o') }
 util_bnames.each do |name|

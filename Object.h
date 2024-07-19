@@ -10,6 +10,7 @@
 #include "String.h"
 #include "Number.h"
 #include "Error.h"
+#include "Result.h"
 
 #define OBJECT_TYPES_BUCKETS_SIZE 128
 
@@ -110,6 +111,7 @@ Object* Object_zero(Object* self);
 Object* Object_to_number(Object* self);
 Object* Object_to_symbol(Object* self);
 Object* Object_to_string(Object* self);
+Object* Object_from_result(Result res);
 
 // Mainly Number Ops
 size_t  Object_len(Object* self);

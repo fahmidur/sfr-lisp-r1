@@ -7,6 +7,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "Result.h"
 #include "Object.h"
 
 typedef struct HashNode HashNode;
@@ -44,8 +45,8 @@ struct HashIter {
 
 Hash*   Hash_new();
 Object* Hash_get(Hash* self, Object* key);
-size_t  Hash_set(Hash* self, Object* key, Object* val);
-size_t  Hash_rem(Hash* self, Object* key);
+Object* Hash_set(Hash* self, Object* key, Object* val);
+void    Hash_rem(Hash* self, Object* key);
 void    Hash_del(Hash* self);
 size_t  Hash_len(Hash* self);
 size_t  Hash_size(Hash* self);

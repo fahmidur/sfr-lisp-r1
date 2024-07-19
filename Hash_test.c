@@ -59,6 +59,10 @@ int main(int argc, char** argv) {
   printf("h3 = "); Hash_print(h3); printf("\n");
   nassert(Hash_len(h3) == 0);
 
+  Object* err1 = Object_accept(Hash_set(h3, apple, apple));
+  ObjectUtil_eprintf("err1 = %v\n", err1);
+  nassert(Object_is_error(err1));
+
   //--- manual cleanup ---
   Hash_del(h1);
   Hash_del(h1_clone);
