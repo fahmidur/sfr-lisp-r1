@@ -19,14 +19,14 @@ Result HashNode_new(Object* key, Object* val) {
   if(Object_is_error(tmp)) {
     ObjectUtil_eprintf("ERROR: HashNode_new failure in Object_clone(key). %v\n", tmp);
     res.err = 1;
-    res.ptr = Object_return(tmp);
-    printf("donuts tmp->rc = %d\n", tmp->rc);
+    res.ptr = Object_return(Object_rc_incr(tmp));
+    printf("donuts. tmp->rc = %d\n", tmp->rc);
     goto _return;
   }
   self = calloc(1, sizeof(HashNode));
   self->prev = NULL;
   self->next = NULL;
-  self->key = tmp;
+  self->key = Object_rc_incr(tmp);
   self->val = Object_rc_incr(val);
   res.ptr = self;
 _return:
@@ -36,6 +36,12 @@ _return:
   /*   free(self); */
   /*   self = NULL; */
   /* } */
+  if(tmp != NULL) {
+    /* ObjectUtil_eprintf("donuts. tmp = %v | rc=%d\n", tmp, tmp->rc); */
+    Object_assign(&tmp, NULL);
+    /* Object_rc_decr(tmp); */
+    /* tmp = NULL; */
+  }
   return res;
 }
 
