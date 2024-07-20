@@ -10,7 +10,6 @@
 #include "Hash.h"
 #include "Error.h"
 #include "Object.h"
-#include "Result.h"
 
 ObjectSystem* object_system;
 

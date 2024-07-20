@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include "Object.h"
 #include "Hash.h"
-#include "Result.h"
 
 HashNode* HashNode_new(Object* key, Object* val) {
   HashNode* self = NULL;

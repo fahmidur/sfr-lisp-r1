@@ -7,7 +7,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "Result.h"
 #include "Object.h"
 
 typedef struct HashNode HashNode;
