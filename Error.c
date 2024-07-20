@@ -31,7 +31,7 @@ void ErrorSystem_set(int code, char* msg)  {
   _g_error.msg = msg;
 }
 
-void ErrorSystem_set_obj(int code, void* ptr) {
+void ErrorSystem_set_ptr(int code, void* ptr) {
   _g_error_code = code;
   _g_error.code = 0;
   _g_error.msg = "";

@@ -16,11 +16,11 @@ void   Error_del(Error* self);
 void   Error_print(Error* self);
 Error* Error_clone(Error* self);
 
-void ErrorSystem_init();
-void ErrorSystem_done();
-void ErrorSystem_reset();
-void ErrorSystem_set(int code, char* msg);
-void ErrorSystem_set_obj(int code, void* ptr);
+void  ErrorSystem_init();
+void  ErrorSystem_done();
+void  ErrorSystem_reset();
+void  ErrorSystem_set(int code, char* msg);
+void  ErrorSystem_set_ptr(int code, void* ptr);
 
 int   ErrorSystem_get_code();
 char* ErrorSystem_get_msg();
