@@ -61,8 +61,7 @@ int main(int argc, char** argv) {
 
   Object* err1 = Object_accept(Hash_set(h3, apple, apple));
   ObjectUtil_eprintf("err1->rc = %d\n", err1->rc);
-  // TODO: fix below
-  /* nassert(err1->rc == 1); */
+  nassert(err1->rc == 1);
   ObjectUtil_eprintf("err1 = %v\n", err1);
   nassert(Object_is_error(err1));
 

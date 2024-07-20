@@ -4,23 +4,20 @@
 #include "Hash.h"
 #include "Result.h"
 
-Result HashNode_new(Object* key, Object* val) {
-  Result res = {.err = 0, .ptr = NULL, .msg = "\0" };
+HashNode* HashNode_new(Object* key, Object* val) {
   HashNode* self = NULL;
   Object* tmp = NULL;
   if(key == val) {
-    res.err = 1;
-    res.msg = "HashNode key cannot be equal to value";
-    return res;
+    /* res.err = 1; */
+    /* res.msg = "HashNode key cannot be equal to value"; */
+    /* return res; */
+    return NULL;
   }
   Object_rc_incr(key);
   Object_rc_incr(val);
   tmp = Object_accept(Object_clone(key));
   if(Object_is_error(tmp)) {
     ObjectUtil_eprintf("ERROR: HashNode_new failure in Object_clone(key). %v\n", tmp);
-    res.err = 1;
-    res.ptr = Object_return(Object_rc_incr(tmp));
-    printf("donuts. tmp->rc = %d\n", tmp->rc);
     goto _return;
   }
   self = calloc(1, sizeof(HashNode));
@@ -28,21 +25,13 @@ Result HashNode_new(Object* key, Object* val) {
   self->next = NULL;
   self->key = Object_rc_incr(tmp);
   self->val = Object_rc_incr(val);
-  res.ptr = self;
 _return:
   Object_rc_decr(key);
   Object_rc_decr(val);
-  /* if(self != NULL && res.ptr != self) { */
-  /*   free(self); */
-  /*   self = NULL; */
-  /* } */
   if(tmp != NULL) {
-    /* ObjectUtil_eprintf("donuts. tmp = %v | rc=%d\n", tmp, tmp->rc); */
     Object_assign(&tmp, NULL);
-    /* Object_rc_decr(tmp); */
-    /* tmp = NULL; */
   }
-  return res;
+  return self;
 }
 
 void HashNode_print(HashNode* self) {
@@ -183,18 +172,16 @@ Object* Hash_set(Hash* self, Object* key, Object* val) {
   size_t index = Object_hash(key) % HASH_BUCKET_SIZE;
 
   Object* ret = NULL;
-  Result res1;
   HashNode* node = self->buckets[index];
   HashNode* iter = NULL;
   HashNode* iter_prev = NULL;
   char clash = 0;
   if(node == NULL) {
-    res1 = HashNode_new(key, val);
-    if(res1.err != 0) {
-      ret = Object_accept(Object_from_result(res1));
+    node = HashNode_new(key, val);
+    if(node == NULL) {
+      ret = Object_return(QERROR_NEW0("Failed to create HashNode"));
       goto _return;
     }
-    node = (HashNode*) res1.ptr;
     self->buckets[index] = node;
     self->size++;
   }
@@ -213,12 +200,11 @@ Object* Hash_set(Hash* self, Object* key, Object* val) {
       HashNode_set_val(node, val);
     } 
     else {
-      res1 = HashNode_new(key, val);
-      if(res1.err != 0) {
-        ret = Object_accept(Object_from_result(res1));
+      node = HashNode_new(key, val);
+      if(node == NULL) {
+        ret = Object_return(QERROR_NEW0("Failed to create HashNode"));
         goto _return;
       }
-      node = (HashNode*) res1.ptr;
       iter_prev->next = node;
       node->prev = iter_prev;
       self->size++;

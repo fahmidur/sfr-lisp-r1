@@ -1024,35 +1024,35 @@ size_t Object_len(Object* self) {
   return ret;
 }
 
-Object* Object_from_result(Result res) {
-  /* printf("Object_from_result\n"); */
-  if(res.err == 0) {
-    // success -- err == 0
-    if(res.ptr != NULL) {
-      // a success is always treated as an Object
-      return Object_return((Object*) res.ptr);
-    }
-    else {
-      return Object_new_null();
-    }
-  }
-  else {
-    // failure -- err != 0
-    if(res.ptr != NULL) {
-      // an error possibly bubbled up from the object system
-      return Object_return((Object*) res.ptr);
-    }
-    else
-    if(res.msg != NULL) {
-      // a raw cstr error message was set somewhere
-      return Object_return(QERROR_NEW0(res.msg));
-    }
-    else {
-      // only an error code was supplied without a message
-      return Object_return(QERROR_NEW0("generic error"));
-    }
-  }
-}
+/* Object* Object_from_result(Result res) { */
+/*   /1* printf("Object_from_result\n"); *1/ */
+/*   if(res.err == 0) { */
+/*     // success -- err == 0 */
+/*     if(res.ptr != NULL) { */
+/*       // a success is always treated as an Object */
+/*       return Object_return((Object*) res.ptr); */
+/*     } */
+/*     else { */
+/*       return Object_new_null(); */
+/*     } */
+/*   } */
+/*   else { */
+/*     // failure -- err != 0 */
+/*     if(res.ptr != NULL) { */
+/*       // an error possibly bubbled up from the object system */
+/*       return Object_return((Object*) res.ptr); */
+/*     } */
+/*     else */
+/*     if(res.msg != NULL) { */
+/*       // a raw cstr error message was set somewhere */
+/*       return Object_return(QERROR_NEW0(res.msg)); */
+/*     } */
+/*     else { */
+/*       // only an error code was supplied without a message */
+/*       return Object_return(QERROR_NEW0("generic error")); */
+/*     } */
+/*   } */
+/* } */
 
 void ObjectUtil_eprintf_sig(int SIGSIZE, char** sigptr, int* sigposptr, va_list argv) {
   /*printf("--- ObjectUtil_eprintf_sig ---\n");*/
