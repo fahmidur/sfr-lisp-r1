@@ -2,6 +2,16 @@
 #include "Error.h"
 #include "Util.h"
 
+int    _g_error_code = 0;
+Error  _g_error_static = {.msg = ""};
+void*  _g_error_dynamic = NULL;
+
+void Error_reset() {
+  _g_error_code = 0;
+  Error empty = {.msg = ""};
+  _g_error_static = empty;
+}
+
 Error* Error_new(char* msg) {
   Error* self = calloc(1, sizeof(Error));
   size_t msg_strlen = strlen(msg);
