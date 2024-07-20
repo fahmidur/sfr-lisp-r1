@@ -2,34 +2,21 @@
 #include <stdlib.h>
 #include "Object.h"
 #include "Hash.h"
+#include "Error.h"
 
 HashNode* HashNode_new(Object* key, Object* val) {
   HashNode* self = NULL;
   Object* tmp = NULL;
-  if(key == val) {
-    /* res.err = 1; */
-    /* res.msg = "HashNode key cannot be equal to value"; */
-    /* return res; */
-    return NULL;
-  }
   Object_rc_incr(key);
   Object_rc_incr(val);
-  tmp = Object_accept(Object_clone(key));
-  if(Object_is_error(tmp)) {
-    ObjectUtil_eprintf("ERROR: HashNode_new failure in Object_clone(key). %v\n", tmp);
-    goto _return;
-  }
   self = calloc(1, sizeof(HashNode));
   self->prev = NULL;
   self->next = NULL;
-  self->key = Object_rc_incr(tmp);
+  self->key = Object_rc_incr(key);
   self->val = Object_rc_incr(val);
 _return:
   Object_rc_decr(key);
   Object_rc_decr(val);
-  if(tmp != NULL) {
-    Object_assign(&tmp, NULL);
-  }
   return self;
 }
 
@@ -164,19 +151,29 @@ Object* Hash_set(Hash* self, Object* key, Object* val) {
   if(val == NULL) {
     return QERROR_NEW0("val cannot be NULL");
   }
+  if(key == val) {
+    return QERROR_NEW0("key cannot equal val");
+  }
 
   Object_rc_incr(key);
   Object_rc_incr(val);
 
-  size_t index = Object_hash(key) % HASH_BUCKET_SIZE;
-
   Object* ret = NULL;
+  Object* key_clone = Object_accept(Object_clone(key));
+  if(Object_is_error(key_clone)) {
+    Object_move(&ret, &key_clone);
+    goto _return;
+  }
+
+  size_t index = Object_hash(key_clone) % HASH_BUCKET_SIZE;
+
   HashNode* node = self->buckets[index];
   HashNode* iter = NULL;
   HashNode* iter_prev = NULL;
   char clash = 0;
+
   if(node == NULL) {
-    node = HashNode_new(key, val);
+    node = HashNode_new(key_clone, val);
     if(node == NULL) {
       ret = Object_return(QERROR_NEW0("Failed to create HashNode"));
       goto _return;
@@ -187,7 +184,7 @@ Object* Hash_set(Hash* self, Object* key, Object* val) {
   else {
     iter = node;
     while(iter != NULL) {
-      if(Object_cmp(iter->key, key) == 0) {
+      if(Object_cmp(iter->key, key_clone) == 0) {
         clash = 1;
         node = iter;
         break;
@@ -199,7 +196,7 @@ Object* Hash_set(Hash* self, Object* key, Object* val) {
       HashNode_set_val(node, val);
     } 
     else {
-      node = HashNode_new(key, val);
+      node = HashNode_new(key_clone, val);
       if(node == NULL) {
         ret = Object_return(QERROR_NEW0("Failed to create HashNode"));
         goto _return;

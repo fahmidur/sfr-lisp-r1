@@ -4,9 +4,12 @@
 #include "Symbol.h"
 #include "Object.h"
 #include "Hash.h"
+#include "Error.h"
 
 int main(int argc, char** argv) {
   printf("--- Hash test ---\n");
+
+  ErrorSystem_init();
   Symbol_system_init();
   Object_system_init();
 
@@ -81,6 +84,7 @@ int main(int argc, char** argv) {
   Object_system_print();
   Object_system_done();
   Symbol_system_done();
+  ErrorSystem_done();
 
   nassert_report();
   return nassert_exit_code();

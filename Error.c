@@ -3,13 +3,51 @@
 #include "Util.h"
 
 int    _g_error_code = 0;
-Error  _g_error_static = {.msg = ""};
-void*  _g_error_dynamic = NULL;
+Error  _g_error = {.msg = ""};
+void*  _g_error_ptr = NULL;
 
-void Error_reset() {
+void ErrorSystem_init() {
   _g_error_code = 0;
-  Error empty = {.msg = ""};
-  _g_error_static = empty;
+  _g_error.code = 0;
+  _g_error.msg = "";
+  _g_error_ptr = NULL;
+}
+
+void ErrorSystem_done() {
+  _g_error_code = 0;
+  _g_error.code = 0;
+  _g_error.msg = "";
+  _g_error_ptr = NULL;
+}
+
+void ErrorSystem_reset() {
+  ErrorSystem_init();
+}
+
+void ErrorSystem_set(int code, char* msg)  {
+  _g_error_ptr = NULL;
+  _g_error_code = code;
+  _g_error.code = code;
+  _g_error.msg = msg;
+}
+
+void ErrorSystem_set_obj(int code, void* ptr) {
+  _g_error_code = code;
+  _g_error.code = 0;
+  _g_error.msg = "";
+  _g_error_ptr = ptr;
+}
+
+int ErrorSystem_get_code() {
+  return _g_error_code;
+}
+
+char* ErrorSystem_get_msg() {
+  return _g_error.msg;
+}
+
+void* ErrorSystem_get_ptr() {
+  return _g_error_ptr;
 }
 
 Error* Error_new(char* msg) {
@@ -18,6 +56,7 @@ Error* Error_new(char* msg) {
   size_t msg_buflen = msg_strlen+1;
   self->msg = calloc(1, msg_buflen);
   memcpy(self->msg, msg, msg_buflen);
+  self->code = (msg_strlen > 0) ? 1 : 0;
   return self;
 }
 

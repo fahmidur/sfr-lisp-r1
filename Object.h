@@ -102,6 +102,7 @@ char Object_is_composite(Object* self); // TODO
 
 // Helper to make assignments with rc easier.
 void Object_assign(Object** targetptr, Object* source);
+void Object_move(Object** targetptr, Object** sourceptr);
 
 // Return the hash of the object for use in Hash tables.
 size_t Object_hash(Object* self);

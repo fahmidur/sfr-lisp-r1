@@ -283,6 +283,11 @@ void Object_assign(Object** targetptr, Object* source) {
   }
 }
 
+void Object_move(Object** targetptr, Object** sourceptr) {
+  Object_assign(targetptr, *sourceptr);
+  Object_assign(sourceptr, NULL);
+}
+
 Object* Object_to_number(Object* self) {
   assert(self != NULL);
   Object_rc_incr(self);
