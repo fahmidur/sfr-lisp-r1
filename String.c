@@ -3,6 +3,7 @@
 #include <string.h>
 #include "String.h"
 #include "Util.h"
+#include "Error.h"
 
 String* String_new(char* istr) {
   printf("String_new(%s)\n", istr);
@@ -192,16 +193,28 @@ void String_del(String* self) {
  * Reset this string to the zero state --
  * the empty string.
  */
-void String_zero(String* self) {
+char String_zero(String* self) {
+  if(self == NULL) {
+    ErrorSystem_set(1, "String_zero. self is null");
+    return 0;
+  }
+  char ret = 1;
   memset(self->buf, 0, self->buf_size);
   self->len = 0;
   #ifdef STRING_RETURN_MEMORY
     if(self->buf_size > String_MBUFSIZE) {
       self->buf = realloc(self->buf, String_IBUFSIZE);
+      if(self->buf == NULL) {
+        // the reallocation failed
+        ret = 0;
+        ErrorSystem_set(1, "realloc failed");
+      }
       self->buf_size = String_IBUFSIZE;
     }
   #endif
+  // recomputes the length
   String_len(self);
+  return ret;
 }
 
 ssize_t String_getline(String* self, FILE *stream) {

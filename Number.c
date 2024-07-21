@@ -36,8 +36,9 @@ Number* Number_new(double x) {
   return Number_new_from_double(x);
 }
 
-void Number_zero(Number* self) {
+char Number_zero(Number* self) {
   self->rep = 0;
+  return 1;
 }
 
 Number* Number_clone(Number* self) {

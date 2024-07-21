@@ -1,9 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "Error.h"
 #include "String.h"
 #include "nassert.h"
 
 int main(int argc, char** argv) {
+  ErrorSystem_init();
+
   String* str0 = String_new("");
   nassert(strcmp("", str0->buf) == 0);
   nassert(str0->len == 0);
@@ -66,6 +69,10 @@ int main(int argc, char** argv) {
   String* single_char = String_new("x");
   nassert(String_to_char(single_char) == 'x');
 
+  char success = String_zero(NULL);
+  nassert(success == 0);
+  nassert(ErrorSystem_get_code() != 0);
+
   String_del(str0);
   String_del(str1);
   String_del(str2);
@@ -80,6 +87,8 @@ int main(int argc, char** argv) {
   String_del(numeric1);
   String_del(numeric2);
   String_del(single_char);
+
+  ErrorSystem_done();
 
   nassert_report();
   return nassert_exit_code();

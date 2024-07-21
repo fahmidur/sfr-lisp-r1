@@ -45,11 +45,16 @@ List* List_new() {
   return self;
 }
 
-void List_zero(List* self) {
-  assert(self != NULL);
+char List_zero(List* self) {
+  /* assert(self != NULL); */
+  if(self == NULL) {
+    ErrorSystem_set(1, "List_zero. self is NULL");
+    return 0;
+  }
   while(List_len(self) > 0) {
     Object_reject(List_pop(self));
   }
+  return 1;
 }
 
 size_t List_size(List* self) {

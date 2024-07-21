@@ -2,6 +2,7 @@
 #include "Error.h"
 #include "Util.h"
 
+// TODO: this should be made thread-local
 int    _g_error_code = 0;
 Error  _g_error = {.msg = ""};
 void*  _g_error_ptr = NULL;

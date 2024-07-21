@@ -2,8 +2,10 @@
 #include <stdlib.h>
 #include "nassert.h"
 #include "Number.h"
+#include "Error.h"
 
 int main(int argc, char** argv) {
+  ErrorSystem_init();
   Number* n0 = Number_new_from_int(0);
   Number* n1 = Number_new_from_int(1);
   nassert(n1->rep == 1);
@@ -37,6 +39,8 @@ int main(int argc, char** argv) {
   Number_del(n4);
   Number_del(dolly1);
   Number_del(dolly2);
+
+  ErrorSystem_done();
 
   nassert_report();
   return nassert_exit_code();

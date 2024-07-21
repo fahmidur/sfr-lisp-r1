@@ -217,6 +217,11 @@ void Symbol_noop(void* self) {
   return;
 }
 
+char Symbol_zero(Symbol* self) {
+  // intentional noop, always succeeds
+  return 1;
+}
+
 int Symbol_cmp(Symbol* self, Symbol* other) {
   if(self == other) {
     return 0;

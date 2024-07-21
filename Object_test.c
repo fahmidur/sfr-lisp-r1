@@ -9,6 +9,7 @@
 int main(int argc, char** argv) {
 
   Util_heading1(1, "RUNTIME INIT");
+  ErrorSystem_init();
   Symbol_system_init();
   Object_system_init();
   Util_heading1(0, "RUNTIME INIT");
@@ -273,6 +274,7 @@ int main(int argc, char** argv) {
   Object_system_print();
   Object_system_done();
   Symbol_system_done();
+  ErrorSystem_done();
   Util_heading1(0, "RUNTIME DONE");
 
   nassert_report();

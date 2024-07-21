@@ -256,8 +256,12 @@ void Hash_print(Hash* self) {
  * Reset this hash to the empty hash
  * deleting everything
  */
-void Hash_zero(Hash* self) {
-  assert(self != NULL);
+char Hash_zero(Hash* self) {
+  /* assert(self != NULL); */
+  if(self == NULL) {
+    ErrorSystem_set(1, "Hash_zero. self is NULL");
+    return 0;
+  }
   HashNode* iter = NULL;
   size_t i = 0;
   for(i = 0; i < HASH_BUCKET_SIZE; i++) {
@@ -268,6 +272,7 @@ void Hash_zero(Hash* self) {
     self->buckets[i] = NULL;
   }
   self->size = 0;
+  return 1;
 }
 
 HashIter* HashIter_new(Hash* hash) {

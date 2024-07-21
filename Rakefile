@@ -25,14 +25,14 @@ end
 # Objects
 #==========================================================
 
-util_bnames = ['Util']
+util_bnames = ['Util', 'Error']
 util_hfiles = util_bnames.map {|e| e+'.h' }
 util_ofiles = util_bnames.map {|e| build(e+'.o') }
 util_bnames.each do |name|
   compile_file_task(:object, build(name+'.o'), [name+'.h', name+'.c'])
 end
 
-basic_bnames = ['Symbol', 'String', 'Number', 'Error', 'List', 'Hash']
+basic_bnames = ['Symbol', 'String', 'Number', 'List', 'Hash']
 basic_ofiles = basic_bnames.map {|e| build(e+'.o') }
 basic_hfiles = basic_bnames.map {|e| e+'.h' }
 basic_bnames.each do |name|
@@ -57,7 +57,7 @@ compile_file_task(:object, build('Tokenizer.o'), ['Tokenizer.c', 'Tokenizer.h'])
 compile_file_task(:program, build('leaky'), ['leaky.c'])
 
 test_hfiles = ['nassert.h']
-test_common = [*test_hfiles, build('Util.o')]
+test_common = [*test_hfiles, build('Util.o'), build('Error.o')]
 
 compile_file_task(:program, build('nassert_test'), ['nassert.h', 'nassert_test.c'])
 

@@ -98,7 +98,7 @@ void Object_system_init() {
     .fn_del   = Symbol_noop, 
     .fn_print = (void  (*)(void*))Symbol_print,
     .fn_clone = (void* (*)(void*))Symbol_clone,
-    .fn_zero  = (void  (*)(void*))Symbol_noop
+    .fn_zero  = (char  (*)(void*))Symbol_zero
   };
   Object_oti_set(SYMBOL_SYMBOL, otiarg_symbol);
 
@@ -106,7 +106,7 @@ void Object_system_init() {
     .fn_del   = (void  (*)(void*))String_del,
     .fn_print = (void  (*)(void*))String_print,
     .fn_clone = (void* (*)(void*))String_clone,
-    .fn_zero  = (void  (*)(void*))String_zero
+    .fn_zero  = (char  (*)(void*))String_zero
   };
   Object_oti_set(SYMBOL_STRING, otiarg_string);
 
@@ -114,7 +114,7 @@ void Object_system_init() {
     .fn_del   = (void  (*)(void*))Number_del,
     .fn_print = (void  (*)(void*))Number_print,
     .fn_clone = (void* (*)(void*))Number_clone,
-    .fn_zero  = (void  (*)(void*))Number_zero
+    .fn_zero  = (char  (*)(void*))Number_zero
   };
   Object_oti_set(SYMBOL_NUMBER, otiarg_number);
 
@@ -122,7 +122,7 @@ void Object_system_init() {
     .fn_del   = (void   (*)(void*))List_del,
     .fn_print = (void   (*)(void*))List_print,
     .fn_clone = (void*  (*)(void*))List_clone,
-    .fn_zero  = (void   (*)(void*))List_zero
+    .fn_zero  = (char   (*)(void*))List_zero
   };
   Object_oti_set(SYMBOL_LIST, otiarg_list);
 
@@ -137,7 +137,7 @@ void Object_system_init() {
     .fn_del   = (void  (*)(void*))Hash_del,
     .fn_print = (void  (*)(void*))Hash_print,
     .fn_clone = (void* (*)(void*))Hash_clone,
-    .fn_zero  = (void  (*)(void*))Hash_zero
+    .fn_zero  = (char  (*)(void*))Hash_zero
    };
    Object_oti_set(SYMBOL_HASH, otiarg_hash);
 
@@ -701,13 +701,27 @@ Object* Object_zero(Object* self) {
   assert(self != NULL);
   Object_rc_incr(self);
 
+  char success = 0;
+  char* error_msg;
+
   Object* ret = NULL;
   Symbol* self_type = Object_type(self);
   ObjectTypeInfo* oti = Object_oti_get(self_type);
   
   if(oti != NULL && oti->fn_zero != NULL) {
-    oti->fn_zero(self->impl);
-    ret = self;
+    success = oti->fn_zero(self->impl);
+    if(success) {
+      ret = self;
+    } else {
+      if(ErrorSystem_get_code() != 0) {
+        error_msg = ErrorSystem_get_msg();
+        ret = Object_return(Object_new(SYMBOL_ERROR, 0, Error_new(error_msg)));
+        ErrorSystem_reset();
+      } 
+      else {
+        ret = Object_return(Object_new(SYMBOL_ERROR, 0, Error_new("Object_zero. fn_zero. strange error")));
+      }
+    }
   } else {
     ret = Object_return(Object_new(SYMBOL_ERROR, 0, Error_new("Missing zero for Object Type")));
   }

@@ -53,7 +53,7 @@ struct ObjectTypeInfo {
   void   (*fn_del)(void* s); 
   void   (*fn_print)(void* s);
   void*  (*fn_clone)(void* s);
-  void   (*fn_zero)(void* s);
+  char   (*fn_zero)(void* s);
 };
 
 typedef struct ObjectSystem ObjectSystem;
