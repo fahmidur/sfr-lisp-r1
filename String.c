@@ -8,10 +8,19 @@
 String* String_new(char* istr) {
   printf("String_new(%s)\n", istr);
   String* self = calloc(1, sizeof(String));
+  if(self == NULL) {
+    ErrorSystem_set(1, "String_new. calloc failed");
+    return NULL;
+  }
   size_t ilen = strlen(istr);
   size_t i;
   self->buf_size = Util_sizet_max(String_IBUFSIZE, ilen+1);
   self->buf = calloc(self->buf_size, sizeof(char));
+  if(self->buf == NULL) {
+    ErrorSystem_set(1, "String_new. calloc failed on self->buf");
+    free(self);
+    return NULL;
+  }
   for(i = 0; i < ilen; i++) {
     self->buf[i] = istr[i];
   }

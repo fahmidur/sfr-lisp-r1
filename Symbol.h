@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "Util.h"
+#include "Error.h"
 
 #define SYMBOL_BUCKET_SIZE 2048
 #define SYMBOLVECTOR_ISIZE 32

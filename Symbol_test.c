@@ -6,6 +6,7 @@
 int main(int argc, char** argv) {
   printf("--- Symbol test ---\n");
   
+  ErrorSystem_init();
   Symbol_system_init();
   Symbol_system_print();
 
@@ -27,6 +28,7 @@ int main(int argc, char** argv) {
 
   Symbol_system_print();
   Symbol_system_done();
+  ErrorSystem_done();
 
   nassert_report();
   return nassert_exit_code();

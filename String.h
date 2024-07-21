@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "Util.h"
+#include "Error.h"
 
 #define STRING_RETURN_MEMORY 1
 #define String_IBUFSIZE 4

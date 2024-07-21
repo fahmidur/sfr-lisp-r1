@@ -6,6 +6,10 @@
 
 Number* Number_new_from_int(int x) {
   Number* self = calloc(1, sizeof(Number));
+  if(self == NULL) {
+    ErrorSystem_set(1, "Number_new_from_int. calloc failed");
+    return NULL;
+  }
   self->rep = x;
   return self;
 }

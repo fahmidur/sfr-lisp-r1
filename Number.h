@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "Util.h"
+#include "Error.h"
 
 typedef struct Number Number;
 struct Number {
