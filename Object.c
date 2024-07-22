@@ -1014,6 +1014,7 @@ Object* Object_uop_shift(Object* a) {
 /**
  * Get the hash of the object for use in Hash tables
  * or anywhere else that a hash might be needed.
+ * Should this be renamed Object_uop_hash ?
  */
 size_t Object_hash(Object* self) {
   assert(self != NULL);
