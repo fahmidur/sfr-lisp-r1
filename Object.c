@@ -388,11 +388,10 @@ char Object_is_returning(Object* self) {
 
 Object* Object_accept(Object* self) {
   assert(self != NULL);
-  self->returning = 0;
   if(Object_is_null(self)) {
-    // do nothing to the null object
-    return NULL;
+    return self;
   }
+  self->returning = 0;
   Object_rc_incr(self);
   return self;
 }
@@ -803,13 +802,16 @@ Object* Object_bop_addx_char(Object* a, char ch) {
   return ret;
 }
 
-Object* Object_bop_hset(Object* self, Object* key, Object* val) {
+Object* Object_top_hset(Object* self, Object* key, Object* val) {
   assert(self != NULL);
   if(Object_type(self) != SYMBOL_HASH) {
     return Object_return(Object_new(SYMBOL_ERROR, 0, Error_new("Expecting Object<Hash> for hset")));
   }
-  // TODO: test this
-  return Object_return(Hash_set(self->impl, key, val));
+  Object* ret = Hash_set(self->impl, key, val);
+  if(ret == NULL) {
+    ret = Object_new_null();
+  }
+  return ret;
 }
 
 Object* Object_bop_hget(Object* self, Object* key) {
@@ -817,8 +819,11 @@ Object* Object_bop_hget(Object* self, Object* key) {
   if(Object_type(self) != SYMBOL_HASH) {
     return Object_return(Object_new(SYMBOL_ERROR, 0, Error_new("Expecting Object<Hash> for hset")));
   }
-  // TODO: test this
-  return Object_return(Hash_get(self->impl, key));
+  Object* ret = Hash_get(self->impl, key);
+  if(ret == NULL) {
+    return Object_new_null();
+  }
+  return ret;
 }
 
 Object* Object_bop_add(Object* a, Object* b) {

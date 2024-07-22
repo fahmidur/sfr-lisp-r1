@@ -158,7 +158,7 @@ Object* Hash_set(Hash* self, Object* key, Object* val) {
   Object_rc_incr(key);
   Object_rc_incr(val);
 
-  Object* ret = NULL;
+  Object* ret = Object_new_null();
   Object* key_clone = Object_accept(Object_clone(key));
   if(Object_is_error(key_clone)) {
     Object_move(&ret, &key_clone);
@@ -209,6 +209,7 @@ Object* Hash_set(Hash* self, Object* key, Object* val) {
 _return:
   Object_rc_decr(key);
   Object_rc_decr(val);
+  assert(ret != NULL);
   return ret;
 }
 

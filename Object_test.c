@@ -272,11 +272,31 @@ int main(int argc, char** argv) {
   
   Util_heading1(1, "HASH OPERATIONS");
 
+  Object* hashop_err = NULL;
   Object* hash1 = QHASH_NEW1();
   ObjectUtil_eprintf("hash1 = %v\n", hash1);
   nassert(hash1->rc == 1);
-  Object* apple = QSTRING_NEW1("apple");
-  Object* red = QSTRING_NEW1("red");
+  Object* str_apple = QSTRING_NEW1("apple");
+  Object* str_red = QSTRING_NEW1("red");
+  hashop_err = Object_accept(Object_top_hset(hash1, str_apple, str_red));
+  ObjectUtil_eprintf("hashop_err = %v\n", hashop_err);
+  nassert(!Object_is_error(hashop_err));
+  ObjectUtil_eprintf("str_apple->rc = %d\n", str_apple->rc);
+
+  // > only referred by str_red because keys are always cloned into the Hash.
+  nassert(str_apple->rc == 1); 
+  nassert(str_red->rc == 2); // referred by str_red, hash1
+
+  Object* str_banana = QSTRING_NEW1("banana");
+  Object* str_yellow = QSTRING_NEW1("yellow");
+  hashop_err = Object_top_hset(hash1, str_banana, str_yellow);
+  nassert(!Object_is_error(hashop_err));
+
+  nassert(hash1->rc == 1);
+  ObjectUtil_eprintf("hash1 = %v\n", hash1);
+
+  Object* expecting_red = Object_bop_hget(hash1, str_apple);
+  nassert(Object_cmp(expecting_red, str_red) ==  0);
 
   Util_heading1(0, "HASH OPERATIONS");
 
