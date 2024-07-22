@@ -54,9 +54,9 @@ struct LispEnv {
 extern LispEnv* LispEnv_root;
 
 LispEnv* LispEnv_new(LispEnv* parent);
-void LispEnv_child_add(LispEnv* self, LispEnv* child);
-void LispEnv_child_rem(LispEnv* self, LispEnv* child);
-void LispEnv_del(LispEnv* self);
+void     LispEnv_child_add(LispEnv* self, LispEnv* child);
+void     LispEnv_child_rem(LispEnv* self, LispEnv* child);
+void     LispEnv_del(LispEnv* self);
 
 // Eval the code in the S-Expression
 // Code is represented as an S-Expression.
