@@ -53,6 +53,7 @@ size_t  Hash_size(Hash* self);
 void    Hash_print(Hash* self);
 Hash*   Hash_clone(Hash* self);
 char    Hash_zero(Hash* self);
+int     Hash_cmp(Hash* self, Hash* other);
 
 HashIter* HashIter_new(Hash* self);
 HashIter* HashIter_head(HashIter* self);

@@ -734,6 +734,8 @@ int Object_cmp(Object* a, Object* b) {
   Object_rc_incr(a); Object_rc_incr(b);
   int ret = -9;
   if(a == b) {
+    // two objects that point to the same memory address
+    // are the same object.
     ret = 0;
   }
   else
@@ -751,6 +753,10 @@ int Object_cmp(Object* a, Object* b) {
   else
   if(Object_type(a) == SYMBOL_LIST && Object_type(b) == SYMBOL_LIST) {
     ret = List_cmp(a->impl, b->impl);
+  }
+  else
+  if(Object_type(a) == SYMBOL_HASH && Object_type(b) == SYMBOL_HASH) {
+    ret = Hash_cmp(a->impl, b->impl);
   }
   Object_rc_decr(a); Object_rc_decr(b);
   return ret;
@@ -795,6 +801,24 @@ Object* Object_bop_addx_char(Object* a, char ch) {
   }
   Object_rc_decr(a);
   return ret;
+}
+
+Object* Object_bop_hset(Object* self, Object* key, Object* val) {
+  assert(self != NULL);
+  if(Object_type(self) != SYMBOL_HASH) {
+    return Object_return(Object_new(SYMBOL_ERROR, 0, Error_new("Expecting Object<Hash> for hset")));
+  }
+  // TODO: test this
+  return Object_return(Hash_set(self->impl, key, val));
+}
+
+Object* Object_bop_hget(Object* self, Object* key) {
+  assert(self != NULL);
+  if(Object_type(self) != SYMBOL_HASH) {
+    return Object_return(Object_new(SYMBOL_ERROR, 0, Error_new("Expecting Object<Hash> for hset")));
+  }
+  // TODO: test this
+  return Object_return(Hash_get(self->impl, key));
 }
 
 Object* Object_bop_add(Object* a, Object* b) {

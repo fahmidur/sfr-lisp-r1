@@ -398,3 +398,24 @@ Hash* Hash_clone(Hash* self) {
   return clone;
 }
 
+int Hash_cmp(Hash* self, Hash* other) {
+  if(self->size != other->size) {
+    return 1;
+  }
+  Object* key = NULL;
+  Object* val1 = NULL;
+  Object* val2 = NULL;
+  HashIter* iter = HashIter_new(self);
+  HashIter_head(iter);
+  while(!HashIter_at_end(iter)) {
+    key = HashIter_get_key(iter);
+    val1 = HashIter_get_val(iter);
+    val2 = Hash_get(other, key);
+    ObjectUtil_eprintf("iter. key=%v val1=%v val2=%v\n", key, val1, val2);
+    if(Object_cmp(val1, val2) != 0) {
+      return 1;
+    }
+  }
+  return 0;
+}
+

@@ -269,7 +269,19 @@ int main(int argc, char** argv) {
   Util_heading1(0, "LIST OPERATIONS");
 
   //===========================================================================
+  
+  Util_heading1(1, "HASH OPERATIONS");
 
+  Object* hash1 = QHASH_NEW1();
+  ObjectUtil_eprintf("hash1 = %v\n", hash1);
+  nassert(hash1->rc == 1);
+  Object* apple = QSTRING_NEW1("apple");
+  Object* red = QSTRING_NEW1("red");
+
+  Util_heading1(0, "HASH OPERATIONS");
+
+  //===========================================================================
+  
   Util_heading1(1, "RUNTIME DONE");
   Object_system_print();
   Object_system_done();
