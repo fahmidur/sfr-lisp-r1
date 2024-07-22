@@ -311,6 +311,7 @@ int main(int argc, char** argv) {
 
   Object* expecting_red = Object_accept(Object_bop_hget(hash1, str_apple));
   nassert(Object_cmp(expecting_red, str_red) ==  0);
+  nassert(expecting_red->rc == 3); // referred by red, hash1, expecting_red
 
   Util_heading1(0, "HASH OPERATIONS");
 
