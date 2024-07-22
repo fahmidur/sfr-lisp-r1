@@ -170,8 +170,10 @@ void    Object_system_gc();
 #define QERROR_NEW0(x) Object_new(SYMBOL_ERROR, 0, Error_new(x))
 #define QERROR_NEW1(x) Object_new(SYMBOL_ERROR, 1, Error_new(x))
 
+#define QLIST_NEW0() Object_new(SYMBOL_LIST, 0, List_new())
 #define QLIST_NEW1() Object_new(SYMBOL_LIST, 1, List_new())
 
+#define QHASH_NEW0() Object_new(SYMBOL_HASH, 0, Hash_new())
 #define QHASH_NEW1() Object_new(SYMBOL_HASH, 1, Hash_new())
 
 #endif

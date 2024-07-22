@@ -283,7 +283,7 @@ int main(int argc, char** argv) {
   nassert(!Object_is_error(hashop_err));
   ObjectUtil_eprintf("str_apple->rc = %d\n", str_apple->rc);
 
-  // > only referred by str_red because keys are always cloned into the Hash.
+  // only referred by str_red because keys are always cloned into the Hash.
   nassert(str_apple->rc == 1); 
   nassert(str_red->rc == 2); // referred by str_red, hash1
 
