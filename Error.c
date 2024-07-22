@@ -44,10 +44,16 @@ int ErrorSystem_get_code() {
 }
 
 char* ErrorSystem_get_msg() {
+  if(_g_error_code == 0) {
+    return "";
+  }
   return _g_error.msg;
 }
 
 void* ErrorSystem_get_ptr() {
+  if(_g_error_code == 0) {
+    return NULL;
+  }
   return _g_error_ptr;
 }
 
