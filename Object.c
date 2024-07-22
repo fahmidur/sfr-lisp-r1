@@ -614,7 +614,10 @@ Symbol* Object_type(Object* self) {
 }
 
 Object* Object_rc_incr(Object* self) {
-  assert(self != NULL);
+  /* assert(self != NULL); */
+  if(self == NULL) {
+    return self;
+  }
   self->rc++;
   return self;
 }
@@ -634,7 +637,10 @@ Object* Object_gc(Object* self) {
 }
 
 Object* Object_rc_decr(Object* self) {
-  assert(self != NULL);
+  /* assert(self != NULL); */
+  if(self == NULL) {
+    return self;
+  }
   if(self->rc >= 1) {
     self->rc--;
   }

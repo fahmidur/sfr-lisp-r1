@@ -272,30 +272,44 @@ int main(int argc, char** argv) {
   
   Util_heading1(1, "HASH OPERATIONS");
 
-  Object* hashop_err = NULL;
+  Object* hashop_err = Object_new_null();
   Object* hash1 = QHASH_NEW1();
   ObjectUtil_eprintf("hash1 = %v\n", hash1);
   nassert(hash1->rc == 1);
   Object* str_apple = QSTRING_NEW1("apple");
   Object* str_red = QSTRING_NEW1("red");
+
   hashop_err = Object_accept(Object_top_hset(hash1, str_apple, str_red));
-  ObjectUtil_eprintf("hashop_err = %v\n", hashop_err);
+  ObjectUtil_eprintf("[1] hashop_err = %v | rc=%d\n", hashop_err, hashop_err->rc);
   nassert(!Object_is_error(hashop_err));
-  ObjectUtil_eprintf("str_apple->rc = %d\n", str_apple->rc);
+  Object_assign(&hashop_err, NULL);
+  ObjectUtil_eprintf("[2] hashop_err = %v | rc=%d\n", hashop_err, hashop_err->rc);
+  nassert(hashop_err->rc == 1);
+  ObjectUtil_eprintf("hash1 = %v\n", hash1);
 
   // only referred by str_red because keys are always cloned into the Hash.
   nassert(str_apple->rc == 1); 
   nassert(str_red->rc == 2); // referred by str_red, hash1
+                             
+  nassert(hash1->rc == 1);   // ensure rc of hash1 has not changed
 
   Object* str_banana = QSTRING_NEW1("banana");
   Object* str_yellow = QSTRING_NEW1("yellow");
-  hashop_err = Object_top_hset(hash1, str_banana, str_yellow);
-  nassert(!Object_is_error(hashop_err));
 
-  nassert(hash1->rc == 1);
+  hashop_err = Object_accept(Object_top_hset(hash1, str_banana, str_yellow));
+  ObjectUtil_eprintf("[1] hashop_err = %v | rc=%d\n", hashop_err, hashop_err->rc);
+  nassert(!Object_is_error(hashop_err));
+  Object_assign(&hashop_err, NULL);
+  ObjectUtil_eprintf("[2] hashop_err = %v | rc=%d\n", hashop_err, hashop_err->rc);
+  nassert(hashop_err->rc == 1);
   ObjectUtil_eprintf("hash1 = %v\n", hash1);
 
-  Object* expecting_red = Object_bop_hget(hash1, str_apple);
+  nassert(str_banana->rc == 1); // referred by str_banana
+  nassert(str_yellow->rc == 2); // referred by str_yellow, hash1
+  
+  nassert(hash1->rc == 1); // ensure that rc of hash1 has not changed
+
+  Object* expecting_red = Object_accept(Object_bop_hget(hash1, str_apple));
   nassert(Object_cmp(expecting_red, str_red) ==  0);
 
   Util_heading1(0, "HASH OPERATIONS");
