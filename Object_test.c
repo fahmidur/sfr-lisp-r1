@@ -313,6 +313,16 @@ int main(int argc, char** argv) {
   nassert(Object_cmp(expecting_red, str_red) ==  0);
   nassert(expecting_red->rc == 3); // referred by red, hash1, expecting_red
 
+  // modifying keys after they have been inserted into hash
+  Object_bop_addx_char(str_apple, '2');
+  Object* str_apple2 = QSTRING_NEW1("apple2");
+  nassert(Object_cmp(str_apple, str_apple2) == 0);
+
+  // show that altering the string 'apple' to 'apple2' does not change 
+  // key-value store in the Hash.
+  Object* expecting_red2 = Object_accept(Object_bop_hget(hash1, QSTRING_NEW0("apple")));
+  nassert(Object_cmp(expecting_red2, str_red) == 0);
+
   Util_heading1(0, "HASH OPERATIONS");
 
   //===========================================================================
