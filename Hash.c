@@ -96,11 +96,11 @@ void Hash_del(Hash* self) {
   free(self);
 }
 
-size_t Hash_size(Hash* self) {
+ssize_t Hash_size(Hash* self) {
   return self->size;
 }
 
-size_t Hash_len(Hash* self) {
+ssize_t Hash_len(Hash* self) {
   return self->size;
   /* size_t i = 0; */
   /* size_t len = 0; */

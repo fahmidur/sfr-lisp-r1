@@ -1,4 +1,5 @@
 #include <string.h>
+#include <limits.h>
 #include "Error.h"
 #include "Util.h"
 
@@ -82,6 +83,14 @@ void Error_print(Error* self) {
   Util_cstr_print(self->msg);
   Util_vt_set(VT_RESET);
   printf(")");
+}
+
+ssize_t Error_len(Error* self) {
+  size_t size = strlen(self->msg);
+  if(size <= SSIZE_MAX) {
+    return (ssize_t)size;
+  }
+  return -1;
 }
 
 Error* Error_clone(Error* self) {

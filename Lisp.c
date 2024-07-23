@@ -23,15 +23,15 @@ void Lisp_init() {
   LISP_PAREN_BEG = QSYMBOL_NEW1("(");
   LISP_PAREN_END = QSYMBOL_NEW1(")");
   /* LispEnv_root = NULL; */
-  /* LispEnv_root = LispEnv_new(NULL); */
+  LispEnv_root = LispEnv_new(NULL);
 }
 
 void Lisp_done() {
   Object_assign(&LISP_PAREN_BEG, NULL);
   Object_assign(&LISP_PAREN_END, NULL);
-  /* if(LispEnv_root != NULL) { */
-  /*   LispEnv_del(LispEnv_root); */
-  /* } */
+  if(LispEnv_root != NULL) {
+    LispEnv_del(LispEnv_root);
+  }
 }
 
 char TokenizerUtil_isdigit(char ch) {
@@ -330,7 +330,8 @@ LispEnv* LispEnv_new(LispEnv* parent) {
   self->children_tail = NULL;
   self->sibling_next = NULL;
   self->sibling_prev = NULL;
-  self->objects = Object_new(SYMBOL_HASH, 1, Hash_new());
+  self->objects = QHASH_NEW1();
+
   if(parent != NULL) {
     LispEnv_child_add(parent, self);
   }

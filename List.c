@@ -61,7 +61,7 @@ size_t List_size(List* self) {
   return self->size;
 }
 
-size_t List_len(List* self) {
+ssize_t List_len(List* self) {
   return self->size;
 }
 

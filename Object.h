@@ -50,10 +50,11 @@ struct ObjectTypeInfo {
   ObjectTypeInfo* prev;
   ObjectTypeInfo* next;
   // vtable
-  void   (*fn_del)(void* s); 
-  void   (*fn_print)(void* s);
-  void*  (*fn_clone)(void* s);
-  char   (*fn_zero)(void* s);
+  void    (*fn_del)(void* s); 
+  void    (*fn_print)(void* s);
+  void*   (*fn_clone)(void* s);
+  char    (*fn_zero)(void* s);
+  ssize_t (*fn_len)(void* s);
 };
 
 typedef struct ObjectSystem ObjectSystem;
@@ -114,7 +115,7 @@ Object* Object_to_symbol(Object* self);
 Object* Object_to_string(Object* self);
 
 // Mainly Number Ops
-size_t  Object_len(Object* self);
+ssize_t Object_len(Object* self);
 Object* Object_bop_add(Object* a, Object* b);
 Object* Object_bop_sub(Object* a, Object* b);
 Object* Object_bop_mul(Object* a, Object* b);

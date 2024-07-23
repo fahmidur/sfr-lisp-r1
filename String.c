@@ -252,7 +252,7 @@ void String_chomp(String* self) {
   String_len(self);
 }
 
-size_t String_len(String* self) {
+ssize_t String_len(String* self) {
   self->len = strlen(self->buf);
   return self->len;
 }

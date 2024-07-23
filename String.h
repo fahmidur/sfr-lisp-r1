@@ -27,7 +27,7 @@ ssize_t String_getline(struct String* self, FILE *stream);
 char String_zero(String* self);
 void String_del(String* self);
 void String_chomp(String* self);
-size_t String_len(String* self);
+ssize_t String_len(String* self);
 int String_cmp(String* self, String* other);
 void String_print(String* self);
 size_t String_hash(String* self);

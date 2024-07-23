@@ -292,6 +292,7 @@ int main(int argc, char** argv) {
   nassert(str_red->rc == 2); // referred by str_red, hash1
                              
   nassert(hash1->rc == 1);   // ensure rc of hash1 has not changed
+  nassert(Object_len(hash1) == 1);
 
   Object* str_banana = QSTRING_NEW1("banana");
   Object* str_yellow = QSTRING_NEW1("yellow");
@@ -308,6 +309,7 @@ int main(int argc, char** argv) {
   nassert(str_yellow->rc == 2); // referred by str_yellow, hash1
   
   nassert(hash1->rc == 1); // ensure that rc of hash1 has not changed
+  nassert(Object_len(hash1) == 2);
 
   Object* expecting_red = Object_accept(Object_bop_hget(hash1, str_apple));
   nassert(Object_cmp(expecting_red, str_red) ==  0);

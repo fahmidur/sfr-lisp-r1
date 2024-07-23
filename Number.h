@@ -27,8 +27,9 @@ Number* Number_sub(Number* self, Number* other);
 Number* Number_mul(Number* self, Number* other);
 Number* Number_div(Number* self, Number* other);
 
-int  Number_cmp(Number* self, Number* other);
-void Number_del(Number* self);
-void Number_print(Number* self);
+int     Number_cmp(Number* self, Number* other);
+void    Number_del(Number* self);
+ssize_t Number_len(Number* self);
+void    Number_print(Number* self);
 
 #endif

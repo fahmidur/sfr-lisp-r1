@@ -41,6 +41,7 @@ char Object_oti_set(Symbol* type, ObjectTypeInfo otiarg) {
   oti->fn_print = otiarg.fn_print;
   oti->fn_clone = otiarg.fn_clone;
   oti->fn_zero  = otiarg.fn_zero;
+  oti->fn_len   = otiarg.fn_len;
   ObjectTypeInfo* oti_old = object_system->types[oti->key];
   /*printf("oti_old=%p\n", oti_old);*/
   oti->next = oti_old;
@@ -96,33 +97,37 @@ void Object_system_init() {
 
   ObjectTypeInfo otiarg_symbol = { 
     .fn_del   = Symbol_noop, 
-    .fn_print = (void  (*)(void*))Symbol_print,
-    .fn_clone = (void* (*)(void*))Symbol_clone,
-    .fn_zero  = (char  (*)(void*))Symbol_zero
+    .fn_print = (void     (*)(void*))Symbol_print,
+    .fn_clone = (void*    (*)(void*))Symbol_clone,
+    .fn_zero  = (char     (*)(void*))Symbol_zero,
+    .fn_len   = (ssize_t  (*)(void*))Symbol_len,
   };
   Object_oti_set(SYMBOL_SYMBOL, otiarg_symbol);
 
   ObjectTypeInfo otiarg_string = {
-    .fn_del   = (void  (*)(void*))String_del,
-    .fn_print = (void  (*)(void*))String_print,
-    .fn_clone = (void* (*)(void*))String_clone,
-    .fn_zero  = (char  (*)(void*))String_zero
+    .fn_del   = (void    (*)(void*))String_del,
+    .fn_print = (void    (*)(void*))String_print,
+    .fn_clone = (void*   (*)(void*))String_clone,
+    .fn_zero  = (char    (*)(void*))String_zero,
+    .fn_len   = (ssize_t (*)(void*))String_len,
   };
   Object_oti_set(SYMBOL_STRING, otiarg_string);
 
   ObjectTypeInfo otiarg_number = {
-    .fn_del   = (void  (*)(void*))Number_del,
-    .fn_print = (void  (*)(void*))Number_print,
-    .fn_clone = (void* (*)(void*))Number_clone,
-    .fn_zero  = (char  (*)(void*))Number_zero
+    .fn_del   = (void    (*)(void*))Number_del,
+    .fn_print = (void    (*)(void*))Number_print,
+    .fn_clone = (void*   (*)(void*))Number_clone,
+    .fn_zero  = (char    (*)(void*))Number_zero,
+    .fn_len   = (ssize_t (*)(void*))Number_len,
   };
   Object_oti_set(SYMBOL_NUMBER, otiarg_number);
 
   ObjectTypeInfo otiarg_list = {
-    .fn_del   = (void   (*)(void*))List_del,
-    .fn_print = (void   (*)(void*))List_print,
-    .fn_clone = (void*  (*)(void*))List_clone,
-    .fn_zero  = (char   (*)(void*))List_zero
+    .fn_del   = (void    (*)(void*))List_del,
+    .fn_print = (void    (*)(void*))List_print,
+    .fn_clone = (void*   (*)(void*))List_clone,
+    .fn_zero  = (char    (*)(void*))List_zero,
+    .fn_len   = (ssize_t (*)(void*))List_len,
   };
   Object_oti_set(SYMBOL_LIST, otiarg_list);
 
@@ -134,17 +139,19 @@ void Object_system_init() {
   };
 
    ObjectTypeInfo otiarg_hash = {
-    .fn_del   = (void  (*)(void*))Hash_del,
-    .fn_print = (void  (*)(void*))Hash_print,
-    .fn_clone = (void* (*)(void*))Hash_clone,
-    .fn_zero  = (char  (*)(void*))Hash_zero
+    .fn_del   = (void    (*)(void*))Hash_del,
+    .fn_print = (void    (*)(void*))Hash_print,
+    .fn_clone = (void*   (*)(void*))Hash_clone,
+    .fn_zero  = (char    (*)(void*))Hash_zero,
+    .fn_len   = (ssize_t (*)(void*))Hash_len,
    };
    Object_oti_set(SYMBOL_HASH, otiarg_hash);
 
   ObjectTypeInfo otiarg_error = {
-    .fn_del   = (void  (*)(void*))Error_del,
-    .fn_print = (void  (*)(void*))Error_print,
-    .fn_clone = (void* (*)(void*))Error_clone
+    .fn_del   = (void    (*)(void*))Error_del,
+    .fn_print = (void    (*)(void*))Error_print,
+    .fn_clone = (void*   (*)(void*))Error_clone,
+    .fn_len   = (ssize_t (*)(void*))Error_len,
   };
   Object_oti_set(SYMBOL_ERROR, otiarg_error);
 
@@ -1063,17 +1070,39 @@ void Object_system_print() {
 /**
  * Return the length of Object. 
  */
-size_t Object_len(Object* self) {
+ssize_t Object_len(Object* self) {
   assert(self != NULL);
   Object_rc_incr(self);
-  size_t ret = 0;
-  if(Object_type(self) == SYMBOL_LIST) {
-    ret = List_len(self->impl);
+  ssize_t ret = 0;
+
+  /* if(Object_type(self) == SYMBOL_LIST) { */
+  /*   ret = List_len(self->impl); */
+  /* } */
+  /* else */
+  /* if(Object_type(self) == SYMBOL_STRING) { */
+  /*   ret = String_len(self->impl); */
+  /* } */
+  /* else */
+  /* if(Object_type(self) == SYMBOL_HASH) { */
+  /*   ret = Hash_len(self->impl); */
+  /* } */
+
+  ObjectTypeInfo* oti = Object_oti_get(self->type);
+  if(oti == NULL) {
+    printf("FATAL: unknown ObjectTypeInfo oti for type ");
+    Symbol_print(self->type);
+    exit(1);
   }
-  else
-  if(Object_type(self) == SYMBOL_STRING) {
-    ret = String_len(self->impl);
+  // Or you might want to have a default print.
+  if(oti->fn_len == NULL) {
+    printf("FATAL: ObjectTypeInfo oti for type ");
+    Symbol_print(self->type);
+    printf(" is missing fn_len\n");
+    exit(1);
   }
+
+  ret = oti->fn_len(self->impl);
+
   Object_rc_decr(self);
   return ret;
 }

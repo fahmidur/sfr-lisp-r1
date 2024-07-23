@@ -232,3 +232,8 @@ int Symbol_cmp(Symbol* self, Symbol* other) {
 char* Symbol_cstr(Symbol* self) {
   return self->str;
 }
+
+ssize_t Symbol_len(Symbol* self) {
+  return self->str_len;
+}
+

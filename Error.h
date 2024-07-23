@@ -1,6 +1,7 @@
 #ifndef _SFR_ERROR_H
 #define _SFR_ERROR_H
 
+#include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -11,10 +12,11 @@ struct Error {
   char* msg;
 };
 
-Error* Error_new(char* str);
-void   Error_del(Error* self);
-void   Error_print(Error* self);
-Error* Error_clone(Error* self);
+Error*  Error_new(char* str);
+void    Error_del(Error* self);
+void    Error_print(Error* self);
+Error*  Error_clone(Error* self);
+ssize_t Error_len(Error* self);
 
 void  ErrorSystem_init();
 void  ErrorSystem_done();

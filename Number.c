@@ -40,6 +40,10 @@ Number* Number_new(double x) {
   return Number_new_from_double(x);
 }
 
+ssize_t Number_len(Number* self) {
+  return 1;
+}
+
 char Number_zero(Number* self) {
   self->rep = 0;
   return 1;

@@ -33,18 +33,19 @@ SymbolVector* SymbolVector_new();
 void SymbolVector_push(SymbolVector* self, Symbol* atom);
 void SymbolVector_del(SymbolVector* self);
 
-size_t Symbol_calc_hash(char* str);
-size_t Symbol_calc_key(char* str);
-size_t Symbol_calc_key_from_hash(size_t hash);
-Symbol* Symbol_find(char* str);
-Symbol* Symbol_new(char* str);
-void Symbol_del(Symbol* str);
-void Symbol_print(Symbol* self);
-Symbol* Symbol_clone(Symbol* self);
-char Symbol_zero(Symbol* self);
-void Symbol_noop(void* self);
-int Symbol_cmp(Symbol* self, Symbol* other);
-size_t Symbol_hash(Symbol* self);
-char* Symbol_cstr(Symbol* self);
+size_t   Symbol_calc_hash(char* str);
+size_t   Symbol_calc_key(char* str);
+size_t   Symbol_calc_key_from_hash(size_t hash);
+Symbol*  Symbol_find(char* str);
+Symbol*  Symbol_new(char* str);
+void     Symbol_del(Symbol* str);
+void     Symbol_print(Symbol* self);
+Symbol*  Symbol_clone(Symbol* self);
+char     Symbol_zero(Symbol* self);
+void     Symbol_noop(void* self);
+int      Symbol_cmp(Symbol* self, Symbol* other);
+size_t   Symbol_hash(Symbol* self);
+char*    Symbol_cstr(Symbol* self);
+ssize_t  Symbol_len(Symbol* self);
 
 #endif

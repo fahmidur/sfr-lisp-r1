@@ -58,7 +58,7 @@ List*     List_clone(List* self);
 int       List_cmp(List* self, List* other);
 
 size_t    List_size(List* self);
-size_t    List_len(List* self);
+ssize_t   List_len(List* self);
 size_t    List_push(List* self, Object* data);
 Object*   List_pop(List* self);
 size_t    List_unshift(List* self, Object* data);
