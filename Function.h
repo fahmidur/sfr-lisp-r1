@@ -17,8 +17,14 @@
 typedef struct Function Function;
 struct Function {
   int arity; 
-  Object* (*impl)(Object* args);
+  Object* (*impl)(Object* argv);
 };
+
+// this is what a function call looks like
+// (foo a b c)
+// we don't want to create a new list for the args,
+// so we send the whole Object<List> to the function implementation.
+// just ignore argv[0].
 
 //Function* Function_new(Object* (impl*)(Object* args), int arity);
 
