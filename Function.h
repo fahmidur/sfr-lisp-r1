@@ -12,12 +12,25 @@
 #include "Symbol.h"
 #include "Object.h"
 
-// TODO: work on this.
+typedef struct FunctionEnv FunctionEnv;
+struct FunctionEnv {
+  FunctionEnv* parent;
+  FunctionEnv* children_head;
+  FunctionEnv* children_tail;
+  FunctionEnv* sibling_prev;
+  FunctionEnv* sibling_next;
+  Object*      objects_map;    // Object<Hash>
+};
+
+FunctionEnv* FunctionEnv_new(FunctionEnv* parent);
+void FunctionEnv_child_add(FunctionEnv* self, FunctionEnv* child);
+void FunctionEnv_del(FunctionEnv* self);
 
 typedef struct Function Function;
 struct Function {
-  int arity; 
-  Object* (*impl)(Object* argv);
+  int   arity; 
+  FunctionEnv* env;
+  Object* (*impl)(Function* fn, Object* argv);
 };
 
 // this is what a function call looks like
@@ -26,7 +39,11 @@ struct Function {
 // so we send the whole Object<List> to the function implementation.
 // just ignore argv[0].
 
-//Function* Function_new(Object* (impl*)(Object* args), int arity);
+Function* Function_new(
+  Object* (*impl)(Function* fn, Object* args), 
+  int arity,
+  FunctionEnv* env
+);
 
 // Uses varargs from stdarg. 
 // Every argument is expected to be Object*

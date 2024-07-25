@@ -1,9 +1,71 @@
+#include "Error.h"
 #include "Function.h"
 
-Function* Function_new(Object* (*impl)(Object* args), int arity) {
+FunctionEnv* FunctionEnv_new(FunctionEnv* parent) {
+  FunctionEnv* self = calloc(1, sizeof(FunctionEnv));
+
+  if(self == NULL) {
+    // ERROR: unable to reserve memory
+    ErrorSystem_set(1, "FunctionEnv_new. calloc failed");
+    return self;
+  }
+
+  self->children_head = NULL;
+  self->children_tail = NULL;
+  self->sibling_next = NULL;
+  self->sibling_prev = NULL;
+  self->objects_map = QHASH_NEW1();
+
+  /* if(parent != NULL) { */
+  /*   FunctionEnv_child_add(parent, self); */
+  /* } */
+  return self;
+}
+
+void FunctionEnv_del(FunctionEnv* self) {
+  assert(self != NULL);
+  if(self->children_head != NULL) {
+  }
+}
+
+void FunctionEnv_child_add(FunctionEnv* self, FunctionEnv* child) {
+  assert(self != NULL);
+  assert(child != NULL);
+  assert(child->sibling_next == NULL);
+  assert(child->sibling_prev == NULL);
+  child->parent = self;
+  if(self->children_head == NULL && self->children_tail == NULL) {
+    // first child being added
+    self->children_head = self->children_tail = child;
+    child->sibling_prev = NULL;
+    child->sibling_next = NULL;
+  }
+  else {
+    FunctionEnv* iter = self->children_head;
+    while(iter != NULL) {
+      if(iter == child) {
+        // the child is already in this list
+        return;
+      }
+      iter = iter->sibling_next;
+    }
+    FunctionEnv* last_child = self->children_tail;
+    last_child->sibling_next = child;
+    child->sibling_prev = last_child;
+    self->children_tail = child;
+  }
+}
+
+Function* Function_new(
+  Object* (*impl)(Function* fn, Object* args), 
+  int arity, 
+  FunctionEnv* env
+) {
   Function* self = calloc(1, sizeof(Function));
   self->arity = arity;
   self->impl = impl;
+  assert(env != NULL);
+  self->env = env;
   return self;
 }
 
