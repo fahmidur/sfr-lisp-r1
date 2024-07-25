@@ -61,8 +61,8 @@ void FunctionSystem_done() {
 
 Function* Function_new(
   Object* (*impl)(Function* fn, Object* args), 
-  int arity, 
-  Object* env
+  Object* env,
+  Object* params
 ) {
   char idbuf[128];
   Function* self = calloc(1, sizeof(Function));
@@ -72,8 +72,8 @@ Function* Function_new(
   }
   sprintf(idbuf, "%p", self);
   self->id = QSTRING_NEW1(idbuf);
-  self->arity = arity;
   self->impl = impl;
+  self->params = params;
   assert(env != NULL);
   self->env = env;
   return self;

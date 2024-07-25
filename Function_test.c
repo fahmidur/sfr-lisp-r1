@@ -17,9 +17,11 @@ int main(int argc, char** argv) {
   FunctionSystem_init();
 
   Object* env = QHASH_NEW1();
-  Function* fn1 = Function_new(fn_dprint, -1, env);
+  Function* fn1 = Function_new(fn_dprint, env, NULL);
 
+  printf("function fn1 = ");
   Function_print(fn1);
+  printf("\n");
 
   FunctionSystem_done();
   Object_system_done();
