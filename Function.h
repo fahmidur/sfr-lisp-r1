@@ -12,24 +12,25 @@
 #include "Symbol.h"
 #include "Object.h"
 
-typedef struct FunctionEnv FunctionEnv;
-struct FunctionEnv {
-  FunctionEnv* parent;
-  FunctionEnv* children_head;
-  FunctionEnv* children_tail;
-  FunctionEnv* sibling_prev;
-  FunctionEnv* sibling_next;
-  Object*      objects_map;    // Object<Hash>
-};
+/* typedef struct FunctionEnv FunctionEnv; */
+/* struct FunctionEnv { */
+/*   FunctionEnv* parent; */
+/*   FunctionEnv* children_head; */
+/*   FunctionEnv* children_tail; */
+/*   FunctionEnv* sibling_prev; */
+/*   FunctionEnv* sibling_next; */
+/*   Object*      objects_map;    // Object<Hash> */
+/* }; */
 
-FunctionEnv* FunctionEnv_new(FunctionEnv* parent);
-void FunctionEnv_child_add(FunctionEnv* self, FunctionEnv* child);
-void FunctionEnv_del(FunctionEnv* self);
+/* FunctionEnv* FunctionEnv_new(FunctionEnv* parent); */
+/* void FunctionEnv_child_add(FunctionEnv* self, FunctionEnv* child); */
+/* void FunctionEnv_del(FunctionEnv* self); */
 
 typedef struct Function Function;
 struct Function {
   int   arity; 
-  FunctionEnv* env;
+  Object* id;
+  Object* env;
   Object* (*impl)(Function* fn, Object* argv);
 };
 
@@ -42,8 +43,15 @@ struct Function {
 Function* Function_new(
   Object* (*impl)(Function* fn, Object* args), 
   int arity,
-  FunctionEnv* env
+  Object* env
 );
+
+Function* Function_get_parent(Function* self);
+
+void Function_print(Function* self);
+
+void FunctionSystem_init();
+void FunctionSystem_done();
 
 // Uses varargs from stdarg. 
 // Every argument is expected to be Object*
