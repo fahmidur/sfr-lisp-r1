@@ -19,6 +19,7 @@
 /*   FunctionEnv* children_tail; */
 /*   FunctionEnv* sibling_prev; */
 /*   FunctionEnv* sibling_next; */
+/*   Object*      children;       // Object<List> */
 /*   Object*      objects_map;    // Object<Hash> */
 /* }; */
 
@@ -30,7 +31,9 @@ typedef struct Function Function;
 struct Function {
   Object* id;
   Object* env;
+  int arity;
   Object* params;
+  Object* body;
   Object* (*impl)(Function* fn, Object* argv);
 };
 
@@ -43,12 +46,14 @@ struct Function {
 Function* Function_new(
   Object* (*impl)(Function* fn, Object* args), 
   Object* env, 
+  int arity,
   Object* params // List of Symbols
 );
 
 Function* Function_get_parent(Function* self);
 
 void Function_print(Function* self);
+Function* Function_clone(Function* self);
 
 void FunctionSystem_init();
 void FunctionSystem_done();

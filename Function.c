@@ -6,6 +6,8 @@ Object* SYMBOL_FNENV_PARENT;
 
 void FunctionSystem_init() {
   SYMBOL_FNENV_PARENT = QSYMBOL("_FNENV_PARENT");
+  // a special key used to refer to the parent Object<Hash>
+  // representing the parent environment/scope.
 }
 
 void FunctionSystem_done() {
@@ -26,9 +28,9 @@ void FunctionSystem_done() {
 /*   self->sibling_prev = NULL; */
 /*   self->objects_map = QHASH_NEW1(); */
 
-/*   /1* if(parent != NULL) { *1/ */
-/*   /1*   FunctionEnv_child_add(parent, self); *1/ */
-/*   /1* } *1/ */
+/*   if(parent != NULL) { */
+/*     FunctionEnv_child_add(parent, self); */
+/*   } */
 /*   return self; */
 /* } */
 
@@ -51,7 +53,6 @@ void FunctionSystem_done() {
 /*     child->sibling_next = NULL; */
 /*   } */
 /*   else { */
-/*     FunctionEnv* iter = self->children_head; */
 /*     FunctionEnv* last_child = self->children_tail; */
 /*     last_child->sibling_next = child; */
 /*     child->sibling_prev = last_child; */
@@ -62,6 +63,7 @@ void FunctionSystem_done() {
 Function* Function_new(
   Object* (*impl)(Function* fn, Object* args), 
   Object* env,
+  int arity,
   Object* params
 ) {
   char idbuf[128];
@@ -73,14 +75,38 @@ Function* Function_new(
   sprintf(idbuf, "%p", self);
   self->id = QSTRING_NEW1(idbuf);
   self->impl = impl;
+  self->arity = arity;
   self->params = params;
+  if(self->arity >= 0 && Object_len(self->params) != self->arity) {
+    ErrorSystem_set(1, "Function_new. Invalid arity for given params");
+    return NULL;
+  }
   assert(env != NULL);
   self->env = env;
+  // The use of the body is entirely dependent on the impl.
+  // we do not do anything special to the body.
+  self->body = NULL;
   return self;
 }
 
 void Function_print(Function* self) {
-  printf("Function(%p)", self);
+  ObjectUtil_eprintf("Function(%p ID=%v)", self, self->id);
+}
+
+Function* Function_clone(Function* self) {
+  char idbuf[128];
+  Function* clone = calloc(1, sizeof(Function));
+  if(clone == NULL) {
+    ErrorSystem_set(1, "Function_clone. calloc failed");
+    return NULL;
+  }
+  sprintf(idbuf, "%p", clone);
+  clone->id = QSTRING_NEW1(idbuf);
+  clone->impl = self->impl;
+  clone->arity = self->arity;
+  clone->env = Object_accept(Object_clone(self->env));
+  clone->params = Object_rc_incr(self->params);
+  return clone;
 }
 
 Function* Function_get_parent(Function* self) {
@@ -90,4 +116,4 @@ Function* Function_get_parent(Function* self) {
     return NULL;
   }
   return parent_obj->impl;
-};
+}
