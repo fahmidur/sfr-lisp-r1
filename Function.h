@@ -31,7 +31,7 @@ typedef struct Function Function;
 struct Function {
   Object* id;
   Object* env;
-  int arity;
+  int     arity;
   Object* params;
   Object* body;
   Object* (*impl)(Function* fn, Object* argv);
@@ -46,7 +46,7 @@ struct Function {
 Function* Function_new(
   Object* (*impl)(Function* fn, Object* args), 
   Object* env, 
-  int arity,
+  int     arity,
   Object* params // List of Symbols
 );
 
