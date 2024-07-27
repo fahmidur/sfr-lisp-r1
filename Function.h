@@ -12,25 +12,24 @@
 #include "Symbol.h"
 #include "Object.h"
 
-/* typedef struct FunctionEnv FunctionEnv; */
-/* struct FunctionEnv { */
-/*   FunctionEnv* parent; */
-/*   FunctionEnv* children_head; */
-/*   FunctionEnv* children_tail; */
-/*   FunctionEnv* sibling_prev; */
-/*   FunctionEnv* sibling_next; */
-/*   Object*      children;       // Object<List> */
-/*   Object*      objects_map;    // Object<Hash> */
-/* }; */
+typedef struct FunctionEnv FunctionEnv;
+struct FunctionEnv {
+  FunctionEnv* parent;
+  FunctionEnv* children_head;
+  FunctionEnv* children_tail;
+  FunctionEnv* sibling_prev;
+  FunctionEnv* sibling_next;
+  Object*      objects;    // Object<Hash>
+};
 
-/* FunctionEnv* FunctionEnv_new(FunctionEnv* parent); */
-/* void FunctionEnv_child_add(FunctionEnv* self, FunctionEnv* child); */
-/* void FunctionEnv_del(FunctionEnv* self); */
+FunctionEnv* FunctionEnv_new(FunctionEnv* parent);
+void         FunctionEnv_child_add(FunctionEnv* self, FunctionEnv* child);
+void         FunctionEnv_del(FunctionEnv* self);
 
 typedef struct Function Function;
 struct Function {
-  Object* id;
-  Object* env;
+  /* Object* id; */
+  FunctionEnv* env;
   int     arity;
   Object* params;
   Object* body;
@@ -45,12 +44,11 @@ struct Function {
 
 Function* Function_new(
   Object* (*impl)(Function* fn, Object* args), 
-  Object* env, 
   int     arity,
   Object* params // List of Symbols
 );
 
-Function* Function_get_parent(Function* self);
+/* Function* Function_get_parent(Function* self); */
 
 void Function_print(Function* self);
 Function* Function_clone(Function* self);
