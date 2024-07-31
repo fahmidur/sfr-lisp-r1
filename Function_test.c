@@ -5,10 +5,16 @@
 #include "Object.h"
 #include "nassert.h"
 
-Object* fn_dprint(Function* fn, Object* argv) {
-  printf("fn_dprintf. Called\n");
-  ObjectUtil_eprintf("fn_dprintf. argv=%v\n", argv);
-  ObjectUtil_eprintf("fn_dprintf. len(argv)=%d\n", Object_len(argv));
+Object* fn_println(Function* fn, Object* argv) {
+  printf("fn_println. Called\n");
+  ObjectUtil_eprintf("fn_println. argv=%v\n", argv);
+  ObjectUtil_eprintf("fn_println. len(argv)=%d\n", Object_len(argv));
+  int i = 0;
+  int argv_len = Object_len(argv);
+  for(i = 1; i < argv_len; i++) {
+    Object_print(Object_bop_at(argv, i));
+  }
+  printf("\n");
   return NULL;
 }
 
@@ -23,7 +29,7 @@ int main(int argc, char** argv) {
   FunctionSystem_init();
 
   printf("Constructing fn1 ...\n");
-  Function* fn1 = Function_new(NULL, fn_dprint, -1, NULL, NULL);
+  Function* fn1 = Function_new(NULL, fn_println, -1, NULL, NULL);
   printf("fn1 constructed\n");
 
   printf("function fn1 = ");
@@ -32,6 +38,8 @@ int main(int argc, char** argv) {
 
   printf("calling fn1...\n");
   Function_call(fn1, NULL);
+
+  Function_call(fn1, Object_new_list(1, 2, QSYMBOL("print"), QSTRING("Hello there")));
 
   printf("Constructing fn2 ...\n");
   Function* fn2 = Function_new(NULL, fn_add, 2, Object_new_list(1, 2, QSYMBOL("a"), QSYMBOL("b")), NULL);
