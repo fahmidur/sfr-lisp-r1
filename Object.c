@@ -25,6 +25,7 @@ Symbol* SYMBOL_LIST_ITER;
 Symbol* SYMBOL_HASH;
 Symbol* SYMBOL_HASH_ITER;
 Symbol* SYMBOL_NULL;
+Symbol* SYMBOL_FUNCTION;
 
 char Object_oti_set(Symbol* type, ObjectTypeInfo otiarg) {
   assert(type != NULL);
@@ -82,6 +83,8 @@ void Object_system_init() {
   SYMBOL_NEW = Symbol_new("new");
   SYMBOL_DEL = Symbol_new("del");
 
+  // The NULL Type
+  SYMBOL_NULL = Symbol_new("NULL");
   // Atomic Types
   SYMBOL_SYMBOL = Symbol_new("Symbol");
   SYMBOL_STRING = Symbol_new("String");
@@ -90,8 +93,8 @@ void Object_system_init() {
   // Composit Types
   SYMBOL_LIST = Symbol_new("List");
   SYMBOL_HASH = Symbol_new("Hash");
-  // The NULL Type
-  SYMBOL_NULL = Symbol_new("NULL");
+  // Callable Object
+  SYMBOL_FUNCTION = Symbol_new("Function");
 
   printf("\n\n");
 
