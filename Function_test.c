@@ -26,6 +26,11 @@ Object* fn_add(Function* fn, Object* argv) {
   return Object_bop_add(Object_bop_at(argv, 1), Object_bop_at(argv, 2));
 }
 
+Function* fn_make_adder(Function* fn, Object* argv) {
+  //TODO
+  return NULL;
+}
+
 int main(int argc, char** argv) {
   ErrorSystem_init();
   Symbol_system_init();
