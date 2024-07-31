@@ -92,14 +92,12 @@ Function* Function_new(
   Object* params,
   Object* body
 ) {
-  /* char idbuf[128]; */
   Function* self = calloc(1, sizeof(Function));
   if(self == NULL) {
     ErrorSystem_set(1, "Function_new. calloc failed");
     return NULL;
   }
-  /* sprintf(idbuf, "%p", self); */
-  /* self->id = QSTRING_NEW1(idbuf); */
+  self->parent = parent;
   self->impl = impl;
   self->arity = arity;
   if(params == NULL) {
@@ -132,9 +130,13 @@ Function* Function_new(
 void Function_print(Function* self) {
   printf("Function(");
   Util_vt_set(VT_COLOR_BRIGHT_YELLOW_FG);
-  printf("%p", self);
+  printf("addr=%p arity=%d", self, self->arity);
   Util_vt_set(VT_RESET);
   printf(")");
+  if(self->parent != NULL) {
+    printf(" < ");
+    Function_print(self->parent);
+  }
 }
 
 Object* Function_call(Function* self, Object* argv) {
@@ -142,18 +144,33 @@ Object* Function_call(Function* self, Object* argv) {
     argv = Object_new_null();
   }
   Object_rc_incr(argv);
-  if(self->arity >= 0) {
-    if(Object_len(argv) == (self->arity+1)) {
-      ErrorSystem_set(1, "Function_call. argv arity mismatch");
-      return NULL;
-    }
-  }
+  /* if(self->arity >= 0) { */
+  /*   if(Object_len(argv) == (self->arity+1)) { */
+  /*     ErrorSystem_set(1, "Function_call. argv arity mismatch"); */
+  /*     return NULL; */
+  /*   } */
+  /* } */
   Object* ret = (self->impl)(self, argv);
   if(ret == NULL) {
     ret = Object_new_null();
   }
   Object_rc_decr(argv);
   return Object_return(ret);
+}
+
+// Set key/val in the Functions environment
+Object* Function_set(Function* self, Object* key, Object* val) {
+  assert(self != NULL);
+  assert(self->env != NULL);
+  assert(self->env->objects != NULL);
+  return Object_top_hset(self->env->objects, key, val);
+}
+
+Object* Function_get(Function* self, Object* key) {
+  assert(self != NULL);
+  assert(self->env != NULL);
+  assert(self->env->objects != NULL);
+  return Object_bop_hget(self->env->objects, key);
 }
 
 /* Function* Function_clone(Function* self) { */

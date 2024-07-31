@@ -30,7 +30,7 @@ void         FunctionEnv_del(FunctionEnv* self);
 
 typedef struct Function Function;
 struct Function {
-  /* Object* id; */
+  Function* parent;
   FunctionEnv* env;
   int     arity;
   Object* params;
