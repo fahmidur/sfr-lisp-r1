@@ -58,6 +58,8 @@ int main(int argc, char** argv) {
   Object* res1 = Object_accept(Function_call(fn2, Object_new_list(1, 3, QSYMBOL("+"), num1, num2)));
   ObjectUtil_eprintf("%v + %v = %v\n", num1, num2, res1);
 
+  // now let's try closures
+
   // manually delete each function
   Function_del(fn1);
   Function_del(fn2);

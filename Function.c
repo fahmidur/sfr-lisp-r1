@@ -170,7 +170,17 @@ Object* Function_env_get(Function* self, Object* key) {
   assert(self != NULL);
   assert(self->env != NULL);
   assert(self->env->objects != NULL);
-  return Object_bop_hget(self->env->objects, key);
+  Object* ret = Object_bop_hget(self->env->objects, key);
+  if(ret == NULL) {
+    ret = Object_new_null();
+  }
+  if(Object_is_null(ret) && self->parent != NULL) {
+    ret = Function_env_get(self->parent, key);
+  }
+  if(ret == NULL) {
+    ret = Object_new_null();
+  }
+  return ret;
 }
 
 void Function_del(Function* self) {
