@@ -1087,21 +1087,25 @@ ssize_t Object_len(Object* self) {
   /*   ret = Hash_len(self->impl); */
   /* } */
 
-  ObjectTypeInfo* oti = Object_oti_get(self->type);
-  if(oti == NULL) {
-    printf("FATAL: unknown ObjectTypeInfo oti for type ");
-    Symbol_print(self->type);
-    exit(1);
+  if(Object_is_null(self)) {
+    ret = 0;
   }
-  // Or you might want to have a default print.
-  if(oti->fn_len == NULL) {
-    printf("FATAL: ObjectTypeInfo oti for type ");
-    Symbol_print(self->type);
-    printf(" is missing fn_len\n");
-    exit(1);
+  else {
+    ObjectTypeInfo* oti = Object_oti_get(self->type);
+    if(oti == NULL) {
+      printf("FATAL: unknown ObjectTypeInfo oti for type ");
+      Symbol_print(self->type);
+      exit(1);
+    }
+    // Or you might want to have a default print.
+    if(oti->fn_len == NULL) {
+      printf("FATAL: ObjectTypeInfo oti for type ");
+      Symbol_print(self->type);
+      printf(" is missing fn_len\n");
+      exit(1);
+    }
+    ret = oti->fn_len(self->impl);
   }
-
-  ret = oti->fn_len(self->impl);
 
   Object_rc_decr(self);
   return ret;

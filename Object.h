@@ -138,6 +138,8 @@ Object* Object_bop_hget(Object* self, Object *key);
 // Mainly String ops
 char    Object_bop_charat(Object* self, size_t idx);
 
+// Mainly function ops
+
 void ObjectUtil_eprintf(char* fmt, ...);
 
 void    Object_system_init();

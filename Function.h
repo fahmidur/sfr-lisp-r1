@@ -26,6 +26,8 @@ FunctionEnv* FunctionEnv_new(FunctionEnv* parent);
 void         FunctionEnv_child_add(FunctionEnv* self, FunctionEnv* child);
 void         FunctionEnv_del(FunctionEnv* self);
 
+#define FUNCTION_ARITY_ANY -1
+
 typedef struct Function Function;
 struct Function {
   /* Object* id; */
@@ -43,15 +45,19 @@ struct Function {
 // just ignore argv[0].
 
 Function* Function_new(
+  Function* parent,
   Object* (*impl)(Function* fn, Object* args), 
-  int     arity,
-  Object* params // List of Symbols
+  int     arity,  // Must match length of params if >= 0
+  Object* params, // Object<List> of Symbols
+  Object* body    // Object<List> of whatever
 );
 
 /* Function* Function_get_parent(Function* self); */
 
-void Function_print(Function* self);
-Function* Function_clone(Function* self);
+void      Function_print(Function* self);
+Object*   Function_call(Function* self, Object* argv);
+
+/* Function* Function_clone(Function* self); */
 
 void FunctionSystem_init();
 void FunctionSystem_done();
