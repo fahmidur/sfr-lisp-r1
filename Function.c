@@ -5,7 +5,7 @@
 Object* SYMBOL_FNENV_PARENT;
 
 void FunctionSystem_init() {
-  SYMBOL_FNENV_PARENT = QSYMBOL("_FNENV_PARENT");
+  /* SYMBOL_FNENV_PARENT = QSYMBOL("_FNENV_PARENT"); */
   // a special key used to refer to the parent Object<Hash>
   // representing the parent environment/scope.
 }
@@ -159,18 +159,27 @@ Object* Function_call(Function* self, Object* argv) {
 }
 
 // Set key/val in the Functions environment
-Object* Function_set(Function* self, Object* key, Object* val) {
+Object* Function_env_set(Function* self, Object* key, Object* val) {
   assert(self != NULL);
   assert(self->env != NULL);
   assert(self->env->objects != NULL);
   return Object_top_hset(self->env->objects, key, val);
 }
 
-Object* Function_get(Function* self, Object* key) {
+Object* Function_env_get(Function* self, Object* key) {
   assert(self != NULL);
   assert(self->env != NULL);
   assert(self->env->objects != NULL);
   return Object_bop_hget(self->env->objects, key);
+}
+
+void Function_del(Function* self) {
+  if(self->env != NULL) {
+    FunctionEnv_del(self->env);
+  }
+  self->env = NULL;
+  self->parent = NULL;
+  free(self);
 }
 
 /* Function* Function_clone(Function* self) { */

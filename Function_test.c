@@ -11,7 +11,11 @@ Object* fn_println(Function* fn, Object* argv) {
   ObjectUtil_eprintf("fn_println. len(argv)=%d\n", Object_len(argv));
   int i = 0;
   int argv_len = Object_len(argv);
+  Object* iter;
+  Symbol* iter_type;
   for(i = 1; i < argv_len; i++) {
+    iter = Object_bop_at(argv, i);
+    iter_type = Object_type(iter);
     Object_print(Object_bop_at(argv, i));
   }
   printf("\n");
@@ -51,8 +55,12 @@ int main(int argc, char** argv) {
 
   Object* num1 = QNUMBER(2);
   Object* num2 = QNUMBER(3);
-  Object* res1 = Function_call(fn2, Object_new_list(1, 3, QSYMBOL("+"), num1, num2));
+  Object* res1 = Object_accept(Function_call(fn2, Object_new_list(1, 3, QSYMBOL("+"), num1, num2)));
   ObjectUtil_eprintf("%v + %v = %v\n", num1, num2, res1);
+
+  // manually delete each function
+  Function_del(fn1);
+  Function_del(fn2);
 
   FunctionSystem_done();
   Object_system_done();

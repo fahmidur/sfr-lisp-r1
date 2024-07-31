@@ -56,6 +56,7 @@ Function* Function_new(
 
 void      Function_print(Function* self);
 Object*   Function_call(Function* self, Object* argv);
+void      Function_del(Function* self);
 
 /* Function* Function_clone(Function* self); */
 
