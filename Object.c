@@ -838,9 +838,18 @@ Object* Object_bop_hget(Object* self, Object* key) {
   }
   Object* ret = Hash_get(self->impl, key);
   if(ret == NULL) {
-    return Object_new_null();
+    ret = Object_new_null();
   }
   return ret;
+}
+
+Object* Object_bop_hrem(Object* self, Object* key) {
+  assert(self != NULL);
+  if(Object_type(self) != SYMBOL_HASH) {
+    return Object_return(Object_new(SYMBOL_ERROR, 0, Error_new("Expecting Object<Hash> for hset")));
+  }
+  Hash_rem(self->impl, key);
+  return Object_new_null();
 }
 
 Object* Object_bop_add(Object* a, Object* b) {

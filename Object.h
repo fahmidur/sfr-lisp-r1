@@ -132,9 +132,10 @@ Object* Object_bop_unshift(Object* a, Object* b);
 Object* Object_uop_shift(Object* self);
 Object* Object_bop_at(Object* self, size_t idx);
 
-// Mainly Hash Ops
+// Mainly Hash/Environment Ops
 Object* Object_top_hset(Object* self, Object* key, Object* val);
 Object* Object_bop_hget(Object* self, Object *key);
+Object* Object_bop_hrem(Object* self, Object* key);
 
 // Mainly String ops
 char    Object_bop_charat(Object* self, size_t idx);

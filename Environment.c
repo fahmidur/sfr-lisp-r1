@@ -112,6 +112,11 @@ Object* Environment_get(Environment* self, Object* key) {
   return Object_return(ret);
 }
 
+Object* Environment_rem(Environment* self, Object* key) {
+  assert(self != NULL);
+  assert(self->objects != NULL);
+}
+
 ssize_t Environment_len(Environment* self) {
   assert(self != NULL);
   ssize_t ret = 0;
