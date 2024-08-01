@@ -746,7 +746,8 @@ Object* Object_zero(Object* self) {
 
 int Object_cmp(Object* a, Object* b) {
   assert(a != NULL); assert(b != NULL);
-  Object_rc_incr(a); Object_rc_incr(b);
+  /* Object_rc_incr(a); Object_rc_incr(b); */
+  Object_accept(a); Object_accept(b);
   int ret = -9;
   if(a == b) {
     // two objects that point to the same memory address
