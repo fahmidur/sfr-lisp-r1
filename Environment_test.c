@@ -77,8 +77,12 @@ int main(int argc, char** argv) {
     ) == 0
   );
 
+  printf("deleting environments ... \n");
+  printf("deleting env2 ... \n");
   Environment_del(env2);
+  printf("deleting env1 ... \n");
   Environment_del(env1);
+  printf("deleting environments ... DONE\n");
 
   Object_system_done();
   Symbol_system_done();

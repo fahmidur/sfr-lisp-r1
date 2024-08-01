@@ -26,11 +26,17 @@ Environment* Environment_new(Environment* parent) {
 
 void Environment_del(Environment* self) {
   assert(self != NULL);
+  printf("  deleting own\t\tself=%p\n", self);
   // assert that the child is detached from siblings
   assert(self->sibling_prev == NULL);
   assert(self->sibling_next == NULL);
   Environment* iter = NULL;
   Environment* next = NULL;
+
+  if(self->parent) {
+    // remove the parent-child relationship to this Environment
+    Environment_child_rem(self->parent, self);
+  }
 
   // delete all children
   if(self->children_head != NULL && self->children_tail != NULL) {
@@ -41,6 +47,7 @@ void Environment_del(Environment* self) {
       iter->sibling_next = NULL;
       iter->sibling_prev = NULL;
       // now delete the child recursively
+      printf("  deleting child\t\titer=%p\n", iter);
       Environment_del(iter);
       // move the head over to next child
       self->children_head = next;
@@ -76,6 +83,21 @@ void Environment_child_add(Environment* self, Environment* child) {
     child->sibling_prev = last_child;
     self->children_tail = child;
   }
+}
+
+void Environment_child_rem(Environment* self, Environment* child) {
+  assert(self != NULL);
+  assert(child != NULL);
+  child->parent = NULL;
+  Environment* iter = self->children_head;
+  Environment* sibling_prev = NULL;
+  Environment* sibling_next = NULL;
+  //TODO
+  /* while(iter != NULL) { */
+  /*   if(iter == child) { */
+  /*   } */
+  /*   iter = iter->sibling_next; */
+  /* } */
 }
 
 /**
@@ -151,4 +173,5 @@ char Environment_zero(Environment* self) {
   }
   return 1;
 }
+
 
