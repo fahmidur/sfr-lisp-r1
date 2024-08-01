@@ -60,6 +60,15 @@ int main(int argc, char** argv) {
     ) == 0
   )
 
+  // now we remove the shadowing variable
+  Environment_rem(env2, apple);
+  nassert(
+    Object_cmp(
+      Environment_get(env2, apple),
+      red
+    ) == 0
+  );
+
   Object_system_done();
   Symbol_system_done();
   ErrorSystem_done();

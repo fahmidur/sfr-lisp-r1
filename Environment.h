@@ -25,6 +25,7 @@ void Environment_child_add(Environment* self, Environment* child);
 
 Object* Environment_get(Environment* self, Object* key);
 Object* Environment_set(Environment* self, Object* key, Object* val);
+Object* Environment_rem(Environment* self, Object* key);
 
 ssize_t Environment_len(Environment* self);
 
