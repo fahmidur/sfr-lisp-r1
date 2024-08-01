@@ -25,6 +25,7 @@ Symbol* SYMBOL_LIST_ITER;
 Symbol* SYMBOL_HASH;
 Symbol* SYMBOL_HASH_ITER;
 Symbol* SYMBOL_NULL;
+Symbol* SYMBOL_ENVIRONMENT;
 Symbol* SYMBOL_FUNCTION;
 
 char Object_oti_set(Symbol* type, ObjectTypeInfo otiarg) {
@@ -93,6 +94,7 @@ void Object_system_init() {
   // Composit Types
   SYMBOL_LIST = Symbol_new("List");
   SYMBOL_HASH = Symbol_new("Hash");
+  SYMBOL_ENVIRONMENT = Symbol_new("Environment");
   // Callable Object
   SYMBOL_FUNCTION = Symbol_new("Function");
 

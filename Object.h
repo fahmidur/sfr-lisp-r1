@@ -22,6 +22,7 @@ extern Symbol* SYMBOL_LIST_ITER;
 extern Symbol* SYMBOL_HASH;
 extern Symbol* SYMBOL_HASH_ITER;
 extern Symbol* SYMBOL_NULL;
+extern Symbol* SYMBOL_ENVIRONMENT;
 extern Symbol* SYMBOL_FUNCTION;
 
 typedef struct Object Object;
