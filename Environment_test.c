@@ -77,6 +77,9 @@ int main(int argc, char** argv) {
     ) == 0
   );
 
+  Environment_del(env2);
+  Environment_del(env1);
+
   Object_system_done();
   Symbol_system_done();
   ErrorSystem_done();

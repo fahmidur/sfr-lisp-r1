@@ -141,3 +141,14 @@ void Environment_print(Environment* self) {
   }
 }
 
+char Environment_zero(Environment* self) {
+  assert(self != NULL);
+  assert(self->objects != NULL);
+  Object* ret = Object_zero(self->objects);
+  if(Object_is_error(ret)) {
+    ErrorSystem_set(1, "Environment_set. Failed to zero self->objects Hash");
+    return 0;
+  }
+  return 1;
+}
+
