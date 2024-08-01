@@ -1,5 +1,5 @@
-#ifndef _SFR_FUNCTION
-#define _SFR_FUNCTION
+#ifndef _SFR_FUNCTION_H
+#define _SFR_FUNCTION_H
 
 /**
  * A wrapper around C Functions. 

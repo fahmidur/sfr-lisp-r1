@@ -44,6 +44,7 @@ char        ListIter_at_end(ListIter* self);
 ListIter*   ListIter_head(ListIter* self);
 ListIter*   ListIter_tail(ListIter* self);
 Object*     ListIter_get_val(ListIter* self);
+/* char        ListIter_del_val(ListIter* self); */
 
 ListNode* ListNode_new(Object* data);
 void ListNode_unlink(ListNode* self);

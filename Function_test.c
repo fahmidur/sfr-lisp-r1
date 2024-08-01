@@ -27,7 +27,6 @@ Object* fn_add(Function* fn, Object* argv) {
 }
 
 Function* fn_make_adder(Function* fn, Object* argv) {
-  //TODO
   return NULL;
 }
 
@@ -73,6 +72,8 @@ int main(int argc, char** argv) {
   Object_system_done();
   Symbol_system_done();
   ErrorSystem_done();
+
+  nassert_report();
   return nassert_exit_code();
 }
 

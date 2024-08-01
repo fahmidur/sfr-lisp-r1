@@ -32,7 +32,7 @@ util_bnames.each do |name|
   compile_file_task(:object, build(name+'.o'), [name+'.h', name+'.c'])
 end
 
-basic_bnames = ['Symbol', 'String', 'Number', 'List', 'Hash', 'Function']
+basic_bnames = ['Symbol', 'String', 'Number', 'List', 'Hash', 'Environment', 'Function']
 basic_ofiles = basic_bnames.map {|e| build(e+'.o') }
 basic_hfiles = basic_bnames.map {|e| e+'.h' }
 basic_bnames.each do |name|
@@ -66,7 +66,7 @@ compile_file_task(:program, build('Util_test'), ['Util_test.c', build('Util.o'),
 ['Symbol', 'String', 'Number'].each do |name|
   compile_file_task(:program, build(name+'_test'), [name+'_test.c', build(name+'.o'), test_common])
 end
-['Object', 'List', 'Hash', 'Function'].each do |name|
+['Object', 'List', 'Hash', 'Environment', 'Function'].each do |name|
   compile_file_task(:program, build(name+'_test'), [name+'_test.c', obj_ofiles, test_common])
 end
 

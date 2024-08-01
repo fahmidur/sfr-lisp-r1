@@ -2,12 +2,7 @@
 #include "Function.h"
 #include "Object.h"
 
-Object* SYMBOL_FNENV_PARENT;
-
 void FunctionSystem_init() {
-  /* SYMBOL_FNENV_PARENT = QSYMBOL("_FNENV_PARENT"); */
-  // a special key used to refer to the parent Object<Hash>
-  // representing the parent environment/scope.
 }
 
 void FunctionSystem_done() {
@@ -119,6 +114,7 @@ Function* Function_new(
   if(parent == NULL) {
     self->env = FunctionEnv_new(NULL);
   } else {
+    // inherit the environment of the parent function
     self->env = FunctionEnv_new(parent->env);
   }
   // The use of the body is entirely dependent on the impl.
@@ -150,6 +146,7 @@ Object* Function_call(Function* self, Object* argv) {
   /*     return NULL; */
   /*   } */
   /* } */
+  /* FunctionEnv* tmpEnv = FunctionEnv_new(self->env); */
   Object* ret = (self->impl)(self, argv);
   if(ret == NULL) {
     ret = Object_new_null();
