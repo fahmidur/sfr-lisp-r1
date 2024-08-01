@@ -8,6 +8,7 @@
 #include "Number.h"
 #include "List.h"
 #include "Hash.h"
+#include "Environment.h"
 #include "Error.h"
 #include "Object.h"
 
@@ -159,6 +160,14 @@ void Object_system_init() {
     .fn_len   = (ssize_t (*)(void*))Error_len,
   };
   Object_oti_set(SYMBOL_ERROR, otiarg_error);
+
+  ObjectTypeInfo otiarg_environment = {
+    .fn_del   = (void (*)(void*))Environment_del,
+    .fn_print = (void (*)(void*))Environment_print,
+    .fn_clone = NULL,
+    .fn_len   = (ssize_t (*)(void*))Environment_len,
+  };
+  Object_oti_set(SYMBOL_ENVIRONMENT, otiarg_environment);
 
   object_system->null_object = Object_new(SYMBOL_SYMBOL, 1, Symbol_new("NULL"));
 
@@ -823,10 +832,19 @@ Object* Object_bop_addx_char(Object* a, char ch) {
 
 Object* Object_top_hset(Object* self, Object* key, Object* val) {
   assert(self != NULL);
-  if(Object_type(self) != SYMBOL_HASH) {
-    return Object_return(Object_new(SYMBOL_ERROR, 0, Error_new("Expecting Object<Hash> for hset")));
+  Object* ret = NULL;
+
+  if(Object_type(self) == SYMBOL_HASH) {
+    ret = Hash_set(self->impl, key, val);
   }
-  Object* ret = Hash_set(self->impl, key, val);
+  else
+  if(Object_type(self) == SYMBOL_ENVIRONMENT) {
+    ret = Environment_set(self->impl, key, val);
+  }
+  else {
+    ret = Object_return(Object_new(SYMBOL_ERROR, 0, Error_new("Method missing")));
+  }
+
   if(ret == NULL) {
     ret = Object_new_null();
   }
@@ -835,10 +853,18 @@ Object* Object_top_hset(Object* self, Object* key, Object* val) {
 
 Object* Object_bop_hget(Object* self, Object* key) {
   assert(self != NULL);
-  if(Object_type(self) != SYMBOL_HASH) {
-    return Object_return(Object_new(SYMBOL_ERROR, 0, Error_new("Expecting Object<Hash> for hset")));
+  Object* ret = NULL;
+
+  if(Object_type(self) == SYMBOL_HASH) {
+    ret = Hash_get(self->impl, key);
   }
-  Object* ret = Hash_get(self->impl, key);
+  else
+  if(Object_type(self) == SYMBOL_ENVIRONMENT) {
+    ret = Environment_get(self->impl, key);
+  }
+  else {
+    return Object_return(Object_new(SYMBOL_ERROR, 0, Error_new("Method missing")));
+  }
   if(ret == NULL) {
     ret = Object_new_null();
   }
@@ -847,11 +873,21 @@ Object* Object_bop_hget(Object* self, Object* key) {
 
 Object* Object_bop_hrem(Object* self, Object* key) {
   assert(self != NULL);
-  if(Object_type(self) != SYMBOL_HASH) {
-    return Object_return(Object_new(SYMBOL_ERROR, 0, Error_new("Expecting Object<Hash> for hset")));
+  Object* ret = NULL;
+  if(Object_type(self) == SYMBOL_HASH) {
+    Hash_rem(self->impl, key);
   }
-  Hash_rem(self->impl, key);
-  return Object_new_null();
+  else
+  if(Object_type(self) == SYMBOL_ENVIRONMENT) {
+    Environment_rem(self->impl, key);
+  }
+  else {
+    ret = Object_return(Object_new(SYMBOL_ERROR, 0, Error_new("Method missing")));
+  }
+  if(ret == NULL) {
+    ret = Object_new_null();
+  }
+  return ret;
 }
 
 Object* Object_bop_add(Object* a, Object* b) {
