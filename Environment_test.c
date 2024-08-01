@@ -23,6 +23,11 @@ int main(int argc, char** argv) {
   Object* green = QSTRING_NEW1("green");
 
   Environment* env1 = Environment_new(NULL);
+
+  printf("env1 = ");
+  Environment_print(env1);
+  printf("\n");
+
   Environment_set(env1, apple, red);
   Environment_set(env1, grape, purple);
 
@@ -36,6 +41,9 @@ int main(int argc, char** argv) {
   nassert(Environment_len(env1) == 2);
 
   Environment* env2 = Environment_new(env1);
+  printf("env2 = ");
+  Environment_print(env2);
+  printf("\n");
 
   Environment_set(env2, banana, yellow);
   nassert(
@@ -43,7 +51,7 @@ int main(int argc, char** argv) {
       Environment_get(env2, apple),
       red
     ) == 0
-  )
+  );
 
   // test shadowing
   Environment_set(env2, apple, green);
@@ -52,13 +60,13 @@ int main(int argc, char** argv) {
       Environment_get(env2, apple),
       green
     ) == 0
-  )
+  );
   nassert(
     Object_cmp(
       Environment_get(env1, apple),
       red
     ) == 0
-  )
+  );
 
   // now we remove the shadowing variable
   Environment_rem(env2, apple);

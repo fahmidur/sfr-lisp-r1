@@ -29,5 +29,6 @@ Object* Environment_rem(Environment* self, Object* key);
 
 ssize_t Environment_len(Environment* self);
 
+void Environment_print(Environment* self);
 
 #endif

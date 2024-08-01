@@ -127,3 +127,17 @@ ssize_t Environment_len(Environment* self) {
   ret += Object_len(self->objects);
   return ret;
 }
+
+void Environment_print(Environment* self) {
+  assert(self != NULL);
+  printf("Environment(");
+  Util_vt_set(VT_COLOR_BRIGHT_YELLOW_FG);
+  printf("%p", self);
+  Util_vt_set(VT_RESET);
+  printf(")");
+  if(self->parent != NULL) {
+    printf(" < ");
+    Environment_print(self->parent);
+  }
+}
+
