@@ -19,14 +19,14 @@ Environment* Environment_new(Environment* parent) {
 
   if(parent != NULL) {
     // Establish the parent-child relationship
-    Environment_child_add(parent, self);
+    Environment_child_attach(parent, self);
   }
   return self;
 }
 
 void Environment_del(Environment* self) {
   assert(self != NULL);
-  printf("  deleting own\t\tself=%p\n", self);
+  printf("  deleting self_\t\tself=%p\n", self);
   // assert that the child is detached from siblings
   assert(self->sibling_prev == NULL);
   assert(self->sibling_next == NULL);
@@ -34,8 +34,8 @@ void Environment_del(Environment* self) {
   Environment* next = NULL;
 
   if(self->parent) {
-    // remove the parent-child relationship to this Environment
-    Environment_child_rem(self->parent, self);
+    // detach parent-child relationship to this Environment
+    Environment_child_detach(self->parent, self);
   }
 
   // delete all children
@@ -67,7 +67,7 @@ void Environment_del(Environment* self) {
  * Setup the parent-child relationship between a parent environment 'self'
  * and the child environment 'child'.
  **/
-void Environment_child_add(Environment* self, Environment* child) {
+void Environment_child_attach(Environment* self, Environment* child) {
   assert(self != NULL);
   assert(child != NULL);
   assert(child->sibling_next == NULL);
@@ -85,19 +85,56 @@ void Environment_child_add(Environment* self, Environment* child) {
   }
 }
 
-void Environment_child_rem(Environment* self, Environment* child) {
+void Environment_child_detach(Environment* self, Environment* child) {
   assert(self != NULL);
   assert(child != NULL);
   child->parent = NULL;
   Environment* iter = self->children_head;
   Environment* sibling_prev = NULL;
   Environment* sibling_next = NULL;
-  //TODO
-  /* while(iter != NULL) { */
-  /*   if(iter == child) { */
-  /*   } */
-  /*   iter = iter->sibling_next; */
-  /* } */
+  while(iter != NULL) {
+    if(iter == child) {
+      printf("  found matching child self=%p iter=%p child=%p\n", self, iter, child);
+      if(iter == self->children_head && iter == self->children_tail) {
+        printf("  child is the only child\n");
+        // iter is child which is the only child
+        self->children_head = NULL;
+        self->children_tail = NULL;
+        iter->sibling_next = NULL;
+        iter->sibling_prev = NULL;
+      }
+      else
+      if(iter == self->children_head) {
+        printf("  child is at head\n");
+        // iter is child which is at head position
+        self->children_head = iter->sibling_next;
+        self->children_head->sibling_prev = NULL;
+        iter->sibling_next = NULL;
+        iter->sibling_prev = NULL;
+      }
+      else
+      if(iter == self->children_tail) {
+        printf("  child is at tail\n");
+        // iter is child which is at tail position
+        self->children_tail = iter->sibling_prev;
+        self->children_tail->sibling_next = NULL;
+        iter->sibling_next = NULL;
+        iter->sibling_prev = NULL;
+      }
+      else {
+        printf("  child is somewhere in between head and tail\n");
+        // iter is child somewhere in between
+        sibling_prev = iter->sibling_prev;
+        sibling_next = iter->sibling_next;
+        sibling_prev->sibling_next = sibling_next;
+        sibling_next->sibling_prev = sibling_prev;
+        iter->sibling_prev = NULL;
+        iter->sibling_prev = NULL;
+      }
+      break;
+    }
+    iter = iter->sibling_next;
+  }
 }
 
 /**

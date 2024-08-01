@@ -21,8 +21,8 @@ struct Environment {
 
 Environment* Environment_new(Environment* parent);
 void Environment_del(Environment* self);
-void Environment_child_add(Environment* self, Environment* child);
-void Environment_child_rem(Environment* self, Environment* child);
+void Environment_child_attach(Environment* self, Environment* child);
+void Environment_child_detach(Environment* self, Environment* child);
 
 Object* Environment_get(Environment* self, Object* key);
 Object* Environment_set(Environment* self, Object* key, Object* val);
