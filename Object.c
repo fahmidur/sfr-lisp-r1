@@ -534,12 +534,18 @@ void Object_del(Object* self) {
   free(self);
 }
 
+/**
+ * Recursively the refcount of this object to be 
+ * MAX(parent->rc+1, self->rc).
+ * This ensures that all scalar objects have a higher
+ * refcount than their composit parent containers objects.
+ * Which then, ensures that parent container objects are 
+ * GC'd before the objects they contain.
+ **/
 void Object_rc_done(Object* self, int parent_rc) {
   assert(self != NULL);
   int i = 0;
   Object* tmp;
-  Object* key;
-  Object* val;
   if(Object_type(self) == SYMBOL_LIST) {
     int list_size = Object_len(self);
     for(i = 0; i < list_size; i++) {
@@ -550,16 +556,15 @@ void Object_rc_done(Object* self, int parent_rc) {
   }
   else
   if(Object_type(self) == SYMBOL_HASH) {
-    // TODO: ensure that Object<Hash> has higher refcount than its children.
-    /* HashIter* iter = HashIter_new(self->impl); */
-    /* HashIter_next(iter); */
-    /* while(!HashIter_at_end(iter)) { */
-    /*   key = HashIter_get_key(iter); */
-    /*   val = HashIter_get_val(iter); */
-    /*   Object_rc_done(key, self->rc); */
-    /*   Object_rc_done(val, self->rc); */
-    /*   HashIter_next(iter); */
-    /* } */
+    HashIter* iter = HashIter_new(self->impl);
+    HashIter_next(iter);
+    while(!HashIter_at_end(iter)) {
+      Object_rc_done(HashIter_get_key(iter), self->rc);
+      Object_rc_done(HashIter_get_val(iter), self->rc);
+      HashIter_next(iter);
+    }
+    HashIter_del(iter);
+    iter = NULL;
   }
   else
   if(Object_type(self) == SYMBOL_ENVIRONMENT) {

@@ -56,6 +56,7 @@ char    Hash_zero(Hash* self);
 int     Hash_cmp(Hash* self, Hash* other);
 
 HashIter* HashIter_new(Hash* self);
+void      HashIter_del(HashIter* self);
 HashIter* HashIter_head(HashIter* self);
 HashIter* HashIter_next(HashIter* self);
 Object*   HashIter_get_key(HashIter* self);
