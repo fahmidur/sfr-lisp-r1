@@ -26,7 +26,7 @@ Environment* Environment_new(Environment* parent) {
 
 void Environment_del(Environment* self) {
   assert(self != NULL);
-  printf("  deleting self_\t\tself=%p\n", self);
+  printf("  Environment_del. deleting self_\t\tself=%p\n", self);
   // assert that the child is detached from siblings
   assert(self->sibling_prev == NULL);
   assert(self->sibling_next == NULL);
@@ -34,6 +34,7 @@ void Environment_del(Environment* self) {
   Environment* next = NULL;
 
   if(self->parent) {
+    printf("  Environment_del. detaching parent...\n");
     // detach parent-child relationship to this Environment
     Environment_child_detach(self->parent, self);
   }
@@ -47,7 +48,7 @@ void Environment_del(Environment* self) {
       iter->sibling_next = NULL;
       iter->sibling_prev = NULL;
       // now delete the child recursively
-      printf("  deleting child\t\titer=%p\n", iter);
+      printf("  Environment_del. deleting child\t\titer=%p\n", iter);
       Environment_del(iter);
       // move the head over to next child
       self->children_head = next;
@@ -59,6 +60,7 @@ void Environment_del(Environment* self) {
     // release our reference to the objects Hash
     Object_assign(&(self->objects), NULL);
   }
+  printf("  Environment_del. free(self)\n");
   free(self);
 }
 

@@ -548,7 +548,12 @@ void Object_rc_done(Object* self, int parent_rc) {
   }
   else
   if(Object_type(self) == SYMBOL_HASH) {
-    // TODO
+    // TODO: ensure that Object<Hash> has higher refcount than its children.
+  }
+  else
+  if(Object_type(self) == SYMBOL_ENVIRONMENT) {
+    // TODO: ensure that Object<Environment> has higher refcount than
+    //  its children.
   }
   else {
     self->rc = MAX(parent_rc+1, self->rc);

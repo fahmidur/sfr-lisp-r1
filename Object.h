@@ -154,6 +154,7 @@ void    Object_system_gc();
 // Composits
 #include "List.h"
 #include "Hash.h"
+#include "Environment.h"
 
 //#define OBJ_RETURN(expr) do { \
   //return Object_return(expr); \

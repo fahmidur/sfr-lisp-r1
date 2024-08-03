@@ -328,6 +328,11 @@ int main(int argc, char** argv) {
   Util_heading1(0, "HASH OPERATIONS");
 
   //===========================================================================
+  Util_heading1(1, "Environment Operations");
+  /* Object* env1 = Object_new(SYMBOL_ENVIRONMENT, 1, Environment_new(NULL)); */
+  Util_heading1(0, "Environment Operations");
+
+  //===========================================================================
   
   Util_heading1(1, "RUNTIME DONE");
   Object_system_print();
