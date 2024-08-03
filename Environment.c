@@ -26,7 +26,7 @@ Environment* Environment_new(Environment* parent) {
 
 void Environment_del(Environment* self) {
   assert(self != NULL);
-  printf("  Environment_del. deleting self_\t\tself=%p\n", self);
+  printf("  Environment_del. Deleting self_\t\tself=%p\n", self);
   // assert that the child is detached from siblings
   assert(self->sibling_prev == NULL);
   assert(self->sibling_next == NULL);
@@ -39,6 +39,7 @@ void Environment_del(Environment* self) {
     Environment_child_detach(self->parent, self);
   }
 
+  printf("  Environment_del. Deleting all children ...\n");
   // delete all children
   if(self->children_head != NULL && self->children_tail != NULL) {
     iter = self->children_head;
@@ -56,7 +57,8 @@ void Environment_del(Environment* self) {
     }
     self->children_tail = self->children_head = NULL;
   }
-  if(self->objects) {
+  if(self->objects != NULL) {
+    printf("  Environment_del. Releasing self->objects Hash\n");
     // release our reference to the objects Hash
     Object_assign(&(self->objects), NULL);
   }

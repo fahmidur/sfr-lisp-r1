@@ -538,6 +538,8 @@ void Object_rc_done(Object* self, int parent_rc) {
   assert(self != NULL);
   int i = 0;
   Object* tmp;
+  Object* key;
+  Object* val;
   if(Object_type(self) == SYMBOL_LIST) {
     int list_size = Object_len(self);
     for(i = 0; i < list_size; i++) {
@@ -549,6 +551,15 @@ void Object_rc_done(Object* self, int parent_rc) {
   else
   if(Object_type(self) == SYMBOL_HASH) {
     // TODO: ensure that Object<Hash> has higher refcount than its children.
+    /* HashIter* iter = HashIter_new(self->impl); */
+    /* HashIter_next(iter); */
+    /* while(!HashIter_at_end(iter)) { */
+    /*   key = HashIter_get_key(iter); */
+    /*   val = HashIter_get_val(iter); */
+    /*   Object_rc_done(key, self->rc); */
+    /*   Object_rc_done(val, self->rc); */
+    /*   HashIter_next(iter); */
+    /* } */
   }
   else
   if(Object_type(self) == SYMBOL_ENVIRONMENT) {
