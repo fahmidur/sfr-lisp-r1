@@ -467,7 +467,11 @@ void Object_add_to_system(Object* self) {
 
 char Object_is_composite(Object* self) {
   Symbol* self_type = Object_type(self);
-  return (self_type == SYMBOL_LIST || self_type == SYMBOL_HASH);
+  return (
+    self_type == SYMBOL_LIST || 
+    self_type == SYMBOL_HASH ||
+    self_type == SYMBOL_ENVIRONMENT
+  );
 }
 
 void Object_del(Object* self) {
