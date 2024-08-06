@@ -10,19 +10,16 @@
 // An Environment is mostly a Tree of Hashes.
 typedef struct Environment Environment;
 struct Environment {
-  Environment* parent;
-  Environment* children_head;
-  Environment* children_tail;
-  Environment* sibling_prev;
-  Environment* sibling_next;
+  Object*      parent;
+  Object*      children;
   Object*      objects;    // Object<Hash>
 };
 
-
-Environment* Environment_new(Environment* parent);
+Environment* Environment_new();
 void Environment_del(Environment* self);
-void Environment_child_attach(Environment* self, Environment* child);
-void Environment_child_detach(Environment* self, Environment* child);
+void Environment_set_parent(Environment* self, Object* parent);
+void Environment_child_attach(Environment* self, Object* child);
+void Environment_child_detach(Environment* self, Object* child);
 
 Object* Environment_get(Environment* self, Object* key);
 Object* Environment_set(Environment* self, Object* key, Object* val);
