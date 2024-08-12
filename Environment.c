@@ -17,17 +17,18 @@ Environment* Environment_new() {
   return self;
 }
 
-void Environment_set_parent(Environment* self, Object* parent) {
+void Environment_set_parent(Environment* self, Object* parent_obj) {
   assert(self != NULL);
-  assert(parent != NULL);
-  assert(Object_type(parent) == SYMBOL_ENVIRONMENT);
+  assert(parent_obj != NULL);
+  assert(Object_type(parent_obj) == SYMBOL_ENVIRONMENT);
 
   Object* old_parent = self->parent;
   if(old_parent != NULL) {
+    //TODO: remove the old parent object
   }
   self->parent = Object_accept(parent);
   Environment* parent_env = parent->impl;
-  Object_bop_push(parent_env->children, self);
+  /* Object_bop_push(parent_env->children, self); */
 }
 
 void Environment_del(Environment* self) {
