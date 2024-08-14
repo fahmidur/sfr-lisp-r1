@@ -48,37 +48,40 @@ int main(int argc, char** argv) {
   Object* env1_obj = Object_new(SYMBOL_ENVIRONMENT, 1, env1);
   Object* env2_obj = Object_new(SYMBOL_ENVIRONMENT, 1, env2);
 
-  /* Environment_set(env2, banana, yellow); */
-  /* nassert( */
-  /*   Object_cmp( */
-  /*     Environment_get(env2, apple), */
-  /*     red */
-  /*   ) == 0 */
-  /* ); */
+  // env2 is now a child of env1
+  Environment_child_attach(env1_obj, env2_obj);
+
+  Environment_set(env2, banana, yellow);
+  nassert(
+    Object_cmp(
+      Environment_get(env2, apple),
+      red
+    ) == 0
+  );
 
   // test shadowing
-  /* Environment_set(env2, apple, green); */
-  /* nassert( */
-  /*   Object_cmp( */
-  /*     Environment_get(env2, apple), */
-  /*     green */
-  /*   ) == 0 */
-  /* ); */
-  /* nassert( */
-  /*   Object_cmp( */
-  /*     Environment_get(env1, apple), */
-  /*     red */
-  /*   ) == 0 */
-  /* ); */
+  Environment_set(env2, apple, green);
+  nassert(
+    Object_cmp(
+      Environment_get(env2, apple),
+      green
+    ) == 0
+  );
+  nassert(
+    Object_cmp(
+      Environment_get(env1, apple),
+      red
+    ) == 0
+  );
 
   // now we remove the shadowing variable
-  /* Environment_rem(env2, apple); */
-  /* nassert( */
-  /*   Object_cmp( */
-  /*     Environment_get(env2, apple), */
-  /*     red */
-  /*   ) == 0 */
-  /* ); */
+  Environment_rem(env2, apple);
+  nassert(
+    Object_cmp(
+      Environment_get(env2, apple),
+      red
+    ) == 0
+  );
 
   /* printf("deleting environments ... \n"); */
   /* printf("deleting env2 ... \n"); */
