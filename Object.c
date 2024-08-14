@@ -540,7 +540,7 @@ void Object_del(Object* self) {
 
 /**
  * Recursively the refcount of this object to be 
- * MAX(parent->rc+1, self->rc).
+ * greater than its parent object.
  * This ensures that all scalar objects have a higher
  * refcount than their composit parent containers objects.
  * Which then, ensures that parent container objects are 
