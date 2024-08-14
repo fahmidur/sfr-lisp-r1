@@ -50,6 +50,8 @@ int main(int argc, char** argv) {
 
   // env2 is now a child of env1
   Environment_child_attach(env1_obj, env2_obj);
+  nassert(env1_obj->rc == 2);
+  nassert(env2_obj->rc == 2);
 
   Environment_set(env2, banana, yellow);
   nassert(
