@@ -17,19 +17,71 @@ Environment* Environment_new() {
   return self;
 }
 
-void Environment_set_parent(Environment* self, Object* parent_obj) {
-  assert(self != NULL);
-  assert(parent_obj != NULL);
-  assert(Object_type(parent_obj) == SYMBOL_ENVIRONMENT);
+void Environment_child_attach(Object* self_obj, Object* child_obj) {
+  assert(self_obj != NULL);
+  assert(child_obj != NULL);
+  assert(Object_type(self_obj) == SYMBOL_ENVIRONMENT);
+  assert(Object_type(child_obj) == SYMBOL_ENVIRONMENT);
 
-  Object* old_parent = self->parent;
-  if(old_parent != NULL) {
-    //TODO: remove the old parent object
+  Object_rc_incr(self_obj);
+  Object_rc_incr(child_obj);
+
+  Environment* self = self_obj->impl;
+  Environment* child = child_obj->impl;
+
+  if(child->parent != NULL) {
+    if(child->parent == self_obj) {
+      // nothing to do
+      goto _return;
+    }
+    else {
+      // we must unset the old parent because an Environment
+      // can only have one parent.
+      Environment_child_detach(child->parent, child_obj);
+    }
   }
-  self->parent = Object_accept(parent);
-  Environment* parent_env = parent->impl;
-  /* Object_bop_push(parent_env->children, self); */
+
+  Object_bop_push(self->children, child_obj);
+  child->parent = Object_accept(self_obj);
+
+_return:
+  Object_rc_decr(self_obj);
+  Object_rc_decr(child_obj);
 }
+
+void Environment_child_detach(Object* self_obj, Object* child_obj) {
+  assert(self_obj != NULL);
+  assert(child_obj != NULL);
+  assert(Object_type(self_obj) == SYMBOL_ENVIRONMENT);
+  assert(Object_type(child_obj) == SYMBOL_ENVIRONMENT);
+
+  Object_rc_incr(self_obj);
+  Object_rc_incr(child_obj);
+
+  Environment* self = self_obj->impl;
+  Environment* child = child_obj->impl;
+
+  //TODO: finish this
+
+_return:
+  Object_rc_decr(self_obj);
+  Object_rc_decr(child_obj);
+
+}
+
+/* void Environment_set_parent(Environment* self, Object* parent_obj) { */
+/*   assert(self != NULL); */
+/*   assert(parent_obj != NULL); */
+/*   assert(Object_type(parent_obj) == SYMBOL_ENVIRONMENT); */
+
+/*   Object* old_parent = self->parent; */
+/*   if(old_parent != NULL) { */
+/*     //TODO: remove the old parent object */
+/*   } */
+/*   self->parent = Object_accept(parent); */
+/*   Environment* parent_env = parent->impl; */
+/*   /1* Object_bop_push(parent_env->children, self); *1/ */
+/* } */
 
 void Environment_del(Environment* self) {
   assert(self != NULL);
@@ -153,7 +205,7 @@ Object* Environment_get(Environment* self, Object* key) {
   }
   ret = Object_accept(ret);
   if(Object_is_null(ret) && self->parent != NULL) {
-    ret = Environment_get(self->parent, key);
+    ret = Environment_get(self->parent->impl, key);
     if(ret == NULL) {
       ret = Object_new_null();
     }
@@ -171,8 +223,8 @@ Object* Environment_rem(Environment* self, Object* key) {
 ssize_t Environment_len(Environment* self) {
   assert(self != NULL);
   ssize_t ret = 0;
-  if(self->parent) {
-    ret += Environment_len(self->parent);
+  if(self->parent != NULL) {
+    ret += Environment_len(self->parent->impl);
   }
   ret += Object_len(self->objects);
   return ret;
@@ -187,7 +239,7 @@ void Environment_print(Environment* self) {
   printf(")");
   if(self->parent != NULL) {
     printf(" < ");
-    Environment_print(self->parent);
+    Environment_print(self->parent->impl);
   }
 }
 

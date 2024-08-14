@@ -17,9 +17,9 @@ struct Environment {
 
 Environment* Environment_new();
 void Environment_del(Environment* self);
-void Environment_set_parent(Environment* self, Object* parent_obj);
-void Environment_child_attach(Environment* self, Object* child_obj);
-void Environment_child_detach(Environment* self, Object* child_obj);
+/* void Environment_set_parent(Environment* self, Object* parent_obj); */
+void Environment_child_attach(Object* self_obj, Object* child_obj);
+void Environment_child_detach(Object* self_obj, Object* child_obj);
 
 Object* Environment_get(Environment* self, Object* key);
 Object* Environment_set(Environment* self, Object* key, Object* val);
