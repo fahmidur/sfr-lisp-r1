@@ -552,9 +552,9 @@ void Object_rc_done(Object* self, int parent_rc) {
   Object* tmp;
   if(Object_type(self) == SYMBOL_LIST) {
     int list_size = Object_len(self);
+    self->rc += parent_rc;
     for(i = 0; i < list_size; i++) {
       tmp = Object_bop_at(self, i);
-      self->rc = MAX(parent_rc+1, self->rc);
       Object_rc_done(tmp, self->rc);
     }
   }
@@ -562,6 +562,7 @@ void Object_rc_done(Object* self, int parent_rc) {
   if(Object_type(self) == SYMBOL_HASH) {
     HashIter* iter = HashIter_new(self->impl);
     HashIter_next(iter);
+    self->rc += parent_rc;
     while(!HashIter_at_end(iter)) {
       Object_rc_done(HashIter_get_key(iter), self->rc);
       Object_rc_done(HashIter_get_val(iter), self->rc);
@@ -572,11 +573,11 @@ void Object_rc_done(Object* self, int parent_rc) {
   }
   else
   if(Object_type(self) == SYMBOL_ENVIRONMENT) {
-    // TODO: ensure that Object<Environment> has higher refcount than
-    //  its children.
+    self->rc += parent_rc;
+    Object_rc_done(((Environment*)(self->impl))->objects, self->rc);
   }
   else {
-    self->rc = MAX(parent_rc+1, self->rc);
+    self->rc += parent_rc;
   }
 }
 
@@ -602,6 +603,10 @@ void Object_system_done() {
     Object_rc_done(obj_curr, 0);
     obj_curr = obj_next;
   }
+
+  printf("--- { Object_system_done(). AFT Object_rc_done() { ---\n");
+  Object_system_print();
+  printf("--- } Object_system_done(). AFT Object_rc_done() } ---\n");
 
   // Above should guarantee that all container objects
   // get deleted before the things they contain. 

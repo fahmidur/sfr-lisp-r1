@@ -40,10 +40,13 @@ int main(int argc, char** argv) {
 
   nassert(Environment_len(env1) == 2);
 
-  /* Environment* env2 = Environment_new(env1); */
-  /* printf("env2 = "); */
-  /* Environment_print(env2); */
-  /* printf("\n"); */
+  Environment* env2 = Environment_new();
+  printf("env2 = ");
+  Environment_print(env2);
+  printf("\n");
+
+  Object* env1_obj = Object_new(SYMBOL_ENVIRONMENT, 1, env1);
+  Object* env2_obj = Object_new(SYMBOL_ENVIRONMENT, 1, env2);
 
   /* Environment_set(env2, banana, yellow); */
   /* nassert( */
@@ -81,9 +84,9 @@ int main(int argc, char** argv) {
   /* printf("deleting env2 ... \n"); */
   /* Environment_del(env2); */
 
-  printf("deleting env1 ... \n");
-  Environment_del(env1);
-  printf("deleting environments ... DONE\n");
+  /* printf("deleting env1 ... \n"); */
+  /* Environment_del(env1); */
+  /* printf("deleting environments ... DONE\n"); */
 
   Object_system_done();
   Symbol_system_done();
