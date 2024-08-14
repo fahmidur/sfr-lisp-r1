@@ -574,7 +574,11 @@ void Object_rc_done(Object* self, int parent_rc) {
   else
   if(Object_type(self) == SYMBOL_ENVIRONMENT) {
     self->rc += parent_rc;
-    Object_rc_done(((Environment*)(self->impl))->objects, self->rc);
+    Environment* env = (Environment*)(self->impl);
+    Object_rc_done(env->objects, self->rc);
+    if(env->children != NULL) {
+      Object_rc_done(env->children, self->rc);
+    }
   }
   else {
     self->rc += parent_rc;

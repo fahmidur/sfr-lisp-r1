@@ -92,9 +92,8 @@ void Environment_del(Environment* self) {
 
   if(self->parent != NULL) {
     printf("  Environment_del. detaching parent...\n");
-    // detach parent-child relationship to this Environment
+    // TODO: detach parent-child relationship to this Environment
   }
-
 
   // release our reference to the objects Hash
   if(self->objects != NULL) {
