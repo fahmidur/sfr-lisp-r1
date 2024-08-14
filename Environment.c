@@ -69,20 +69,6 @@ _return:
 
 }
 
-/* void Environment_set_parent(Environment* self, Object* parent_obj) { */
-/*   assert(self != NULL); */
-/*   assert(parent_obj != NULL); */
-/*   assert(Object_type(parent_obj) == SYMBOL_ENVIRONMENT); */
-
-/*   Object* old_parent = self->parent; */
-/*   if(old_parent != NULL) { */
-/*     //TODO: remove the old parent object */
-/*   } */
-/*   self->parent = Object_accept(parent); */
-/*   Environment* parent_env = parent->impl; */
-/*   /1* Object_bop_push(parent_env->children, self); *1/ */
-/* } */
-
 void Environment_del(Environment* self) {
   assert(self != NULL);
   printf("  Environment_del. Deleting self_\t\tself=%p\n", self);
@@ -103,81 +89,6 @@ void Environment_del(Environment* self) {
   printf("  Environment_del. free(self)\n");
   free(self);
 }
-
-/**
- * @private
- * Setup the parent-child relationship between a parent environment 'self'
- * and the child environment 'child'.
- **/
-/* void Environment_child_attach(Environment* self, Environment* child) { */
-/*   assert(self != NULL); */
-/*   assert(child != NULL); */
-/*   assert(child->sibling_next == NULL); */
-/*   assert(child->sibling_prev == NULL); */
-/*   child->parent = self; */
-/*   if(self->children_head == NULL && self->children_tail == NULL) { */
-/*     // first child being added */
-/*     self->children_head = self->children_tail = child; */
-/*   } */
-/*   else { */
-/*     Environment* last_child = self->children_tail; */
-/*     last_child->sibling_next = child; */
-/*     child->sibling_prev = last_child; */
-/*     self->children_tail = child; */
-/*   } */
-/* } */
-
-/* void Environment_child_detach(Environment* self, Environment* child) { */
-/*   assert(self != NULL); */
-/*   assert(child != NULL); */
-/*   child->parent = NULL; */
-/*   Environment* iter = self->children_head; */
-/*   Environment* sibling_prev = NULL; */
-/*   Environment* sibling_next = NULL; */
-/*   while(iter != NULL) { */
-/*     if(iter == child) { */
-/*       printf("  found matching child self=%p iter=%p child=%p\n", self, iter, child); */
-/*       if(iter == self->children_head && iter == self->children_tail) { */
-/*         printf("  child is the only child\n"); */
-/*         // iter is child which is the only child */
-/*         self->children_head = NULL; */
-/*         self->children_tail = NULL; */
-/*         iter->sibling_next = NULL; */
-/*         iter->sibling_prev = NULL; */
-/*       } */
-/*       else */
-/*       if(iter == self->children_head) { */
-/*         printf("  child is at head\n"); */
-/*         // iter is child which is at head position */
-/*         self->children_head = iter->sibling_next; */
-/*         self->children_head->sibling_prev = NULL; */
-/*         iter->sibling_next = NULL; */
-/*         iter->sibling_prev = NULL; */
-/*       } */
-/*       else */
-/*       if(iter == self->children_tail) { */
-/*         printf("  child is at tail\n"); */
-/*         // iter is child which is at tail position */
-/*         self->children_tail = iter->sibling_prev; */
-/*         self->children_tail->sibling_next = NULL; */
-/*         iter->sibling_next = NULL; */
-/*         iter->sibling_prev = NULL; */
-/*       } */
-/*       else { */
-/*         printf("  child is somewhere in between head and tail\n"); */
-/*         // iter is child somewhere in between */
-/*         sibling_prev = iter->sibling_prev; */
-/*         sibling_next = iter->sibling_next; */
-/*         sibling_prev->sibling_next = sibling_next; */
-/*         sibling_next->sibling_prev = sibling_prev; */
-/*         iter->sibling_prev = NULL; */
-/*         iter->sibling_prev = NULL; */
-/*       } */
-/*       break; */
-/*     } */
-/*     iter = iter->sibling_next; */
-/*   } */
-/* } */
 
 /**
  * Same interface as Hash_set.
