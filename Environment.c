@@ -61,12 +61,19 @@ void Environment_child_detach(Object* self_obj, Object* child_obj) {
   Environment* self = self_obj->impl;
   Environment* child = child_obj->impl;
 
+  if(child->parent != NULL) {
+    // release pointer to child->parent
+    Object_rc_decr(child->parent);
+  }
+  child->parent = NULL;
+
+  Object* self_children = Object_rc_incr(self->children);
   //TODO: finish this
 
 _return:
+  Object_rc_decr(self_children);
   Object_rc_decr(self_obj);
   Object_rc_decr(child_obj);
-
 }
 
 void Environment_del(Environment* self) {

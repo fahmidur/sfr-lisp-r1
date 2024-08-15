@@ -93,7 +93,7 @@ int Object_cmp(Object* a, Object* b);
 void Object_print(Object* self);
 Object* Object_rc_incr(Object* self);
 Object* Object_rc_decr(Object* self);
-void    Object_rc_done(Object* self, int parent_rc);
+void    Object_rc_done(Object* self, int parent_rc, int level);
 Object* Object_gc(Object* self);
 Object* Object_return(Object* self);
 Object* Object_accept(Object* self);

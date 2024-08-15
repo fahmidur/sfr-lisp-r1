@@ -546,8 +546,9 @@ void Object_del(Object* self) {
  * Which then, ensures that parent container objects are 
  * GC'd before the objects they contain.
  **/
-void Object_rc_done(Object* self, int parent_rc) {
+void Object_rc_done(Object* self, int parent_rc, int level) {
   assert(self != NULL);
+  Util_indent(level); ObjectUtil_eprintf("A[%02d] Object_rc_done. prc=%d rc=%d self=%v\n", level, parent_rc, self->rc, self);
   int i = 0;
   Object* tmp;
   if(Object_type(self) == SYMBOL_LIST) {
@@ -555,7 +556,7 @@ void Object_rc_done(Object* self, int parent_rc) {
     self->rc += parent_rc;
     for(i = 0; i < list_size; i++) {
       tmp = Object_bop_at(self, i);
-      Object_rc_done(tmp, self->rc);
+      Object_rc_done(tmp, self->rc, level+1);
     }
   }
   else
@@ -564,8 +565,8 @@ void Object_rc_done(Object* self, int parent_rc) {
     HashIter_next(iter);
     self->rc += parent_rc;
     while(!HashIter_at_end(iter)) {
-      Object_rc_done(HashIter_get_key(iter), self->rc);
-      Object_rc_done(HashIter_get_val(iter), self->rc);
+      Object_rc_done(HashIter_get_key(iter), self->rc, level+1);
+      Object_rc_done(HashIter_get_val(iter), self->rc, level+1);
       HashIter_next(iter);
     }
     HashIter_del(iter);
@@ -575,14 +576,18 @@ void Object_rc_done(Object* self, int parent_rc) {
   if(Object_type(self) == SYMBOL_ENVIRONMENT) {
     self->rc += parent_rc;
     Environment* env = (Environment*)(self->impl);
-    Object_rc_done(env->objects, self->rc);
+    if(env->objects != NULL) {
+      Object_rc_done(env->objects, self->rc, level+1);
+    }
     if(env->children != NULL) {
-      Object_rc_done(env->children, self->rc);
+      Object_rc_done(env->children, self->rc, level+1);
     }
   }
   else {
+    // non-composite Objects like String, Number, Symbol
     self->rc += parent_rc;
   }
+  Util_indent(level); ObjectUtil_eprintf("B[%02d] Object_rc_done. prc=%d rc=%d self=%v\n", level, parent_rc, self->rc, self);
 }
 
 void Object_system_done() {
@@ -604,7 +609,7 @@ void Object_system_done() {
   obj_next = NULL;
   while(obj_curr != NULL) {
     obj_next = obj_curr->next;
-    Object_rc_done(obj_curr, 0);
+    Object_rc_done(obj_curr, 0, 0);
     obj_curr = obj_next;
   }
 

@@ -47,11 +47,14 @@ int main(int argc, char** argv) {
 
   Object* env1_obj = Object_new(SYMBOL_ENVIRONMENT, 1, env1);
   Object* env2_obj = Object_new(SYMBOL_ENVIRONMENT, 1, env2);
+  nassert(env1_obj->rc == 1);
+  nassert(env2_obj->rc == 1);
 
   // env2 is now a child of env1
   Environment_child_attach(env1_obj, env2_obj);
   nassert(env1_obj->rc == 2);
   nassert(env2_obj->rc == 2);
+  // refcount of each env increases by 1 because they point at each other.
 
   Environment_set(env2, banana, yellow);
   nassert(
@@ -63,6 +66,7 @@ int main(int argc, char** argv) {
 
   // test shadowing
   Environment_set(env2, apple, green);
+  nassert(green->rc == 2);
   nassert(
     Object_cmp(
       Environment_get(env2, apple),

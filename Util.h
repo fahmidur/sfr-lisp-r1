@@ -18,6 +18,8 @@ void Util_cstr_print(char* cstr);
 
 void Util_heading1(char isbeg, char* str);
 
+void Util_indent(int size);
+
 
 // See https://en.wikipedia.org/wiki/ANSI_escape_code
 #define VT_COLOR_BLACK_FG 30

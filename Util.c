@@ -3,6 +3,13 @@
 #include <string.h>
 #include "Util.h"
 
+void Util_indent(int size) {
+  int i = 0;
+  for(i = 0; i < size; i++) {
+    printf("  ");
+  }
+}
+
 size_t Util_cstr_hash_djb2(char* str) {
   size_t hash = 5381;
   char c;
