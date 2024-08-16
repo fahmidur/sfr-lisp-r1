@@ -556,6 +556,7 @@ void Object_rc_done(Object* self, int parent_rc, int level) {
     self->rc += parent_rc;
     for(i = 0; i < list_size; i++) {
       tmp = Object_bop_at(self, i);
+      //TODO: use a ListIter here instead
       Object_rc_done(tmp, self->rc, level+1);
     }
   }
