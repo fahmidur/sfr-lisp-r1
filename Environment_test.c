@@ -89,6 +89,22 @@ int main(int argc, char** argv) {
     ) == 0
   );
 
+  Environment* env3 = Environment_new();
+  Object* env3_obj = Object_new(SYMBOL_ENVIRONMENT, 1, env3);
+  nassert(env3_obj->rc == 1);
+  nassert(Object_is_null(Environment_get(env3, apple)) == 1);
+
+  Environment_child_attach(env2_obj, env3_obj);
+
+  nassert(Object_is_null(Environment_get(env3, apple)) == 0);
+  nassert(
+      Object_cmp(
+        Environment_get(env3, apple),
+        red
+      ) == 0
+  );
+
+
   /* printf("deleting environments ... \n"); */
   /* printf("deleting env2 ... \n"); */
   /* Environment_del(env2); */
