@@ -98,10 +98,10 @@ int main(int argc, char** argv) {
 
   nassert(Object_is_null(Environment_get(env3, apple)) == 0);
   nassert(
-      Object_cmp(
-        Environment_get(env3, apple),
-        red
-      ) == 0
+    Object_cmp(
+      Environment_get(env3, apple),
+      red
+    ) == 0
   );
 
 
