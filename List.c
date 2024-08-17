@@ -121,6 +121,9 @@ Object* List_pop(List* self) {
 }
 
 size_t List_unshift(List* self, Object* obj) {
+  assert(self != NULL);
+  assert(obj != NULL);
+  assert(obj->impl != self);
   ListNode* listnode = ListNode_new(obj);
   if(self->size == 0) {
     self->head = listnode;
