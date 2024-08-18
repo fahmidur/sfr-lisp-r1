@@ -552,26 +552,29 @@ void Object_rc_done(Object* self, int parent_rc, int level) {
   int i = 0;
   Object* tmp;
   if(Object_type(self) == SYMBOL_LIST) {
-    int list_size = Object_len(self);
     self->rc += parent_rc;
-    for(i = 0; i < list_size; i++) {
-      tmp = Object_bop_at(self, i);
-      //TODO: use a ListIter here instead
+    ListIter* list_iter = ListIter_new(self->impl);
+    ListIter_next(list_iter);
+    while(!ListIter_at_end(list_iter)) {
+      tmp = ListIter_get_val(list_iter);
       Object_rc_done(tmp, self->rc, level+1);
+      ListIter_next(list_iter);
     }
+    ListIter_del(list_iter);
+    list_iter = NULL;
   }
   else
   if(Object_type(self) == SYMBOL_HASH) {
-    HashIter* iter = HashIter_new(self->impl);
-    HashIter_next(iter);
     self->rc += parent_rc;
-    while(!HashIter_at_end(iter)) {
-      Object_rc_done(HashIter_get_key(iter), self->rc, level+1);
-      Object_rc_done(HashIter_get_val(iter), self->rc, level+1);
-      HashIter_next(iter);
+    HashIter* hash_iter = HashIter_new(self->impl);
+    HashIter_next(hash_iter);
+    while(!HashIter_at_end(hash_iter)) {
+      Object_rc_done(HashIter_get_key(hash_iter), self->rc, level+1);
+      Object_rc_done(HashIter_get_val(hash_iter), self->rc, level+1);
+      HashIter_next(hash_iter);
     }
-    HashIter_del(iter);
-    iter = NULL;
+    HashIter_del(hash_iter);
+    hash_iter = NULL;
   }
   else
   if(Object_type(self) == SYMBOL_ENVIRONMENT) {
