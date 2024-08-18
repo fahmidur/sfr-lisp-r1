@@ -65,7 +65,7 @@ ssize_t List_len(List* self) {
   return self->size;
 }
 
-size_t List_push(List* self, Object* obj) {
+ssize_t List_push(List* self, Object* obj) {
   assert(self != NULL);
   assert(obj != NULL);
   assert(obj->impl != self);
@@ -120,7 +120,7 @@ Object* List_pop(List* self) {
   return ret;
 }
 
-size_t List_unshift(List* self, Object* obj) {
+ssize_t List_unshift(List* self, Object* obj) {
   assert(self != NULL);
   assert(obj != NULL);
   assert(obj->impl != self);

@@ -60,9 +60,9 @@ int       List_cmp(List* self, List* other);
 
 size_t    List_size(List* self);
 ssize_t   List_len(List* self);
-size_t    List_push(List* self, Object* data);
+ssize_t    List_push(List* self, Object* data);
 Object*   List_pop(List* self);
-size_t    List_unshift(List* self, Object* data);
+ssize_t    List_unshift(List* self, Object* data);
 Object*   List_shift(List* self);
 /* Object*   List_first(List* self); */
 /* Object*   List_last(List* self); */
