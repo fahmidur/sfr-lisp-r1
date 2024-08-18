@@ -610,6 +610,7 @@ void Object_system_done() {
   Object* obj_next = NULL;
   int i;
 
+  printf("--- { Object_system_done(). Object_rc_done() { ---\n");
   // Ensure that the rc of
   // simple nested objects is higher than
   // that of complex container objects.
@@ -620,6 +621,7 @@ void Object_system_done() {
     Object_rc_done(obj_curr, 0, 0);
     obj_curr = obj_next;
   }
+  printf("--- } Object_system_done(). Object_rc_done() } ---\n");
 
   printf("--- { Object_system_done(). AFT Object_rc_done() { ---\n");
   Object_system_print();
