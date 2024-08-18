@@ -548,10 +548,11 @@ void Object_del(Object* self) {
  **/
 void Object_rc_done(Object* self, int parent_rc, int level) {
   assert(self != NULL);
+  Symbol* self_type = Object_type(self);
   Util_indent(level); ObjectUtil_eprintf("A[%02d] Object_rc_done. prc=%d rc=%d self=%v\n", level, parent_rc, self->rc, self);
   int i = 0;
   Object* tmp;
-  if(Object_type(self) == SYMBOL_LIST) {
+  if(self_type == SYMBOL_LIST) {
     //WARNING: this can infinite-loop if there are circular references.
     self->rc += parent_rc;
     ListIter* list_iter = ListIter_new(self->impl);
@@ -565,7 +566,7 @@ void Object_rc_done(Object* self, int parent_rc, int level) {
     list_iter = NULL;
   }
   else
-  if(Object_type(self) == SYMBOL_HASH) {
+  if(self_type == SYMBOL_HASH) {
     //WARNING: this can infinite-loop if there are circular references.
     self->rc += parent_rc;
     HashIter* hash_iter = HashIter_new(self->impl);
@@ -579,7 +580,7 @@ void Object_rc_done(Object* self, int parent_rc, int level) {
     hash_iter = NULL;
   }
   else
-  if(Object_type(self) == SYMBOL_ENVIRONMENT) {
+  if(self_type == SYMBOL_ENVIRONMENT) {
     //WARNING: this can infinite-loop if there are circular references.
     self->rc += parent_rc;
     Environment* env = (Environment*)(self->impl);
