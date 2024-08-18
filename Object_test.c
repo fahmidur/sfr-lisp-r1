@@ -266,6 +266,14 @@ int main(int argc, char** argv) {
   ObjectUtil_eprintf("nlist1 = %v\n", nlist1);
   nassert(Object_len(nlist1) == 4);
 
+  printf("Creating circular list ...\n");
+  Object* list_c_a = Object_new_list(1, 3, QNUMBER(11), QNUMBER(12), QNUMBER(13));
+  Object* list_c_b = Object_new_list(1, 3, QNUMBER(14), QNUMBER(15), QNUMBER(16));
+  Object* list_c_c = Object_new_list(1, 3, QNUMBER(17), QNUMBER(18), QNUMBER(19));
+  Object_bop_push(list_c_a, list_c_b); // A -> B
+  Object_bop_push(list_c_b, list_c_c); // B -> C
+  Object_bop_push(list_c_c, list_c_a); // C -> A
+
   Util_heading1(0, "LIST OPERATIONS");
 
   //===========================================================================
