@@ -4,3 +4,7 @@
   void  memsafe_free(void* ptr)
 
 - Finish Hash, Hash_test, and Hash+Object integration.
+
+- Cycle detection and cycle breaking.
+
+
