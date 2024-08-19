@@ -25,6 +25,7 @@ extern Symbol* SYMBOL_NULL;
 extern Symbol* SYMBOL_ENVIRONMENT;
 extern Symbol* SYMBOL_FUNCTION;
 
+
 typedef struct Object Object;
 struct Object {
   Symbol* type;
@@ -34,6 +35,14 @@ struct Object {
   int     rc;
   char    returning;
   char    cloneable;
+};
+
+
+typedef struct ObjectVisitRecord ObjectVisitRecord;
+struct ObjectVisitRecord {
+  Object* obj;
+  ObjectVisitRecord* next;
+  ObjectVisitRecord* prev;
 };
 
 // unused for now
@@ -93,7 +102,7 @@ int Object_cmp(Object* a, Object* b);
 void Object_print(Object* self);
 Object* Object_rc_incr(Object* self);
 Object* Object_rc_decr(Object* self);
-void    Object_rc_done(Object* self, int parent_rc, int level);
+void    Object_rc_done(Object* self, int parent_rc, int level, ObjectVisitRecord* ovr_tail);
 Object* Object_gc(Object* self);
 Object* Object_return(Object* self);
 Object* Object_accept(Object* self);

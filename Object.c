@@ -546,8 +546,33 @@ void Object_del(Object* self) {
  * Which then, ensures that parent container objects are 
  * GC'd before the objects they contain.
  **/
-void Object_rc_done(Object* self, int parent_rc, int level) {
+void Object_rc_done(Object* self, int parent_rc, int level, ObjectVisitRecord* ovr_tail) {
   assert(self != NULL);
+  if(ovr_tail != NULL) {
+    ObjectVisitRecord* iter = ovr_tail;
+    int ovr_count = 0;
+    while(iter != NULL) {
+      Util_indent(level); 
+      printf("donuts. [%2d] ovr iter=%p | ", ovr_count, iter);
+      ObjectUtil_eprintf("obj=%v\n", iter->obj);
+      if(iter->obj == self) {
+        printf("Object_rc_done. Loop detected\n");
+        return;
+      }
+      iter = iter->prev;
+      ovr_count++;
+    }
+  }
+
+  ObjectVisitRecord* new_ovr_tail;
+  new_ovr_tail = (ObjectVisitRecord*) malloc(sizeof(ObjectVisitRecord));
+  new_ovr_tail->obj = self;
+  new_ovr_tail->prev = ovr_tail;
+  if(ovr_tail != NULL) {
+    ovr_tail->next = new_ovr_tail;
+  }
+  new_ovr_tail->next = NULL;
+
   Symbol* self_type = Object_type(self);
   Util_indent(level); ObjectUtil_eprintf("A[%02d] Object_rc_done. prc=%d rc=%d self=%v\n", level, parent_rc, self->rc, self);
   int i = 0;
@@ -559,7 +584,7 @@ void Object_rc_done(Object* self, int parent_rc, int level) {
     ListIter_next(list_iter);
     while(!ListIter_at_end(list_iter)) {
       tmp = ListIter_get_val(list_iter);
-      Object_rc_done(tmp, self->rc, level+1);
+      Object_rc_done(tmp, self->rc, level+1, new_ovr_tail);
       ListIter_next(list_iter);
     }
     ListIter_del(list_iter);
@@ -572,8 +597,8 @@ void Object_rc_done(Object* self, int parent_rc, int level) {
     HashIter* hash_iter = HashIter_new(self->impl);
     HashIter_next(hash_iter);
     while(!HashIter_at_end(hash_iter)) {
-      Object_rc_done(HashIter_get_key(hash_iter), self->rc, level+1);
-      Object_rc_done(HashIter_get_val(hash_iter), self->rc, level+1);
+      Object_rc_done(HashIter_get_key(hash_iter), self->rc, level+1, new_ovr_tail);
+      Object_rc_done(HashIter_get_val(hash_iter), self->rc, level+1, new_ovr_tail);
       HashIter_next(hash_iter);
     }
     HashIter_del(hash_iter);
@@ -585,17 +610,22 @@ void Object_rc_done(Object* self, int parent_rc, int level) {
     self->rc += parent_rc;
     Environment* env = (Environment*)(self->impl);
     if(env->objects != NULL) {
-      Object_rc_done(env->objects, self->rc, level+1);
+      Object_rc_done(env->objects, self->rc, level+1, new_ovr_tail);
     }
     if(env->children != NULL) {
-      Object_rc_done(env->children, self->rc, level+1);
+      Object_rc_done(env->children, self->rc, level+1, new_ovr_tail);
     }
   }
   else {
     // non-composite Objects like String, Number, Symbol
     self->rc += parent_rc;
   }
-  Util_indent(level); ObjectUtil_eprintf("B[%02d] Object_rc_done. prc=%d rc=%d self=%v\n", level, parent_rc, self->rc, self);
+  free(new_ovr_tail);
+  new_ovr_tail = NULL;
+  if(ovr_tail != NULL) {
+    ovr_tail->next = NULL;
+  }
+  /* Util_indent(level); ObjectUtil_eprintf("B[%02d] Object_rc_done. prc=%d rc=%d self=%v\n", level, parent_rc, self->rc, self); */
 }
 
 void Object_system_done() {
@@ -618,7 +648,7 @@ void Object_system_done() {
   obj_next = NULL;
   while(obj_curr != NULL) {
     obj_next = obj_curr->next;
-    Object_rc_done(obj_curr, 0, 0);
+    Object_rc_done(obj_curr, 0, 0, NULL);
     obj_curr = obj_next;
   }
   printf("--- } Object_system_done(). Object_rc_done() } ---\n");
