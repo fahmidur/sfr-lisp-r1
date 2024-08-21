@@ -12,6 +12,7 @@
 #include "Error.h"
 
 #define OBJECT_TYPES_BUCKETS_SIZE 128
+#define OBJECT_PRINT_VFLAG 0b00001
 
 extern Symbol* SYMBOL_SYMBOL;
 extern Symbol* SYMBOL_STRING;
@@ -35,6 +36,7 @@ struct Object {
   int     rc;
   char    returning;
   char    cloneable;
+  int     visited;
 };
 
 

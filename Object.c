@@ -197,6 +197,7 @@ Object* Object_new(Symbol* type, int rc, void* impl) {
   /*self->gc_skipped = 0;*/
   self->returning = 0;
   self->cloneable = 1;
+  self->visited = 0;
 
   Object_add_to_system(self);
   
@@ -750,8 +751,14 @@ Object* Object_rc_decr(Object* self) {
 void Object_print(Object* self) {
   if(self == NULL) {
     printf("(NULL)");
-    return;
+    goto _return;
   }
+  if((self->visited & OBJECT_PRINT_VFLAG) != 0) {
+    // this object has already been visited;
+    printf("CYCLE(%p)", self);
+    goto _return;
+  }
+  self->visited |= OBJECT_PRINT_VFLAG;
   ObjectTypeInfo* oti = Object_oti_get(self->type);
   if(oti == NULL) {
     printf("FATAL: unknown ObjectTypeInfo oti for type ");
@@ -766,6 +773,12 @@ void Object_print(Object* self) {
     exit(1);
   }
   oti->fn_print(self->impl);
+_return:
+  if(self != NULL) {
+    /* self->visited = (self->visited ^ OBJECT_PRINT_VFLAG); */
+    self->visited = 0;
+  }
+  return;
 }
 
 Object* Object_clone(Object* self) {
