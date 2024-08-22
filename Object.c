@@ -485,7 +485,7 @@ void Object_del(Object* self) {
     }
   printf("\n");
   if(object_system->size == 0) {
-    return;
+    goto _return;
   }
   Object* new_head;
   Object* new_tail;
@@ -534,9 +534,19 @@ void Object_del(Object* self) {
     printf(" is missing fn_del\n");
     exit(1);
   }
+
+  if(self->visited & OBJECT_DEL_VFLAG) {
+    goto _return;
+  }
+
+  self->visited = self->visited | OBJECT_DEL_VFLAG;
+
   oti->fn_del(self->impl);
   /*printf("Object_del(%p). calling free on self.\n", self);*/
   free(self);
+
+_return:
+  return;
 }
 
 /**

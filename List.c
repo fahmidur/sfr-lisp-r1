@@ -197,6 +197,7 @@ void List_del(List* self) {
   while(self->size > 0) {
     Object_reject(List_pop(self));
   }
+  printf("List_del(%p) free(self)\n", self);
   free(self);
   printf("} List_del(%p) }\n", self);
 }
