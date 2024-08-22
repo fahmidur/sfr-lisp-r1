@@ -36,7 +36,7 @@ struct Object {
   int     rc;
   char    returning;
   char    cloneable;
-  int     visited;
+  char     visited;
 };
 
 

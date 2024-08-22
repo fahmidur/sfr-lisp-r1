@@ -749,16 +749,18 @@ Object* Object_rc_decr(Object* self) {
 }
 
 void Object_print(Object* self) {
+  char old_visited = 0;
   if(self == NULL) {
     printf("(NULL)");
     goto _return;
   }
+  old_visited = self->visited;
   if((self->visited & OBJECT_PRINT_VFLAG) != 0) {
     // this object has already been visited;
     printf("CYCLE(%p)", self);
     goto _return;
   }
-  self->visited |= OBJECT_PRINT_VFLAG;
+  self->visited = self->visited | OBJECT_PRINT_VFLAG;
   ObjectTypeInfo* oti = Object_oti_get(self->type);
   if(oti == NULL) {
     printf("FATAL: unknown ObjectTypeInfo oti for type ");
@@ -775,8 +777,7 @@ void Object_print(Object* self) {
   oti->fn_print(self->impl);
 _return:
   if(self != NULL) {
-    /* self->visited = (self->visited ^ OBJECT_PRINT_VFLAG); */
-    self->visited = 0;
+    self->visited = old_visited;
   }
   return;
 }
