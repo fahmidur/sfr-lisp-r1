@@ -477,13 +477,17 @@ char Object_is_composite(Object* self) {
 
 void Object_del(Object* self) {
   assert(self != NULL);
-  printf("Object_del(%p). rc=%d. rt=%d. type=", self, self->rc, self->returning); 
+  if(self->visited & OBJECT_DEL_VFLAG) {
+    goto _return;
+  }
+  self->visited = self->visited & ~OBJECT_DEL_VFLAG;
+  printf("{ Object_del(%p). rc=%d. rt=%d. type=", self, self->rc, self->returning); 
     Symbol_print(Object_type(self)); 
     if(!Object_is_composite(self)) {
       printf(" || ");
       Object_print(self);
     }
-  printf("\n");
+  printf(" { \n");
   if(object_system->size == 0) {
     goto _return;
   }
@@ -535,17 +539,12 @@ void Object_del(Object* self) {
     exit(1);
   }
 
-  if(self->visited & OBJECT_DEL_VFLAG) {
-    goto _return;
-  }
-
-  self->visited = self->visited | OBJECT_DEL_VFLAG;
-
   oti->fn_del(self->impl);
   /*printf("Object_del(%p). calling free on self.\n", self);*/
   free(self);
 
 _return:
+  printf("} Object_del(%p) }\n", self);
   return;
 }
 
@@ -681,9 +680,9 @@ void Object_system_done() {
       obj_next = obj_curr->next; 
       if(obj_curr->rc <= 1) {
         if(Object_is_composite(obj_curr)) {
-          ObjectUtil_eprintf("[OSDK] || Object(p=%p) || type=%s || COMPOSITE", obj_curr, Object_type(obj_curr)->str);
+          ObjectUtil_eprintf("[OSDK] || Object(%p) || type=%s || COMPOSITE", obj_curr, Object_type(obj_curr)->str);
         } else {
-          ObjectUtil_eprintf("[OSDK] || Object(p=%p) || %v", obj_curr, obj_curr);
+          ObjectUtil_eprintf("[OSDK] || Object(%p) || %v", obj_curr, obj_curr);
         }
         if(obj_curr->returning) {
           printf(" || RT_WARNING");
@@ -759,12 +758,10 @@ Object* Object_rc_decr(Object* self) {
 }
 
 void Object_print(Object* self) {
-  char old_visited = 0;
   if(self == NULL) {
     printf("(NULL)");
     goto _return;
   }
-  old_visited = self->visited;
   if((self->visited & OBJECT_PRINT_VFLAG) != 0) {
     // this object has already been visited;
     printf("CYCLE(%p)", self);
@@ -787,7 +784,7 @@ void Object_print(Object* self) {
   oti->fn_print(self->impl);
 _return:
   if(self != NULL) {
-    self->visited = old_visited;
+    self->visited = self->visited & ~OBJECT_PRINT_VFLAG;
   }
   return;
 }

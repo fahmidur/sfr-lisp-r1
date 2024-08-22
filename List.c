@@ -92,7 +92,7 @@ ssize_t List_push(List* self, Object* obj) {
 Object* List_pop(List* self) {
   printf("List_pop(%p).\n", self);
   if(self->size == 0) {
-    return NULL;
+    return Object_new_null();
   }
   ListNode* node;
   ListNode* new_tail;
@@ -194,10 +194,14 @@ Object* List_at(List* self, size_t idx) {
 
 void List_del(List* self) {
   printf("{ List_del(%p) {\n", self);
+  Object* tmp;
   while(self->size > 0) {
-    Object_reject(List_pop(self));
+    tmp = List_pop(self);
+    printf("List_del(%p). dbg. 001 tmp=%p | Object_reject(tmp)\n", self, tmp);
+    Object_reject(tmp);
+    printf("List_del(%p). dbg. 002\n", self);
   }
-  printf("List_del(%p) free(self)\n", self);
+  printf("List_del(%p). free(self)\n", self);
   free(self);
   printf("} List_del(%p) }\n", self);
 }
