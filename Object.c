@@ -408,6 +408,20 @@ char Object_is_returning(Object* self) {
   return self->returning;
 }
 
+char Object_is_known(Object* self) {
+  if(self == NULL) {
+    return 0;
+  }
+  Object* iter = object_system->head;
+  while(iter != NULL) {
+    if(self == iter) {
+      return 1;
+    }
+    iter = iter->next;
+  }
+  return 0;
+}
+
 Object* Object_accept(Object* self) {
   assert(self != NULL);
   if(Object_is_null(self)) {
@@ -420,6 +434,9 @@ Object* Object_accept(Object* self) {
 
 Object* Object_reject(Object* self) {
   assert(self != NULL);
+  if(!Object_is_known(self)) {
+    return NULL;
+  }
   self->returning = 0;
   if(Object_is_null(self)) {
     // do nothing to the null object
