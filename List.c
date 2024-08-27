@@ -197,7 +197,9 @@ void List_del(List* self) {
   Object* tmp;
   while(self->size > 0) {
     tmp = List_pop(self);
+    // tmp is now damaged
     printf("List_del(%p). dbg. 001 tmp=%p | Object_reject(tmp)\n", self, tmp);
+    // below is unsafe, because tmp could no longer exist
     Object_reject(tmp);
     printf("List_del(%p). dbg. 002\n", self);
   }

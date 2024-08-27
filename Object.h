@@ -114,7 +114,8 @@ char Object_is_known(Object* self);
 char Object_is_null(Object* self);
 char Object_is_error(Object* self);
 char Object_is_returning(Object* self);
-char Object_is_composite(Object* self);
+/* char Object_is_composite(Object* self); */
+char Object_is_container(Object* self);
 
 // Helper to make assignments with rc easier.
 void Object_assign(Object** targetptr, Object* source);

@@ -434,9 +434,9 @@ Object* Object_accept(Object* self) {
 
 Object* Object_reject(Object* self) {
   assert(self != NULL);
-  if(!Object_is_known(self)) {
-    return NULL;
-  }
+  /* if(!Object_is_known(self)) { */
+  /*   return NULL; */
+  /* } */
   self->returning = 0;
   if(Object_is_null(self)) {
     // do nothing to the null object
@@ -483,7 +483,16 @@ void Object_add_to_system(Object* self) {
   object_system->size++;
 }
 
-char Object_is_composite(Object* self) {
+/* char Object_is_composite(Object* self) { */
+/*   Symbol* self_type = Object_type(self); */
+/*   return ( */
+/*     self_type == SYMBOL_LIST || */ 
+/*     self_type == SYMBOL_HASH || */
+/*     self_type == SYMBOL_ENVIRONMENT */
+/*   ); */
+/* } */
+
+char Object_is_container(Object* self) {
   Symbol* self_type = Object_type(self);
   return (
     self_type == SYMBOL_LIST || 
@@ -500,7 +509,7 @@ void Object_del(Object* self) {
   self->visited = self->visited & ~OBJECT_DEL_VFLAG;
   printf("{ Object_del(%p). rc=%d. rt=%d. type=", self, self->rc, self->returning); 
     Symbol_print(Object_type(self)); 
-    if(!Object_is_composite(self)) {
+    if(!Object_is_container(self)) {
       printf(" || ");
       Object_print(self);
     }
@@ -685,31 +694,28 @@ void Object_system_done() {
   printf("--- } Object_system_done(). AFT Object_rc_done() } ---\n");
 
   // Above should guarantee that all container objects
+  // have an RC lower than their contained objects, thus
   // get deleted before the things they contain. 
 
   printf("--- { OSDK { ---\n");
   // delete all objects
   while(object_system->size > 0) {
-    /*Object_del(object_system->head);*/
     obj_curr = object_system->head;
-    obj_next = NULL;
-    while(obj_curr != NULL) {
-      obj_next = obj_curr->next; 
-      if(obj_curr->rc <= 1) {
-        if(Object_is_composite(obj_curr)) {
-          ObjectUtil_eprintf("[OSDK] || Object(%p) || type=%s || COMPOSITE", obj_curr, Object_type(obj_curr)->str);
-        } else {
-          ObjectUtil_eprintf("[OSDK] || Object(%p) || %v", obj_curr, obj_curr);
-        }
-        if(obj_curr->returning) {
-          printf(" || RT_WARNING");
-          obj_curr->returning = 0;
-        }
-        printf("\n");
+    if(obj_curr->rc <= 1) {
+      // this is the last cycle for this object before deletion
+      if(Object_is_container(obj_curr)) {
+        ObjectUtil_eprintf("[OSDK] || Object(%p) || type=%s || CONTAINER", obj_curr, Object_type(obj_curr)->str);
+      } 
+      else {
+        ObjectUtil_eprintf("[OSDK] || Object(%p) || %v", obj_curr, obj_curr);
       }
-      obj_curr = Object_rc_decr(obj_curr);
-      obj_curr = obj_next;
+      if(obj_curr->returning) {
+        printf(" || RT_WARNING");
+        obj_curr->returning = 0;
+      }
+      printf("\n");
     }
+    Object_rc_decr(obj_curr);
   }
   printf("--- } OSDK } ---\n");
 
