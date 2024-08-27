@@ -12,8 +12,9 @@
 #include "Error.h"
 
 #define OBJECT_TYPES_BUCKETS_SIZE 128
-#define OBJECT_PRINT_VFLAG 0b00001
-#define OBJECT_DEL_VFLAG   0b00010
+#define OBJECT_PRINT_VFLAG   0b00001
+#define OBJECT_DEL_VFLAG     0b00010
+#define OBJECT_RC_DONE_VFLAG 0b00100
 
 extern Symbol* SYMBOL_SYMBOL;
 extern Symbol* SYMBOL_STRING;
@@ -105,7 +106,7 @@ int Object_cmp(Object* a, Object* b);
 void Object_print(Object* self);
 Object* Object_rc_incr(Object* self);
 Object* Object_rc_decr(Object* self);
-void    Object_rc_done(Object* self, int parent_rc, int level, ObjectVisitRecord* ovr_tail);
+void    Object_rc_done(Object* self, int parent_rc, int level);
 Object* Object_gc(Object* self);
 Object* Object_return(Object* self);
 Object* Object_accept(Object* self);

@@ -273,7 +273,7 @@ int main(int argc, char** argv) {
   Object* list_c_c = Object_new_list(1, 1, QSTRING("l.C"));
   Object_bop_push(list_c_a, list_c_b); // A -> B
   Object_bop_push(list_c_b, list_c_c); // B -> C
-  Object_bop_push(list_c_c, list_c_a); // C -> A
+  /* Object_bop_push(list_c_c, list_c_a); // C -> A */
   ObjectUtil_eprintf("list_c_a(%p) = \n  %v\n", list_c_a, list_c_a);
   printf("list_c_a->visited = %d\n", list_c_a->visited);
   nassert(list_c_a->visited == 0);

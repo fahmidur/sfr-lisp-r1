@@ -508,7 +508,7 @@ void Object_del(Object* self) {
   if(self->visited & OBJECT_DEL_VFLAG) {
     goto _return;
   }
-  self->visited = self->visited & ~OBJECT_DEL_VFLAG;
+  self->visited = self->visited | OBJECT_DEL_VFLAG;
   printf("{ Object_del(%p). rc=%d. rt=%d. type=", self, self->rc, self->returning); 
     Symbol_print(Object_type(self)); 
     if(!Object_is_container(self)) {
@@ -573,6 +573,8 @@ void Object_del(Object* self) {
 
 _return:
   printf("} Object_del(%p) }\n", self);
+  // unsetting of the self->visited flag is not needed because
+  // the object is deleted.
   return;
 }
 
@@ -584,32 +586,16 @@ _return:
  * Which then, ensures that parent container objects are 
  * GC'd before the objects they contain.
  **/
-void Object_rc_done(Object* self, int parent_rc, int level, ObjectVisitRecord* ovr_tail) {
+void Object_rc_done(Object* self, int parent_rc, int level) {
   assert(self != NULL);
-  if(ovr_tail != NULL) {
-    ObjectVisitRecord* iter = ovr_tail;
-    int ovr_count = 0;
-    while(iter != NULL) {
-      Util_indent(level); 
-      printf("donuts. [%2d] ovr iter=%p | ", ovr_count, iter);
-      ObjectUtil_eprintf("obj=%v\n", iter->obj);
-      if(iter->obj == self) {
-        printf("Object_rc_done. Loop detected\n");
-        return;
-      }
-      iter = iter->prev;
-      ovr_count++;
-    }
+  
+  if((self->visited & OBJECT_RC_DONE_VFLAG) != 0) {
+    Util_indent(level); ObjectUtil_eprintf("X[%02d] Object_rc_done. prc=%d rc=%d self=%v\n", level, parent_rc, self->rc, self);
+    Util_indent(level); ObjectUtil_eprintf("Loop detected\n");
+    return;
   }
 
-  ObjectVisitRecord* new_ovr_tail;
-  new_ovr_tail = (ObjectVisitRecord*) malloc(sizeof(ObjectVisitRecord));
-  new_ovr_tail->obj = self;
-  new_ovr_tail->prev = ovr_tail;
-  if(ovr_tail != NULL) {
-    ovr_tail->next = new_ovr_tail;
-  }
-  new_ovr_tail->next = NULL;
+  self->visited = self->visited | OBJECT_RC_DONE_VFLAG;
 
   Symbol* self_type = Object_type(self);
   Util_indent(level); ObjectUtil_eprintf("A[%02d] Object_rc_done. prc=%d rc=%d self=%v\n", level, parent_rc, self->rc, self);
@@ -622,7 +608,7 @@ void Object_rc_done(Object* self, int parent_rc, int level, ObjectVisitRecord* o
     ListIter_next(list_iter);
     while(!ListIter_at_end(list_iter)) {
       tmp = ListIter_get_val(list_iter);
-      Object_rc_done(tmp, self->rc, level+1, new_ovr_tail);
+      Object_rc_done(tmp, self->rc, level+1);
       ListIter_next(list_iter);
     }
     ListIter_del(list_iter);
@@ -635,8 +621,8 @@ void Object_rc_done(Object* self, int parent_rc, int level, ObjectVisitRecord* o
     HashIter* hash_iter = HashIter_new(self->impl);
     HashIter_next(hash_iter);
     while(!HashIter_at_end(hash_iter)) {
-      Object_rc_done(HashIter_get_key(hash_iter), self->rc, level+1, new_ovr_tail);
-      Object_rc_done(HashIter_get_val(hash_iter), self->rc, level+1, new_ovr_tail);
+      Object_rc_done(HashIter_get_key(hash_iter), self->rc, level+1);
+      Object_rc_done(HashIter_get_val(hash_iter), self->rc, level+1);
       HashIter_next(hash_iter);
     }
     HashIter_del(hash_iter);
@@ -648,21 +634,17 @@ void Object_rc_done(Object* self, int parent_rc, int level, ObjectVisitRecord* o
     self->rc += parent_rc;
     Environment* env = (Environment*)(self->impl);
     if(env->objects != NULL) {
-      Object_rc_done(env->objects, self->rc, level+1, new_ovr_tail);
+      Object_rc_done(env->objects, self->rc, level+1);
     }
     if(env->children != NULL) {
-      Object_rc_done(env->children, self->rc, level+1, new_ovr_tail);
+      Object_rc_done(env->children, self->rc, level+1);
     }
   }
   else {
     // non-composite Objects like String, Number, Symbol
     self->rc += parent_rc;
   }
-  free(new_ovr_tail);
-  new_ovr_tail = NULL;
-  if(ovr_tail != NULL) {
-    ovr_tail->next = NULL;
-  }
+  self->visited = self->visited & ~OBJECT_RC_DONE_VFLAG;
   /* Util_indent(level); ObjectUtil_eprintf("B[%02d] Object_rc_done. prc=%d rc=%d self=%v\n", level, parent_rc, self->rc, self); */
 }
 
@@ -688,7 +670,7 @@ void Object_system_done() {
   obj_next = NULL;
   while(obj_curr != NULL) {
     obj_next = obj_curr->next;
-    Object_rc_done(obj_curr, 0, 0, NULL);
+    Object_rc_done(obj_curr, 0, 0);
     obj_curr = obj_next;
   }
   printf("--- } Object_system_done(). Object_rc_done() } ---\n");
