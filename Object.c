@@ -435,7 +435,9 @@ Object* Object_accept(Object* self) {
 Object* Object_reject(Object* self) {
   assert(self != NULL);
   /* if(!Object_is_known(self)) { */
-  /*   return NULL; */
+  /*   printf("ERROR. FATAL. self=%p is not known\n", self); */
+  /*   exit(1); */
+  /*   /1* return NULL; *1/ */
   /* } */
   self->returning = 0;
   if(Object_is_null(self)) {
@@ -675,6 +677,8 @@ void Object_system_done() {
   Object* obj_curr = NULL;
   Object* obj_next = NULL;
   int i;
+
+  /* Object_system_gc(); */
 
   printf("--- { Object_system_done(). Object_rc_done() { ---\n");
   // Ensure that the rc of
