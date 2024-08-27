@@ -704,22 +704,26 @@ void Object_system_done() {
   printf("--- { OSDK { ---\n");
   // delete all objects
   while(object_system->size > 0) {
+    /*Object_del(object_system->head);*/
     obj_curr = object_system->head;
-    if(obj_curr->rc <= 1) {
-      // this is the last cycle for this object before deletion
-      if(Object_is_container(obj_curr)) {
-        ObjectUtil_eprintf("[OSDK] || Object(%p) || type=%s || CONTAINER", obj_curr, Object_type(obj_curr)->str);
-      } 
-      else {
-        ObjectUtil_eprintf("[OSDK] || Object(%p) || %v", obj_curr, obj_curr);
+    obj_next = NULL;
+    while(obj_curr != NULL) {
+      obj_next = obj_curr->next; 
+      if(obj_curr->rc <= 1) {
+        if(Object_is_container(obj_curr)) {
+          ObjectUtil_eprintf("[OSDK] || Object(%p) || type=%s || CONTAINER", obj_curr, Object_type(obj_curr)->str);
+        } else {
+          ObjectUtil_eprintf("[OSDK] || Object(%p) || %v", obj_curr, obj_curr);
+        }
+        if(obj_curr->returning) {
+          printf(" || RT_WARNING");
+          obj_curr->returning = 0;
+        }
+        printf("\n");
       }
-      if(obj_curr->returning) {
-        printf(" || RT_WARNING");
-        obj_curr->returning = 0;
-      }
-      printf("\n");
+      obj_curr = Object_rc_decr(obj_curr);
+      obj_curr = obj_next;
     }
-    Object_rc_decr(obj_curr);
   }
   printf("--- } OSDK } ---\n");
 
