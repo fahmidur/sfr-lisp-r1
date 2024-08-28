@@ -36,6 +36,7 @@ struct Object {
   Object* prev;
   void*   impl;
   int     rc;
+  int     rc_gc;
   char    returning;
   char    cloneable;
   int     visited;
