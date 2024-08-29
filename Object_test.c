@@ -271,12 +271,18 @@ int main(int argc, char** argv) {
   Object* list_c_a = Object_new_list(1, 1, QSTRING("l.A"));
   Object* list_c_b = Object_new_list(1, 1, QSTRING("l.B"));
   Object* list_c_c = Object_new_list(1, 1, QSTRING("l.C"));
-  Object_bop_push(list_c_a, list_c_b); // A -> B
-  Object_bop_push(list_c_b, list_c_c); // B -> C
-  Object_bop_push(list_c_c, list_c_a); // C -> A
+  nassert(list_c_a->returning == 0);
+  nassert(list_c_b->returning == 0);
+  nassert(list_c_c->returning == 0);
+  Object_reject(Object_bop_push(list_c_a, list_c_b)); // A -> B
+  Object_reject(Object_bop_push(list_c_b, list_c_c)); // B -> C
+  Object_reject(Object_bop_push(list_c_c, list_c_a)); // C -> A
   nassert(list_c_a->rc == 2);
   nassert(list_c_b->rc == 2);
   nassert(list_c_c->rc == 2);
+  nassert(list_c_a->returning == 0);
+  nassert(list_c_b->returning == 0);
+  nassert(list_c_c->returning == 0);
   ObjectUtil_eprintf("list_c_a(%p) = \n  %v\n", list_c_a, list_c_a);
   printf("list_c_a->visited = %d\n", list_c_a->visited);
   nassert(list_c_a->visited == 0);
@@ -293,10 +299,6 @@ int main(int argc, char** argv) {
 
   Object_assign(&list_c_c, NULL);
   nassert(Object_is_null(list_c_c));
-
-  nassert(list_c_a->rc == 1);
-  nassert(list_c_b->rc == 1);
-  nassert(list_c_c->rc == 1);
 
   Object_system_gc();
 

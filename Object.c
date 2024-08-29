@@ -583,7 +583,8 @@ void Object_system_gc() {
   while(iter != NULL) {
     next = iter->next;
     if(iter->unreachable) {
-      ObjectUtil_eprintf("donuts. unreachable obj(p=%p, rc=%d) = %v\n", iter, iter->rc, iter);
+      ObjectUtil_eprintf("donuts. unreachable obj(p=%p rc=%d)\n", iter, iter->rc);
+      /* ObjectUtil_eprintf("donuts. unreachable obj(p=%p, rc=%d) = %v\n", iter, iter->rc, iter); */
       iter->rc = 0;
     }
     iter = Object_gc(iter);
@@ -651,11 +652,13 @@ void Object_del(Object* self) {
   Object* prev;
   Object* next;
   if(self == object_system->head && self == object_system->tail) {
+    // the object is both head and tail, it is the only object
     object_system->head = NULL;
     object_system->tail = NULL;
   }
   else
   if(self == object_system->head) {
+    // the object lives at head
     new_head = self->next;
     assert(new_head != NULL);
     new_head->prev = NULL;
@@ -664,6 +667,7 @@ void Object_del(Object* self) {
   }
   else
   if(self == object_system->tail) {
+    // the object lives at tail
     new_tail = self->prev;
     assert(new_tail != NULL);
     new_tail->next = NULL;
