@@ -170,6 +170,7 @@ void    Object_system_done();
 void    Object_system_print();
 void    Object_system_gc();
 char    Object_system_delete_recurse();
+char    Object_system_delete_soft();
 
 // Composits
 #include "List.h"

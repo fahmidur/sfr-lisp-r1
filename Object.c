@@ -183,6 +183,10 @@ char Object_system_delete_recurse() {
   return object_system->delete_recurse;
 }
 
+char Object_system_delete_soft() {
+  return object_system->delete_soft;
+}
+
 /**
  * Create a new Object. 
  * Everything in this Runtime is an Object. 
@@ -554,9 +558,12 @@ void Object_system_gc() {
     iter = iter->next;
   }
 
+  // decrease the rc_gc of referand by 1 for every referring object.
+  // not every object will be a referend, in that they are not referenced
+  // by another container object, this is expected.
   Object_system_walkrefs(&Object_action_rc_gc_decr);
 
-  // mark any object with rc_gc == 0 as unreachable
+  // mark any object with rc_gc == 0 as tentatively unreachable
   iter = object_system->head;
   while(iter != NULL) {
     if(iter->rc_gc <= 0) {
@@ -568,12 +575,21 @@ void Object_system_gc() {
   //unset any objects that can be reached from a reachable
   Object_system_walkrefs(&Object_action_unset_unreachable);
 
+  //now anything that is left marked unreachable is truly unreachable
+  //we must now safely delete these unreachable objects
+
+  object_system->delete_recurse = 0;
   iter = object_system->head;
   while(iter != NULL) {
     next = iter->next;
+    if(iter->unreachable) {
+      ObjectUtil_eprintf("donuts. unreachable obj(p=%p, rc=%d) = %v\n", iter, iter->rc, iter);
+      iter->rc = 0;
+    }
     iter = Object_gc(iter);
     iter = next;
   }
+  object_system->delete_recurse = 1;
 }
 
 /**
