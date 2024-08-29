@@ -474,7 +474,69 @@ void Object_action_set_unreachable(Object* referer, Object* referend) {
   }
 }
 
-void Object_system_walk(void fn(Object* referer, Object* referend)) {
+void Object_action_unset_unreachable(Object* referer, Object* referend) {
+  if(referer->unreachable == 0 && referend->unreachable != 0) {
+    referend->unreachable = 0;
+  }
+}
+
+/* void Object_system_iterate(void fn(Object* tmp)) { */
+/*   Object* iter; */
+/*   iter = object_system->head; */
+/*   while(iter != NULL) { */
+/*     fn(iter); */
+/*     iter = iter->next; */
+/*   } */
+/* } */
+
+void Object_system_walkrefs(void fn(Object* referer, Object* referend)) {
+  Object* obj_curr;
+  Object* obj_temp;
+
+  Symbol* obj_curr_type;
+  obj_curr = object_system->head;
+  while(obj_curr != NULL) {
+    obj_curr_type = Object_type(obj_curr);
+    if(obj_curr_type == SYMBOL_LIST) {
+      ListIter* list_iter = ListIter_new(obj_curr->impl);
+      ListIter_next(list_iter);
+      while(!ListIter_at_end(list_iter)) {
+        obj_temp = ListIter_get_val(list_iter);
+        //obj_temp_1 is a referend, that we now decrease 1 refcount from
+        fn(obj_curr, obj_temp);
+        ListIter_next(list_iter);
+      }
+      ListIter_del(list_iter);
+      list_iter = NULL;
+    }
+    else
+    if(obj_curr_type == SYMBOL_HASH) {
+      HashIter* hash_iter = HashIter_new(obj_curr->impl);
+      HashIter_next(hash_iter);
+      while(!HashIter_at_end(hash_iter)) {
+        obj_temp = HashIter_get_key(hash_iter);
+        fn(obj_curr, obj_temp);
+        obj_temp = HashIter_get_val(hash_iter);
+        fn(obj_curr, obj_temp);
+        HashIter_next(hash_iter);
+      }
+      HashIter_del(hash_iter);
+      hash_iter = NULL;
+    }
+    else
+    if(obj_curr_type == SYMBOL_ENVIRONMENT) {
+      Environment* env = (Environment*)(obj_curr->impl);
+      if(env->objects != NULL) {
+        obj_temp = env->objects; // Object<Hash>
+        fn(obj_curr, obj_temp);
+      }
+      if(env->children != NULL) {
+        obj_temp = env->objects; // Object<List>
+        fn(obj_curr, obj_temp);
+      }
+    }
+    obj_curr = obj_curr->next;
+  }
 }
 
 void Object_system_gc() {
@@ -492,51 +554,7 @@ void Object_system_gc() {
     iter = iter->next;
   }
 
-  Symbol* obj_curr_type;
-  obj_curr = object_system->head;
-  while(obj_curr != NULL) {
-    obj_curr_type = Object_type(obj_curr);
-    if(obj_curr_type == SYMBOL_LIST) {
-      ListIter* list_iter = ListIter_new(obj_curr->impl);
-      ListIter_next(list_iter);
-      while(!ListIter_at_end(list_iter)) {
-        obj_temp_1 = ListIter_get_val(list_iter);
-        //obj_temp_1 is a referend, that we now decrease 1 refcount from
-        obj_temp_1->rc_gc--;
-        ListIter_next(list_iter);
-      }
-      ListIter_del(list_iter);
-      list_iter = NULL;
-    }
-    else
-    if(obj_curr_type == SYMBOL_HASH) {
-      HashIter* hash_iter = HashIter_new(obj_curr->impl);
-      HashIter_next(hash_iter);
-      while(!HashIter_at_end(hash_iter)) {
-        obj_temp_1 = HashIter_get_key(hash_iter);
-        obj_temp_2 = HashIter_get_val(hash_iter);
-        // decrease 1 refcount from both of these referends
-        obj_temp_1->rc_gc--;
-        obj_temp_2->rc_gc--;
-        HashIter_next(hash_iter);
-      }
-      HashIter_del(hash_iter);
-      hash_iter = NULL;
-    }
-    else
-    if(obj_curr_type == SYMBOL_ENVIRONMENT) {
-      Environment* env = (Environment*)(obj_curr->impl);
-      if(env->objects != NULL) {
-        obj_temp_1 = env->objects; // Object<Hash>
-        obj_temp_1->rc_gc--;
-      }
-      if(env->children != NULL) {
-        obj_temp_1 = env->objects; // Object<List>
-        obj_temp_1->rc_gc--;
-      }
-    }
-    obj_curr = obj_curr->next;
-  }
+  Object_system_walkrefs(&Object_action_rc_gc_decr);
 
   // mark any object with rc_gc == 0 as unreachable
   iter = object_system->head;
@@ -546,6 +564,9 @@ void Object_system_gc() {
     }
     iter = iter->next;
   }
+
+  //unset any objects that can be reached from a reachable
+  Object_system_walkrefs(&Object_action_unset_unreachable);
 
   iter = object_system->head;
   while(iter != NULL) {
