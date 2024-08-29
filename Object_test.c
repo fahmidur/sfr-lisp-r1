@@ -288,6 +288,16 @@ int main(int argc, char** argv) {
   Object_assign(&list_c_a, NULL);
   nassert(Object_is_null(list_c_a));
 
+  Object_assign(&list_c_b, NULL);
+  nassert(Object_is_null(list_c_b));
+
+  Object_assign(&list_c_c, NULL);
+  nassert(Object_is_null(list_c_c));
+
+  nassert(list_c_a->rc == 1);
+  nassert(list_c_b->rc == 1);
+  nassert(list_c_c->rc == 1);
+
   Util_heading1(0, "LIST OPERATIONS");
 
   //===========================================================================
