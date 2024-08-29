@@ -94,11 +94,11 @@ void Object_system_init() {
   SYMBOL_STRING = Symbol_new("String");
   SYMBOL_NUMBER = Symbol_new("Number");
   SYMBOL_ERROR  = Symbol_new("Error");
-  // Composit Types
+  // Container Types
   SYMBOL_LIST = Symbol_new("List");
   SYMBOL_HASH = Symbol_new("Hash");
   SYMBOL_ENVIRONMENT = Symbol_new("Environment");
-  // Callable Object
+  // Container + Callable Object
   SYMBOL_FUNCTION = Symbol_new("Function");
 
   printf("\n\n");
@@ -612,15 +612,6 @@ void Object_add_to_system(Object* self) {
   }
   object_system->size++;
 }
-
-/* char Object_is_composite(Object* self) { */
-/*   Symbol* self_type = Object_type(self); */
-/*   return ( */
-/*     self_type == SYMBOL_LIST || */ 
-/*     self_type == SYMBOL_HASH || */
-/*     self_type == SYMBOL_ENVIRONMENT */
-/*   ); */
-/* } */
 
 char Object_is_container(Object* self) {
   Symbol* self_type = Object_type(self);
