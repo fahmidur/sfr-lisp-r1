@@ -298,6 +298,8 @@ int main(int argc, char** argv) {
   nassert(list_c_b->rc == 1);
   nassert(list_c_c->rc == 1);
 
+  Object_system_gc();
+
   Util_heading1(0, "LIST OPERATIONS");
 
   //===========================================================================
