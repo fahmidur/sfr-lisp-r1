@@ -305,6 +305,7 @@ int main(int argc, char** argv) {
   Object_system_gc();
   int clist_endsize = Object_system_size();
   printf("clist_endsize = %d\n", clist_endsize);
+  // test that the total number of objects has gone down by 3 after GC
   nassert(clist_begsize - clist_endsize == 3);
 
   Util_heading1(0, "LIST OPERATIONS");
@@ -367,6 +368,25 @@ int main(int argc, char** argv) {
   nassert(Object_cmp(expecting_red2, str_red) == 0);
 
   Util_heading1(0, "HASH OPERATIONS");
+
+  //keywords: circle, circular
+  printf("Creating circular hashes ...\n");
+  Object* str_other = QSTRING_NEW1("other");
+  Object* hash_c_a = QHASH_NEW1();
+  Object* hash_c_b = QHASH_NEW1();
+  Object_top_hset(hash_c_a, str_other, hash_c_b);
+  Object_top_hset(hash_c_b, str_other, hash_c_a);
+  nassert(hash_c_a->rc == 2);
+  nassert(hash_c_b->rc == 2);
+  Object_assign(&hash_c_a, NULL);
+  Object_assign(&hash_c_b, NULL);
+  nassert(hash_c_a->rc == 1);
+  nassert(hash_c_b->rc == 1);
+
+  int chash_begsize = Object_system_size();
+  Object_system_gc();
+  int chash_endsize = Object_system_size();
+  nassert(chash_begsize - chash_endsize == 2);
 
   //===========================================================================
   Util_heading1(1, "Environment Operations");
