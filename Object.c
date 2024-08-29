@@ -609,7 +609,6 @@ void Object_rc_done(Object* self, int parent_rc, int level) {
   int i = 0;
   Object* tmp;
   if(self_type == SYMBOL_LIST) {
-    //WARNING: this can infinite-loop if there are circular references.
     self->rc += parent_rc;
     ListIter* list_iter = ListIter_new(self->impl);
     ListIter_next(list_iter);
@@ -623,7 +622,6 @@ void Object_rc_done(Object* self, int parent_rc, int level) {
   }
   else
   if(self_type == SYMBOL_HASH) {
-    //WARNING: this can infinite-loop if there are circular references.
     self->rc += parent_rc;
     HashIter* hash_iter = HashIter_new(self->impl);
     HashIter_next(hash_iter);
@@ -637,7 +635,6 @@ void Object_rc_done(Object* self, int parent_rc, int level) {
   }
   else
   if(self_type == SYMBOL_ENVIRONMENT) {
-    //WARNING: this can infinite-loop if there are circular references.
     self->rc += parent_rc;
     Environment* env = (Environment*)(self->impl);
     if(env->objects != NULL) {
