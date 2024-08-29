@@ -274,6 +274,9 @@ int main(int argc, char** argv) {
   Object_bop_push(list_c_a, list_c_b); // A -> B
   Object_bop_push(list_c_b, list_c_c); // B -> C
   Object_bop_push(list_c_c, list_c_a); // C -> A
+  nassert(list_c_a->rc == 2);
+  nassert(list_c_b->rc == 2);
+  nassert(list_c_c->rc == 2);
   ObjectUtil_eprintf("list_c_a(%p) = \n  %v\n", list_c_a, list_c_a);
   printf("list_c_a->visited = %d\n", list_c_a->visited);
   nassert(list_c_a->visited == 0);
@@ -281,6 +284,9 @@ int main(int argc, char** argv) {
   nassert(list_c_b->visited == 0);
   ObjectUtil_eprintf("list_c_c(%p) = \n  %v\n", list_c_c, list_c_c);
   nassert(list_c_c->visited == 0);
+
+  Object_assign(&list_c_a, NULL);
+  nassert(Object_is_null(list_c_a));
 
   Util_heading1(0, "LIST OPERATIONS");
 
