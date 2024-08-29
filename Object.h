@@ -28,7 +28,6 @@ extern Symbol* SYMBOL_NULL;
 extern Symbol* SYMBOL_ENVIRONMENT;
 extern Symbol* SYMBOL_FUNCTION;
 
-
 typedef struct Object Object;
 struct Object {
   Symbol* type;
@@ -40,6 +39,7 @@ struct Object {
   char    returning;
   char    cloneable;
   int     visited;
+  char    mfd; // marked for deletion
 };
 
 
@@ -77,6 +77,8 @@ typedef struct ObjectSystem ObjectSystem;
 struct ObjectSystem {
   char             init_called;
   char             done_called;
+  char             delete_soft;
+  char             delete_recurse;
   Object*          head;
   Object*          tail;
   size_t           size;
@@ -166,6 +168,7 @@ size_t  Object_system_size();
 void    Object_system_done();
 void    Object_system_print();
 void    Object_system_gc();
+char    Object_system_delete_recurse();
 
 // Composits
 #include "List.h"

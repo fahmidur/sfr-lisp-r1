@@ -75,6 +75,8 @@ void Object_system_init() {
   object_system = calloc(1, sizeof(ObjectSystem));
   object_system->init_called = 0;
   object_system->done_called = 0;
+  object_system->delete_soft = 0;
+  object_system->delete_recurse = 1;
   object_system->head = NULL;
   object_system->tail = NULL;
   object_system->size = 0;
@@ -175,6 +177,10 @@ void Object_system_init() {
   object_system->done_called = 0;
 
   printf("--- END. Object_system_init() ---\n");
+}
+
+char Object_system_delete_recurse() {
+  return object_system->delete_recurse;
 }
 
 /**
@@ -664,12 +670,12 @@ void Object_system_done() {
   int i;
 
   // copy the rc into the rc_gc as our working scrap
-  obj_curr = object_system->head;
-  obj_next = NULL;
-  while(obj_curr != NULL) {
-    obj_curr->rc_gc = obj_curr->rc;
-    obj_curr = obj_curr->next;
-  }
+  //obj_curr = object_system->head;
+  //obj_next = NULL;
+  //while(obj_curr != NULL) {
+  //  obj_curr->rc_gc = obj_curr->rc;
+  //  obj_curr = obj_curr->next;
+  //}
 
   //printf("--- { Object_system_done(). Object_rc_done() { ---\n");
   //// Ensure that the rc of
@@ -684,80 +690,82 @@ void Object_system_done() {
   //}
   //printf("--- } Object_system_done(). Object_rc_done() } ---\n");
 
-  printf("--- { Object_system_done(). 002 { ---\n");
-  Object_system_print();
-  printf("--- } Object_system_done(). 002 } ---\n");
+  //printf("--- { Object_system_done(). 002 { ---\n");
+  //Object_system_print();
+  //printf("--- } Object_system_done(). 002 } ---\n");
 
-  Symbol* obj_curr_type;
-  obj_curr = object_system->head;
-  while(obj_curr != NULL) {
-    obj_curr_type = Object_type(obj_curr);
-    if(obj_curr_type == SYMBOL_LIST) {
-      ListIter* list_iter = ListIter_new(obj_curr->impl);
-      ListIter_next(list_iter);
-      while(!ListIter_at_end(list_iter)) {
-        obj_temp_1 = ListIter_get_val(list_iter);
-        ListIter_next(list_iter);
-      }
-      ListIter_del(list_iter);
-      list_iter = NULL;
-    }
-    else
-    if(obj_curr_type == SYMBOL_HASH) {
-      HashIter* hash_iter = HashIter_new(obj_curr->impl);
-      HashIter_next(hash_iter);
-      while(!HashIter_at_end(hash_iter)) {
-        obj_temp_1 = HashIter_get_key(hash_iter);
-        obj_temp_2 = HashIter_get_val(hash_iter);
-        HashIter_next(hash_iter);
-      }
-      HashIter_del(hash_iter);
-      hash_iter = NULL;
-    }
-    else
-    if(obj_curr_type == SYMBOL_ENVIRONMENT) {
-      Environment* env = (Environment*)(obj_curr->impl);
-      if(env->objects != NULL) {
-        obj_temp_1 = env->objects; // Object<Hash>
-      }
-      if(env->children != NULL) {
-        obj_temp_1 = env->objects; // Object<List>
-      }
-    }
-    else {
-      // non-composite Objects like String, Number, Symbol
-    }
-    obj_curr = obj_curr->next;
-  }
+  //Symbol* obj_curr_type;
+  //obj_curr = object_system->head;
+  //while(obj_curr != NULL) {
+  //  obj_curr_type = Object_type(obj_curr);
+  //  if(obj_curr_type == SYMBOL_LIST) {
+  //    ListIter* list_iter = ListIter_new(obj_curr->impl);
+  //    ListIter_next(list_iter);
+  //    while(!ListIter_at_end(list_iter)) {
+  //      obj_temp_1 = ListIter_get_val(list_iter);
+  //      ListIter_next(list_iter);
+  //    }
+  //    ListIter_del(list_iter);
+  //    list_iter = NULL;
+  //  }
+  //  else
+  //  if(obj_curr_type == SYMBOL_HASH) {
+  //    HashIter* hash_iter = HashIter_new(obj_curr->impl);
+  //    HashIter_next(hash_iter);
+  //    while(!HashIter_at_end(hash_iter)) {
+  //      obj_temp_1 = HashIter_get_key(hash_iter);
+  //      obj_temp_2 = HashIter_get_val(hash_iter);
+  //      HashIter_next(hash_iter);
+  //    }
+  //    HashIter_del(hash_iter);
+  //    hash_iter = NULL;
+  //  }
+  //  else
+  //  if(obj_curr_type == SYMBOL_ENVIRONMENT) {
+  //    Environment* env = (Environment*)(obj_curr->impl);
+  //    if(env->objects != NULL) {
+  //      obj_temp_1 = env->objects; // Object<Hash>
+  //    }
+  //    if(env->children != NULL) {
+  //      obj_temp_1 = env->objects; // Object<List>
+  //    }
+  //  }
+  //  else {
+  //    // non-composite Objects like String, Number, Symbol
+  //  }
+  //  obj_curr = obj_curr->next;
+  //}
 
   // Above should guarantee that all container objects
   // have an RC lower than their contained objects, thus
   // get deleted before the things they contain. 
 
-  //printf("--- { OSDK { ---\n");
-  //// delete all objects
-  //while(object_system->size > 0) {
-  //  obj_curr = object_system->head;
-  //  obj_next = NULL;
-  //  while(obj_curr != NULL) {
-  //    obj_next = obj_curr->next; 
-  //    if(obj_curr->rc <= 1) {
-  //      if(Object_is_container(obj_curr)) {
-  //        ObjectUtil_eprintf("[OSDK] || Object(%p) || type=%s || CONTAINER", obj_curr, Object_type(obj_curr)->str);
-  //      } else {
-  //        ObjectUtil_eprintf("[OSDK] || Object(%p) || %v", obj_curr, obj_curr);
-  //      }
-  //      if(obj_curr->returning) {
-  //        printf(" || RT_WARNING");
-  //        obj_curr->returning = 0;
-  //      }
-  //      printf("\n");
-  //    }
-  //    obj_curr = Object_rc_decr(obj_curr);
-  //    obj_curr = obj_next;
-  //  }
-  //}
-  //printf("--- } OSDK } ---\n");
+  printf("--- { OSDK { ---\n");
+  // delete all objects
+  object_system->delete_recurse = 0;
+  while(object_system->size > 0) {
+    obj_curr = object_system->head;
+    obj_next = NULL;
+    while(obj_curr != NULL) {
+      obj_next = obj_curr->next; 
+      if(obj_curr->rc <= 1) {
+        if(Object_is_container(obj_curr)) {
+          ObjectUtil_eprintf("[OSDK] || Object(%p) || type=%s || CONTAINER", obj_curr, Object_type(obj_curr)->str);
+        } else {
+          ObjectUtil_eprintf("[OSDK] || Object(%p) || %v", obj_curr, obj_curr);
+        }
+        if(obj_curr->returning) {
+          printf(" || RT_WARNING");
+          obj_curr->returning = 0;
+        }
+        printf("\n");
+      }
+      obj_curr = Object_rc_decr(obj_curr);
+      obj_curr = obj_next;
+    }
+  }
+  object_system->delete_recurse = 1;
+  printf("--- } OSDK } ---\n");
 
   // delete type information
   ObjectTypeInfo* oti_curr;

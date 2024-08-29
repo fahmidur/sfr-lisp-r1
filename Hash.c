@@ -34,10 +34,10 @@ void HashNode_del(HashNode* self) {
     self->next = NULL;
   }
   assert(self->prev == NULL && self->next == NULL);
-  if(self->key != NULL) {
+  if(self->key != NULL && Object_system_delete_recurse()) {
     self->key = Object_rc_decr(self->key);
   }
-  if(self->val != NULL) {
+  if(self->val != NULL && Object_system_delete_recurse()) {
     self->key = Object_rc_decr(self->val);
   }
   self->key = NULL;

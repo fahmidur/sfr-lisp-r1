@@ -33,7 +33,11 @@ int ListNode_cmp(ListNode* a, ListNode* b) {
 
 void ListNode_del(ListNode* self) {
   ListNode_unlink(self);
-  self->data = Object_rc_decr(self->data);
+  if(Object_system_delete_recurse()) {
+    self->data = Object_rc_decr(self->data);
+  } else {
+    self->data = NULL;
+  }
   free(self);
 }
 
@@ -114,7 +118,11 @@ Object* List_pop(List* self) {
   // detach node
   node->prev = NULL; node->next = NULL;
   self->size--;
-  ret = Object_return(node->data);
+  if(Object_system_delete_recurse()) {
+    ret = Object_return(node->data);
+  } else {
+    ret = NULL;
+  }
   ListNode_del(node);
   printf("List_pop(%p). size=%zu\n", self, self->size);
   return ret;
@@ -195,14 +203,18 @@ Object* List_at(List* self, size_t idx) {
 void List_del(List* self) {
   printf("{ List_del(%p) {\n", self);
   Object* tmp;
+
   while(self->size > 0) {
     tmp = List_pop(self);
     // tmp is now damaged
     printf("List_del(%p). dbg. 001 tmp=%p | Object_reject(tmp)\n", self, tmp);
     // below is unsafe, because tmp may no longer exist
-    Object_reject(tmp);
+    if(Object_system_delete_recurse()) {
+      Object_reject(tmp);
+    }
     printf("List_del(%p). dbg. 002\n", self);
   }
+
   printf("List_del(%p). free(self)\n", self);
   free(self);
   printf("} List_del(%p) }\n", self);

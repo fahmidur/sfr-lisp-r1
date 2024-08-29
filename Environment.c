@@ -83,15 +83,20 @@ void Environment_del(Environment* self) {
   Environment* iter = NULL;
   Environment* next = NULL;
 
-  if(self->parent != NULL) {
+  if(self->parent != NULL && Object_system_delete_recurse()) {
     printf("  Environment_del. detaching parent...\n");
     // TODO: detach parent-child relationship to this Environment
   }
 
   // release our reference to the objects Hash
-  if(self->objects != NULL) {
-    printf("  Environment_del. Releasing self->objects Hash\n");
+  if(self->objects != NULL && Object_system_delete_recurse()) {
+    printf("  Environment_del. Releasing self->objects Object<Hash>\n");
     Object_assign(&(self->objects), NULL);
+  }
+
+  if(self->children != NULL && Object_system_delete_recurse()) {
+    printf("  Environment_del. Releasing self->children Object<List>\n");
+    Object_assign(&(self->children), NULL);
   }
   printf("  Environment_del. free(self)\n");
   free(self);
