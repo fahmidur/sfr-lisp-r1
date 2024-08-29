@@ -300,7 +300,12 @@ int main(int argc, char** argv) {
   Object_assign(&list_c_c, NULL);
   nassert(Object_is_null(list_c_c));
 
+  int clist_begsize = Object_system_size();
+  printf("clist_begsize = %d\n", clist_begsize);
   Object_system_gc();
+  int clist_endsize = Object_system_size();
+  printf("clist_endsize = %d\n", clist_endsize);
+  nassert(clist_begsize - clist_endsize == 3);
 
   Util_heading1(0, "LIST OPERATIONS");
 
