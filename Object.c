@@ -586,7 +586,7 @@ _return:
 }
 
 /**
- * Recursively the refcount of this object to be 
+ * Recursively set the refcount of this object to be 
  * greater than its parent object.
  * This ensures that all scalar objects have a higher
  * refcount than their composit parent containers objects.
