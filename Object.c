@@ -205,6 +205,8 @@ Object* Object_new(Symbol* type, int rc, void* impl) {
   self->returning = 0;
   self->cloneable = 1;
   self->visited = 0;
+  self->mfd = 0;
+  self->unreachable = 0;
 
   Object_add_to_system(self);
   
@@ -462,9 +464,90 @@ size_t Object_system_size() {
   return object_system->size;
 }
 
+void Object_action_rc_gc_decr(Object* referer, Object* referend) {
+  referend->rc_gc--;
+}
+
+void Object_action_set_unreachable(Object* referer, Object* referend) {
+  if(referend->rc_gc <= 0) {
+    referend->unreachable = 1;
+  }
+}
+
+void Object_system_walk(void fn(Object* referer, Object* referend)) {
+}
+
 void Object_system_gc() {
+  Object* obj_curr;
+  Object* obj_temp_1;
+  Object* obj_temp_2;
+
   Object* iter = object_system->head;
   Object* next = NULL;
+
+  // copy the rc into rc_gc;
+  iter = object_system->head;
+  while(iter != NULL) {
+    iter->rc_gc = iter->rc;
+    iter = iter->next;
+  }
+
+  Symbol* obj_curr_type;
+  obj_curr = object_system->head;
+  while(obj_curr != NULL) {
+    obj_curr_type = Object_type(obj_curr);
+    if(obj_curr_type == SYMBOL_LIST) {
+      ListIter* list_iter = ListIter_new(obj_curr->impl);
+      ListIter_next(list_iter);
+      while(!ListIter_at_end(list_iter)) {
+        obj_temp_1 = ListIter_get_val(list_iter);
+        //obj_temp_1 is a referend, that we now decrease 1 refcount from
+        obj_temp_1->rc_gc--;
+        ListIter_next(list_iter);
+      }
+      ListIter_del(list_iter);
+      list_iter = NULL;
+    }
+    else
+    if(obj_curr_type == SYMBOL_HASH) {
+      HashIter* hash_iter = HashIter_new(obj_curr->impl);
+      HashIter_next(hash_iter);
+      while(!HashIter_at_end(hash_iter)) {
+        obj_temp_1 = HashIter_get_key(hash_iter);
+        obj_temp_2 = HashIter_get_val(hash_iter);
+        // decrease 1 refcount from both of these referends
+        obj_temp_1->rc_gc--;
+        obj_temp_2->rc_gc--;
+        HashIter_next(hash_iter);
+      }
+      HashIter_del(hash_iter);
+      hash_iter = NULL;
+    }
+    else
+    if(obj_curr_type == SYMBOL_ENVIRONMENT) {
+      Environment* env = (Environment*)(obj_curr->impl);
+      if(env->objects != NULL) {
+        obj_temp_1 = env->objects; // Object<Hash>
+        obj_temp_1->rc_gc--;
+      }
+      if(env->children != NULL) {
+        obj_temp_1 = env->objects; // Object<List>
+        obj_temp_1->rc_gc--;
+      }
+    }
+    obj_curr = obj_curr->next;
+  }
+
+  // mark any object with rc_gc == 0 as unreachable
+  iter = object_system->head;
+  while(iter != NULL) {
+    if(iter->rc_gc <= 0) {
+      iter->unreachable = 1;
+    }
+    iter = iter->next;
+  }
+
+  iter = object_system->head;
   while(iter != NULL) {
     next = iter->next;
     iter = Object_gc(iter);

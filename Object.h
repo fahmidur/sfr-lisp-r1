@@ -39,7 +39,8 @@ struct Object {
   char    returning;
   char    cloneable;
   int     visited;
-  char    mfd; // marked for deletion
+  char    mfd; 
+  char    unreachable;
 };
 
 
