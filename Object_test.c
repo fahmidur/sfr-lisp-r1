@@ -390,7 +390,7 @@ int main(int argc, char** argv) {
 
   //===========================================================================
   Util_heading1(1, "Environment Operations");
-  /* Object* env1 = Object_new(SYMBOL_ENVIRONMENT, 1, Environment_new(NULL)); */
+  Object* env1 = Object_new(SYMBOL_ENVIRONMENT, 1, Environment_new());
   Util_heading1(0, "Environment Operations");
 
   //===========================================================================

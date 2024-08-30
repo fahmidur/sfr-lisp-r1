@@ -6,7 +6,7 @@
 #include "Error.h"
 
 String* String_new(char* istr) {
-  printf("String_new(%s)\n", istr);
+  /* printf("String_new(%s)\n", istr); */
   String* self = calloc(1, sizeof(String));
   if(self == NULL) {
     ErrorSystem_set(1, "String_new. calloc failed");
@@ -25,7 +25,7 @@ String* String_new(char* istr) {
     self->buf[i] = istr[i];
   }
   self->len = strlen(self->buf);
-  printf("String_new. p=%p || buf=%s\n", self, self->buf);
+  /* printf("String_new. p=%p || buf=%s\n", self, self->buf); */
   return self;
 }
 

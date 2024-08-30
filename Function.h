@@ -10,29 +10,29 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include "Symbol.h"
+#include "Environment.h"
 #include "Object.h"
 
-typedef struct FunctionEnv FunctionEnv;
-struct FunctionEnv {
-  FunctionEnv* parent;
-  FunctionEnv* children_head;
-  FunctionEnv* children_tail;
-  FunctionEnv* sibling_prev;
-  FunctionEnv* sibling_next;
-  Object*      objects;    // Object<Hash>
-};
+/* typedef struct FunctionEnv FunctionEnv; */
+/* struct FunctionEnv { */
+/*   FunctionEnv* parent; */
+/*   FunctionEnv* children_head; */
+/*   FunctionEnv* children_tail; */
+/*   FunctionEnv* sibling_prev; */
+/*   FunctionEnv* sibling_next; */
+/*   Object*      objects;    // Object<Hash> */
+/* }; */
 
-FunctionEnv* FunctionEnv_new(FunctionEnv* parent);
-void         FunctionEnv_child_add(FunctionEnv* self, FunctionEnv* child);
-void         FunctionEnv_del(FunctionEnv* self);
+/* FunctionEnv* FunctionEnv_new(FunctionEnv* parent); */
+/* void         FunctionEnv_child_add(FunctionEnv* self, FunctionEnv* child); */
+/* void         FunctionEnv_del(FunctionEnv* self); */
 
 #define FUNCTION_ARITY_ANY -1
 
 typedef struct Function Function;
 struct Function {
-  Function* parent;
-  FunctionEnv* env;
-  int     arity;
+  Object* env;
+  int     arity; // must match length of params if >= 0
   Object* params;
   Object* body;
   Object* (*impl)(Function* fn, Object* argv);
@@ -45,7 +45,7 @@ struct Function {
 // just ignore argv[0].
 
 Function* Function_new(
-  Function* parent,
+  Object* env,
   Object* (*impl)(Function* fn, Object* args), 
   int     arity,  // Must match length of params if >= 0
   Object* params, // Object<List> of Symbols
