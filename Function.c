@@ -62,7 +62,8 @@ Object* Function_call(Function* self, Object* argv) {
   if(argv == NULL) {
     argv = Object_new_null();
   }
-  Object_rc_incr(argv);
+  /* Object_rc_incr(argv); */
+  Object_accept(argv);
   /* if(self->arity >= 0) { */
   /*   if(Object_len(argv) == (self->arity+1)) { */
   /*     ErrorSystem_set(1, "Function_call. argv arity mismatch"); */
@@ -97,6 +98,7 @@ Object* Function_call(Function* self, Object* argv) {
   if(ret == NULL) {
     ret = Object_new_null();
   }
+  // release the argv object, we do not need it anymore.
   Object_rc_decr(argv);
   Object_assign(&tmpEnv, NULL);
   return Object_return(ret);
