@@ -58,6 +58,7 @@ void Function_print(Function* self) {
 }
 
 Object* Function_call(Function* self, Object* argv) {
+  assert(self != NULL);
   if(argv == NULL) {
     argv = Object_new_null();
   }
@@ -71,7 +72,27 @@ Object* Function_call(Function* self, Object* argv) {
 
   Object* tmpEnv = Object_new(SYMBOL_ENVIRONMENT, 1, Environment_new());
   Environment_child_attach(self->env, tmpEnv);
-  //TODO: replace above with Object-level API
+
+  if(
+      !Object_is_null(argv) && Object_type(argv) == SYMBOL_LIST &&
+      !Object_is_null(self->params) && Object_type(self->params) == SYMBOL_LIST &&
+      Object_len(argv) > 1 && Object_len(self->params) > 0
+    ) {
+    ListIter* argv_iter = ListIter_new(argv->impl);
+    ListIter_head(argv_iter); // go to head
+    ListIter_next(argv_iter); // go one more past head because we ignore the first arg
+    ListIter* params_iter = ListIter_new(self->params->impl);
+    ListIter_head(params_iter);
+    while(!(ListIter_at_end(argv_iter) || ListIter_at_end(params_iter))) {
+      Object_top_hset(tmpEnv, ListIter_get_val(params_iter), ListIter_get_val(argv_iter));
+      //---
+      ListIter_next(argv_iter);
+      ListIter_next(params_iter);
+    }
+    ListIter_del(argv_iter);
+    ListIter_del(params_iter);
+  }
+
   Object* ret = (self->impl)(self, tmpEnv, argv);
   if(ret == NULL) {
     ret = Object_new_null();

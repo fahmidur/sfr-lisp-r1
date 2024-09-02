@@ -52,7 +52,11 @@ Object* fn_add(Function* fn, Object* env, Object* argv) {
   /* return Object_bop_add(Object_bop_at(argv, 1), Object_bop_at(argv, 2)); */
   // This Function was defined with named-params, and so we should be able to
   // 'a' and 'b' from the environment.
-  return NULL;
+  Object* a = Object_bop_hget(env, QSYMBOL("a"));
+  Object* b = Object_bop_hget(env, QSYMBOL("b"));
+  ObjectUtil_eprintf("fn_add. got a = %v\n", a);
+  ObjectUtil_eprintf("fn_add. got b = %v\n", b);
+  return Object_bop_add(a, b);
 }
 
 Function* fn_make_adder(Function* fn, Object* argv) {
@@ -83,9 +87,12 @@ int main(int argc, char** argv) {
   Function_call(fn1, Object_new_list(1, 3, QSYMBOL("print"), QNUMBER(3.14), QSTRING("is my favorite number")));
   Function_call(fn1, Object_new_list(1, 3, QSYMBOL("print"), QSTRING("My favorite number is"), QNUMBER(3.14)));
 
-  /* printf("Constructing fn2 ...\n"); */
-  /* Function* fn2 = Function_new(NULL, fn_add, 2, Object_new_list(1, 2, QSYMBOL("a"), QSYMBOL("b")), NULL); */
-  /* printf("fn2 constructed\n"); */
+  printf("Constructing fn2 ...\n");
+  Function* fn2 = Function_new(NULL, fn_add, 2, Object_new_list(1, 2, QSYMBOL("a"), QSYMBOL("b")), NULL);
+  printf("fn2 constructed\n");
+
+  Object* res1 = Object_accept(Function_call(fn2, Object_new_list(1, 3, QSYMBOL("add"), QNUMBER(2), QNUMBER(3))));
+  ObjectUtil_eprintf("res1 = %v\n", res1);
 
   /* printf("function fn2 = "); */
   /* Function_print(fn2); */
@@ -100,7 +107,7 @@ int main(int argc, char** argv) {
 
   // manually delete each function
   Function_del(fn1);
-  /* Function_del(fn2); */
+  Function_del(fn2);
 
   FunctionSystem_done();
   Object_system_done();
