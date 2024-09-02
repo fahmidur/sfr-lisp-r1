@@ -156,6 +156,9 @@ Object* Object_top_hset(Object* self, Object* key, Object* val);
 Object* Object_bop_hget(Object* self, Object *key);
 Object* Object_bop_hrem(Object* self, Object* key);
 
+// Mainly Environment Ops or anything Tree-Like
+Object* Object_bop_child_attach(Object* self, Object* child);
+
 // Mainly String ops
 char    Object_bop_charat(Object* self, size_t idx);
 

@@ -10,7 +10,7 @@ void FunctionSystem_done() {
 
 Function* Function_new(
   Object* env, 
-  Object* (*impl)(Function* fn, Object* args), 
+  Object* (*impl)(Function* fn, Object* env, Object* args), 
   int arity, 
   Object* params,
   Object* body
@@ -38,8 +38,10 @@ Function* Function_new(
     ErrorSystem_set(1, "Function_new. Invalid arity for given params");
     return NULL;
   }
+
   if(env == NULL) {
-    self->env = (NULL);
+    // it is not possible for a function to exist without an environment
+    self->env = Object_new(SYMBOL_ENVIRONMENT, 1, Environment_new());
   }
   // The use of the body is entirely dependent on the impl.
   // we do not do anything special to the body.
@@ -66,12 +68,16 @@ Object* Function_call(Function* self, Object* argv) {
   /*     return NULL; */
   /*   } */
   /* } */
-  /* FunctionEnv* tmpEnv = FunctionEnv_new(self->env); */
-  Object* ret = (self->impl)(self, argv);
+
+  Object* tmpEnv = Object_new(SYMBOL_ENVIRONMENT, 1, Environment_new());
+  Environment_child_attach(self->env, tmpEnv);
+  //TODO: replace above with Object-level API
+  Object* ret = (self->impl)(self, tmpEnv, argv);
   if(ret == NULL) {
     ret = Object_new_null();
   }
   Object_rc_decr(argv);
+  Object_assign(&tmpEnv, NULL);
   return Object_return(ret);
 }
 

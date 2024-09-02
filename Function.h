@@ -35,7 +35,7 @@ struct Function {
   int     arity; // must match length of params if >= 0
   Object* params;
   Object* body;
-  Object* (*impl)(Function* fn, Object* argv);
+  Object* (*impl)(Function* fn, Object* env, Object* argv);
 };
 
 // this is what a function call looks like
@@ -46,7 +46,7 @@ struct Function {
 
 Function* Function_new(
   Object* env,
-  Object* (*impl)(Function* fn, Object* args), 
+  Object* (*impl)(Function* fn, Object* env, Object* args), 
   int     arity,  // Must match length of params if >= 0
   Object* params, // Object<List> of Symbols
   Object* body    // Object<List> of whatever

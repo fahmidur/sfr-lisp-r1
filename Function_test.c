@@ -5,7 +5,7 @@
 #include "Object.h"
 #include "nassert.h"
 
-Object* fn_println(Function* fn, Object* argv) {
+Object* fn_println(Function* fn, Object* env, Object* argv) {
   assert(fn != NULL);
   assert(argv != NULL);
   if(Object_is_null(argv)) {
@@ -48,8 +48,11 @@ Object* fn_println(Function* fn, Object* argv) {
   return NULL;
 }
 
-Object* fn_add(Function* fn, Object* argv) {
-  return Object_bop_add(Object_bop_at(argv, 1), Object_bop_at(argv, 2));
+Object* fn_add(Function* fn, Object* env, Object* argv) {
+  /* return Object_bop_add(Object_bop_at(argv, 1), Object_bop_at(argv, 2)); */
+  // This Function was defined with named-params, and so we should be able to
+  // 'a' and 'b' from the environment.
+  return NULL;
 }
 
 Function* fn_make_adder(Function* fn, Object* argv) {
@@ -65,6 +68,9 @@ int main(int argc, char** argv) {
   printf("Constructing fn1 ...\n");
   Function* fn1 = Function_new(NULL, fn_println, -1, NULL, NULL);
   printf("fn1 constructed\n");
+  nassert(fn1 != NULL);
+  // a function 'has' an Environment env
+  nassert(fn1->env != NULL); 
 
   printf("function fn1 = ");
   Function_print(fn1);
@@ -74,9 +80,7 @@ int main(int argc, char** argv) {
   Function_call(fn1, NULL);
 
   Function_call(fn1, Object_new_list(1, 2, QSYMBOL("print"), QSTRING("Hello there")));
-  printf("\n---\n");
   Function_call(fn1, Object_new_list(1, 3, QSYMBOL("print"), QNUMBER(3.14), QSTRING("is my favorite number")));
-  printf("\n---\n");
   Function_call(fn1, Object_new_list(1, 3, QSYMBOL("print"), QSTRING("My favorite number is"), QNUMBER(3.14)));
 
   /* printf("Constructing fn2 ...\n"); */

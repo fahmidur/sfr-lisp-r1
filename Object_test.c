@@ -391,6 +391,7 @@ int main(int argc, char** argv) {
   //===========================================================================
   Util_heading1(1, "Environment Operations");
   Object* env1 = Object_new(SYMBOL_ENVIRONMENT, 1, Environment_new());
+  //TODO: add object-level Environment tests
   Util_heading1(0, "Environment Operations");
 
   //===========================================================================
