@@ -305,8 +305,9 @@ int main(int argc, char** argv) {
   Object_system_gc();
   int clist_endsize = Object_system_size();
   printf("clist_endsize = %d\n", clist_endsize);
-  // test that the total number of objects has gone down by 3 after GC
-  nassert(clist_begsize - clist_endsize == 3);
+  // test that the total number of objects has gone down by 6 after GC
+  // 3 for each of the lists, 3 for each Object<String> in each list.
+  nassert(clist_begsize - clist_endsize == 6);
 
   Util_heading1(0, "LIST OPERATIONS");
 
