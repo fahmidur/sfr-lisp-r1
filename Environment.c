@@ -139,6 +139,8 @@ Object* Environment_get(Environment* self, Object* key) {
 Object* Environment_rem(Environment* self, Object* key) {
   assert(self != NULL);
   assert(self->objects != NULL);
+  // notice that removing an item is not recursive, it 
+  // does not go up to remove items in the parent environment.
   return Object_bop_hrem(self->objects, key);
 }
 
