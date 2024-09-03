@@ -392,7 +392,14 @@ int main(int argc, char** argv) {
   //===========================================================================
   Util_heading1(1, "Environment Operations");
   Object* env1 = Object_new(SYMBOL_ENVIRONMENT, 1, Environment_new());
-  //TODO: add object-level Environment tests
+  Object_top_hset(env1, str_apple, str_red);
+  nassert(Object_len(env1) == 1);
+  nassert(
+      Object_cmp(
+        Object_bop_hget(env1, str_apple),
+        str_red
+      ) == 0
+    )
   Util_heading1(0, "Environment Operations");
 
   //===========================================================================
