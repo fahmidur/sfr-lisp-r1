@@ -156,8 +156,9 @@ Object* Object_top_hset(Object* self, Object* key, Object* val);
 Object* Object_bop_hget(Object* self, Object *key);
 Object* Object_bop_hrem(Object* self, Object* key);
 
-// Mainly Environment Ops or anything Tree-Like
+// Mainly Environment Ops or anything Tree-Like (future)
 Object* Object_bop_child_attach(Object* self, Object* child);
+Object* Object_bop_child_detach(Object* self, Object* child);
 
 // Mainly String ops
 char    Object_bop_charat(Object* self, size_t idx);
@@ -199,6 +200,7 @@ char    Object_system_delete_soft();
 
 #define QERROR_NEW0(x) Object_new(SYMBOL_ERROR, 0, Error_new(x))
 #define QERROR_NEW1(x) Object_new(SYMBOL_ERROR, 1, Error_new(x))
+#define QERROR(x) Object_new(SYMBOL_ERROR, 0, Error_new(x))
 
 #define QLIST_NEW0() Object_new(SYMBOL_LIST, 0, List_new())
 #define QLIST_NEW1() Object_new(SYMBOL_LIST, 1, List_new())

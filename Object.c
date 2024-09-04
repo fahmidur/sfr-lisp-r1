@@ -1360,6 +1360,32 @@ Object* Object_uop_shift(Object* a) {
   return ret;
 }
 
+Object* Object_bop_child_attach(Object* self, Object* child) {
+  assert(self != NULL);
+  assert(child != NULL);
+  Object* ret = Object_new_null();
+  if(Object_type(self) == SYMBOL_ENVIRONMENT && Object_type(child) == SYMBOL_ENVIRONMENT) {
+    Environment_child_attach(self, child);
+  } 
+  else {
+    ret = QERROR("invalid types for bop_child_attach");
+  }
+  return ret;
+}
+
+Object* Object_bop_child_detach(Object* self, Object* child) {
+  assert(self != NULL);
+  assert(child != NULL);
+  Object* ret = Object_new_null();
+  if(Object_type(self) == SYMBOL_ENVIRONMENT && Object_type(child) == SYMBOL_ENVIRONMENT) {
+    Environment_child_detach(self, child);
+  }
+  else {
+    ret = QERROR("invalid types for bop_child_detach");
+  }
+  return ret;
+}
+
 /**
  * Get the hash of the object for use in Hash tables
  * or anywhere else that a hash might be needed.

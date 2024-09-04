@@ -399,7 +399,7 @@ int main(int argc, char** argv) {
         Object_bop_hget(env1, str_apple),
         str_red
       ) == 0
-    )
+  )
   Util_heading1(0, "Environment Operations");
 
   //===========================================================================
