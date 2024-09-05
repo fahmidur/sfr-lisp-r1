@@ -27,10 +27,12 @@
 /* void         FunctionEnv_child_add(FunctionEnv* self, FunctionEnv* child); */
 /* void         FunctionEnv_del(FunctionEnv* self); */
 
+// let this constant denote that a function that takes variable args.
 #define FUNCTION_ARITY_ANY -1
 
 typedef struct Function Function;
 struct Function {
+  Object* name;
   Object* env;
   int     arity; // must match length of params if >= 0
   Object* params;
@@ -45,6 +47,7 @@ struct Function {
 // just ignore argv[0].
 
 Function* Function_new(
+  Object* name,
   Object* env,
   Object* (*impl)(Function* fn, Object* env, Object* args), 
   int     arity,  // Must match length of params if >= 0
@@ -57,7 +60,10 @@ Function* Function_new(
 void      Function_print(Function* self);
 Object*   Function_call(Function* self, Object* argv);
 void      Function_del(Function* self);
+// initialize the function in the context of the Object System
+void      Function_obj_init(Object* self);
 
+// I don't think this will be needed.
 /* Function* Function_clone(Function* self); */
 
 void FunctionSystem_init();

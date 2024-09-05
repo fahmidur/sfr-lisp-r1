@@ -70,7 +70,7 @@ int main(int argc, char** argv) {
   FunctionSystem_init();
 
   printf("Constructing fn1 ...\n");
-  Function* fn1 = Function_new(NULL, fn_println, -1, NULL, NULL);
+  Function* fn1 = Function_new(QSYMBOL("println"), NULL, fn_println, -1, NULL, NULL);
   printf("fn1 constructed\n");
   nassert(fn1 != NULL);
   // a function 'has' an Environment env
@@ -83,12 +83,12 @@ int main(int argc, char** argv) {
   printf("calling fn1...\n");
   Function_call(fn1, NULL);
 
-  Function_call(fn1, Object_new_list(1, 2, QSYMBOL("print"), QSTRING("Hello there")));
-  Function_call(fn1, Object_new_list(1, 3, QSYMBOL("print"), QNUMBER(3.14), QSTRING("is my favorite number")));
-  Function_call(fn1, Object_new_list(1, 3, QSYMBOL("print"), QSTRING("My favorite number is"), QNUMBER(3.14)));
+  Function_call(fn1, Object_new_list(1, 2, QSYMBOL("println"), QSTRING("Hello there")));
+  Function_call(fn1, Object_new_list(1, 3, QSYMBOL("println"), QNUMBER(3.14), QSTRING("is my favorite number")));
+  Function_call(fn1, Object_new_list(1, 3, QSYMBOL("println"), QSTRING("My favorite number is"), QNUMBER(3.14)));
 
   printf("Constructing fn2 ...\n");
-  Function* fn2 = Function_new(NULL, fn_add, 2, Object_new_list(1, 2, QSYMBOL("a"), QSYMBOL("b")), NULL);
+  Function* fn2 = Function_new(QSYMBOL("add"), NULL, fn_add, 2, Object_new_list(1, 2, QSYMBOL("a"), QSYMBOL("b")), NULL);
   printf("fn2 constructed\n");
 
   Object* res1 = Object_accept(Function_call(fn2, Object_new_list(1, 3, QSYMBOL("add"), QNUMBER(2.1), QNUMBER(3.1))));

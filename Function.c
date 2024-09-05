@@ -9,6 +9,7 @@ void FunctionSystem_done() {
 }
 
 Function* Function_new(
+  Object* name,
   Object* env, 
   Object* (*impl)(Function* fn, Object* env, Object* args), 
   int arity, 
@@ -43,6 +44,16 @@ Function* Function_new(
     // it is not possible for a function to exist without an environment
     self->env = Object_new(SYMBOL_ENVIRONMENT, 1, Environment_new());
   }
+
+  if(!Object_is_null(name)) {
+    self->name = Object_accept(name);
+    // a function's name if present must live in the environment for ease
+    // of recursion.
+    /* Object_top_hset(self->env, name, self); */
+  } else {
+    self->name = Object_new_null();
+  }
+
   // The use of the body is entirely dependent on the impl.
   // we do not do anything special to the body.
   self->body = NULL;
