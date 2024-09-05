@@ -169,6 +169,7 @@ void ObjectUtil_eprintf(char* fmt, ...);
 
 void    Object_system_init();
 size_t  Object_system_size();
+size_t  Object_system_rtcount();
 void    Object_system_done();
 void    Object_system_print();
 void    Object_system_gc();

@@ -470,6 +470,19 @@ size_t Object_system_size() {
   return object_system->size;
 }
 
+size_t Object_system_rtcount() {
+  size_t count = 0;
+  Object* iter = object_system->head;
+  while(iter != NULL) {
+    if(iter->returning) {
+      ObjectUtil_eprintf("nonzero rt. %v\n", iter);
+      count++;
+    }
+    iter = iter->next;
+  }
+  return count;
+}
+
 void Object_action_rc_gc_decr(Object* referer, Object* referend) {
   referend->rc_gc--;
 }
