@@ -61,7 +61,7 @@ void      Function_print(Function* self);
 Object*   Function_call(Function* self, Object* argv);
 void      Function_del(Function* self);
 // initialize the function in the context of the Object System
-void      Function_obj_init(Object* self);
+Object*   Function_obj_init(Object* self);
 
 // I don't think this will be needed.
 /* Function* Function_clone(Function* self); */

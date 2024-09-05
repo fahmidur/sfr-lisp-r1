@@ -135,3 +135,14 @@ void Function_del(Function* self) {
   free(self);
 }
 
+Object* Function_obj_init(Object* self) {
+  assert(self != NULL);
+  if(Object_type(self) != SYMBOL_FUNCTION) {
+    return QERROR("Invalid type for Function_obj_init");
+  }
+  Function* fn = (Function*) self->impl;
+  if(!Object_is_null(fn->name)) {
+    Object_top_hset(fn->env, fn->name, self);
+  }
+  return NULL;
+}

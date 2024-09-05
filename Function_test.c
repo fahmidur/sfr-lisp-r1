@@ -49,7 +49,6 @@ Object* fn_println(Function* fn, Object* env, Object* argv) {
 }
 
 Object* fn_add(Function* fn, Object* env, Object* argv) {
-  /* return Object_bop_add(Object_bop_at(argv, 1), Object_bop_at(argv, 2)); */
   // This Function was defined with named-params, and so we should be able to
   // 'a' and 'b' from the environment.
   Object* a = Object_bop_hget(env, QSYMBOL("a"));
