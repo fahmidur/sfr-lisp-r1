@@ -263,6 +263,33 @@ int List_cmp(List* self, List* other) {
   return 0;
 }
 
+// Remove all items based on value
+ssize_t List_rem(List* self, Object* item) {
+  if(self->size == 0) {
+    return 0;
+  }
+  ListNode* prev = NULL;
+  ListNode* next = NULL;
+  ListNode* node = self->head;
+  while(node != NULL) {
+    if(Object_cmp(node->data, item) == 0) {
+      // we have a match
+      if(node == self->head) {
+        // special head position
+        self->head = node->next;
+      }
+      else
+      if(node == self->tail) {
+        // special tail position
+        self->tail = node->prev;
+      }
+      ListNode_del(node);
+    }
+    node = node->next;
+  }
+  return 0;
+}
+
 ListIter* ListIter_new(List* list) {
   ListIter* self = calloc(1, sizeof(ListIter));
   self->list = list;
