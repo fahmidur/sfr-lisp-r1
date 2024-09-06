@@ -83,7 +83,9 @@ Object* Function_call(Function* self, Object* argv) {
   /* } */
 
   Object* tmpEnv = Object_new(SYMBOL_ENVIRONMENT, 1, Environment_new());
+  assert(tmpEnv->rc == 1);
   Environment_child_attach(self->env, tmpEnv);
+  ObjectUtil_eprintf("donuts. tmpEnv(%p)=%v\n", tmpEnv, tmpEnv);
 
   if(
       !Object_is_null(argv) && Object_type(argv) == SYMBOL_LIST &&
@@ -111,7 +113,15 @@ Object* Function_call(Function* self, Object* argv) {
   }
   // release the argv object, we do not need it anymore.
   Object_rc_decr(argv);
+  printf("tmpEnv bef detach. tmpEnv->rc = %d\n", tmpEnv->rc);
+  Environment_child_detach(self->env, tmpEnv);
+  printf("tmpEnv aft detach. tmpEnv->rc = %d\n", tmpEnv->rc);
   Object_assign(&tmpEnv, NULL);
+  // at this point we expect the tmpEnv to be destroyed.
+  assert(Object_is_null(tmpEnv));
+  printf("--------------\n");
+  printf("donuts. f=%s l=%d. rtcount=%zu\n", __FILE__, __LINE__, Object_system_rtcount());
+  printf("--------------\n");
   return Object_return(ret);
 }
 

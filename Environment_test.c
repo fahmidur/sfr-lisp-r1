@@ -56,6 +56,14 @@ int main(int argc, char** argv) {
   nassert(env2_obj->rc == 2);
   // refcount of each env increases by 1 because they point at each other.
 
+  Environment_child_detach(env1_obj, env2_obj);
+  nassert(env1_obj->rc == 1);
+  nassert(env2_obj->rc == 1);
+
+  Environment_child_attach(env1_obj, env2_obj);
+  nassert(env1_obj->rc == 2);
+  nassert(env2_obj->rc == 2);
+
   Environment_set(env2, banana, yellow);
   nassert(
     Object_cmp(

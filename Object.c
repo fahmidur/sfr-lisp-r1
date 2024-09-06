@@ -475,7 +475,7 @@ size_t Object_system_rtcount() {
   Object* iter = object_system->head;
   while(iter != NULL) {
     if(iter->returning) {
-      ObjectUtil_eprintf("nonzero rt. %v\n", iter);
+      ObjectUtil_eprintf("os_rtcount. nonzero obj(%p). %v\n", iter, iter);
       count++;
     }
     iter = iter->next;
