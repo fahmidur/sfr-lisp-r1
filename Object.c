@@ -1188,6 +1188,20 @@ Object* Object_bop_hrem(Object* self, Object* key) {
   return ret;
 }
 
+/**
+ * Remove an item from an Object<List>.
+ **/
+Object* Object_bop_rem(Object* self, Object* item) {
+  assert(self != NULL);
+  if(Object_type(self) == SYMBOL_LIST) {
+    List_rem(self->impl, item);
+    return Object_new_null();
+  }
+  else {
+    return QERROR("invalid type for object_bop_rem");
+  }
+}
+
 Object* Object_bop_add(Object* a, Object* b) {
   assert(a != NULL); assert(b != NULL);
   Object_rc_incr(a); Object_rc_incr(b);
