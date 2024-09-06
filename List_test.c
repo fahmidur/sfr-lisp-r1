@@ -86,9 +86,35 @@ int main(int argc, char** argv) {
   printf("list2 ="); List_print(list2); printf("\n");
   nassert(List_len(list2) == 0);
 
+  // List_rem test
+  List* list3 = List_new();
+  Object* eve = QSTRING_NEW1("eve");
+  List_push(list3, QSTRING("alice"));
+  List_push(list3, QSTRING("bob"));
+  List_push(list3, eve);
+  List_push(list3, QSTRING("zed"));
+
+  nassert(List_size(list3) == 4);
+  List_rem(list3, eve);
+  nassert(List_size(list3) == 3);
+
+  // ensure that 'eve' is no longer in the list
+  char eve_found = 0;
+  ListIter* list3_iter = ListIter_new(list3);
+  ListIter_head(list3_iter);
+  while(!ListIter_at_end(list3_iter)) {
+    if(Object_cmp(ListIter_get_val(list3_iter), eve) == 0) {
+      eve_found = 1;
+    }
+    ListIter_next(list3_iter);
+  }
+  nassert(eve_found == 0);
+
   //--- manual cleanup ---
   List_del(list1);
   List_del(list2);
+  List_del(list3);
+  ListIter_del(list3_iter);
 
   Object_system_print();
   Object_system_done();

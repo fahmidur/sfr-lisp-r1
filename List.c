@@ -265,14 +265,19 @@ int List_cmp(List* self, List* other) {
 
 // Remove all items based on value
 ssize_t List_rem(List* self, Object* item) {
+  assert(self != NULL);
+  assert(item != NULL);
+  Object_accept(item);
   if(self->size == 0) {
-    return 0;
+    goto _return;
   }
   ListNode* prev = NULL;
   ListNode* next = NULL;
   ListNode* node = self->head;
   while(node != NULL) {
     if(Object_cmp(node->data, item) == 0) {
+      next = node->next;
+      prev = node->prev;
       // we have a match
       if(node == self->head) {
         // special head position
@@ -284,9 +289,15 @@ ssize_t List_rem(List* self, Object* item) {
         self->tail = node->prev;
       }
       ListNode_del(node);
+      self->size--;
+      node = next;
+    } 
+    else {
+      node = node->next;
     }
-    node = node->next;
   }
+_return:
+  Object_rc_decr(item);
   return 0;
 }
 
