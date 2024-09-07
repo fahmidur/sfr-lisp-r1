@@ -94,10 +94,10 @@ int main(int argc, char** argv) {
   Function* fn2 = Function_new(QSYMBOL("add"), NULL, fn_add, 2, Object_new_list(1, 2, QSYMBOL("a"), QSYMBOL("b")), NULL);
   printf("fn2 constructed\n");
 
-  printf("donuts. F=%s L=%d. rtcount = %zu\n", __FILE__, __LINE__, Object_system_rtcount());
+  /* printf("F=%s L=%d. rtcount = %zu\n", __FILE__, __LINE__, Object_system_rtcount()); */
   Object* res1 = Object_accept(Function_call(fn2, Object_new_list(1, 3, QSYMBOL("add"), QNUMBER(2.1), QNUMBER(3.1))));
   ObjectUtil_eprintf("res1 = %v\n", res1);
-  printf("donuts. F=%s L=%d. rtcount = %zu\n", __FILE__, __LINE__, Object_system_rtcount());
+  /* printf("F=%s L=%d. rtcount = %zu\n", __FILE__, __LINE__, Object_system_rtcount()); */
 
   printf("function fn2 = ");
   Function_print(fn2);
