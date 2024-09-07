@@ -41,7 +41,7 @@ void Environment_child_attach(Object* self_obj, Object* child_obj) {
     }
   }
 
-  Object_bop_push(self->children, child_obj);
+  Object_reject(Object_bop_push(self->children, child_obj));
   child->parent = Object_accept(self_obj);
 
 _return:
@@ -69,13 +69,7 @@ void Environment_child_detach(Object* self_obj, Object* child_obj) {
 
   Object* self_children = Object_rc_incr(self->children);
 
-  ListIter* iter = ListIter_new((List*) self_children->impl);
-  ListIter_head(iter);
-  while(!ListIter_at_end(iter)) {
-    // TODO: delete matching child from this list
-    ListIter_next(iter);
-  }
-  ListIter_del(iter);
+  Object_bop_rem(self_children, child_obj);
 
 _return:
   Object_rc_decr(self_children);
