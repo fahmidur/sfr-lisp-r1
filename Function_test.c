@@ -51,11 +51,15 @@ Object* fn_println(Function* fn, Object* env, Object* argv) {
 Object* fn_add(Function* fn, Object* env, Object* argv) {
   // This Function was defined with named-params, and so we should be able to
   // 'a' and 'b' from the environment.
-  Object* a = Object_bop_hget(env, QSYMBOL("a"));
-  Object* b = Object_bop_hget(env, QSYMBOL("b"));
+  printf("donuts. F=%s L=%d. rtcount = %zu\n", __FILE__, __LINE__, Object_system_rtcount());
+  Object* a = Object_accept(Object_bop_hget(env, QSYMBOL("a")));
+  Object* b = Object_accept(Object_bop_hget(env, QSYMBOL("b")));
   ObjectUtil_eprintf("fn_add. got a = %v\n", a);
   ObjectUtil_eprintf("fn_add. got b = %v\n", b);
-  return Object_bop_add(a, b);
+  Object* ret = Object_accept(Object_bop_add(a, b));
+  Object_rc_decr(a);
+  Object_rc_decr(b);
+  return ret;
 }
 
 Function* fn_make_adder(Function* fn, Object* argv) {
@@ -79,27 +83,25 @@ int main(int argc, char** argv) {
   Function_print(fn1);
   printf("\n");
 
-  /* printf("donuts. L=%d. rtcount = %zu\n", __LINE__, Object_system_rtcount()); */
-
   printf("calling fn1...\n");
   Function_call(fn1, NULL);
 
-  /* printf("donuts. L=%d. rtcount = %zu\n", __LINE__, Object_system_rtcount()); */
-
   Function_call(fn1, Object_new_list(1, 2, QSYMBOL("println"), QSTRING("Hello there")));
-  /* Function_call(fn1, Object_new_list(1, 3, QSYMBOL("println"), QNUMBER(3.14), QSTRING("is my favorite number"))); */
-  /* Function_call(fn1, Object_new_list(1, 3, QSYMBOL("println"), QSTRING("My favorite number is"), QNUMBER(3.14))); */
+  Function_call(fn1, Object_new_list(1, 3, QSYMBOL("println"), QNUMBER(3.14), QSTRING("is my favorite number")));
+  Function_call(fn1, Object_new_list(1, 3, QSYMBOL("println"), QSTRING("My favorite number is"), QNUMBER(3.14)));
 
-  /* printf("Constructing fn2 ...\n"); */
-  /* Function* fn2 = Function_new(QSYMBOL("add"), NULL, fn_add, 2, Object_new_list(1, 2, QSYMBOL("a"), QSYMBOL("b")), NULL); */
-  /* printf("fn2 constructed\n"); */
+  printf("Constructing fn2 ...\n");
+  Function* fn2 = Function_new(QSYMBOL("add"), NULL, fn_add, 2, Object_new_list(1, 2, QSYMBOL("a"), QSYMBOL("b")), NULL);
+  printf("fn2 constructed\n");
 
-  /* Object* res1 = Object_accept(Function_call(fn2, Object_new_list(1, 3, QSYMBOL("add"), QNUMBER(2.1), QNUMBER(3.1)))); */
-  /* ObjectUtil_eprintf("res1 = %v\n", res1); */
+  printf("donuts. F=%s L=%d. rtcount = %zu\n", __FILE__, __LINE__, Object_system_rtcount());
+  Object* res1 = Object_accept(Function_call(fn2, Object_new_list(1, 3, QSYMBOL("add"), QNUMBER(2.1), QNUMBER(3.1))));
+  ObjectUtil_eprintf("res1 = %v\n", res1);
+  printf("donuts. F=%s L=%d. rtcount = %zu\n", __FILE__, __LINE__, Object_system_rtcount());
 
-  /* printf("function fn2 = "); */
-  /* Function_print(fn2); */
-  /* printf("\n"); */
+  printf("function fn2 = ");
+  Function_print(fn2);
+  printf("\n");
 
   /* Object* num1 = QNUMBER(2); */
   /* Object* num2 = QNUMBER(3); */
@@ -110,7 +112,7 @@ int main(int argc, char** argv) {
 
   // manually delete each function
   Function_del(fn1);
-  /* Function_del(fn2); */
+  Function_del(fn2);
 
   FunctionSystem_done();
   Object_system_done();
