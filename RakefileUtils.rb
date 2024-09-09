@@ -46,10 +46,19 @@ end
 def which(x)
   out = `which #{x}`.strip
   return out if out && out.size > 0
-  return nil
 end
 
-$debug = env_truthy?(:debug) ? true : false
+def has_flag?(name)
+  name = name.to_s
+  return !!(
+    env_truthy?(name) ||
+    ARGV.map{|e| e.gsub(/^\-+/, '').downcase }.member?(name)
+  )
+end
+
+$debug = has_flag?(:debug)
+puts "debug=#{$debug}"
+
 $compilers = [ENV['CC'], "clang", "gcc"].compact
 $cc = $compilers.find {|e| which(e) }
 unless $cc
@@ -57,10 +66,13 @@ unless $cc
   exit 1
 end
 
-$cflags = ["-g", "-I.", "-fsanitize=address"]
-# $cflags = ["-g", "-I."]
+$cflags = ["-g", "-I."]
+# $cflags = ["-g", "-I.", "-fsanitize=address"]
 if $debug
   $cflags << "-D DEBUG"
+end
+if has_flag?('asan')
+  $cflags << "-fsanitize=address"
 end
 $cflags = $cflags.join(' ')
 
