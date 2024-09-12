@@ -28,6 +28,9 @@ int main(int argc, char** argv) {
   Object* sym1 = QSYMBOL_NEW1("hammer_and_sickle");
   nassert(Object_type(sym1) == SYMBOL_SYMBOL);
 
+  Object* sym2 = QSYMBOL_NEW1("+");
+  nassert(Object_type(sym2) == SYMBOL_SYMBOL);
+
   Util_heading1(0, "SYMBOL OPERATIONS");
 
   //===========================================================================

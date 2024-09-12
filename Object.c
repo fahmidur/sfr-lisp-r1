@@ -199,6 +199,18 @@ Object* Object_new(Symbol* type, int rc, void* impl) {
   assert(rc == 0 || rc == 1);
   assert(impl != NULL);
 
+  if(type == SYMBOL_SYMBOL) {
+    // Symbol objects are immutable and so we can use the same Object 
+    // for the same Symbol impl.
+    Object* iter = object_system->head;
+    while(iter != NULL) {
+      if(Object_type(iter) == SYMBOL_SYMBOL && iter->impl == impl) {
+        return iter;
+      }
+      iter = iter->next;
+    }
+  }
+
   Object* self = calloc(1, sizeof(Object));
 
   self->type = type;
