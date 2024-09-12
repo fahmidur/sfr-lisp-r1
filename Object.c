@@ -9,6 +9,7 @@
 #include "List.h"
 #include "Hash.h"
 #include "Environment.h"
+#include "Function.h"
 #include "Error.h"
 #include "Object.h"
 
@@ -167,9 +168,19 @@ void Object_system_init() {
     .fn_del   = (void (*)(void*))Environment_del,
     .fn_print = (void (*)(void*))Environment_print,
     .fn_clone = NULL,
+    .fn_zero  = NULL,
     .fn_len   = (ssize_t (*)(void*))Environment_len,
   };
   Object_oti_set(SYMBOL_ENVIRONMENT, otiarg_environment);
+
+  ObjectTypeInfo otiarg_function = {
+    .fn_del = (void (*)(void*))Function_del,
+    .fn_print = (void (*)(void*))Function_print,
+    .fn_clone = NULL,
+    .fn_zero  = NULL,
+    .fn_len   = (ssize_t (*)(void*))Function_len,
+  };
+  Object_oti_set(SYMBOL_FUNCTION, otiarg_function);
 
   object_system->null_object = Object_new(SYMBOL_SYMBOL, 1, Symbol_new("NULL"));
 
@@ -1198,6 +1209,26 @@ Object* Object_bop_hrem(Object* self, Object* key) {
     ret = Object_new_null();
   }
   return ret;
+}
+
+/**
+ * @param self An Object* of type Function
+ * @param argv An Object* of type List
+ **/
+Object* Object_bop_call(Object* self, Object* argv) {
+  assert(self != NULL);
+  assert(argv != NULL);
+
+  if(Object_type(self) != SYMBOL_FUNCTION) {
+    return QERROR_NEW0("Expecting self to be of type Object<Function>");
+  }
+
+  if(Object_type(argv) != SYMBOL_LIST) {
+    return QERROR_NEW0("Expecting argv to be of type Object<List>");
+  }
+
+  Function* fn = self->impl;
+  return Function_call(fn, argv);
 }
 
 /**

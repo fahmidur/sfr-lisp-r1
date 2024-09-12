@@ -6,6 +6,63 @@
 #include "Number.h"
 #include "Object.h"
 
+Object* fn_println(Function* fn, Object* env, Object* argv) {
+  assert(fn != NULL);
+  assert(argv != NULL);
+  if(Object_is_null(argv)) {
+    printf("\n");
+    return NULL;
+  }
+  assert(Object_type(argv) == SYMBOL_LIST);
+  /* printf("fn_println. Called\n"); */
+  /* ObjectUtil_eprintf("fn_println. argv=%v\n", argv); */
+  /* ObjectUtil_eprintf("fn_println. len(argv)=%d\n", Object_len(argv)); */
+  int argv_len = Object_len(argv);
+  Object* tmp;
+  Symbol* tmp_type;
+  int i = 0;
+  ListIter* argv_iter = ListIter_new(argv->impl);
+  ListIter_next(argv_iter);
+  ListIter_next(argv_iter);
+  while(!ListIter_at_end(argv_iter)) {
+    tmp = ListIter_get_val(argv_iter);
+    /* ObjectUtil_eprintf("debug. tmp=%v\n", tmp); */
+    tmp_type = Object_type(tmp);
+    if(i > 0) {
+      printf(" ");
+    }
+    if(tmp_type == SYMBOL_STRING) {
+      printf("%s", (char*)(((String*)tmp->impl)->buf));
+    } 
+    else
+    if(tmp_type == SYMBOL_NUMBER) {
+      printf("%f", (((Number*)tmp->impl)->rep));
+    }
+    else {
+      Object_print(tmp);
+    }
+    ListIter_next(argv_iter);
+    i++;
+  }
+  ListIter_del(argv_iter);
+  printf("\n");
+  return NULL;
+}
+
+Object* fn_add(Function* fn, Object* env, Object* argv) {
+  // This Function was defined with named-params, and so we should be able to
+  // 'a' and 'b' from the environment.
+  /* printf("F=%s L=%d. rtcount = %zu\n", __FILE__, __LINE__, Object_system_rtcount()); */
+  Object* a = Object_accept(Object_bop_hget(env, QSYMBOL("a")));
+  Object* b = Object_accept(Object_bop_hget(env, QSYMBOL("b")));
+  ObjectUtil_eprintf("fn_add. got a = %v\n", a);
+  ObjectUtil_eprintf("fn_add. got b = %v\n", b);
+  Object* ret = Object_accept(Object_bop_add(a, b));
+  Object_rc_decr(a);
+  Object_rc_decr(b);
+  return ret;
+}
+
 int main(int argc, char** argv) {
 
   Util_heading1(1, "RUNTIME INIT");
@@ -404,6 +461,39 @@ int main(int argc, char** argv) {
       ) == 0
   )
   Util_heading1(0, "Environment Operations");
+
+  //===========================================================================
+  
+  Util_heading1(1, "Function Operations");
+
+  Object* fn1 = Object_new(SYMBOL_FUNCTION, 1, Function_new(
+    QSYMBOL("println"),  // name
+    NULL,                // env
+    fn_println,          // impl
+    -1, 
+    NULL, 
+    NULL
+  ));
+  nassert(fn1 != NULL);
+  nassert(Object_type(fn1) == SYMBOL_FUNCTION);
+
+  Object_reject(
+    Object_bop_call(fn1, Object_new_list(0, 3, QSYMBOL("print"), QSTRING("The value of pi is "), QNUMBER(3.14)))
+  );
+
+  Object* fn2 = Object_new(
+    SYMBOL_FUNCTION, 
+    1, 
+    Function_new(QSYMBOL("add"), NULL, fn_add, 2, Object_new_list(1, 2, QSYMBOL("a"), QSYMBOL("b")), NULL)
+  );
+  nassert(fn2 != NULL);
+  nassert(Object_type(fn2) == SYMBOL_FUNCTION);
+
+  Object* fnres1 = Object_accept(Object_bop_call(fn2, Object_new_list(1, 3, QSYMBOL("add"), QNUMBER(1.2), QNUMBER(1.3))));
+  ObjectUtil_eprintf("fnres1 = %v\n", fnres1);
+  nassert(Object_cmp(fnres1, QNUMBER(2.5)) == 0);
+
+  Util_heading1(0, "Function Operations");
 
   //===========================================================================
   

@@ -137,9 +137,11 @@ Object* Function_env_get(Function* self, Object* key) {
 }
 
 void Function_del(Function* self) {
-  Object_assign(&(self->env), NULL);
-  Object_assign(&(self->params), NULL);
-  Object_assign(&(self->body), NULL);
+  if(Object_system_delete_recurse()) {
+    Object_assign(&(self->env), NULL);
+    Object_assign(&(self->params), NULL);
+    Object_assign(&(self->body), NULL);
+  }
   free(self);
 }
 
@@ -153,4 +155,8 @@ Object* Function_obj_init(Object* self) {
     Object_top_hset(fn->env, fn->name, self);
   }
   return NULL;
+}
+
+ssize_t Function_len(Function* self) {
+  return 1;
 }

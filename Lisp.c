@@ -27,6 +27,9 @@ void Lisp_init() {
   LISP_PAREN_BEG = QSYMBOL_NEW1("(");
   LISP_PAREN_END = QSYMBOL_NEW1(")");
   LispEnv_root = Object_new(SYMBOL_ENVIRONMENT, 1, Environment_new());
+
+  // Some default Math operators
+
 }
 
 void Lisp_done() {

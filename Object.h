@@ -165,6 +165,7 @@ Object* Object_bop_child_detach(Object* self, Object* child);
 char    Object_bop_charat(Object* self, size_t idx);
 
 // Mainly function ops
+Object* Object_bop_call(Object* self, Object* argv);
 
 void ObjectUtil_eprintf(char* fmt, ...);
 
@@ -177,10 +178,11 @@ void    Object_system_gc();
 char    Object_system_delete_recurse();
 char    Object_system_delete_soft();
 
-// Composits
+// Containers
 #include "List.h"
 #include "Hash.h"
 #include "Environment.h"
+#include "Function.h"
 
 //#define OBJ_RETURN(expr) do { \
   //return Object_return(expr); \

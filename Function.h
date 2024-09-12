@@ -62,6 +62,7 @@ Object*   Function_call(Function* self, Object* argv);
 void      Function_del(Function* self);
 // initialize the function in the context of the Object System
 Object*   Function_obj_init(Object* self);
+ssize_t   Function_len(Function* self);
 
 // I don't think this will be needed.
 /* Function* Function_clone(Function* self); */

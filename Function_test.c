@@ -51,7 +51,7 @@ Object* fn_println(Function* fn, Object* env, Object* argv) {
 Object* fn_add(Function* fn, Object* env, Object* argv) {
   // This Function was defined with named-params, and so we should be able to
   // 'a' and 'b' from the environment.
-  printf("donuts. F=%s L=%d. rtcount = %zu\n", __FILE__, __LINE__, Object_system_rtcount());
+  /* printf("F=%s L=%d. rtcount = %zu\n", __FILE__, __LINE__, Object_system_rtcount()); */
   Object* a = Object_accept(Object_bop_hget(env, QSYMBOL("a")));
   Object* b = Object_accept(Object_bop_hget(env, QSYMBOL("b")));
   ObjectUtil_eprintf("fn_add. got a = %v\n", a);
