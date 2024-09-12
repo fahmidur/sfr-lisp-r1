@@ -6,6 +6,10 @@
 
 Object* LISP_PAREN_BEG;
 Object* LISP_PAREN_END;
+
+// The root Environment for the Lisp interpreter.
+// It is this Environment that contains the core functions
+// that user-defined Lisp functions will use.
 LispEnv* LispEnv_root;
 
 typedef enum TokenizerState TokenizerState;
