@@ -10,7 +10,7 @@ Object* LISP_PAREN_END;
 // The root Environment for the Lisp interpreter.
 // It is this Environment that contains the core functions
 // that user-defined Lisp functions will use.
-LispEnv* LispEnv_root;
+Object* LispEnv_root;
 
 typedef enum TokenizerState TokenizerState;
 enum TokenizerState {
@@ -26,16 +26,13 @@ enum TokenizerState {
 void Lisp_init() {
   LISP_PAREN_BEG = QSYMBOL_NEW1("(");
   LISP_PAREN_END = QSYMBOL_NEW1(")");
-  /* LispEnv_root = NULL; */
-  LispEnv_root = LispEnv_new(NULL);
+  LispEnv_root = Object_new(SYMBOL_ENVIRONMENT, 1, Environment_new());
 }
 
 void Lisp_done() {
   Object_assign(&LISP_PAREN_BEG, NULL);
   Object_assign(&LISP_PAREN_END, NULL);
-  if(LispEnv_root != NULL) {
-    LispEnv_del(LispEnv_root);
-  }
+  Object_assign(&LispEnv_root, NULL);
 }
 
 char TokenizerUtil_isdigit(char ch) {
@@ -324,75 +321,75 @@ Object* Lisp_parse_string(Object* str) {
   return parsed;
 }
 
-LispEnv* LispEnv_new(LispEnv* parent) {
-  LispEnv* self = calloc(1, sizeof(LispEnv));
-  if(self == NULL) {
-    // ERROR: unable to reserve memory
-    return self;
-  }
-  self->children_head = NULL;
-  self->children_tail = NULL;
-  self->sibling_next = NULL;
-  self->sibling_prev = NULL;
-  self->objects = QHASH_NEW1();
+/* LispEnv* LispEnv_new(LispEnv* parent) { */
+/*   LispEnv* self = calloc(1, sizeof(LispEnv)); */
+/*   if(self == NULL) { */
+/*     // ERROR: unable to reserve memory */
+/*     return self; */
+/*   } */
+/*   self->children_head = NULL; */
+/*   self->children_tail = NULL; */
+/*   self->sibling_next = NULL; */
+/*   self->sibling_prev = NULL; */
+/*   self->objects = QHASH_NEW1(); */
 
-  if(parent != NULL) {
-    LispEnv_child_add(parent, self);
-  }
-  return self;
-}
+/*   if(parent != NULL) { */
+/*     LispEnv_child_add(parent, self); */
+/*   } */
+/*   return self; */
+/* } */
 
-void LispEnv_del(LispEnv* self) {
-  assert(self != NULL);
-  LispEnv* curr_child = self->children_head;
-  LispEnv* next_child = NULL;
-  while(curr_child != NULL) {
-    // save the next child
-    next_child = curr_child->sibling_next;
-    LispEnv_del(curr_child);
-    curr_child = next_child;
-  }
-  // unlink everything
-  self->parent = NULL;
-  self->children_head = NULL;
-  self->children_tail = NULL;
-  self->sibling_next = NULL;
-  self->sibling_prev = NULL;
-  Object_assign(&(self->objects), NULL);
-  free(self);
-}
+/* void LispEnv_del(LispEnv* self) { */
+/*   assert(self != NULL); */
+/*   LispEnv* curr_child = self->children_head; */
+/*   LispEnv* next_child = NULL; */
+/*   while(curr_child != NULL) { */
+/*     // save the next child */
+/*     next_child = curr_child->sibling_next; */
+/*     LispEnv_del(curr_child); */
+/*     curr_child = next_child; */
+/*   } */
+/*   // unlink everything */
+/*   self->parent = NULL; */
+/*   self->children_head = NULL; */
+/*   self->children_tail = NULL; */
+/*   self->sibling_next = NULL; */
+/*   self->sibling_prev = NULL; */
+/*   Object_assign(&(self->objects), NULL); */
+/*   free(self); */
+/* } */
 
-void LispEnv_child_add(LispEnv* self, LispEnv* child) {
-  assert(self != NULL);
-  assert(child != NULL);
-  assert(child->sibling_next == NULL);
-  assert(child->sibling_prev == NULL);
-  child->parent = self;
-  if(self->children_head == NULL && self->children_tail == NULL) {
-    // first child being added
-    self->children_head = self->children_tail = child;
-    child->sibling_prev = NULL;
-    child->sibling_next = NULL;
-  }
-  else {
-    LispEnv* iter = self->children_head;
-    while(iter != NULL) {
-      if(iter == child) {
-        // the child is already in this list
-        return;
-      }
-      iter = iter->sibling_next;
-    }
-    LispEnv* last_child = self->children_tail;
-    last_child->sibling_next = child;
-    child->sibling_prev = last_child;
-    self->children_tail = child;
-  }
-}
+/* void LispEnv_child_add(LispEnv* self, LispEnv* child) { */
+/*   assert(self != NULL); */
+/*   assert(child != NULL); */
+/*   assert(child->sibling_next == NULL); */
+/*   assert(child->sibling_prev == NULL); */
+/*   child->parent = self; */
+/*   if(self->children_head == NULL && self->children_tail == NULL) { */
+/*     // first child being added */
+/*     self->children_head = self->children_tail = child; */
+/*     child->sibling_prev = NULL; */
+/*     child->sibling_next = NULL; */
+/*   } */
+/*   else { */
+/*     LispEnv* iter = self->children_head; */
+/*     while(iter != NULL) { */
+/*       if(iter == child) { */
+/*         // the child is already in this list */
+/*         return; */
+/*       } */
+/*       iter = iter->sibling_next; */
+/*     } */
+/*     LispEnv* last_child = self->children_tail; */
+/*     last_child->sibling_next = child; */
+/*     child->sibling_prev = last_child; */
+/*     self->children_tail = child; */
+/*   } */
+/* } */
 
-void LispEnv_child_rem(LispEnv* self, LispEnv* child) {
-  assert(self != NULL);
-  assert(child != NULL);
-  // TODO
-}
+/* void LispEnv_child_rem(LispEnv* self, LispEnv* child) { */
+/*   assert(self != NULL); */
+/*   assert(child != NULL); */
+/*   // TODO */
+/* } */
 

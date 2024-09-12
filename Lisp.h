@@ -51,7 +51,7 @@ struct LispEnv {
   Object*  objects;
 };
 
-extern LispEnv* LispEnv_root;
+extern Object* LispEnv_root;
 
 LispEnv* LispEnv_new(LispEnv* parent);
 void     LispEnv_child_add(LispEnv* self, LispEnv* child);
