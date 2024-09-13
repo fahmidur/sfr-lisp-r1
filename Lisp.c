@@ -38,19 +38,63 @@ Object* fn_add(Function* fn, Object* env, Object* argv) {
   return ret;
 }
 
+Object* fn_println(Function* fn, Object* env, Object* argv) {
+  assert(fn != NULL);
+  assert(argv != NULL);
+  if(Object_is_null(argv)) {
+    printf("\n");
+    return NULL;
+  }
+  assert(Object_type(argv) == SYMBOL_LIST);
+  /* printf("fn_println. Called\n"); */
+  /* ObjectUtil_eprintf("fn_println. argv=%v\n", argv); */
+  /* ObjectUtil_eprintf("fn_println. len(argv)=%d\n", Object_len(argv)); */
+  int argv_len = Object_len(argv);
+  Object* tmp;
+  Symbol* tmp_type;
+  int i = 0;
+  ListIter* argv_iter = ListIter_new(argv->impl);
+  ListIter_next(argv_iter);
+  ListIter_next(argv_iter);
+  while(!ListIter_at_end(argv_iter)) {
+    tmp = ListIter_get_val(argv_iter);
+    /* ObjectUtil_eprintf("debug. tmp=%v\n", tmp); */
+    tmp_type = Object_type(tmp);
+    if(i > 0) {
+      printf(" ");
+    }
+    if(tmp_type == SYMBOL_STRING) {
+      printf("%s", (char*)(((String*)tmp->impl)->buf));
+    } 
+    else
+    if(tmp_type == SYMBOL_NUMBER) {
+      printf("%f", (((Number*)tmp->impl)->rep));
+    }
+    else {
+      Object_print(tmp);
+    }
+    ListIter_next(argv_iter);
+    i++;
+  }
+  ListIter_del(argv_iter);
+  printf("\n");
+  return NULL;
+}
 
 void Lisp_init() {
   LISP_PAREN_BEG = QSYMBOL_NEW1("(");
   LISP_PAREN_END = QSYMBOL_NEW1(")");
   LispEnv_root = Object_new(SYMBOL_ENVIRONMENT, 1, Environment_new());
 
+  Object* fnobj_println = Object_new(SYMBOL_FUNCTION, 1, 
+    Function_new(QSYMBOL("println"), NULL, fn_println, -1, NULL, NULL)
+  );
   // Some default Math operators
   Object* fnobj_add = Object_new(SYMBOL_FUNCTION, 1, 
     Function_new(QSYMBOL("+"), NULL, fn_add, 2, Object_new_list(1, 2, QSYMBOL("a"), QSYMBOL("b")), NULL)
   );
   
   Object_top_hset(LispEnv_root, QSYMBOL("+"), fnobj_add);
-
 }
 
 void Lisp_done() {
@@ -346,7 +390,20 @@ Object* Lisp_parse_string(Object* str) {
 }
 
 Object* Lisp_eval_sexp2(Object* sexp, Object* env) {
-  if(Object_type(sexp) == SYMBOL_LIST) {
+  Symbol* sexp_type = Object_type(sexp);
+  if(
+      sexp_type == SYMBOL_NUMBER ||
+      sexp_type == SYMBOL_STRING
+  ) {
+    return sexp;
+  }
+  else
+  if(sexp_type == SYMBOL_SYMBOL) {
+    return Object_bop_hget(env, sexp);
+  }
+  else
+  if(sexp_type == SYMBOL_LIST) {
+    /* op = Object_bop_first(sexp); */
   }
   // TODO: finish this
   return NULL;
