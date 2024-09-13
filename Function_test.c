@@ -62,7 +62,32 @@ Object* fn_add(Function* fn, Object* env, Object* argv) {
   return ret;
 }
 
-Function* fn_make_adder(Function* fn, Object* argv) {
+Object* fn_tipper(Function* fn, Object* env, Object* argv) {
+  return NULL;
+}
+
+/**
+ * Returns a new function that calculates percentage
+ * tip.
+ **/
+Function* fn_make_tipper(Function* fn, Object* env, Object* argv) {
+  Object* prcnt = Object_bop_hget(env, QSYMBOL("prcnt"));
+  ObjectUtil_eprintf("prcnt = %v\n", prcnt);
+  Object* env2 = Object_new(SYMBOL_ENVIRONMENT, 1, Environment_new());
+  Object_reject(Object_top_hset(env2, QSYMBOL("prcnt"), prcnt));
+  Object_bop_child_attach(env, env2);
+  Object_new(
+    SYMBOL_FUNCTION, 
+    0, 
+    Function_new(
+      QSYMBOL("tipper"),
+      env2, 
+      fn_tipper,
+      1,
+      Object_new_list(1, 1, QSYMBOL("price")),
+      NULL
+    )
+  );
   return NULL;
 }
 
