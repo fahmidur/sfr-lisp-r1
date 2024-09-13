@@ -23,12 +23,33 @@ enum TokenizerState {
   ts_InBareWord,
 };
 
+
+Object* fn_add(Function* fn, Object* env, Object* argv) {
+  // This Function was defined with named-params, and so we should be able to
+  // 'a' and 'b' from the environment.
+  /* printf("F=%s L=%d. rtcount = %zu\n", __FILE__, __LINE__, Object_system_rtcount()); */
+  Object* a = Object_accept(Object_bop_hget(env, QSYMBOL("a")));
+  Object* b = Object_accept(Object_bop_hget(env, QSYMBOL("b")));
+  ObjectUtil_eprintf("fn_add. got a = %v\n", a);
+  ObjectUtil_eprintf("fn_add. got b = %v\n", b);
+  Object* ret = Object_accept(Object_bop_add(a, b));
+  Object_rc_decr(a);
+  Object_rc_decr(b);
+  return ret;
+}
+
+
 void Lisp_init() {
   LISP_PAREN_BEG = QSYMBOL_NEW1("(");
   LISP_PAREN_END = QSYMBOL_NEW1(")");
   LispEnv_root = Object_new(SYMBOL_ENVIRONMENT, 1, Environment_new());
 
   // Some default Math operators
+  Object* fnobj_add = Object_new(SYMBOL_FUNCTION, 1, 
+    Function_new(QSYMBOL("+"), NULL, fn_add, 2, Object_new_list(1, 2, QSYMBOL("a"), QSYMBOL("b")), NULL)
+  );
+  
+  Object_top_hset(LispEnv_root, QSYMBOL("+"), fnobj_add);
 
 }
 
@@ -322,6 +343,17 @@ Object* Lisp_parse_string(Object* str) {
   Object* parsed = Object_return(Lisp_parse_tokens(tokens));
   Object_rc_decr(tokens); tokens = NULL;
   return parsed;
+}
+
+Object* Lisp_eval_sexp2(Object* sexp, Object* env) {
+  if(Object_type(sexp) == SYMBOL_LIST) {
+  }
+  // TODO: finish this
+  return NULL;
+}
+
+Object* Lisp_eval_sexp(Object* sexp) {
+  return Lisp_eval_sexp2(sexp, LispEnv_root);
 }
 
 /* LispEnv* LispEnv_new(LispEnv* parent) { */

@@ -41,27 +41,28 @@ Object* Lisp_parse_tokens(Object* tokenlist);
 // @return S-Expression
 Object* Lisp_parse_string(Object* string);
 
-typedef struct LispEnv LispEnv;
-struct LispEnv {
-  LispEnv* parent;
-  LispEnv* children_head;
-  LispEnv* children_tail;
-  LispEnv* sibling_prev;
-  LispEnv* sibling_next;
-  Object*  objects;
-};
+/* typedef struct LispEnv LispEnv; */
+/* struct LispEnv { */
+/*   LispEnv* parent; */
+/*   LispEnv* children_head; */
+/*   LispEnv* children_tail; */
+/*   LispEnv* sibling_prev; */
+/*   LispEnv* sibling_next; */
+/*   Object*  objects; */
+/* }; */
 
-extern Object* LispEnv_root;
+/* extern Object* LispEnv_root; */
 
-LispEnv* LispEnv_new(LispEnv* parent);
-void     LispEnv_child_add(LispEnv* self, LispEnv* child);
-void     LispEnv_child_rem(LispEnv* self, LispEnv* child);
-void     LispEnv_del(LispEnv* self);
+/* LispEnv* LispEnv_new(LispEnv* parent); */
+/* void     LispEnv_child_add(LispEnv* self, LispEnv* child); */
+/* void     LispEnv_child_rem(LispEnv* self, LispEnv* child); */
+/* void     LispEnv_del(LispEnv* self); */
 
 // Eval the code in the S-Expression
 // Code is represented as an S-Expression.
 // @return Object
-//Object* Lisp_eval_sexp(Object* sexp, LispEnv* env);
+Object* Lisp_eval_sexp2(Object* sexp, Object* env);
+Object* Lisp_eval_sexp(Object* sexp);
 
 // Eval the given string 
 // Lisp_eval_string(x) = Lisp_eval_code(Lisp_parse_string(x))
