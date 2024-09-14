@@ -257,6 +257,7 @@ List* List_clone(List* self) {
   while(iter != NULL) {
     /*List_push(clone, Object_accept(Object_clone(iter->data)));*/
     List_push(clone, Object_clone(iter->data));
+    iter = iter->next;
   }
   return clone;
 }

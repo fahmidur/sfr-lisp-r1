@@ -1357,6 +1357,15 @@ Object* Object_uop_tail(Object* self) {
   return Object_new_null();
 }
 
+Object* Object_uop_rest(Object* self) {
+  if(Object_type(self) == SYMBOL_LIST) {
+    Object* clone = Object_accept(Object_clone(self));
+    Object_reject(Object_uop_shift(clone));
+    return clone;
+  }
+  return Object_new_null();
+}
+
 Object* Object_bop_push(Object* a, Object* b) {
   assert(a != NULL); assert(b != NULL);
   Object_rc_incr(a); Object_rc_incr(b);

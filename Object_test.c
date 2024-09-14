@@ -239,6 +239,7 @@ int main(int argc, char** argv) {
   nassert(list1->rc == 1);
   printf("Calling list1.push(mem2) ...\n");
   Object_reject(Object_bop_push(list1, mem2));
+  nassert(Object_len(list1) == 2);
   nassert(mem2->rc == 2);
   nassert(list1->rc == 1);
   printf("list1 = "); Object_print(list1); printf("\n");
@@ -368,6 +369,19 @@ int main(int argc, char** argv) {
   // test that the total number of objects has gone down by 6 after GC
   // 3 for each of the lists, 3 for each Object<String> in each list.
   nassert(clist_begsize - clist_endsize == 6);
+
+
+  Object* list5 = Object_new_list(1, 3, QNUMBER(5.1), QNUMBER(5.2), QNUMBER(5.3));
+  ObjectUtil_eprintf("list5 = %v\n", list5);
+  nassert(Object_len(list5) == 3);
+  Object* list5_e1 = Object_accept(Object_uop_head(list5));
+  nassert(Object_cmp(list5_e1, QNUMBER(5.1)) == 0);
+  Object* list5_en = Object_accept(Object_uop_tail(list5));
+  nassert(Object_cmp(list5_en, QNUMBER(5.3)) == 0);
+  Object* list5_r1 = Object_accept(Object_uop_rest(list5));
+  ObjectUtil_eprintf("list5_r1 = %v\n", list5_r1);
+  Object* list5_r1_exp = Object_new_list(1, 2, QNUMBER(5.2), QNUMBER(5.3));
+  nassert(Object_cmp(list5_r1, list5_r1_exp) == 0);
 
   Util_heading1(0, "LIST OPERATIONS");
 
