@@ -403,7 +403,10 @@ Object* Lisp_eval_sexp2(Object* sexp, Object* env) {
   }
   else
   if(sexp_type == SYMBOL_LIST) {
-    /* op = Object_bop_first(sexp); */
+    Object* op = Object_accept(Object_uop_head(sexp));
+    Object* opval = Lisp_eval_sexp2(op, env);
+    if(Object_type(opval) == SYMBOL_FUNCTION) {
+    }
   }
   // TODO: finish this
   return NULL;
