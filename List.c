@@ -177,6 +177,22 @@ Object* List_shift(List* self) {
   return ret;
 }
 
+Object* List_head(List* self) {
+  if(self->size == 0) {
+    return Object_new_null();
+  }
+  ListNode* head = self->head;
+  return Object_return(head->data);
+}
+
+Object* List_tail(List* self) {
+  if(self->size == 0) {
+    return Object_new_null();
+  }
+  ListNode* tail = self->tail;
+  return Object_return(tail->data);
+}
+
 Object* List_at(List* self, size_t idx) {
   if(self->size == 0) {
     return NULL;

@@ -145,6 +145,9 @@ Object* Object_bop_addx(Object* a, Object* b);
 Object* Object_bop_addx_char(Object* a, char ch);
 
 // Mainly List Ops
+Object* Object_uop_head(Object* self);
+Object* Object_uop_tail(Object* self);
+Object* Object_uop_rest(Object* self);
 Object* Object_bop_push(Object* a, Object* b);
 Object* Object_uop_pop(Object* a);
 Object* Object_bop_unshift(Object* a, Object* b);

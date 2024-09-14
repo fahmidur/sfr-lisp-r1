@@ -1339,18 +1339,22 @@ Object* Object_bop_at(Object* self, size_t idx) {
  * Return the first element of the list
  * if it exists or object_null.
  */
-Object* Object_uop_first(Object* self) {
-  // TODO: finish this
-  return NULL;
+Object* Object_uop_head(Object* self) {
+  if(Object_type(self) == SYMBOL_LIST) {
+    return List_head(self->impl);
+  }
+  return Object_new_null();
 }
 
 /**
  * Return the last element of the list 
  * if it exists or object_null.
  */
-Object* Object_uop_last(Object* self) {
-  // TODO: finish this
-  return NULL;
+Object* Object_uop_tail(Object* self) {
+  if(Object_type(self) == SYMBOL_LIST) {
+    return List_tail(self->impl);
+  }
+  return Object_new_null();
 }
 
 Object* Object_bop_push(Object* a, Object* b) {
