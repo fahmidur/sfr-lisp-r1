@@ -390,26 +390,40 @@ Object* Lisp_parse_string(Object* str) {
 }
 
 Object* Lisp_eval_sexp2(Object* sexp, Object* env) {
+  Object* ret = NULL;
+  Object* op = NULL;
+  Object* opval = NULL;
   Symbol* sexp_type = Object_type(sexp);
   if(
       sexp_type == SYMBOL_NUMBER ||
       sexp_type == SYMBOL_STRING
   ) {
-    return sexp;
+    ret = Object_accept(sexp);
   }
   else
   if(sexp_type == SYMBOL_SYMBOL) {
-    return Object_bop_hget(env, sexp);
+    ret = Object_accept(Object_bop_hget(env, sexp));
   }
   else
   if(sexp_type == SYMBOL_LIST) {
-    Object* op = Object_accept(Object_uop_head(sexp));
-    Object* opval = Lisp_eval_sexp2(op, env);
+    // it is in this case that we can have various lisp forms
+    op = Object_accept(Object_uop_head(sexp));
+    opval = Lisp_eval_sexp2(op, env);
     if(Object_type(opval) == SYMBOL_FUNCTION) {
+      /* ret = Object_bop_call(opval, Object_uop_rest(sexp)); */
+      ret = Object_bop_call(opval, sexp);
     }
   }
-  // TODO: finish this
-  return NULL;
+_return:
+  if(op != NULL) {
+    Object_assign(&op,  NULL);
+  }
+  if(opval != NULL) {
+    Object_assign(&opval, NULL);
+  }
+  ret = Object_return(ret);
+  Object_rc_decr(ret);
+  return ret;
 }
 
 Object* Lisp_eval_sexp(Object* sexp) {

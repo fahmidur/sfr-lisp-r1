@@ -16,6 +16,8 @@ int main(int argc, char** argv) {
   Object* tc1_parsed = Object_accept(Lisp_parse_tokens(tc1_tokens_got));
   ObjectUtil_eprintf("tc1_parsed = %v\n", tc1_parsed);
   Object* tc1_value = Lisp_eval_sexp(tc1_parsed);
+  ObjectUtil_eprintf("tc1_value = %v\n", tc1_value);
+  nassert(Object_cmp(tc1_value, QNUMBER(5.859)) == 0);
 
   printf("\n=== === tc1_2 === ===\n");
   Object* tc1_2_string = QSTRING_NEW1("(+ 2.718 (* 2 3.141))");
