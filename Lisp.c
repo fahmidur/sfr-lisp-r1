@@ -64,11 +64,10 @@ Object* fn_println(Function* fn, Object* env, Object* argv) {
   Symbol* tmp_type;
   int i = 0;
   ListIter* argv_iter = ListIter_new(argv->impl);
-  ListIter_next(argv_iter);
-  ListIter_next(argv_iter);
+  ListIter_head(argv_iter);
   while(!ListIter_at_end(argv_iter)) {
     tmp = ListIter_get_val(argv_iter);
-    /* ObjectUtil_eprintf("debug. tmp=%v\n", tmp); */
+    /* ObjectUtil_eprintf("donuts. println. tmp=%v\n", tmp); */
     tmp_type = Object_type(tmp);
     if(i > 0) {
       printf(" ");
@@ -426,8 +425,8 @@ Object* Lisp_eval_sexp2(Object* sexp, Object* env) {
     op = Object_accept(Object_uop_head(sexp));
     opval = Lisp_eval_sexp2(op, env);
     if(Object_type(opval) == SYMBOL_FUNCTION) {
-      /* ret = Object_bop_call(opval, Object_uop_rest(sexp)); */
-      ret = Object_bop_call(opval, sexp);
+      ret = Object_bop_call(opval, Object_uop_rest(sexp));
+      /* ret = Object_bop_call(opval, sexp); */
     }
   }
 _return:
