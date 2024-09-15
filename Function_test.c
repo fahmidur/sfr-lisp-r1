@@ -21,11 +21,10 @@ Object* fn_println(Function* fn, Object* env, Object* argv) {
   Symbol* tmp_type;
   int i = 0;
   ListIter* argv_iter = ListIter_new(argv->impl);
-  ListIter_next(argv_iter);
-  ListIter_next(argv_iter);
+  ListIter_head(argv_iter);
   while(!ListIter_at_end(argv_iter)) {
     tmp = ListIter_get_val(argv_iter);
-    /* ObjectUtil_eprintf("debug. tmp=%v\n", tmp); */
+    /* ObjectUtil_eprintf("donuts. println. tmp=%v\n", tmp); */
     tmp_type = Object_type(tmp);
     if(i > 0) {
       printf(" ");
@@ -111,16 +110,16 @@ int main(int argc, char** argv) {
   printf("calling fn1...\n");
   Function_call(fn1, NULL);
 
-  Function_call(fn1, Object_new_list(1, 2, QSYMBOL("println"), QSTRING("Hello there")));
-  Function_call(fn1, Object_new_list(1, 3, QSYMBOL("println"), QNUMBER(3.14), QSTRING("is my favorite number")));
-  Function_call(fn1, Object_new_list(1, 3, QSYMBOL("println"), QSTRING("My favorite number is"), QNUMBER(3.14)));
+  Function_call(fn1, Object_new_list(1, 1, QSTRING("Hello there")));
+  Function_call(fn1, Object_new_list(1, 2, QNUMBER(3.14), QSTRING("is my favorite number")));
+  Function_call(fn1, Object_new_list(1, 2, QSTRING("My favorite number is"), QNUMBER(3.14)));
 
   printf("Constructing fn2 ...\n");
   Function* fn2 = Function_new(QSYMBOL("add"), NULL, fn_add, 2, Object_new_list(1, 2, QSYMBOL("a"), QSYMBOL("b")), NULL);
   printf("fn2 constructed\n");
 
   /* printf("F=%s L=%d. rtcount = %zu\n", __FILE__, __LINE__, Object_system_rtcount()); */
-  Object* res1 = Object_accept(Function_call(fn2, Object_new_list(1, 3, QSYMBOL("add"), QNUMBER(2.1), QNUMBER(3.1))));
+  Object* res1 = Object_accept(Function_call(fn2, Object_new_list(1, 2, QNUMBER(2.1), QNUMBER(3.1))));
   ObjectUtil_eprintf("res1 = %v\n", res1);
   /* printf("F=%s L=%d. rtcount = %zu\n", __FILE__, __LINE__, Object_system_rtcount()); */
 
