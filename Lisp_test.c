@@ -15,9 +15,11 @@ int main(int argc, char** argv) {
   nassert_obj_eq(tc1_tokens_got, tc1_tokens_exp);
   Object* tc1_parsed = Object_accept(Lisp_parse_tokens(tc1_tokens_got));
   ObjectUtil_eprintf("tc1_parsed = %v\n", tc1_parsed);
-  Object* tc1_value = Lisp_eval_sexp(tc1_parsed);
+  Object* tc1_value = Object_accept(Lisp_eval_sexp(tc1_parsed));
   ObjectUtil_eprintf("tc1_value = %v\n", tc1_value);
   nassert(Object_cmp(tc1_value, QNUMBER(5.859)) == 0);
+
+  ObjectUtil_eprintf("again.\ntc1_value = %v\n", tc1_value);
 
   printf("\n=== === tc1_mul === ===\n");
   Object* tc1_mul_string = QSTRING_NEW1("(* 2.718 3.141)");
@@ -26,7 +28,7 @@ int main(int argc, char** argv) {
   nassert_obj_eq(tc1_mul_tokens_got, tc1_mul_tokens_exp);
   Object* tc1_mul_parsed = Object_accept(Lisp_parse_tokens(tc1_mul_tokens_got));
   ObjectUtil_eprintf("tc1_mul_parsed = %v\n", tc1_mul_parsed);
-  Object* tc1_mul_value = Lisp_eval_sexp(tc1_mul_parsed);
+  Object* tc1_mul_value = Object_accept(Lisp_eval_sexp(tc1_mul_parsed));
   ObjectUtil_eprintf("tc1_mul_value = %v\n", tc1_mul_value);
   nassert(Object_cmp(tc1_mul_value, QNUMBER(8.537238)) == 0);
 
