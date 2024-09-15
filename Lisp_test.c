@@ -19,6 +19,17 @@ int main(int argc, char** argv) {
   ObjectUtil_eprintf("tc1_value = %v\n", tc1_value);
   nassert(Object_cmp(tc1_value, QNUMBER(5.859)) == 0);
 
+  printf("\n=== === tc1_mul === ===\n");
+  Object* tc1_mul_string = QSTRING_NEW1("(* 2.718 3.141)");
+  Object* tc1_mul_tokens_got = Object_accept(Lisp_tokenize(tc1_mul_string));
+  Object* tc1_mul_tokens_exp = Object_new_list(1, 5, QSYMBOL("("), QSYMBOL("*"), QNUMBER(2.718), QNUMBER(3.141), QSYMBOL(")"));
+  nassert_obj_eq(tc1_mul_tokens_got, tc1_mul_tokens_exp);
+  Object* tc1_mul_parsed = Object_accept(Lisp_parse_tokens(tc1_mul_tokens_got));
+  ObjectUtil_eprintf("tc1_mul_parsed = %v\n", tc1_mul_parsed);
+  Object* tc1_mul_value = Lisp_eval_sexp(tc1_mul_parsed);
+  ObjectUtil_eprintf("tc1_mul_value = %v\n", tc1_mul_value);
+  nassert(Object_cmp(tc1_mul_value, QNUMBER(8.537238)) == 0);
+
   printf("\n=== === tc1_2 === ===\n");
   Object* tc1_2_string = QSTRING_NEW1("(+ 2.718 (* 2 3.141))");
   Object* tc1_2_tokens_got = Object_accept(Lisp_tokenize(tc1_2_string));

@@ -25,16 +25,26 @@ enum TokenizerState {
 
 
 Object* fn_add(Function* fn, Object* env, Object* argv) {
-  // This Function was defined with named-params, and so we should be able to
-  // 'a' and 'b' from the environment.
-  /* printf("F=%s L=%d. rtcount = %zu\n", __FILE__, __LINE__, Object_system_rtcount()); */
   Object* a = Object_accept(Object_bop_hget(env, QSYMBOL("a")));
   Object* b = Object_accept(Object_bop_hget(env, QSYMBOL("b")));
-  ObjectUtil_eprintf("fn_add. got a = %v\n", a);
-  ObjectUtil_eprintf("fn_add. got b = %v\n", b);
-  Object* ret = Object_accept(Object_bop_add(a, b));
+  /* ObjectUtil_eprintf("fn_add. got a = %v\n", a); */
+  /* ObjectUtil_eprintf("fn_add. got b = %v\n", b); */
+  Object* ret = Object_return(Object_accept(Object_bop_add(a, b)));
   Object_rc_decr(a);
   Object_rc_decr(b);
+  Object_rc_decr(ret);
+  return ret;
+}
+
+Object* fn_mul(Function* fn, Object* env, Object* argv) {
+  Object* a = Object_accept(Object_bop_hget(env, QSYMBOL("a")));
+  Object* b = Object_accept(Object_bop_hget(env, QSYMBOL("b")));
+  /* ObjectUtil_eprintf("fn_mul. got a = %v\n", a); */
+  /* ObjectUtil_eprintf("fn_mul. got b = %v\n", b); */
+  Object* ret = Object_return(Object_accept(Object_bop_mul(a, b)));
+  Object_rc_decr(a);
+  Object_rc_decr(b);
+  Object_rc_decr(ret);
   return ret;
 }
 
@@ -89,12 +99,17 @@ void Lisp_init() {
   Object* fnobj_println = Object_new(SYMBOL_FUNCTION, 1, 
     Function_new(QSYMBOL("println"), NULL, fn_println, -1, NULL, NULL)
   );
-  // Some default Math operators
+
   Object* fnobj_add = Object_new(SYMBOL_FUNCTION, 1, 
     Function_new(QSYMBOL("+"), NULL, fn_add, 2, Object_new_list(1, 2, QSYMBOL("a"), QSYMBOL("b")), NULL)
   );
-  
   Object_top_hset(LispEnv_root, QSYMBOL("+"), fnobj_add);
+
+  Object* fnobj_mul = Object_new(SYMBOL_FUNCTION, 1, 
+    Function_new(QSYMBOL("*"), NULL, fn_mul, 2, Object_new_list(1, 2, QSYMBOL("a"), QSYMBOL("b")), NULL)
+  );
+  Object_top_hset(LispEnv_root, QSYMBOL("*"), fnobj_mul);
+
 }
 
 void Lisp_done() {
