@@ -411,7 +411,8 @@ Object* Lisp_eval_sexp2(Object* sexp, Object* env) {
   Symbol* sexp_type = Object_type(sexp);
   if(
       sexp_type == SYMBOL_NUMBER ||
-      sexp_type == SYMBOL_STRING
+      sexp_type == SYMBOL_STRING ||
+      sexp_type == SYMBOL_FUNCTION
   ) {
     ret = Object_accept(sexp);
   }
