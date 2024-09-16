@@ -83,6 +83,8 @@ int main(int argc, char** argv) {
   Object* tc5_parsed_got = Object_accept(Lisp_parse_tokens(tc5_tokens_got));
   Object* tc5_parsed_exp = Object_new_list(1, 2, QSYMBOL("displayln"), QSTRING("hello world"));
   nassert_obj_eq(tc5_parsed_got, tc5_parsed_exp);
+  ObjectUtil_eprintf("tc5_parsed_got = %v\n", tc5_parsed_got);
+  /* Object* tc5_value = Object_accept(Lisp_eval_sexp(tc5_parsed_got)); */
 
   printf("\n=== === tc6 === ===\n");
   Object* tc6_string = QSTRING_NEW1(") invalid1 ()");

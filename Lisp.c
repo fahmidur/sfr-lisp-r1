@@ -79,9 +79,9 @@ Object* fn_display(Function* fn, Object* env, Object* argv) {
     return NULL;
   }
   assert(Object_type(argv) == SYMBOL_LIST);
-  /* printf("fn_display. Called\n"); */
-  /* ObjectUtil_eprintf("fn_display. argv=%v\n", argv); */
-  /* ObjectUtil_eprintf("fn_display. len(argv)=%d\n", Object_len(argv)); */
+  printf("fn_display. Called\n");
+  ObjectUtil_eprintf("fn_display. argv=%v\n", argv);
+  ObjectUtil_eprintf("fn_display. len(argv)=%d\n", Object_len(argv));
   int argv_len = Object_len(argv);
   Object* tmp;
   Symbol* tmp_type;
@@ -129,7 +129,7 @@ void Lisp_init() {
   Object_top_hset(LispEnv_root, QSYMBOL("display"), fnobj_display);
   
   Object* fnobj_displayln = Object_new(SYMBOL_FUNCTION, 1, 
-    Function_new(QSYMBOL("displayln"), NULL, fn_display, -1, NULL, NULL)
+    Function_new(QSYMBOL("displayln"), NULL, fn_displayln, -1, NULL, NULL)
   );
   Object_top_hset(LispEnv_root, QSYMBOL("displayln"), fnobj_displayln);
 
