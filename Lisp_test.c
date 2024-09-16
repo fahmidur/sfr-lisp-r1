@@ -76,12 +76,12 @@ int main(int argc, char** argv) {
   nassert_obj_eq(tc4_tokens_got, tc4_tokens_exp);
 
   printf("\n=== === tc5 === ===\n");
-  Object* tc5_string = QSTRING_NEW1("(print \"hello world\")");
+  Object* tc5_string = QSTRING_NEW1("(displayln \"hello world\")");
   Object* tc5_tokens_got = Object_accept(Lisp_tokenize(tc5_string));
-  Object* tc5_tokens_exp = Object_new_list(1, 4, QSYMBOL("("), QSYMBOL("print"), QSTRING("hello world"), QSYMBOL(")"));
+  Object* tc5_tokens_exp = Object_new_list(1, 4, QSYMBOL("("), QSYMBOL("displayln"), QSTRING("hello world"), QSYMBOL(")"));
   nassert_obj_eq(tc5_tokens_got, tc5_tokens_exp);
   Object* tc5_parsed_got = Object_accept(Lisp_parse_tokens(tc5_tokens_got));
-  Object* tc5_parsed_exp = Object_new_list(1, 2, QSYMBOL("print"), QSTRING("hello world"));
+  Object* tc5_parsed_exp = Object_new_list(1, 2, QSYMBOL("displayln"), QSTRING("hello world"));
   nassert_obj_eq(tc5_parsed_got, tc5_parsed_exp);
 
   printf("\n=== === tc6 === ===\n");

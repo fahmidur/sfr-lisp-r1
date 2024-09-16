@@ -71,7 +71,7 @@ Object* fn_div(Function* fn, Object* env, Object* argv) {
   return ret;
 }
 
-Object* fn_println(Function* fn, Object* env, Object* argv) {
+Object* fn_display(Function* fn, Object* env, Object* argv) {
   assert(fn != NULL);
   assert(argv != NULL);
   if(Object_is_null(argv)) {
@@ -79,9 +79,9 @@ Object* fn_println(Function* fn, Object* env, Object* argv) {
     return NULL;
   }
   assert(Object_type(argv) == SYMBOL_LIST);
-  /* printf("fn_println. Called\n"); */
-  /* ObjectUtil_eprintf("fn_println. argv=%v\n", argv); */
-  /* ObjectUtil_eprintf("fn_println. len(argv)=%d\n", Object_len(argv)); */
+  /* printf("fn_display. Called\n"); */
+  /* ObjectUtil_eprintf("fn_display. argv=%v\n", argv); */
+  /* ObjectUtil_eprintf("fn_display. len(argv)=%d\n", Object_len(argv)); */
   int argv_len = Object_len(argv);
   Object* tmp;
   Symbol* tmp_type;
@@ -90,7 +90,7 @@ Object* fn_println(Function* fn, Object* env, Object* argv) {
   ListIter_head(argv_iter);
   while(!ListIter_at_end(argv_iter)) {
     tmp = ListIter_get_val(argv_iter);
-    /* ObjectUtil_eprintf("donuts. println. tmp=%v\n", tmp); */
+    /* ObjectUtil_eprintf("donuts. display. tmp=%v\n", tmp); */
     tmp_type = Object_type(tmp);
     if(i > 0) {
       printf(" ");
@@ -109,6 +109,11 @@ Object* fn_println(Function* fn, Object* env, Object* argv) {
     i++;
   }
   ListIter_del(argv_iter);
+  return NULL;
+}
+
+Object* fn_displayln(Function* fn, Object* env, Object* argv) {
+  fn_display(fn, env, argv);
   printf("\n");
   return NULL;
 }
@@ -118,9 +123,16 @@ void Lisp_init() {
   LISP_PAREN_END = QSYMBOL_NEW1(")");
   LispEnv_root = Object_new(SYMBOL_ENVIRONMENT, 1, Environment_new());
 
-  Object* fnobj_println = Object_new(SYMBOL_FUNCTION, 1, 
-    Function_new(QSYMBOL("println"), NULL, fn_println, -1, NULL, NULL)
+  Object* fnobj_display = Object_new(SYMBOL_FUNCTION, 1, 
+    Function_new(QSYMBOL("display"), NULL, fn_display, -1, NULL, NULL)
   );
+  Object_top_hset(LispEnv_root, QSYMBOL("display"), fnobj_display);
+  
+  Object* fnobj_displayln = Object_new(SYMBOL_FUNCTION, 1, 
+    Function_new(QSYMBOL("displayln"), NULL, fn_display, -1, NULL, NULL)
+  );
+  Object_top_hset(LispEnv_root, QSYMBOL("displayln"), fnobj_displayln);
+
 
   Object* fnobj_add = Object_new(SYMBOL_FUNCTION, 1, 
     Function_new(QSYMBOL("+"), NULL, fn_add, 2, Object_new_list(1, 2, QSYMBOL("a"), QSYMBOL("b")), NULL)
