@@ -23,7 +23,6 @@ enum TokenizerState {
   ts_InBareWord,
 };
 
-
 Object* fn_add(Function* fn, Object* env, Object* argv) {
   Object* a = Object_accept(Object_bop_hget(env, QSYMBOL("a")));
   Object* b = Object_accept(Object_bop_hget(env, QSYMBOL("b")));
@@ -36,12 +35,36 @@ Object* fn_add(Function* fn, Object* env, Object* argv) {
   return ret;
 }
 
+Object* fn_sub(Function* fn, Object* env, Object* argv) {
+  Object* a = Object_accept(Object_bop_hget(env, QSYMBOL("a")));
+  Object* b = Object_accept(Object_bop_hget(env, QSYMBOL("b")));
+  /* ObjectUtil_eprintf("fn_sub. got a = %v\n", a); */
+  /* ObjectUtil_eprintf("fn_sub. got b = %v\n", b); */
+  Object* ret = Object_return(Object_accept(Object_bop_sub(a, b)));
+  Object_rc_decr(a);
+  Object_rc_decr(b);
+  Object_rc_decr(ret);
+  return ret;
+}
+
 Object* fn_mul(Function* fn, Object* env, Object* argv) {
   Object* a = Object_accept(Object_bop_hget(env, QSYMBOL("a")));
   Object* b = Object_accept(Object_bop_hget(env, QSYMBOL("b")));
   /* ObjectUtil_eprintf("fn_mul. got a = %v\n", a); */
   /* ObjectUtil_eprintf("fn_mul. got b = %v\n", b); */
   Object* ret = Object_return(Object_accept(Object_bop_mul(a, b)));
+  Object_rc_decr(a);
+  Object_rc_decr(b);
+  Object_rc_decr(ret);
+  return ret;
+}
+
+Object* fn_div(Function* fn, Object* env, Object* argv) {
+  Object* a = Object_accept(Object_bop_hget(env, QSYMBOL("a")));
+  Object* b = Object_accept(Object_bop_hget(env, QSYMBOL("b")));
+  /* ObjectUtil_eprintf("fn_div. got a = %v\n", a); */
+  /* ObjectUtil_eprintf("fn_div. got b = %v\n", b); */
+  Object* ret = Object_return(Object_accept(Object_bop_div(a, b)));
   Object_rc_decr(a);
   Object_rc_decr(b);
   Object_rc_decr(ret);
@@ -104,11 +127,20 @@ void Lisp_init() {
   );
   Object_top_hset(LispEnv_root, QSYMBOL("+"), fnobj_add);
 
+  Object* fnobj_sub = Object_new(SYMBOL_FUNCTION, 1, 
+    Function_new(QSYMBOL("-"), NULL, fn_sub, 2, Object_new_list(1, 2, QSYMBOL("a"), QSYMBOL("b")), NULL)
+  );
+  Object_top_hset(LispEnv_root, QSYMBOL("-"), fnobj_sub);
+
   Object* fnobj_mul = Object_new(SYMBOL_FUNCTION, 1, 
     Function_new(QSYMBOL("*"), NULL, fn_mul, 2, Object_new_list(1, 2, QSYMBOL("a"), QSYMBOL("b")), NULL)
   );
   Object_top_hset(LispEnv_root, QSYMBOL("*"), fnobj_mul);
-
+  
+  Object* fnobj_div = Object_new(SYMBOL_FUNCTION, 1, 
+    Function_new(QSYMBOL("/"), NULL, fn_div, 2, Object_new_list(1, 2, QSYMBOL("a"), QSYMBOL("b")), NULL)
+  );
+  Object_top_hset(LispEnv_root, QSYMBOL("/"), fnobj_div);
 }
 
 void Lisp_done() {
