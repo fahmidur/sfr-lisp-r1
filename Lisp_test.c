@@ -89,15 +89,15 @@ int main(int argc, char** argv) {
   nassert(Object_type(tc5_value) == SYMBOL_SYMBOL);
   ObjectUtil_eprintf("tc5_value = %v\n", tc5_value);
 
-  /* printf("\n=== === tc6 === ===\n"); */
-  /* Object* tc6_string = QSTRING_NEW1(") invalid1 ()"); */
-  /* ObjectUtil_eprintf("tc6_string = %v\n", tc6_string); */
-  /* Object* tc6_tokens = Object_accept(Lisp_tokenize(tc6_string)); */
-  /* ObjectUtil_eprintf("tc6_tokens = %v\n", tc6_tokens); */
-  /* Object* tc6_parsed = Object_accept(Lisp_parse_string(tc6_string)); */
-  /* ObjectUtil_eprintf("tc6_string  = %v\n", tc6_string); */
-  /* ObjectUtil_eprintf("tc6_parsed = %v\n", tc6_parsed); */
-  /* nassert(Object_is_error(tc6_parsed)); */
+  printf("\n=== === tc6 === ===\n");
+  Object* tc6_string = QSTRING_NEW1(") invalid1 ()");
+  ObjectUtil_eprintf("tc6_string = %v\n", tc6_string);
+  Object* tc6_tokens = Object_accept(Lisp_tokenize(tc6_string));
+  ObjectUtil_eprintf("tc6_tokens = %v\n", tc6_tokens);
+  Object* tc6_parsed = Object_accept(Lisp_parse_string(tc6_string));
+  ObjectUtil_eprintf("tc6_string  = %v\n", tc6_string);
+  ObjectUtil_eprintf("tc6_parsed = %v\n", tc6_parsed);
+  nassert(Object_is_error(tc6_parsed));
 
   Lisp_done();
   Runtime_done();
