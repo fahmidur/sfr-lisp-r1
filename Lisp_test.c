@@ -62,6 +62,12 @@ int main(int argc, char** argv) {
   Object* tc3_tokens_got = Object_accept(Lisp_tokenize(tc3_string));
   Object* tc3_tokens_exp = Object_new_list(1, 5, QSYMBOL("("), QSYMBOL("-"), QNUMBER(123), QNUMBER(23), QSYMBOL(")"));
   nassert_obj_eq(tc3_tokens_got, tc3_tokens_exp);
+  Object* tc3_parsed_got = Object_accept(Lisp_parse_tokens(tc3_tokens_got));
+  ObjectUtil_eprintf("tc3_parsed_got = %v\n", tc3_parsed_got);
+  Object* tc3_parsed_exp = Object_new_list(1, 3, QSYMBOL("-"), QNUMBER(123), QNUMBER(23));
+  nassert_obj_eq(tc3_parsed_got, tc3_parsed_exp);
+  Object* tc3_value = Object_accept(Lisp_eval_sexp(tc3_parsed_got));
+  nassert_obj_eq(tc3_value, QNUMBER(100));
 
   printf("\n=== === tc4 ===  ===\n");
   Object* tc4_string = QSTRING_NEW1("(+ 5 -9)");
