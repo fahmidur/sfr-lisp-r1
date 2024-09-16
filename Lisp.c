@@ -76,7 +76,7 @@ Object* fn_display(Function* fn, Object* env, Object* argv) {
   assert(argv != NULL);
   if(Object_is_null(argv)) {
     printf("\n");
-    return NULL;
+    return Object_new_null();
   }
   assert(Object_type(argv) == SYMBOL_LIST);
   printf("fn_display. Called\n");
@@ -90,7 +90,7 @@ Object* fn_display(Function* fn, Object* env, Object* argv) {
   ListIter_head(argv_iter);
   while(!ListIter_at_end(argv_iter)) {
     tmp = ListIter_get_val(argv_iter);
-    /* ObjectUtil_eprintf("donuts. display. tmp=%v\n", tmp); */
+    ObjectUtil_eprintf("donuts. display. tmp=%v\n", tmp);
     tmp_type = Object_type(tmp);
     if(i > 0) {
       printf(" ");
@@ -109,13 +109,13 @@ Object* fn_display(Function* fn, Object* env, Object* argv) {
     i++;
   }
   ListIter_del(argv_iter);
-  return NULL;
+  return Object_new_null();
 }
 
 Object* fn_displayln(Function* fn, Object* env, Object* argv) {
   fn_display(fn, env, argv);
   printf("\n");
-  return NULL;
+  return Object_new_null();
 }
 
 void Lisp_init() {
@@ -462,7 +462,7 @@ Object* Lisp_parse_string(Object* str) {
 }
 
 Object* Lisp_eval_sexp2(Object* sexp, Object* env) {
-  Object* ret = NULL;
+  Object* ret = Object_new_null();
   Object* tmp = NULL;
   Object* tmp2 = NULL;
   Object* op = NULL;
@@ -509,14 +509,24 @@ Object* Lisp_eval_sexp2(Object* sexp, Object* env) {
 
   }
 _return:
+  printf("donuts. Lisp_eval_sexp2. _return\n");
+  if(ret == NULL) {
+    ret = Object_new_null();
+  }
+  printf("donuts. ret=%p\n", ret);
   if(op != NULL) {
     Object_assign(&op,  NULL);
   }
   if(opval != NULL) {
     Object_assign(&opval, NULL);
   }
-  ret = Object_return(ret);
-  Object_rc_decr(ret);
+  if(Object_is_null(ret)) {
+  }
+  else {
+    Object_return(ret);
+    Object_rc_decr(ret);
+  }
+  ObjectUtil_eprintf("donuts. returning. ret = %v\n", ret);
   return ret;
 }
 
