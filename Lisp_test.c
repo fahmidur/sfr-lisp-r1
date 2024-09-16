@@ -41,6 +41,9 @@ int main(int argc, char** argv) {
   ObjectUtil_eprintf("tc1_2_parsed_got = %v\n", tc1_2_parsed_got);
   Object* tc1_2_parsed_exp = Object_new_list(1, 3, QSYMBOL("+"), QNUMBER(2.718), Object_new_list(1, 3, QSYMBOL("*"), QNUMBER(2.0), QNUMBER(3.141)));
   ObjectUtil_eprintf("tc1_2_parsed_exp = %v\n", tc1_2_parsed_exp);
+  Object* tc1_2_val = Object_accept(Lisp_eval_sexp(tc1_2_parsed_got));
+  ObjectUtil_eprintf("tc1_2_val = %v\n", tc1_2_val);
+  nassert(Object_cmp(tc1_2_val, QNUMBER(9.0)) == 0);
 
   printf("\n=== === tc2 === ===\n");
   Object* tc2_string = QSTRING_NEW1("92.3");
