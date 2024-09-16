@@ -399,7 +399,6 @@ Object* Lisp_parse_tokens2(Object* tokenlist, int depth) {
 
   // We are returning a constructed object, that must
   // be accepted or reject with rc=0;
-  printf("donuts. ret->rc = %d\n", ret->rc);
   assert(ret->rc == 0);
   return ret;
 }
@@ -451,16 +450,14 @@ Object* Lisp_eval_sexp2(Object* sexp, Object* env) {
     ListIter_head(iter);
     while(!ListIter_at_end(iter)) {
       tmp = Object_accept(ListIter_get_val(iter));
-      ObjectUtil_eprintf("donuts. tmp = %v\n", tmp);
       tmp2 = Object_accept(Lisp_eval_sexp2(tmp, env));
-      ObjectUtil_eprintf("donuts. tmp2 = %v\n", tmp2);
       Object_bop_push(opargs2, tmp2);
       Object_assign(&tmp, NULL);
       Object_assign(&tmp2, NULL);
       ListIter_next(iter);
     }
     ListIter_del(iter);
-    ObjectUtil_eprintf("donuts. %s:%d opargs2 = %v\n", __FILE__, __LINE__, opargs2);
+    /* ObjectUtil_eprintf("%s:%d opargs2 = %v\n", __FILE__, __LINE__, opargs2); */
     if(Object_type(opval) == SYMBOL_FUNCTION) {
       ret = Object_bop_call(opval, opargs2);
       /* ret = Object_bop_call(opval, sexp); */

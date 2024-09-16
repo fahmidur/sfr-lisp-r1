@@ -67,7 +67,7 @@ unless $cc
 end
 
 $cflags = ["-g", "-I."]
-$cflags << "-fsanitize=address"
+# $cflags << "-fsanitize=address"
 if $debug
   $cflags << "-D DEBUG"
 end
