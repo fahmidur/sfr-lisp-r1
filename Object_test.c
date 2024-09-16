@@ -492,7 +492,7 @@ int main(int argc, char** argv) {
   nassert(Object_type(fn1) == SYMBOL_FUNCTION);
 
   Object_reject(
-    Object_bop_call(fn1, Object_new_list(0, 3, QSYMBOL("print"), QSTRING("The value of pi is "), QNUMBER(3.14)))
+    Object_bop_call(fn1, Object_new_list(0, 2, QSTRING("The value of pi is "), QNUMBER(3.14)))
   );
 
   Object* fn2 = Object_new(
@@ -503,7 +503,7 @@ int main(int argc, char** argv) {
   nassert(fn2 != NULL);
   nassert(Object_type(fn2) == SYMBOL_FUNCTION);
 
-  Object* fnres1 = Object_accept(Object_bop_call(fn2, Object_new_list(1, 3, QSYMBOL("add"), QNUMBER(1.2), QNUMBER(1.3))));
+  Object* fnres1 = Object_accept(Object_bop_call(fn2, Object_new_list(1, 2, QNUMBER(1.2), QNUMBER(1.3))));
   ObjectUtil_eprintf("fnres1 = %v\n", fnres1);
   nassert(Object_cmp(fnres1, QNUMBER(2.5)) == 0);
 

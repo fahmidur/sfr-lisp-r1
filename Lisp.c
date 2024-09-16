@@ -339,10 +339,12 @@ Object* Lisp_tokenize(Object* string) {
 
 Object* Lisp_parse_tokens2(Object* tokenlist, int depth) {
   Object* tmp = Object_new_null();
-  Object* ret = QLIST_NEW1();
+  Object* ret = Object_new_null();
   Object* sublist = Object_new_null();
   int idx = 0;
   char softbreak = 0;
+  /* if(Object_len(tokenlist) == 1 && Object_type(Object_uop_head(tokenlist)) != SYMBOL_LIST) { */
+  /* } */
   while(Object_len(tokenlist) > 0) {
     tmp = Object_accept(Object_uop_shift(tokenlist));
     ObjectUtil_eprintf("[%d] Lisp_parse_tokens2. tmp = %v\n", depth, tmp);
@@ -353,6 +355,9 @@ Object* Lisp_parse_tokens2(Object* tokenlist, int depth) {
     if(Object_cmp(tmp, LISP_PAREN_BEG) == 0) {
       // create a sublist to append to ret
       sublist = Object_accept(Lisp_parse_tokens2(tokenlist, depth+1));
+      if(Object_is_null(ret)) {
+        ret = QLIST_NEW1();
+      }
       Object_bop_push(ret, sublist);
       Object_assign(&sublist, NULL);
     }
@@ -362,7 +367,16 @@ Object* Lisp_parse_tokens2(Object* tokenlist, int depth) {
     }
     else {
       // some sort of atom
-      Object_bop_push(ret, tmp);
+      if(Object_is_null(ret) && Object_len(tokenlist) == 0) {
+        ret = Object_accept(tmp);
+        softbreak = 1;
+      }
+      else {
+        if(Object_is_null(ret)) {
+          ret = QLIST_NEW1();
+        }
+        Object_bop_push(ret, tmp);
+      }
     }
     idx++;
     if(softbreak) {
@@ -385,6 +399,7 @@ Object* Lisp_parse_tokens2(Object* tokenlist, int depth) {
 
   // We are returning a constructed object, that must
   // be accepted or reject with rc=0;
+  printf("donuts. ret->rc = %d\n", ret->rc);
   assert(ret->rc == 0);
   return ret;
 }
@@ -428,10 +443,10 @@ Object* Lisp_eval_sexp2(Object* sexp, Object* env) {
     // it is in this case that we can have various lisp forms
     op = Object_accept(Object_uop_head(sexp));
     opval = Lisp_eval_sexp2(op, env);
+
     opargs1 = Object_accept(Object_uop_rest(sexp));
     opargs2 = Object_new_list(1, 0);
     // todo: redo use a function map abstraction
-    /* ObjectUtil_eprintf("* donuts. %s:%d opargs1 = %v\n", __FILE__, __LINE__, opargs1); */
     ListIter* iter = ListIter_new(opargs1->impl);
     ListIter_head(iter);
     while(!ListIter_at_end(iter)) {
@@ -450,6 +465,7 @@ Object* Lisp_eval_sexp2(Object* sexp, Object* env) {
       ret = Object_bop_call(opval, opargs2);
       /* ret = Object_bop_call(opval, sexp); */
     }
+
   }
 _return:
   if(op != NULL) {
