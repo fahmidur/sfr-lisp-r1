@@ -486,27 +486,23 @@ Object* Lisp_eval_sexp2(Object* sexp, Object* env) {
     // it is in this case that we can have various lisp forms
     op = Object_accept(Object_uop_head(sexp));
     opval = Lisp_eval_sexp2(op, env);
-
-    opargs1 = Object_accept(Object_uop_rest(sexp));
-    opargs2 = Object_new_list(1, 0);
-    // todo: redo use a function map abstraction
-    ListIter* iter = ListIter_new(opargs1->impl);
-    ListIter_head(iter);
-    while(!ListIter_at_end(iter)) {
-      tmp = Object_accept(ListIter_get_val(iter));
-      tmp2 = Object_accept(Lisp_eval_sexp2(tmp, env));
-      Object_bop_push(opargs2, tmp2);
-      Object_assign(&tmp, NULL);
-      Object_assign(&tmp2, NULL);
-      ListIter_next(iter);
-    }
-    ListIter_del(iter);
-    /* ObjectUtil_eprintf("%s:%d opargs2 = %v\n", __FILE__, __LINE__, opargs2); */
     if(Object_type(opval) == SYMBOL_FUNCTION) {
+      // map each arg to values
+      opargs1 = Object_accept(Object_uop_rest(sexp));
+      opargs2 = Object_new_list(1, 0);
+      ListIter* iter = ListIter_new(opargs1->impl);
+      ListIter_head(iter);
+      while(!ListIter_at_end(iter)) {
+        tmp = Object_accept(ListIter_get_val(iter));
+        tmp2 = Object_accept(Lisp_eval_sexp2(tmp, env));
+        Object_bop_push(opargs2, tmp2);
+        Object_assign(&tmp, NULL);
+        Object_assign(&tmp2, NULL);
+        ListIter_next(iter);
+      }
+      ListIter_del(iter);
       ret = Object_bop_call(opval, opargs2);
-      /* ret = Object_bop_call(opval, sexp); */
     }
-
   }
 _return:
   if(ret == NULL) {
