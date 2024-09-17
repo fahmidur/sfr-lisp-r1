@@ -118,6 +118,17 @@ Object* fn_displayln(Function* fn, Object* env, Object* argv) {
   return Object_new_null();
 }
 
+Object* fn_begin(Function* fn, Object* env, Object* argv) {
+  Object* ret = NULL;
+  if(Object_len(argv) > 0) {
+    ret = Object_uop_tail(argv);
+  }
+  else {
+    ret = Object_new_null();
+  }
+  return ret;
+}
+
 void Lisp_init() {
   LISP_PAREN_BEG = QSYMBOL_NEW1("(");
   LISP_PAREN_END = QSYMBOL_NEW1(")");
@@ -153,6 +164,11 @@ void Lisp_init() {
     Function_new(QSYMBOL("/"), NULL, fn_div, 2, Object_new_list(1, 2, QSYMBOL("a"), QSYMBOL("b")), NULL)
   );
   Object_top_hset(LispEnv_root, QSYMBOL("/"), fnobj_div);
+
+  Object* fnobj_begin = Object_new(SYMBOL_FUNCTION, 1,
+    Function_new(QSYMBOL("begin"), NULL, fn_begin, -1, NULL, NULL)
+  );
+  Object_top_hset(LispEnv_root, QSYMBOL("begin"), fnobj_begin);
 }
 
 void Lisp_done() {
