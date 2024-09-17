@@ -487,14 +487,19 @@ Object* Lisp_eval_sexp2(Object* sexp, Object* env) {
     op = Object_accept(Object_uop_head(sexp));
     opval = Lisp_eval_sexp2(op, env);
     if(Object_type(op) == SYMBOL_SYMBOL) {
+      if(op == QSYMBOL("quote")) {
+        ret = Object_accept(Object_uop_rest(sexp));
+      }
+      else
       if(op == QSYMBOL("define")) {
         opargs1 = Object_accept(Object_uop_rest(sexp));
         Object_top_hset(env, op, Lisp_eval_sexp2(opargs1, env));
       }
+      else
       if(op == QSYMBOL("set!")) {
         // set the value of a variable that has been already defined
-        /* opargs1 = Object_accept(Object_uop_rest(sexp)); */
         if(!Object_is_null(opval)) {
+          opargs1 = Object_accept(Object_uop_rest(sexp));
           Object_reject(Object_top_hset(env, op, Lisp_eval_sexp2(opargs1, env)));
         }
       }
