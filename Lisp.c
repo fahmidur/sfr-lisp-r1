@@ -129,6 +129,46 @@ Object* fn_begin(Function* fn, Object* env, Object* argv) {
   return ret;
 }
 
+Object* fn_cmp_lt(Function* fn, Object* env, Object* argv) {
+  Object* a = Object_accept(Object_bop_hget(env, QSYMBOL("a")));
+  Object* b = Object_accept(Object_bop_hget(env, QSYMBOL("b")));
+  if(Object_cmp(a, b) < 0) {
+    return QSYMBOL("true");
+  } else {
+    return Object_new_null();
+  }
+}
+
+Object* fn_cmp_lte(Function* fn, Object* env, Object* argv) {
+  Object* a = Object_accept(Object_bop_hget(env, QSYMBOL("a")));
+  Object* b = Object_accept(Object_bop_hget(env, QSYMBOL("b")));
+  if(Object_cmp(a, b) <= 0) {
+    return QSYMBOL("true");
+  } else {
+    return Object_new_null();
+  }
+}
+
+Object* fn_cmp_gt(Function* fn, Object* env, Object* argv) {
+  Object* a = Object_accept(Object_bop_hget(env, QSYMBOL("a")));
+  Object* b = Object_accept(Object_bop_hget(env, QSYMBOL("b")));
+  if(Object_cmp(a, b) > 0) {
+    return QSYMBOL("true");
+  } else {
+    return Object_new_null();
+  }
+}
+
+Object* fn_cmp_gte(Function* fn, Object* env, Object* argv) {
+  Object* a = Object_accept(Object_bop_hget(env, QSYMBOL("a")));
+  Object* b = Object_accept(Object_bop_hget(env, QSYMBOL("b")));
+  if(Object_cmp(a, b) >= 0) {
+    return QSYMBOL("true");
+  } else {
+    return Object_new_null();
+  }
+}
+
 void Lisp_init() {
   LISP_PAREN_BEG = QSYMBOL_NEW1("(");
   LISP_PAREN_END = QSYMBOL_NEW1(")");
