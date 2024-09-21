@@ -70,10 +70,16 @@ int main(int argc, char** argv) {
   nassert_obj_eq(tc3_value, QNUMBER(100));
 
   printf("\n=== === tc4 ===  ===\n");
+  // testing addition of positive and negative number
   Object* tc4_string = QSTRING_NEW1("(+ 5 -9)");
   Object* tc4_tokens_got = Object_accept(Lisp_tokenize(tc4_string));
   Object* tc4_tokens_exp = Object_new_list(1, 5, QSYMBOL("("), QSYMBOL("+"), QNUMBER(5), QNUMBER(-9), QSYMBOL(")"));
   nassert_obj_eq(tc4_tokens_got, tc4_tokens_exp);
+  Object* tc4_parsed_got = Object_accept(Lisp_parse_tokens(tc4_tokens_got));
+  Object* tc4_parsed_exp = Object_new_list(1, 3, QSYMBOL("+"), QNUMBER(5), QNUMBER(-9));
+  ObjectUtil_eprintf("tc4_parsed_got = %v\n", tc4_parsed_got);
+  ObjectUtil_eprintf("tc4_parsed_exp = %v\n", tc4_parsed_exp);
+  nassert_obj_eq(tc4_parsed_got, tc4_parsed_exp);
 
   printf("\n=== === tc5 === ===\n");
   Object* tc5_string = QSTRING_NEW1("(displayln \"hello world\")");
