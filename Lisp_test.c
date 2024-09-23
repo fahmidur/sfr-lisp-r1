@@ -77,9 +77,9 @@ int main(int argc, char** argv) {
   nassert_obj_eq(tc4_tokens_got, tc4_tokens_exp);
   Object* tc4_parsed_got = Object_accept(Lisp_parse_tokens(tc4_tokens_got));
   Object* tc4_parsed_exp = Object_new_list(1, 3, QSYMBOL("+"), QNUMBER(5), QNUMBER(-9));
-  ObjectUtil_eprintf("tc4_parsed_got = %v\n", tc4_parsed_got);
-  ObjectUtil_eprintf("tc4_parsed_exp = %v\n", tc4_parsed_exp);
   nassert_obj_eq(tc4_parsed_got, tc4_parsed_exp);
+  Object* tc4_value = Object_accept(Lisp_eval_sexp(tc4_parsed_got));
+  nassert_obj_eq(tc4_value, QNUMBER(-4));
 
   printf("\n=== === tc5 === ===\n");
   Object* tc5_string = QSTRING_NEW1("(displayln \"hello world\")");
