@@ -420,6 +420,10 @@ char Object_is_null(Object* x) {
   );
 }
 
+char Object_is_truthy(Object* x) {
+  return !Object_is_null(x);
+}
+
 /**
  * Helper function to check if Object is an
  * Error type object.

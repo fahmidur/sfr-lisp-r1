@@ -223,6 +223,14 @@ int main(int argc, char** argv) {
   Util_heading1(0, "NUMBER OPERATIONS");
 
   //===========================================================================
+  Util_heading1(1, "BOOLEAN OPERATIONS");
+  Object* null_obj1 = Object_new_null();
+  Object* truthy_obj1 = QSYMBOL("True");
+  nassert(Object_is_truthy(truthy_obj1));
+  nassert(!Object_is_truthy(null_obj1));
+  Util_heading1(0, "BOOLEAN OPERATIONS");
+
+  //===========================================================================
   
   Util_heading1(1, "LIST OPERATIONS");
 

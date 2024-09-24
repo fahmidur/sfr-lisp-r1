@@ -117,6 +117,8 @@ Object* Object_accept(Object* self);
 Object* Object_reject(Object* self);
 char Object_is_known(Object* self);
 char Object_is_null(Object* self);
+char Object_is_falsey(Object* self);
+char Object_is_truthy(Object* self);
 char Object_is_error(Object* self);
 char Object_is_returning(Object* self);
 char Object_is_container(Object* self);
