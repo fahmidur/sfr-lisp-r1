@@ -189,26 +189,31 @@ void Lisp_init() {
     Function_new(QSYMBOL("+"), NULL, fn_add, 2, Object_new_list(1, 2, QSYMBOL("a"), QSYMBOL("b")), NULL)
   );
   Object_top_hset(LispEnv_root, QSYMBOL("+"), fnobj_add);
+  Object_assign(&fnobj_add, NULL);
 
   Object* fnobj_sub = Object_new(SYMBOL_FUNCTION, 1, 
     Function_new(QSYMBOL("-"), NULL, fn_sub, 2, Object_new_list(1, 2, QSYMBOL("a"), QSYMBOL("b")), NULL)
   );
   Object_top_hset(LispEnv_root, QSYMBOL("-"), fnobj_sub);
+  Object_assign(&fnobj_sub, NULL);
 
   Object* fnobj_mul = Object_new(SYMBOL_FUNCTION, 1, 
     Function_new(QSYMBOL("*"), NULL, fn_mul, 2, Object_new_list(1, 2, QSYMBOL("a"), QSYMBOL("b")), NULL)
   );
   Object_top_hset(LispEnv_root, QSYMBOL("*"), fnobj_mul);
+  Object_assign(&fnobj_mul, NULL);
   
   Object* fnobj_div = Object_new(SYMBOL_FUNCTION, 1, 
     Function_new(QSYMBOL("/"), NULL, fn_div, 2, Object_new_list(1, 2, QSYMBOL("a"), QSYMBOL("b")), NULL)
   );
   Object_top_hset(LispEnv_root, QSYMBOL("/"), fnobj_div);
+  Object_assign(&fnobj_div, NULL);
 
   Object* fnobj_begin = Object_new(SYMBOL_FUNCTION, 1,
     Function_new(QSYMBOL("begin"), NULL, fn_begin, -1, NULL, NULL)
   );
   Object_top_hset(LispEnv_root, QSYMBOL("begin"), fnobj_begin);
+  Object_assign(&fnobj_begin, NULL);
 }
 
 void Lisp_done() {
