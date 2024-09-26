@@ -212,9 +212,11 @@ void Lisp_init() {
 }
 
 void Lisp_done() {
+  printf("--- { Lisp_done() { ---\n");
   Object_assign(&LISP_PAREN_BEG, NULL);
   Object_assign(&LISP_PAREN_END, NULL);
   Object_assign(&LispEnv_root, NULL);
+  printf("--- } Lisp_done() } ---\n");
 }
 
 char TokenizerUtil_isdigit(char ch) {

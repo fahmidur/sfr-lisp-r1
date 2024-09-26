@@ -75,7 +75,8 @@ compile_file_task(:program, build('Runtime_test'), ['Runtime_test.c', runtime_of
 compile_file_task(:program, build('Lisp_test'), ['Lisp_test.c', build('Lisp.o'), runtime_ofiles, test_common])
 
 compile_file_task(:program, build('Tokenizer_test'), ['Tokenizer_test.c', build('Tokenizer.o'), test_common])
-compile_file_task(:program, build('sfr-lisp'), ['sfr-lisp.c', runtime_ofiles, build('Tokenizer.o'), test_common])
+
+compile_file_task(:program, build('sfr-lisp'), ['sfr-lisp.c', runtime_ofiles, build('Lisp.o'), test_common])
 
 desc "Run all tests"
 task :test => :build do

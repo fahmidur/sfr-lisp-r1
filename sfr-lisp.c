@@ -6,7 +6,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "Tokenizer.h"
+#include "Runtime.h"
+#include "Lisp.h"
 #include "String.h"
 
 void print_banner() {
@@ -29,7 +30,6 @@ void print_usage(const char* progname) {
 
 void repl() {
   struct String* inp = String_new("");
-  struct Tokenizer* tok = Tokenizer_new();
   ssize_t inp_ret;
   while(1) {
     printf("> ");
@@ -86,10 +86,13 @@ int strcmp_onedash(const char* a, const char* b, const char* c) {
 }
 
 int main(int argc, char** argv) {
+  int ret = 0;
+  Runtime_init();
+  Lisp_init();
   if(argc == 2) {
     if(strcmp_onedash(argv[1], "-help", "-h") == 0) {
       print_usage(argv[0]);
-      return 0;
+      goto _return;
     }
     else
     if(strcmp_onedash(argv[1], "-version", "-v") == 0) {
@@ -101,7 +104,8 @@ int main(int argc, char** argv) {
     }
     else {
       printf("ERROR: invalid arg: %s\n", argv[1]);
-      return 1;
+      ret = 1;
+      goto _return;
     }
   }
   else 
@@ -112,7 +116,11 @@ int main(int argc, char** argv) {
   }
   else {
     printf("ERROR: invalid args\n");
-    return 1;
+    ret = 1;
+    goto _return;
   }
-  return 0;
+_return:
+  Lisp_done();
+  Runtime_done();
+  return ret;
 }
