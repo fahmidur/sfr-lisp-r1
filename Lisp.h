@@ -65,7 +65,8 @@ Object* Lisp_eval_sexp2(Object* sexp, Object* env);
 Object* Lisp_eval_sexp(Object* sexp);
 
 // Eval the given string 
-// Lisp_eval_string(x) = Lisp_eval_code(Lisp_parse_string(x))
-//Object* Lisp_eval_string(Object* string, LispEnv* env);
+// Lisp_eval_string(x) = Lisp_eval_sexp(Lisp_parse_string(x))
+Object* Lisp_eval_string2(Object* string, Object* env);
+Object* Lisp_eval_string(Object* string);
 
 #endif

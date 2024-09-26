@@ -602,6 +602,14 @@ Object* Lisp_eval_sexp(Object* sexp) {
   return Lisp_eval_sexp2(sexp, LispEnv_root);
 }
 
+Object* Lisp_eval_string2(Object* str, Object* env) {
+  return Lisp_eval_sexp2(Lisp_parse_string(str), env);
+}
+
+Object* Lisp_eval_string(Object* str) {
+  return Lisp_eval_sexp(Lisp_parse_string(str));
+}
+
 /* LispEnv* LispEnv_new(LispEnv* parent) { */
 /*   LispEnv* self = calloc(1, sizeof(LispEnv)); */
 /*   if(self == NULL) { */

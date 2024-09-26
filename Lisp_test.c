@@ -8,6 +8,13 @@ int main(int argc, char** argv) {
   Runtime_init();
   Lisp_init();
 
+  printf("\n=== === tc0.1 === ===\n");
+  // numbers evaluate to themselves
+  Object* tc0_1_string = QSTRING_NEW1("2.718");
+  Object* tc0_1_value = Object_accept(Lisp_eval_string(tc0_1_string));
+  ObjectUtil_eprintf("tc0_1_value = %v\n", tc0_1_value);
+  nassert_obj_eq(tc0_1_value, QNUMBER(2.718));
+
   printf("\n=== === tc1 === ===\n");
   Object* tc1_string = QSTRING_NEW1("(+ 2.718 3.141)");
   Object* tc1_tokens_got = Object_accept(Lisp_tokenize(tc1_string));
