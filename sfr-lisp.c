@@ -10,6 +10,14 @@
 #include "Lisp.h"
 #include "String.h"
 
+#ifndef VERSION
+#define VERSION "0.0.1"
+#endif
+
+#ifndef GIT_SHA
+#define GIT_SHA "unknown"
+#endif
+
 void print_banner() {
   printf("+----------------------------------------------\n");
   printf("| SFR-LISP \n");
