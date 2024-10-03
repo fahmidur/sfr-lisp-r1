@@ -450,6 +450,8 @@ Object* Lisp_parse_tokens2(Object* tokenlist, int depth) {
   Object* sublist = Object_new_null();
   int idx = 0;
   char softbreak = 0;
+  ObjectUtil_eprintf("donuts. ret = %v. tokenlist=%v\n", ret, tokenlist);
+  ObjectUtil_eprintf("donuts. tokenlist=%v len=%zu\n", tokenlist, Object_len(tokenlist));
   /* if(Object_len(tokenlist) == 1 && Object_type(Object_uop_head(tokenlist)) != SYMBOL_LIST) { */
   /* } */
   while(Object_len(tokenlist) > 0) {
@@ -493,7 +495,9 @@ Object* Lisp_parse_tokens2(Object* tokenlist, int depth) {
     }
   }
   //cleanup
-  Object_assign(&sublist, NULL);
+  if(!Object_is_null(sublist)) {
+    Object_assign(&sublist, NULL);
+  }
   if(depth == 0 && Object_len(tokenlist) != 0) {
     // at depth 0 we have reached the end with left over tokens 
     // in the tokenlist. 
@@ -501,12 +505,15 @@ Object* Lisp_parse_tokens2(Object* tokenlist, int depth) {
     Object_assign(&ret, NULL);
     ret = QERROR_NEW1("invalid input tokenlist");
   }
-  Object_return(ret);   // mark object for returning
-  Object_rc_decr(ret);  // release the RC in this proc
-
-  // We are returning a constructed object, that must
-  // be accepted or reject with rc=0;
-  assert(ret->rc == 0);
+  if(!Object_is_null(ret)) {
+    ObjectUtil_eprintf("donuts. 002. ret = %v\n", ret);
+    Object_return(ret);   // mark object for returning
+    Object_rc_decr(ret);  // release the RC in this proc
+    ObjectUtil_eprintf("donuts. 003. ret = %v\n", ret);
+    // We are returning a constructed object, that must
+    // be accepted or reject with rc=0;
+    assert(ret->rc == 0);
+  }
   return ret;
 }
 
@@ -516,9 +523,11 @@ Object* Lisp_parse_tokens(Object* tokenlist) {
 
 Object* Lisp_parse_string(Object* str) {
   Object* tokens = Object_accept(Lisp_tokenize(str));
+  ObjectUtil_eprintf("donuts. tokens = %v\n", tokens);
   if(Object_is_error(tokens)) {
     return tokens;
   }
+  ObjectUtil_eprintf("donuts. calling Lisp_parse_tokens(tokens) ...\n");
   Object* parsed = Object_return(Lisp_parse_tokens(tokens));
   Object_rc_decr(tokens); tokens = NULL;
   return parsed;

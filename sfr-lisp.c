@@ -37,8 +37,10 @@ void print_usage(const char* progname) {
 }
 
 void repl() {
-  struct String* inp = String_new("");
+  Object* obj_inp = QSTRING_NEW1("");
+  String* inp = obj_inp->impl;
   ssize_t inp_ret;
+  Object* rvalue = NULL;
   while(1) {
     printf("> ");
     inp_ret = String_getline(inp, stdin);
@@ -52,8 +54,21 @@ void repl() {
       printf("goodbye\n");
       break;
     }
+
+    ObjectUtil_eprintf("OK. Got input = %v\n", obj_inp);
+
+    if(rvalue == NULL) {
+    }
+    else
+    if(!Object_is_null(rvalue)) {
+      Object_assign(&rvalue, NULL);
+    }
+    rvalue = Object_accept(Lisp_eval_string(obj_inp));
+    ObjectUtil_eprintf("rvalue = %v\n", rvalue);
+
   }
-  String_del(inp);
+  /* String_del(inp); */
+  Object_assign(&obj_inp, NULL);
 }
 
 char file_exists(const char *path) {
