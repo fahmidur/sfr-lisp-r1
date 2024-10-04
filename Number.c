@@ -100,7 +100,7 @@ Number* Number_divx(Number* self, Number* other) {
 }
 
 void Number_del(Number* self) {
-  printf("Number_del(%p). rep=%f\n", self, self->rep);
+  dbg_printf("Number_del(%p). rep=%f\n", self, self->rep);
   if(self == NULL) {
     return;
   }

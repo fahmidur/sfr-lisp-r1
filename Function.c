@@ -106,14 +106,14 @@ Object* Function_call(Function* self, Object* argv) {
     ListIter_del(params_iter);
   }
 
-  /* printf("donuts. F=%s L=%d. rtcount = %zu\n", __FILE__, __LINE__, Object_system_rtcount()); */
+  /* dbg_printf("donuts. F=%s L=%d. rtcount = %zu\n", __FILE__, __LINE__, Object_system_rtcount()); */
   Object* ret = (self->impl)(self, tmpEnv, argv);
   if(ret == NULL) {
     ret = Object_new_null();
   } else {
     ret = Object_accept(ret);
   }
-  /* printf("donuts. F=%s L=%d. rtcount = %zu\n", __FILE__, __LINE__, Object_system_rtcount()); */
+  /* dbg_printf("donuts. F=%s L=%d. rtcount = %zu\n", __FILE__, __LINE__, Object_system_rtcount()); */
   // release the argv object, we do not need it anymore.
   Object_rc_decr(argv);
   Environment_child_detach(self->env, tmpEnv);
