@@ -124,7 +124,9 @@ int main(int argc, char** argv) {
     }
     else
     if(file_exists(argv[1])) {
-      printf("eval: %s\n", argv[1]);
+      printf("evalfile: %s\n", argv[1]);
+      String* fline = String_new("");
+      String_del(fline);
     }
     else {
       printf("ERROR: invalid arg: %s\n", argv[1]);
