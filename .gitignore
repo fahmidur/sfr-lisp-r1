@@ -62,3 +62,4 @@ flycheck_*.el
 /network-security.data
 
 .ccls-cache
+history.txt

@@ -9,6 +9,7 @@
 #include "Runtime.h"
 #include "Lisp.h"
 #include "String.h"
+#include "sub/linenoise/linenoise.h"
 
 #ifndef VERSION
 #define VERSION "0.0.1"
@@ -41,16 +42,23 @@ void repl() {
   String* inp = obj_inp->impl;
   ssize_t inp_ret;
   Object* rvalue = NULL;
-  while(1) {
-    printf("> ");
-    inp_ret = String_getline(inp, stdin);
-    if(inp_ret < 0) {
-      printf("getline. ERROR=%ld\n", inp_ret);
-      break;
-    }
+  char* line = NULL;
+
+  linenoiseHistoryLoad("history.txt"); /* Load the history at startup */
+  while( (line=linenoise("> ")) != NULL) {
+    /* inp_ret = String_getline(inp, stdin); */
+    /* if(inp_ret < 0) { */
+    /*   printf("getline. ERROR=%ld\n", inp_ret); */
+    /*   break; */
+    /* } */
+    String_zero(inp);
+    String_addx_cstr(inp, line);
     printf("OK. READ 001. %ld chars. buf=|%s| buf_size=%ld\n", inp_ret, inp->buf, inp->buf_size);
     String_chomp(inp);
     printf("OK. READ 002. %ld chars. buf=|%s| buf_size=%ld\n", inp_ret, inp->buf, inp->buf_size);
+
+    linenoiseHistoryAdd(line);
+    linenoiseHistorySave("history.txt");
 
     if(strcmp(inp->buf, ".exit") == 0) {
       printf("goodbye\n");
@@ -69,9 +77,13 @@ void repl() {
     }
     rvalue = Object_accept(Lisp_eval_string(obj_inp));
     ObjectUtil_eprintf("rvalue = %v\n", rvalue);
-
+    free(line);
+    line = NULL;
   }
   /* String_del(inp); */
+  if(line != NULL) {
+    free(line);
+  }
   Object_assign(&obj_inp, NULL);
 }
 

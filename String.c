@@ -186,6 +186,15 @@ String* String_addx_char(String* self, char ch) {
   return self;
 }
 
+String* String_addx_cstr(String* self, char* cstr) {
+  ssize_t cstr_len = strlen(cstr);
+  int i = 0;
+  for(i = 0; i < cstr_len; i++) {
+    String_addx_char(self, cstr[i]);
+  }
+  return self;
+}
+
 void String_del(String* self) {
   if(self == NULL) {
     return;

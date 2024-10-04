@@ -23,6 +23,7 @@ String* String_clone(String* self);
 String* String_add(String* a, String* b);
 String* String_addx(String* self, String* other);
 String* String_addx_char(String* self, char ch);
+String* String_addx_cstr(String* self, char* cstr);
 ssize_t String_getline(struct String* self, FILE *stream);
 char String_zero(String* self);
 void String_del(String* self);
