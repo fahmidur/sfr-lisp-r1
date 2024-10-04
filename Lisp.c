@@ -79,9 +79,11 @@ Object* fn_display(Function* fn, Object* env, Object* argv) {
     return Object_new_null();
   }
   assert(Object_type(argv) == SYMBOL_LIST);
+#ifdef DEBUG
   dbg_printf("fn_display. Called\n");
   ObjectUtil_eprintf("fn_display. argv=%v\n", argv);
   ObjectUtil_eprintf("fn_display. len(argv)=%d\n", Object_len(argv));
+#endif
   int argv_len = Object_len(argv);
   Object* tmp;
   Symbol* tmp_type;
@@ -93,14 +95,14 @@ Object* fn_display(Function* fn, Object* env, Object* argv) {
     /* ObjectUtil_eprintf("display. tmp=%v\n", tmp); */
     tmp_type = Object_type(tmp);
     if(i > 0) {
-      dbg_printf(" ");
+      printf(" ");
     }
     if(tmp_type == SYMBOL_STRING) {
-      dbg_printf("%s", (char*)(((String*)tmp->impl)->buf));
+      printf("%s", (char*)(((String*)tmp->impl)->buf));
     } 
     else
     if(tmp_type == SYMBOL_NUMBER) {
-      dbg_printf("%f", (((Number*)tmp->impl)->rep));
+      printf("%f", (((Number*)tmp->impl)->rep));
     }
     else {
       Object_print(tmp);
@@ -114,7 +116,7 @@ Object* fn_display(Function* fn, Object* env, Object* argv) {
 
 Object* fn_displayln(Function* fn, Object* env, Object* argv) {
   fn_display(fn, env, argv);
-  dbg_printf("\n");
+  printf("\n");
   return Object_new_null();
 }
 
