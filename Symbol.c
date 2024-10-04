@@ -8,7 +8,7 @@ static SymbolVector* av_buckets[SYMBOL_BUCKET_SIZE];
 static char Symbol_system_inited = 0;
 
 void Symbol_system_init() {
-  printf("--- Symbol_system_init() ---\n");
+  dbg_printf("--- { Symbol_system_init() { ---\n");
   if(Symbol_system_inited) {
     return;
   }
@@ -17,10 +17,11 @@ void Symbol_system_init() {
     av_buckets[i] = NULL;
   }
   Symbol_system_inited = 1;
+  dbg_printf("--- } Symbol_system_init() } ---\n");
 }
 
 void Symbol_system_done() {
-  printf("--- { Symbol_system_done() { ---\n");
+  dbg_printf("--- { Symbol_system_done() { ---\n");
   int i;
   SymbolVector* iter;
   for(i = 0; i < SYMBOL_BUCKET_SIZE; i++) {
@@ -29,11 +30,11 @@ void Symbol_system_done() {
       SymbolVector_del(iter);
     }
   }
-  printf("--- } Symbol_system_done() } ---\n");
+  dbg_printf("--- } Symbol_system_done() } ---\n");
 }
 
 void Symbol_system_print() {
-  printf("--- { Symbol_system_print() { ---\n");
+  dbg_printf("--- { Symbol_system_print() { ---\n");
   int i, j;
   SymbolVector* av;
   Symbol* atom;
@@ -48,41 +49,43 @@ void Symbol_system_print() {
       if(nulls_count > nulls_max) {
         if(intrim) {
           if(i == ilast) {
-            printf("%05u] \t= (nil) count=%d\n", i, nulls_count);
+            dbg_printf("%05u] \t= (nil) count=%d\n", i, nulls_count);
             intrim = 0;
           }
         } 
         else {
-          printf("i[%05u..", i);
+          dbg_printf("i[%05u..", i);
           intrim = 1;
         }
       }
       else {
-        printf("i[%05u] \t\t= %p\n", i, av);
+        dbg_printf("i[%05u] \t\t= %p\n", i, av);
       }
     }
     else {
       if(intrim) {
-        printf("%05u] \t= (nil) count=%d\n", i, nulls_count);
+        dbg_printf("%05u] \t= (nil) count=%d\n", i, nulls_count);
         intrim = 0;
       }
-      printf("i[%05u] \t\t= %p\n", i, av);
+      dbg_printf("i[%05u] \t\t= %p\n", i, av);
       nulls_count = 0;
-      printf("  lidx=%zu size=%zu\n", av->lidx, av->size);
+      dbg_printf("  lidx=%zu size=%zu\n", av->lidx, av->size);
       for(j = 0; j < av->size; j++) {
         atom = av->list[j];
-        printf("  i[%05u] j[%03u] \t= %p", i, j, atom);
+        dbg_printf("  i[%05u] j[%03u] \t= %p", i, j, atom);
         if(atom == NULL) {
-          printf("\n");
+          dbg_printf("\n");
           break;
         }
-        printf(" || ");
+        dbg_printf(" || ");
+#ifdef DEBUG
         Symbol_print(atom);
-        printf("\n");
+#endif
+        dbg_printf("\n");
       }
     }
   }
-  printf("--- } Symbol_system_print() } ---\n");
+  dbg_printf("--- } Symbol_system_print() } ---\n");
 }
 
 SymbolVector* SymbolVector_new() {
@@ -94,15 +97,19 @@ SymbolVector* SymbolVector_new() {
 }
 
 void SymbolVector_push(SymbolVector* self, Symbol* atom) {
-  printf("SymbolVector_push. self=%p , atom=", self); Symbol_print(atom); printf("\n");
+  dbg_printf("SymbolVector_push. self=%p , atom=", self); 
+#ifdef DEBUG
+  Symbol_print(atom); 
+#endif
+  dbg_printf("\n");
   self->list[self->lidx++] = atom;
   if(self->lidx == self->size) {
     size_t size_old = self->size;
     size_t size_new = 2*size_old;
-    printf("SymbolVector_push. grow. growing... size_old=%zu size_new=%zu\n", size_old, size_new);
+    dbg_printf("SymbolVector_push. grow. growing... size_old=%zu size_new=%zu\n", size_old, size_new);
     self->list = (Symbol**) realloc(self->list, size_new*sizeof(Symbol*));
     if(self->list == NULL) {
-      printf("ERROR: SymbolVector_push. grow. Failed to realloc SymbolVector\n");
+      dbg_printf("ERROR: SymbolVector_push. grow. Failed to realloc SymbolVector\n");
       exit(1);
     }
     self->size = size_new;
@@ -110,12 +117,12 @@ void SymbolVector_push(SymbolVector* self, Symbol* atom) {
     for(i = self->lidx; i < size_new; i++) {
       self->list[i] = NULL;
     }
-    printf("SymbolVector_push. grow. done. lidx=%zu size=%zu\n", self->lidx, self->size);
+    dbg_printf("SymbolVector_push. grow. done. lidx=%zu size=%zu\n", self->lidx, self->size);
   }
 }
 
 void SymbolVector_del(SymbolVector* self) {
-  printf("SymbolVector_del(%p)\n", self);
+  dbg_printf("SymbolVector_del(%p)\n", self);
   int i;
   size_t lidx = self->lidx;
   Symbol* atom;
@@ -142,7 +149,7 @@ size_t Symbol_calc_key(char* str) {
 }
 
 Symbol* Symbol_find(char* str) {
-  /*printf("Symbol_find(%s). \n", str);*/
+  /*dbg_printf("Symbol_find(%s). \n", str);*/
   size_t key = Symbol_calc_key(str);
   SymbolVector* av = av_buckets[key];
   if(av == NULL) {
@@ -164,7 +171,6 @@ Symbol* Symbol_find(char* str) {
 }
 
 void Symbol_print(Symbol* self) {
-  /*printf("Symbol(%s)", self->str);*/
   printf("Symbol(");
   Util_vt_set(VT_COLOR_MAGENTA_FG);
   Util_cstr_print(self->str);
@@ -213,7 +219,7 @@ void Symbol_del(Symbol* self) {
 }
 
 void Symbol_noop(void* self) {
-  printf("Symbol_noop(%p)\n", self);
+  dbg_printf("Symbol_noop(%p)\n", self);
   return;
 }
 

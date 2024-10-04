@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <string.h>
 #include <stdarg.h>
+#include "Util.h"
 #include "Symbol.h"
 #include "String.h"
 #include "Number.h"
@@ -32,7 +33,11 @@ Symbol* SYMBOL_FUNCTION;
 
 char Object_oti_set(Symbol* type, ObjectTypeInfo otiarg) {
   assert(type != NULL);
-  printf("Object_oti_set("); Symbol_print(type); printf(")\n");
+  dbg_printf("Object_oti_set("); 
+#ifdef DEBUG
+    Symbol_print(type); 
+#endif
+  dbg_printf(")\n");
   size_t hash = type->hash;
   size_t key = hash % OBJECT_TYPES_BUCKETS_SIZE;
   ObjectTypeInfo* oti = calloc(1, sizeof(ObjectTypeInfo));
@@ -47,7 +52,7 @@ char Object_oti_set(Symbol* type, ObjectTypeInfo otiarg) {
   oti->fn_zero  = otiarg.fn_zero;
   oti->fn_len   = otiarg.fn_len;
   ObjectTypeInfo* oti_old = object_system->types[oti->key];
-  /*printf("oti_old=%p\n", oti_old);*/
+  /*dbg_printf("oti_old=%p\n", oti_old);*/
   oti->next = oti_old;
   if(oti_old != NULL) {
     oti_old->prev = oti;
@@ -71,7 +76,7 @@ ObjectTypeInfo* Object_oti_get(Symbol* type) {
 }
 
 void Object_system_init() {
-  printf("--- BEG. Object_system_init() ---\n");
+  dbg_printf("--- BEG. Object_system_init() ---\n");
   size_t i;
   object_system = calloc(1, sizeof(ObjectSystem));
   object_system->init_called = 0;
@@ -102,7 +107,7 @@ void Object_system_init() {
   // Container + Callable Object
   SYMBOL_FUNCTION = Symbol_new("Function");
 
-  printf("\n\n");
+  dbg_printf("\n\n");
 
   ObjectTypeInfo otiarg_symbol = { 
     .fn_del   = Symbol_noop, 
@@ -187,7 +192,7 @@ void Object_system_init() {
   object_system->init_called = 1;
   object_system->done_called = 0;
 
-  printf("--- END. Object_system_init() ---\n");
+  dbg_printf("--- END. Object_system_init() ---\n");
 }
 
 char Object_system_delete_recurse() {
@@ -265,7 +270,7 @@ Object* Object_new_iter(Object* iterable, int rc) {
     Object_rc_incr(iterable);
   }
   else {
-    fprintf(stderr, "ERROR: Object_new_iter. Received non-iterable object\n");
+    dbg_printf("ERROR: Object_new_iter. Received non-iterable object\n");
     return NULL;
   }
 
@@ -286,7 +291,7 @@ Object* Object_new_list(int rc, size_t len, ...) {
   int i;
   Object* tmp;
   for(i = 0; i < len; i++) {
-    /*printf("debug. --- i=%d ---\n", i);*/
+    /*dbg_printf("debug. --- i=%d ---\n", i);*/
     tmp = va_arg(argv, Object*);
     if(tmp == NULL) {
       tmp = Object_new_null();
@@ -301,7 +306,7 @@ Object* Object_new_list(int rc, size_t len, ...) {
     Object_rc_decr(tmp); // we are done with tmp
     /*ObjectUtil_eprintf("debug. pushing into list. aft. tmp= %v | .rc=%d | .rt=%d\n", tmp, tmp->rc, tmp->returning);*/
     /*ObjectUtil_eprintf("debug. list. rt=%d\n", list->returning);*/
-    /*printf("debug. ---- --- \n");*/
+    /*dbg_printf("debug. ---- --- \n");*/
   }
   va_end(argv);
   list->rc = rc;
@@ -477,7 +482,7 @@ Object* Object_accept(Object* self) {
 Object* Object_reject(Object* self) {
   assert(self != NULL);
   /* if(!Object_is_known(self)) { */
-  /*   printf("ERROR. FATAL. self=%p is not known\n", self); */
+  /*   dbg_printf("ERROR. FATAL. self=%p is not known\n", self); */
   /*   exit(1); */
   /*   /1* return NULL; *1/ */
   /* } */
@@ -502,7 +507,9 @@ size_t Object_system_rtcount() {
   Object* iter = object_system->head;
   while(iter != NULL) {
     if(iter->returning) {
+#ifdef DEBUG
       ObjectUtil_eprintf("os_rtcount. nonzero obj(%p). %v\n", iter, iter);
+#endif
       count++;
     }
     iter = iter->next;
@@ -670,13 +677,17 @@ void Object_del(Object* self) {
     goto _return;
   }
   self->visited = self->visited | OBJECT_DEL_VFLAG;
-  printf("{ Object_del(%p). rc=%d. rt=%d. type=", self, self->rc, self->returning); 
-    Symbol_print(Object_type(self)); 
-    if(!Object_is_container(self)) {
-      printf(" || ");
-      Object_print(self);
-    }
-  printf(" { \n");
+  dbg_printf("{ Object_del(%p). rc=%d. rt=%d. type=", self, self->rc, self->returning); 
+#ifdef DEBUG
+  Symbol_print(Object_type(self)); 
+#endif
+  if(!Object_is_container(self)) {
+    dbg_printf(" || ");
+#ifdef DEBUG
+    Object_print(self);
+#endif
+  }
+  dbg_printf(" { \n");
   if(object_system->size == 0) {
     goto _return;
   }
@@ -720,23 +731,23 @@ void Object_del(Object* self) {
 
   ObjectTypeInfo* oti = Object_oti_get(self->type);
   if(!oti) {
-    printf("FATAL: unknown ObjectTypeInfo oti for type ");
+    dbg_printf("FATAL: unknown ObjectTypeInfo oti for type ");
     Symbol_print(self->type);
     exit(1);
   }
   if(oti->fn_del == NULL) {
-    printf("FATAL: ObjectTypeInfo oti for type ");
+    dbg_printf("FATAL: ObjectTypeInfo oti for type ");
     Symbol_print(self->type);
-    printf(" is missing fn_del\n");
+    dbg_printf(" is missing fn_del\n");
     exit(1);
   }
 
   oti->fn_del(self->impl);
-  /*printf("Object_del(%p). calling free on self.\n", self);*/
+  /*dbg_printf("Object_del(%p). calling free on self.\n", self);*/
   free(self);
 
 _return:
-  printf("} Object_del(%p) }\n", self);
+  dbg_printf("} Object_del(%p) }\n", self);
   // unsetting of the self->visited flag is not needed because
   // the object is deleted.
   return;
@@ -813,7 +824,7 @@ void Object_system_done() {
   if(object_system->done_called) {
     return;
   }
-  printf("--- { Object_system_done() { ---\n");
+  dbg_printf("--- { Object_system_done() { ---\n");
   object_system->done_called = 1;
   Object_system_print();
 
@@ -831,7 +842,7 @@ void Object_system_done() {
   //  obj_curr = obj_curr->next;
   //}
 
-  //printf("--- { Object_system_done(). Object_rc_done() { ---\n");
+  //dbg_printf("--- { Object_system_done(). Object_rc_done() { ---\n");
   //// Ensure that the rc of
   //// simple nested objects is higher than
   //// that of complex container objects.
@@ -842,11 +853,11 @@ void Object_system_done() {
   //  Object_rc_done(obj_curr, 0, 0);
   //  obj_curr = obj_next;
   //}
-  //printf("--- } Object_system_done(). Object_rc_done() } ---\n");
+  //dbg_printf("--- } Object_system_done(). Object_rc_done() } ---\n");
 
-  //printf("--- { Object_system_done(). 002 { ---\n");
+  //dbg_printf("--- { Object_system_done(). 002 { ---\n");
   //Object_system_print();
-  //printf("--- } Object_system_done(). 002 } ---\n");
+  //dbg_printf("--- } Object_system_done(). 002 } ---\n");
 
   //Symbol* obj_curr_type;
   //obj_curr = object_system->head;
@@ -894,7 +905,7 @@ void Object_system_done() {
   // have an RC lower than their contained objects, thus
   // get deleted before the things they contain. 
 
-  printf("--- { OSDK { ---\n");
+  dbg_printf("--- { OSDK { ---\n");
   // delete all objects
   object_system->delete_recurse = 0;
   while(object_system->size > 0) {
@@ -904,22 +915,28 @@ void Object_system_done() {
       obj_next = obj_curr->next; 
       if(obj_curr->rc <= 1) {
         if(Object_is_container(obj_curr)) {
+#ifdef DEBug
           ObjectUtil_eprintf("[OSDK] || Object(%p) || type=%s || CONTAINER", obj_curr, Object_type(obj_curr)->str);
+#endif
         } else {
+#ifdef DEBUG
           ObjectUtil_eprintf("[OSDK] || Object(%p) || %v", obj_curr, obj_curr);
+#endif
         }
         if(obj_curr->returning) {
-          printf(" || RT_WARNING");
+#ifdef DEBUG
+          dbg_printf(" || RT_WARNING");
+#endif
           obj_curr->returning = 0;
         }
-        printf("\n");
+        dbg_printf("\n");
       }
       obj_curr = Object_rc_decr(obj_curr);
       obj_curr = obj_next;
     }
   }
   object_system->delete_recurse = 1;
-  printf("--- } OSDK } ---\n");
+  dbg_printf("--- } OSDK } ---\n");
 
   // delete type information
   ObjectTypeInfo* oti_curr;
@@ -940,7 +957,7 @@ void Object_system_done() {
     }
   }
   free(object_system);
-  printf("--- } Object_system_done() } ---\n");
+  dbg_printf("--- } Object_system_done() } ---\n");
 }
 
 Symbol* Object_type(Object* self) {
@@ -961,7 +978,7 @@ Object* Object_gc(Object* self) {
   assert(self != NULL);
   if(self->rc <= 0) {
     if(self->returning) {
-      /*printf("Object_gc(%p). Object is returning. -SKIPPED-\n", self);*/
+      /*dbg_printf("Object_gc(%p). Object is returning. -SKIPPED-\n", self);*/
       /*ObjectUtil_eprintf("Object_gc(%p). SKIPPED returning object: %v\n", self, self);*/
       return self;
     }
@@ -1490,7 +1507,7 @@ size_t Object_hash(Object* self) {
     ret = String_hash(self->impl);
   }
   else {
-    printf("ERROR: Object_hash called on unsupported type");
+    dbg_printf("ERROR: Object_hash called on unsupported type");
   }
   Object_rc_decr(self);
   return ret;
@@ -1501,19 +1518,21 @@ size_t Object_hash(Object* self) {
  * Mainly for debugging. 
  */
 void Object_system_print() {
-  printf("--- { Object_system_print() { ---\n");
+  dbg_printf("--- { Object_system_print() { ---\n");
   Object* iter = object_system->head;
   int i = 0;
   while(iter != NULL) {
-    printf("[i=%03d] || Object(%p, rc=%03d/%03d, rt=%03d) || ", i, iter, iter->rc, iter->rc_gc, iter->returning);
+    dbg_printf("[i=%03d] || Object(%p, rc=%03d/%03d, rt=%03d) || ", i, iter, iter->rc, iter->rc_gc, iter->returning);
+#ifdef DEBUG
     Object_print(iter);
-    printf("\n");
+#endif
+    dbg_printf("\n");
     iter = iter->next;
     i++;
   }
-  printf("--------------------------------------\n");
-  printf("SIZE: %zu\n", object_system->size);
-  printf("--- } Object_system_print() } ---\n");
+  dbg_printf("--------------------------------------\n");
+  dbg_printf("SIZE: %zu\n", object_system->size);
+  dbg_printf("--- } Object_system_print() } ---\n");
 }
 
 /**
@@ -1542,15 +1561,15 @@ ssize_t Object_len(Object* self) {
   else {
     ObjectTypeInfo* oti = Object_oti_get(self->type);
     if(oti == NULL) {
-      printf("FATAL: unknown ObjectTypeInfo oti for type ");
+      dbg_printf("FATAL: unknown ObjectTypeInfo oti for type ");
       Symbol_print(self->type);
       exit(1);
     }
     // Or you might want to have a default print.
     if(oti->fn_len == NULL) {
-      printf("FATAL: ObjectTypeInfo oti for type ");
+      dbg_printf("FATAL: ObjectTypeInfo oti for type ");
       Symbol_print(self->type);
-      printf(" is missing fn_len\n");
+      dbg_printf(" is missing fn_len\n");
       exit(1);
     }
     ret = oti->fn_len(self->impl);
@@ -1561,7 +1580,7 @@ ssize_t Object_len(Object* self) {
 }
 
 /* Object* Object_from_result(Result res) { */
-/*   /1* printf("Object_from_result\n"); *1/ */
+/*   /1* dbg_printf("Object_from_result\n"); *1/ */
 /*   if(res.err == 0) { */
 /*     // success -- err == 0 */
 /*     if(res.ptr != NULL) { */
@@ -1591,9 +1610,9 @@ ssize_t Object_len(Object* self) {
 /* } */
 
 void ObjectUtil_eprintf_sig(int SIGSIZE, char** sigptr, int* sigposptr, va_list argv) {
-  /*printf("--- ObjectUtil_eprintf_sig ---\n");*/
+  /*dbg_printf("--- ObjectUtil_eprintf_sig ---\n");*/
   char* sig = *sigptr;
-  /*printf("[sig=|%s|]", sig);*/
+  /*dbg_printf("[sig=|%s|]", sig);*/
   if(strcmp(sig, "%v") == 0) {
     Object_print(va_arg(argv, void*));
   }
@@ -1605,7 +1624,7 @@ void ObjectUtil_eprintf_sig(int SIGSIZE, char** sigptr, int* sigposptr, va_list 
 }
 
 void ObjectUtil_eprintf_buf(int BUFSIZE, char** bufptr, int* bufposptr) {
-  /*printf("--- ObjectUtil_eprintf_buf ---\n");*/
+  /*dbg_printf("--- ObjectUtil_eprintf_buf ---\n");*/
   if(*bufposptr > 0) {
     fputs(*bufptr, stdout);
   }
@@ -1614,7 +1633,7 @@ void ObjectUtil_eprintf_buf(int BUFSIZE, char** bufptr, int* bufposptr) {
 }
 
 void ObjectUtil_eprintf(char* fmt, ...) {
-  /*printf("ObjectUtil_eprintf. fmt=%s\n", fmt);*/
+  /*dbg_printf("ObjectUtil_eprintf. fmt=%s\n", fmt);*/
   int i, j;
   int argc = 0;
   va_list argv;
@@ -1656,7 +1675,7 @@ void ObjectUtil_eprintf(char* fmt, ...) {
     }
     else {
       buf[bufpos++] = ch;
-      /*printf("bufpos=%d / BUFSIZE=%d || buf=%s\n", bufpos, BUFSIZE, buf);*/
+      /*dbg_printf("bufpos=%d / BUFSIZE=%d || buf=%s\n", bufpos, BUFSIZE, buf);*/
     }
   }
   if(insig && sigpos > 0) {

@@ -6,7 +6,7 @@
 #include "Error.h"
 
 String* String_new(char* istr) {
-  /* printf("String_new(%s)\n", istr); */
+  /* dbg_printf("String_new(%s)\n", istr); */
   String* self = calloc(1, sizeof(String));
   if(self == NULL) {
     ErrorSystem_set(1, "String_new. calloc failed");
@@ -25,7 +25,7 @@ String* String_new(char* istr) {
     self->buf[i] = istr[i];
   }
   self->len = strlen(self->buf);
-  /* printf("String_new. p=%p || buf=%s\n", self, self->buf); */
+  /* dbg_printf("String_new. p=%p || buf=%s\n", self, self->buf); */
   return self;
 }
 
@@ -190,7 +190,7 @@ void String_del(String* self) {
   if(self == NULL) {
     return;
   }
-  printf("String_del(%p). buf=%s\n", self, self->buf);
+  dbg_printf("String_del(%p). buf=%s\n", self, self->buf);
   if(self->buf != NULL) {
     free(self->buf);
     self->buf = NULL;
@@ -229,7 +229,7 @@ char String_zero(String* self) {
 ssize_t String_getline(String* self, FILE *stream) {
   String_zero(self);
   ssize_t ret = getline(&(self->buf), &(self->buf_size), stream);
-  printf("String_getline. ret=%ld buf_size=%ld\n", ret, self->buf_size);
+  dbg_printf("String_getline. ret=%ld buf_size=%ld\n", ret, self->buf_size);
   String_len(self);
   return ret;
 }
@@ -265,7 +265,7 @@ int String_cmp(String* self, String* other) {
 }
 
 void String_print(String* self) {
-  /*printf("String(%s)", self->buf);*/
+  /*dbg_printf("String(%s)", self->buf);*/
   printf("String(");
   Util_vt_set(VT_COLOR_CYAN_FG);
   Util_cstr_print(self->buf);
@@ -273,7 +273,7 @@ void String_print(String* self) {
   printf(")");
   /*char bchar = 92; // The backslash character*/
   /*char wchar = '"';*/
-  /*printf("String(%c", wchar);*/
+  /*dbg_printf("String(%c", wchar);*/
   /*size_t str_len = strlen(self->buf);*/
   /*size_t i;*/
   /*char ch;*/
@@ -287,7 +287,7 @@ void String_print(String* self) {
     /*}*/
     /*putc(ch, stdout);*/
   /*}*/
-  /*printf("%c)", wchar);*/
+  /*dbg_printf("%c)", wchar);*/
 }
 
 char* String_cstr(String* self) {

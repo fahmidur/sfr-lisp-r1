@@ -75,11 +75,11 @@ Object* fn_display(Function* fn, Object* env, Object* argv) {
   assert(fn != NULL);
   assert(argv != NULL);
   if(Object_is_null(argv)) {
-    printf("\n");
+    dbg_printf("\n");
     return Object_new_null();
   }
   assert(Object_type(argv) == SYMBOL_LIST);
-  printf("fn_display. Called\n");
+  dbg_printf("fn_display. Called\n");
   ObjectUtil_eprintf("fn_display. argv=%v\n", argv);
   ObjectUtil_eprintf("fn_display. len(argv)=%d\n", Object_len(argv));
   int argv_len = Object_len(argv);
@@ -93,14 +93,14 @@ Object* fn_display(Function* fn, Object* env, Object* argv) {
     /* ObjectUtil_eprintf("display. tmp=%v\n", tmp); */
     tmp_type = Object_type(tmp);
     if(i > 0) {
-      printf(" ");
+      dbg_printf(" ");
     }
     if(tmp_type == SYMBOL_STRING) {
-      printf("%s", (char*)(((String*)tmp->impl)->buf));
+      dbg_printf("%s", (char*)(((String*)tmp->impl)->buf));
     } 
     else
     if(tmp_type == SYMBOL_NUMBER) {
-      printf("%f", (((Number*)tmp->impl)->rep));
+      dbg_printf("%f", (((Number*)tmp->impl)->rep));
     }
     else {
       Object_print(tmp);
@@ -114,7 +114,7 @@ Object* fn_display(Function* fn, Object* env, Object* argv) {
 
 Object* fn_displayln(Function* fn, Object* env, Object* argv) {
   fn_display(fn, env, argv);
-  printf("\n");
+  dbg_printf("\n");
   return Object_new_null();
 }
 
@@ -217,11 +217,11 @@ void Lisp_init() {
 }
 
 void Lisp_done() {
-  printf("--- { Lisp_done() { ---\n");
+  dbg_printf("--- { Lisp_done() { ---\n");
   Object_assign(&LISP_PAREN_BEG, NULL);
   Object_assign(&LISP_PAREN_END, NULL);
   Object_assign(&LispEnv_root, NULL);
-  printf("--- } Lisp_done() } ---\n");
+  dbg_printf("--- } Lisp_done() } ---\n");
 }
 
 char TokenizerUtil_isdigit(char ch) {
@@ -251,28 +251,28 @@ char TokenizerUtil_min_uint(unsigned int a, unsigned int b) {
 void print_TokenizerState(TokenizerState x) {
   switch(x) {
     case ts_Init:
-      printf("TokenizerState(ts_Init)");
+      dbg_printf("TokenizerState(ts_Init)");
       break;
     case ts_InString:
-      printf("TokenizerState(ts_InString)");
+      dbg_printf("TokenizerState(ts_InString)");
       break;
     case ts_InStringEscaped:
-      printf("TokenizerState(ts_InStringEscaped)");
+      dbg_printf("TokenizerState(ts_InStringEscaped)");
       break;
     case ts_InNumber:
-      printf("TokenizerState(ts_InNumber)");
+      dbg_printf("TokenizerState(ts_InNumber)");
       break;
     case ts_InNumberFloat:
-      printf("TokenizerState(ts_InNumberFloat)");
+      dbg_printf("TokenizerState(ts_InNumberFloat)");
       break;
     case ts_InNumberNegMaybe:
-      printf("TokenizerState(ts_InNumberNegMaybe)");
+      dbg_printf("TokenizerState(ts_InNumberNegMaybe)");
       break;
     case ts_InBareWord:
-      printf("TokenizerState(ts_InBareWord)");
+      dbg_printf("TokenizerState(ts_InBareWord)");
       break;
     default:
-      printf("ERROR");
+      dbg_printf("ERROR");
   }
 }
 
@@ -291,7 +291,7 @@ Object* Lisp_tokenize(Object* string) {
 
   size_t string_len = Object_len(string);
   Object* ret = QLIST_NEW1();
-  /* printf("string_len = %ld\n", string_len); */
+  /* dbg_printf("string_len = %ld\n", string_len); */
 
   size_t i = 0;
   TokenizerState state = ts_Init;
@@ -303,11 +303,11 @@ Object* Lisp_tokenize(Object* string) {
   Object* tmp_str = QSTRING_NEW1("");
   /* ObjectUtil_eprintf("tmp_str=%v\n", tmp_str); */
 
-  /* printf("--- beg-of-forloop ---\n"); */ 
+  /* dbg_printf("--- beg-of-forloop ---\n"); */ 
   for(i = 0; i < string_len; i++) {
     ch = Object_bop_charat(string, i);
-    /* printf("---\n"); */
-    /* printf("state="); print_TokenizerState(state); printf("\n"); */
+    /* dbg_printf("---\n"); */
+    /* dbg_printf("state="); print_TokenizerState(state); dbg_printf("\n"); */
     /* ObjectUtil_eprintf("Lisp_tokenizer. ch=|%c| tmp_str=%v\n", ch, tmp_str); */
     if(state == ts_Init) {
       if(ch == '-') {
@@ -418,11 +418,11 @@ Object* Lisp_tokenize(Object* string) {
     }
     //--- end of forloop-body
     /*ObjectUtil_eprintf("Lisp_tokenizer. ch=|%c| tmp_str=%v\n", ch, tmp_str);*/
-    /*printf("state="); print_TokenizerState(state); printf("\n");*/
+    /*dbg_printf("state="); print_TokenizerState(state); dbg_printf("\n");*/
   }
-  /*printf("--- end-of-forloop ---\n"); */
+  /*dbg_printf("--- end-of-forloop ---\n"); */
 
-  /*printf("state="); print_TokenizerState(state); printf("\n");*/
+  /*dbg_printf("state="); print_TokenizerState(state); dbg_printf("\n");*/
   /*ObjectUtil_eprintf("tmp_str=%v\n", tmp_str);*/
   if(state == ts_InNumber) {
     Object_bop_push(ret, Object_to_number(tmp_str));
@@ -434,7 +434,7 @@ Object* Lisp_tokenize(Object* string) {
     Object_zero(tmp_str);
   }
   /*ObjectUtil_eprintf("tmp_str=%v\n", tmp_str);*/
-  /*printf("---\n");*/
+  /*dbg_printf("---\n");*/
 
   Object_rc_decr(string);
   Object_rc_decr(tmp_str);

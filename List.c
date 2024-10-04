@@ -94,7 +94,7 @@ ssize_t List_push(List* self, Object* obj) {
 }
 
 Object* List_pop(List* self) {
-  printf("List_pop(%p).\n", self);
+  dbg_printf("List_pop(%p).\n", self);
   if(self->size == 0) {
     return Object_new_null();
   }
@@ -124,7 +124,7 @@ Object* List_pop(List* self) {
     ret = NULL;
   }
   ListNode_del(node);
-  printf("List_pop(%p). size=%zu\n", self, self->size);
+  dbg_printf("List_pop(%p). size=%zu\n", self, self->size);
   return ret;
 }
 
@@ -148,7 +148,7 @@ ssize_t List_unshift(List* self, Object* obj) {
 }
 
 Object* List_shift(List* self) {
-  printf("List_shift(%p).\n", self);
+  dbg_printf("List_shift(%p).\n", self);
   if(self->size == 0) {
     return NULL;
   }
@@ -217,23 +217,23 @@ Object* List_at(List* self, size_t idx) {
 }
 
 void List_del(List* self) {
-  printf("{ List_del(%p) {\n", self);
+  dbg_printf("{ List_del(%p) {\n", self);
   Object* tmp;
 
   while(self->size > 0) {
     tmp = List_pop(self);
     // tmp is now damaged
-    printf("List_del(%p). dbg. 001 tmp=%p | Object_reject(tmp)\n", self, tmp);
+    dbg_printf("List_del(%p). dbg. 001 tmp=%p | Object_reject(tmp)\n", self, tmp);
     // below is unsafe, because tmp may no longer exist
     if(Object_system_delete_recurse()) {
       Object_reject(tmp);
     }
-    printf("List_del(%p). dbg. 002\n", self);
+    dbg_printf("List_del(%p). dbg. 002\n", self);
   }
 
-  printf("List_del(%p). free(self)\n", self);
+  dbg_printf("List_del(%p). free(self)\n", self);
   free(self);
-  printf("} List_del(%p) }\n", self);
+  dbg_printf("} List_del(%p) }\n", self);
 }
 
 void List_print(List* self) {

@@ -3,6 +3,18 @@
 #include <string.h>
 #include "Util.h"
 
+#ifdef DEBUG
+void dbg_printf(char* fmt, ...) {
+  va_list argv;
+  va_start(argv, fmt);
+  vprintf(fmt, argv);
+}
+#else
+void dbg_printf(char* fmt, ...) {
+  // do nothing
+}
+#endif
+
 void Util_indent(int size) {
   int i = 0;
   for(i = 0; i < size; i++) {
