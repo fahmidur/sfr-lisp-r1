@@ -228,15 +228,18 @@ char String_zero(String* self) {
 
 ssize_t String_getline(String* self, FILE *stream) {
   String_zero(self);
-  ssize_t ret = getline(&self->buf, &(self->buf_size), stream);
+  ssize_t ret = getline(&(self->buf), &(self->buf_size), stream);
   printf("String_getline. ret=%ld buf_size=%ld\n", ret, self->buf_size);
   String_len(self);
   return ret;
 }
 
+/**
+ * Remove the last newline in the string if there is one
+ **/
 void String_chomp(String* self) {
   char ch;
-  for(size_t i = self->buf_size-1; i >= 0; i--) {
+  for(size_t i = (self->len-1); i >= 0; i--) {
     ch = self->buf[i];
     if(ch == '\0') { 
       continue;
