@@ -41,6 +41,8 @@ Object* Lisp_parse_tokens(Object* tokenlist);
 // @return S-Expression
 Object* Lisp_parse_string(Object* string);
 
+void Lisp_printenv();
+
 /* typedef struct LispEnv LispEnv; */
 /* struct LispEnv { */
 /*   LispEnv* parent; */

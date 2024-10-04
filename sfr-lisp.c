@@ -56,6 +56,9 @@ void repl() {
       printf("goodbye\n");
       break;
     }
+    if(strcmp(inp->buf, ".env") == 0) {
+      Lisp_printenv();
+    }
     ObjectUtil_eprintf("OK. Got input = %v\n", obj_inp);
 
     if(rvalue == NULL) {

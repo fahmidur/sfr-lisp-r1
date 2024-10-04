@@ -567,14 +567,28 @@ Object* Lisp_eval_sexp2(Object* sexp, Object* env) {
       else
       if(op == QSYMBOL("define")) {
         opargs1 = Object_accept(Object_uop_rest(sexp));
-        Object_top_hset(env, op, Lisp_eval_sexp2(opargs1, env));
+        if(Object_len(opargs1) < 2) {
+          // return an error
+        }
+        else
+        if(Object_len(opargs1) == 2) {
+          opargs2 = Object_accept(Object_bop_at(opargs1, 1));
+        } 
+        else {
+          opargs2 = Object_accept(Object_uop_rest(opargs1));
+        }
+        ObjectUtil_eprintf("donuts. opargs1 = %v\n", opargs1);
+        Object_top_hset(env, Object_uop_head(opargs1), Lisp_eval_sexp2(opargs2, env));
       }
       else
       if(op == QSYMBOL("set!")) {
-        // set the value of a variable that has been already defined
-        if(!Object_is_null(opval)) {
+        // set the value of a variable which has been already defined
+        if(Object_is_null(opval)) {
+          // return an error
+        }
+        else {
           opargs1 = Object_accept(Object_uop_rest(sexp));
-          Object_reject(Object_top_hset(env, op, Lisp_eval_sexp2(opargs1, env)));
+          Object_reject(Object_top_hset(env, Object_uop_head(opargs1), Lisp_eval_sexp2(Object_uop_rest(opargs1), env)));
         }
       }
       else
@@ -608,11 +622,13 @@ _return:
     Object_assign(&opval, NULL);
   }
   if(Object_is_null(ret)) {
+    // don't do anything to the null object
   }
   else {
     Object_return(ret);
     Object_rc_decr(ret);
   }
+  ObjectUtil_eprintf("donuts. eval. ret=%v\n", ret);
   return ret;
 }
 
@@ -626,6 +642,11 @@ Object* Lisp_eval_string2(Object* str, Object* env) {
 
 Object* Lisp_eval_string(Object* str) {
   return Lisp_eval_sexp(Lisp_parse_string(str));
+}
+
+void Lisp_printenv() {
+  Environment* env = LispEnv_root->impl;
+  Object_print(env->objects);
 }
 
 /* LispEnv* LispEnv_new(LispEnv* parent) { */
