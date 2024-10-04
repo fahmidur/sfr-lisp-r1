@@ -125,8 +125,29 @@ int main(int argc, char** argv) {
     else
     if(file_exists(argv[1])) {
       printf("evalfile: %s\n", argv[1]);
+      FILE* file = fopen(argv[1], "r");
+      if(file == NULL) {
+        printf("ERROR: Failed to open file at %s\n", argv[1]);
+        goto _return;
+      }
+      Object* content_obj = QSTRING_NEW1("");
+      String* content = content_obj->impl;
       String* fline = String_new("");
+      while(String_getline(fline, file) != -1) {
+        if(fline->len > 0 && fline->buf[0] == '#') {
+          // ignore lines starting with '#'. These are Racket lang-line pragmas
+          continue;
+        }
+        /* printf("%s\n", fline->buf); */
+        String_addx(content, fline);
+      }
       String_del(fline);
+      fclose(file);
+      printf("--- { content { ---\n");
+      printf("%s\n", content->buf);
+      printf("--- } content } ---\n");
+      Object* fresult = Object_accept(Lisp_eval_string(content_obj));
+      ObjectUtil_eprintf("fresult = %v\n", fresult);
     }
     else {
       printf("ERROR: invalid arg: %s\n", argv[1]);
