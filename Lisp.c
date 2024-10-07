@@ -452,13 +452,13 @@ Object* Lisp_parse_tokens2(Object* tokenlist, int depth) {
   Object* sublist = Object_new_null();
   int idx = 0;
   char softbreak = 0;
-  ObjectUtil_eprintf("donuts. ret = %v. tokenlist=%v\n", ret, tokenlist);
-  ObjectUtil_eprintf("donuts. tokenlist=%v len=%zu\n", tokenlist, Object_len(tokenlist));
+  ObjectUtil_eprintf("donuts. lpt2. ret = %v. tokenlist=%v\n", ret, tokenlist);
+  ObjectUtil_eprintf("donuts. lpt2. tokenlist=%v len=%zu\n", tokenlist, Object_len(tokenlist));
   /* if(Object_len(tokenlist) == 1 && Object_type(Object_uop_head(tokenlist)) != SYMBOL_LIST) { */
   /* } */
   while(Object_len(tokenlist) > 0) {
     tmp = Object_accept(Object_uop_shift(tokenlist));
-    ObjectUtil_eprintf("[%d] Lisp_parse_tokens2. tmp = %v\n", depth, tmp);
+    ObjectUtil_eprintf("donuts. lpt2. [%d] tmp = %v\n", depth, tmp);
     if(depth == 0 && idx == 0 && Object_cmp(tmp, LISP_PAREN_BEG) == 0) {
       // special case of first '(' in the tokenlist
     }
