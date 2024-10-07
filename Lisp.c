@@ -458,7 +458,7 @@ Object* Lisp_parse_tokens2(Object* tokenlist, int depth) {
   /* } */
   while(Object_len(tokenlist) > 0) {
     tmp = Object_accept(Object_uop_shift(tokenlist));
-    ObjectUtil_eprintf("donuts. lpt2. [%d] tmp = %v\n", depth, tmp);
+    ObjectUtil_eprintf("donuts. lpt2. d=%d | tmp = %v\n", depth, tmp);
     if(depth == 0 && idx == 0 && Object_cmp(tmp, LISP_PAREN_BEG) == 0) {
       // special case of first '(' in the tokenlist
     }
@@ -508,10 +508,10 @@ Object* Lisp_parse_tokens2(Object* tokenlist, int depth) {
     ret = QERROR_NEW1("invalid input tokenlist");
   }
   if(!Object_is_null(ret)) {
-    ObjectUtil_eprintf("donuts. 002. ret = %v\n", ret);
+    /* ObjectUtil_eprintf("donuts. lpt2. 002. ret = %v\n", ret); */
     Object_return(ret);   // mark object for returning
     Object_rc_decr(ret);  // release the RC in this proc
-    ObjectUtil_eprintf("donuts. 003. ret = %v\n", ret);
+    /* ObjectUtil_eprintf("donuts. lpt2. 003. ret = %v\n", ret); */
     // We are returning a constructed object, that must
     // be accepted or reject with rc=0;
     assert(ret->rc == 0);

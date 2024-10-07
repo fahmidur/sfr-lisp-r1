@@ -65,6 +65,11 @@ void Function_print(Function* self) {
   Util_vt_set(VT_COLOR_BRIGHT_YELLOW_FG);
   printf("addr=%p arity=%d", self, self->arity);
   Util_vt_set(VT_RESET);
+  if(self->name) {
+    ObjectUtil_eprintf(" name=%v", self->name);
+  }
+  Util_vt_set(VT_COLOR_BRIGHT_YELLOW_FG);
+  Util_vt_set(VT_RESET);
   printf(")");
 }
 
