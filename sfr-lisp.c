@@ -64,25 +64,33 @@ void repl() {
       printf("goodbye\n");
       break;
     }
+    else
     if(strcmp(inp->buf, ".env") == 0) {
       Lisp_printenv();
     }
-    ObjectUtil_eprintf("OK. Got input = %v\n", obj_inp);
-
-    if(rvalue == NULL) {
-    }
     else
-    if(!Object_is_null(rvalue)) {
-      Object_assign(&rvalue, NULL);
+    if(strcmp(inp->buf, ".clear") == 0 || strcmp(inp->buf, ".cls") == 0) {
+      linenoiseClearScreen();
     }
-    rvalue = Object_accept(Lisp_eval_string(obj_inp));
-    ObjectUtil_eprintf("rvalue = %v\n", rvalue);
+    else {
+      ObjectUtil_eprintf("OK. Got input = %v\n", obj_inp);
+
+      if(rvalue == NULL) {
+      }
+      else
+      if(!Object_is_null(rvalue)) {
+        Object_assign(&rvalue, NULL);
+      }
+      rvalue = Object_accept(Lisp_eval_string(obj_inp));
+      ObjectUtil_eprintf("rvalue = %v\n", rvalue);
+    }
     free(line);
     line = NULL;
   }
   /* String_del(inp); */
   if(line != NULL) {
     free(line);
+    line = NULL;
   }
   Object_assign(&obj_inp, NULL);
 }
