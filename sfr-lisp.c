@@ -168,11 +168,11 @@ int main(int argc, char** argv) {
       }
       String_del(fline);
       fclose(file);
-      printf("--- { content { ---\n");
-      printf("%s\n", content->buf);
-      printf("--- } content } ---\n");
+      /* printf("--- { content { ---\n"); */
+      /* printf("%s\n", content->buf); */
+      /* printf("--- } content } ---\n"); */
       Object* fresult = Object_accept(Lisp_eval_string(content_obj));
-      ObjectUtil_eprintf("fresult = %v\n", fresult);
+      /* ObjectUtil_eprintf("\ndonuts. fresult = %v\n", fresult); */
     }
     else {
       printf("ERROR: invalid arg: %s\n", argv[1]);

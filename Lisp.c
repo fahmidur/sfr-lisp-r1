@@ -132,7 +132,7 @@ Object* fn_begin(Function* fn, Object* env, Object* argv) {
 }
 
 Object* fn_lambda(Function* fn, Object* env, Object* argv) {
-  printf("donuts. fn_lambda called\n");
+  /* printf("donuts. fn_lambda called\n"); */
   // we must evaluate each statement in the body, the body
   // is a list of statements.
   // but first we must take each argv and zip it with the known params,
@@ -503,13 +503,13 @@ Object* Lisp_parse_tokens2(Object* tokenlist, int depth) {
   Object* sublist = Object_new_null();
   int idx = 0;
   char softbreak = 0;
-  ObjectUtil_eprintf("donuts. lpt2. ret = %v. tokenlist=%v\n", ret, tokenlist);
-  ObjectUtil_eprintf("donuts. lpt2. tokenlist=%v len=%zu\n", tokenlist, Object_len(tokenlist));
+  /* ObjectUtil_eprintf("donuts. lpt2. ret = %v. tokenlist=%v\n", ret, tokenlist); */
+  /* ObjectUtil_eprintf("donuts. lpt2. tokenlist=%v len=%zu\n", tokenlist, Object_len(tokenlist)); */
   /* if(Object_len(tokenlist) == 1 && Object_type(Object_uop_head(tokenlist)) != SYMBOL_LIST) { */
   /* } */
   while(Object_len(tokenlist) > 0) {
     tmp = Object_accept(Object_uop_shift(tokenlist));
-    ObjectUtil_eprintf("donuts. lpt2. d=%d | tmp = %v\n", depth, tmp);
+    /* ObjectUtil_eprintf("donuts. lpt2. d=%d | tmp = %v\n", depth, tmp); */
     if(depth == 0 && idx == 0 && Object_cmp(tmp, LISP_PAREN_BEG) == 0) {
       // special case of first '(' in the tokenlist
     }
@@ -576,11 +576,11 @@ Object* Lisp_parse_tokens(Object* tokenlist) {
 
 Object* Lisp_parse_string(Object* str) {
   Object* tokens = Object_accept(Lisp_tokenize(str));
-  ObjectUtil_eprintf("donuts. tokens = %v\n", tokens);
+  /* ObjectUtil_eprintf("donuts. tokens = %v\n", tokens); */
   if(Object_is_error(tokens)) {
     return tokens;
   }
-  ObjectUtil_eprintf("donuts. calling Lisp_parse_tokens(tokens) ...\n");
+  /* ObjectUtil_eprintf("donuts. calling Lisp_parse_tokens(tokens) ...\n"); */
   Object* parsed = Object_return(Lisp_parse_tokens(tokens));
   Object_rc_decr(tokens); tokens = NULL;
   return parsed;
@@ -690,7 +690,7 @@ Object* Lisp_eval_sexp2(Object* sexp, Object* env) {
               lambda_body
             )
           );
-          ObjectUtil_eprintf("donuts. lambda new func = %v\n", ret);
+          /* ObjectUtil_eprintf("donuts. lambda new func = %v\n", ret); */
           Object_assign(&lambda_body, NULL);
           Object_assign(&lambda_params, NULL);
           Object_assign(&lambda_env, NULL);
@@ -715,7 +715,7 @@ _return:
     Object_return(ret);
     Object_rc_decr(ret);
   }
-  ObjectUtil_eprintf("donuts. eval. ret=%v\n", ret);
+  /* ObjectUtil_eprintf("donuts. eval. ret=%v\n", ret); */
   return ret;
 }
 
