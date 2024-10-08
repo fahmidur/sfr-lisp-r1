@@ -56,9 +56,6 @@ Function* Function_new(
     self->name = Object_new_null();
   }
 
-  // The use of the body is entirely dependent on the impl.
-  // we do not do anything special to the body.
-  self->body = NULL;
   return self;
 }
 

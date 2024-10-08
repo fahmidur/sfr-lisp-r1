@@ -137,6 +137,48 @@ Object* fn_lambda(Function* fn, Object* env, Object* argv) {
   // is a list of statements.
   // but first we must take each argv and zip it with the known params,
   // setting each of these into a new child environment.
+  Object* env2 = Object_new(SYMBOL_ENVIRONMENT, 1, Environment_new());
+  Object_bop_child_attach(env, env2);
+
+  if(fn->arity > 0) {
+    Object* params = Object_accept(fn->params);
+    ListIter* params_iter = ListIter_new(params->impl);
+    ListIter_head(params_iter);
+    ListIter* argv_iter = ListIter_new(argv->impl);
+    ListIter_head(argv_iter);
+    while( ! (ListIter_at_end(params_iter) || ListIter_at_end(argv_iter)) ) {
+      Object_top_hset(env2, ListIter_get_val(params_iter), ListIter_get_val(argv_iter));
+      ListIter_next(params_iter);
+      ListIter_next(argv_iter);
+    }
+    ListIter_del(argv_iter);
+    argv_iter = NULL;
+    ListIter_del(params_iter);
+    params_iter = NULL;
+    Object_assign(&params, NULL);
+  }
+
+  Object* ret = Object_new_null();
+
+  /* ObjectUtil_eprintf("donuts. fn_lambda. body=%v\n", fn->body); */
+
+  Object* body = fn->body;
+  if(!Object_is_null(body)) {
+    ListIter* body_iter = ListIter_new(body->impl);
+    ListIter_head(body_iter);
+    while(!ListIter_at_end(body_iter)) {
+      /* ObjectUtil_eprintf("donuts. fn_lambda. body el=%v\n", ListIter_get_val(body_iter)); */
+      if(!Object_is_null(ret)) {
+        Object_assign(&ret, NULL);
+      }
+      ret = Object_accept(Lisp_eval_sexp2(ListIter_get_val(body_iter), env2));
+      ListIter_next(body_iter);
+    }
+    ListIter_del(body_iter);
+  }
+  Object_assign(&body, NULL);
+
+  Object_assign(&env2, NULL);
   return Object_new_null();
 }
 
@@ -630,18 +672,17 @@ Object* Lisp_eval_sexp2(Object* sexp, Object* env) {
           ret = QERROR("invalid use of 'lambda'");
         }
         else {
-          ObjectUtil_eprintf("donuts. in-lambda. sexp = %v\n", sexp);
           ret = Object_new_null();
           Object* lambda_env = Object_new(SYMBOL_ENVIRONMENT, 1, Environment_new());
           Object_bop_child_attach(env, lambda_env);
           Object* lambda_params = Object_accept(Object_uop_head(Object_uop_rest(sexp)));
           ssize_t lambda_plen = Object_len(lambda_params);
-          Object* lambda_body = Object_accept(Object_uop_head(Object_uop_rest(Object_uop_rest(sexp))));
+          Object* lambda_body = Object_accept(Object_uop_rest(Object_uop_rest(sexp)));
           ret = Object_new(
             SYMBOL_FUNCTION, 
             1, 
             Function_new(
-              QSTRING("lambda001"),
+              QSYMBOL("lambda001"),
               lambda_env, 
               fn_lambda,
               (lambda_plen > 0 ? lambda_plen : -1),
