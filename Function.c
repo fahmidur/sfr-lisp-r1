@@ -101,7 +101,6 @@ Object* Function_call(Function* self, Object* argv) {
     ) {
     ListIter* argv_iter = ListIter_new(argv->impl);
     ListIter_head(argv_iter); // go to head
-    /* ListIter_next(argv_iter); // go one more past head because we ignore the first arg */
     ListIter* params_iter = ListIter_new(self->params->impl);
     ListIter_head(params_iter);
     while(!(ListIter_at_end(argv_iter) || ListIter_at_end(params_iter))) {

@@ -120,6 +120,11 @@ Object* fn_displayln(Function* fn, Object* env, Object* argv) {
   return Object_new_null();
 }
 
+Object* fn_newline(Function* fn, Object* env, Object* argv) {
+  printf("\n");
+  return Object_new_null();
+}
+
 Object* fn_begin(Function* fn, Object* env, Object* argv) {
   Object* ret = NULL;
   if(Object_len(argv) > 0) {
@@ -236,6 +241,11 @@ void Lisp_init() {
     Function_new(QSYMBOL("displayln"), NULL, fn_displayln, -1, NULL, NULL)
   );
   Object_top_hset(LispEnv_root, QSYMBOL("displayln"), fnobj_displayln);
+
+  Object* fnobj_newline = Object_new(SYMBOL_FUNCTION, 1,
+      Function_new(QSYMBOL("newline"), NULL, fn_newline, -1, NULL, NULL)
+  );
+  Object_top_hset(LispEnv_root, QSYMBOL("newline"), fnobj_newline);
 
 
   Object* fnobj_add = Object_new(SYMBOL_FUNCTION, 1, 

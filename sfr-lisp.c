@@ -149,7 +149,7 @@ int main(int argc, char** argv) {
     }
     else
     if(file_exists(argv[1])) {
-      printf("evalfile: %s\n", argv[1]);
+      printf("donuts. eval file: %s\n", argv[1]);
       FILE* file = fopen(argv[1], "r");
       if(file == NULL) {
         printf("ERROR: Failed to open file at %s\n", argv[1]);

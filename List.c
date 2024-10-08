@@ -355,6 +355,7 @@ ListIter* ListIter_next(ListIter* self) {
 ListIter* ListIter_head(ListIter* self) {
   List* list = self->list;
   if(list->size == 0) {
+    self->at_pos = LIST_ITER_POS_END;
     return self;
   }
   self->cnode = list->head;
@@ -365,6 +366,7 @@ ListIter* ListIter_head(ListIter* self) {
 ListIter* ListIter_tail(ListIter* self) {
   List* list = self->list;
   if(list->size == 0) {
+    self->at_pos = LIST_ITER_POS_BEG;
     return self;
   }
   self->cnode = list->tail;
