@@ -135,6 +135,8 @@ Object* fn_lambda(Function* fn, Object* env, Object* argv) {
   printf("donuts. fn_lambda called\n");
   // we must evaluate each statement in the body, the body
   // is a list of statements.
+  // but first we must take each argv and zip it with the known params,
+  // setting each of these into a new child environment.
   return Object_new_null();
 }
 
