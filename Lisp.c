@@ -131,6 +131,10 @@ Object* fn_begin(Function* fn, Object* env, Object* argv) {
   return ret;
 }
 
+Object* fn_lambda(Function* fn, Object* env, Object* argv) {
+  return Object_new_null();
+}
+
 Object* fn_cmp_lt(Function* fn, Object* env, Object* argv) {
   Object* a = Object_accept(Object_bop_hget(env, QSYMBOL("a")));
   Object* b = Object_accept(Object_bop_hget(env, QSYMBOL("b")));
@@ -562,29 +566,32 @@ Object* Lisp_eval_sexp2(Object* sexp, Object* env) {
     opval = Lisp_eval_sexp2(op, env);
     if(Object_type(op) == SYMBOL_SYMBOL) {
       if(op == QSYMBOL("quote")) {
-        ret = Object_accept(Object_uop_rest(sexp));
+        if(Object_len(sexp) != 2) {
+          ret = QERROR("invalid use of 'quote'");
+        }
+        else {
+          ret = Object_accept(Object_uop_head(Object_uop_rest(sexp)));
+        }
       }
       else
       if(op == QSYMBOL("define")) {
         opargs1 = Object_accept(Object_uop_rest(sexp));
-        if(Object_len(opargs1) < 2) {
+        if(Object_len(opargs1) != 2) {
           // return an error
+          ret = QERROR("invalid use of 'define'");
         }
-        else
-        if(Object_len(opargs1) == 2) {
-          opargs2 = Object_accept(Object_bop_at(opargs1, 1));
-        } 
         else {
-          opargs2 = Object_accept(Object_uop_rest(opargs1));
+          opargs2 = Object_accept(Object_bop_at(opargs1, 1));
+          Object_top_hset(env, Object_uop_head(opargs1), Lisp_eval_sexp2(opargs2, env));
         }
-        ObjectUtil_eprintf("donuts. opargs1 = %v\n", opargs1);
-        Object_top_hset(env, Object_uop_head(opargs1), Lisp_eval_sexp2(opargs2, env));
+
       }
       else
       if(op == QSYMBOL("set!")) {
         // set the value of a variable which has been already defined
         if(Object_is_null(opval)) {
           // return an error
+          ret = QERROR("invalid use of 'set!'");
         }
         else {
           opargs1 = Object_accept(Object_uop_rest(sexp));
