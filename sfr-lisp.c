@@ -82,7 +82,9 @@ void repl() {
         Object_assign(&rvalue, NULL);
       }
       rvalue = Object_accept(Lisp_eval_string(obj_inp));
-      ObjectUtil_eprintf("rvalue = %v\n", rvalue);
+      if(!Object_is_null(rvalue)) {
+        ObjectUtil_eprintf("rvalue = %v\n", rvalue);
+      }
     }
     free(line);
     line = NULL;
