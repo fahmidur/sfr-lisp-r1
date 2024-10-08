@@ -43,6 +43,8 @@ Function* Function_new(
   if(env == NULL) {
     // it is not possible for a function to exist without an environment
     self->env = Object_new(SYMBOL_ENVIRONMENT, 1, Environment_new());
+  } else {
+    self->env = Object_accept(env);
   }
 
   if(!Object_is_null(name)) {
@@ -89,6 +91,10 @@ Object* Function_call(Function* self, Object* argv) {
 
   Object* tmpEnv = Object_new(SYMBOL_ENVIRONMENT, 1, Environment_new());
   assert(tmpEnv->rc == 1);
+  /* if(Object_cmp(self->name, QSTRING("lambda001")) == 0) { */
+  /*   printf("donuts. Function_call over here"); */
+  /* } */
+  assert(self->env != NULL);
   Environment_child_attach(self->env, tmpEnv);
 
   if(

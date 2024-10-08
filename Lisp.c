@@ -132,6 +132,9 @@ Object* fn_begin(Function* fn, Object* env, Object* argv) {
 }
 
 Object* fn_lambda(Function* fn, Object* env, Object* argv) {
+  printf("donuts. fn_lambda called\n");
+  // we must evaluate each statement in the body, the body
+  // is a list of statements.
   return Object_new_null();
 }
 
@@ -615,6 +618,40 @@ Object* Lisp_eval_sexp2(Object* sexp, Object* env) {
         }
         ListIter_del(iter);
         ret = Object_bop_call(opval, opargs2);
+      }
+      else
+      if(op == QSYMBOL("lambda")) {
+        // lambda (a b c) (+ a b c)
+        // lambda <params> <body>
+        // we create a closure environment
+        if(Object_len(sexp) < 3) {
+          ret = QERROR("invalid use of 'lambda'");
+        }
+        else {
+          ObjectUtil_eprintf("donuts. in-lambda. sexp = %v\n", sexp);
+          ret = Object_new_null();
+          Object* lambda_env = Object_new(SYMBOL_ENVIRONMENT, 1, Environment_new());
+          Object_bop_child_attach(env, lambda_env);
+          Object* lambda_params = Object_accept(Object_uop_head(Object_uop_rest(sexp)));
+          ssize_t lambda_plen = Object_len(lambda_params);
+          Object* lambda_body = Object_accept(Object_uop_head(Object_uop_rest(Object_uop_rest(sexp))));
+          ret = Object_new(
+            SYMBOL_FUNCTION, 
+            1, 
+            Function_new(
+              QSTRING("lambda001"),
+              lambda_env, 
+              fn_lambda,
+              (lambda_plen > 0 ? lambda_plen : -1),
+              lambda_params,
+              lambda_body
+            )
+          );
+          ObjectUtil_eprintf("donuts. lambda new func = %v\n", ret);
+          Object_assign(&lambda_body, NULL);
+          Object_assign(&lambda_params, NULL);
+          Object_assign(&lambda_env, NULL);
+        }
       }
     }
   }
