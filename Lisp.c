@@ -307,7 +307,8 @@ char TokenizerUtil_wordlike(char ch) {
     (ch == '-') || 
     (ch == '+') || 
     (ch == '*') ||
-    (ch == '/')
+    (ch == '/') ||
+    (ch == '!')
   );
 }
 
@@ -643,20 +644,22 @@ Object* Lisp_eval_sexp2(Object* sexp, Object* env) {
         }
         else {
           opargs2 = Object_accept(Object_bop_at(opargs1, 1));
-          Object_top_hset(env, Object_uop_head(opargs1), Lisp_eval_sexp2(opargs2, env));
+          Object_reject(Object_top_hset(env, Object_uop_head(opargs1), Lisp_eval_sexp2(opargs2, env)));
         }
 
       }
       else
       if(op == QSYMBOL("set!")) {
+        opargs1 = Object_accept(Object_uop_rest(sexp));
         // set the value of a variable which has been already defined
-        if(Object_is_null(opval)) {
+        if(Object_len(opargs1) != 2) {
           // return an error
           ret = QERROR("invalid use of 'set!'");
         }
         else {
-          opargs1 = Object_accept(Object_uop_rest(sexp));
-          Object_reject(Object_top_hset(env, Object_uop_head(opargs1), Lisp_eval_sexp2(Object_uop_rest(opargs1), env)));
+          //TODO: check that key exists, that is the only difference between define and set!
+          opargs2 = Object_accept(Object_bop_at(opargs1, 1));
+          Object_reject(Object_top_hset(env, Object_uop_head(opargs1), Lisp_eval_sexp2(opargs2, env)));
         }
       }
       else
