@@ -746,9 +746,29 @@ Object* Lisp_eval_string(Object* str) {
   return Lisp_eval_sexp(Lisp_parse_string(str));
 }
 
-void Lisp_printenv() {
-  Environment* env = LispEnv_root->impl;
+void Lisp_printenv2(Object* env_obj) {
+  printf("--- { Object<Environment>(%p) { ---\n", env_obj);
+  Environment* env = env_obj->impl;
   Object_print(env->objects);
+  ListIter* iter = ListIter_new(env->children->impl);
+  ListIter_head(iter);
+  int i = 0;
+  Object* child_env_obj = NULL;
+  while(!ListIter_at_end(iter)) {
+    printf("--- { Object<Environment>(%p) child %d { ---\n", env_obj, i);
+    child_env_obj = Object_accept(ListIter_get_val(iter));
+    /* printf("%p : [%d] obj= %p obj->impl=%p\n", env_obj, i, child_env_obj, child_env_obj->impl); */
+    Lisp_printenv2(child_env_obj);
+    printf("--- } Object<Environment>(%p) child %d } ---\n", env_obj, i);
+    ListIter_next(iter);
+    i++;
+  }
+  ListIter_del(iter);
+  printf("--- } Object<Environment>(%p) } ---\n", env_obj);
+}
+
+void Lisp_printenv() {
+  Lisp_printenv2(LispEnv_root);
 }
 
 /* LispEnv* LispEnv_new(LispEnv* parent) { */
