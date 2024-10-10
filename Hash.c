@@ -38,7 +38,7 @@ void HashNode_del(HashNode* self) {
     self->key = Object_rc_decr(self->key);
   }
   if(self->val != NULL && Object_system_delete_recurse()) {
-    self->key = Object_rc_decr(self->val);
+    self->val = Object_rc_decr(self->val);
   }
   self->key = NULL;
   self->val = NULL;
