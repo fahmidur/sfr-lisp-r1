@@ -100,6 +100,9 @@ void repl() {
     if(strcmp(inp->buf, ".clear") == 0 || strcmp(inp->buf, ".cls") == 0) {
       linenoiseClearScreen();
     }
+    else
+    if(strlen(inp->buf) > 1 && inp->buf[0] == '.') {
+    }
     else {
       ObjectUtil_eprintf("OK. Got input = %v\n", obj_inp);
 

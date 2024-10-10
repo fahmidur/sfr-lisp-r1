@@ -675,6 +675,7 @@ Object* Lisp_eval_sexp2(Object* sexp, Object* env) {
           ListIter_next(iter);
         }
         ListIter_del(iter);
+        ObjectUtil_eprintf("donuts. calling function opval=%v\n", opval);
         ret = Object_bop_call(opval, opargs2);
       }
       else
@@ -696,7 +697,7 @@ Object* Lisp_eval_sexp2(Object* sexp, Object* env) {
             SYMBOL_FUNCTION, 
             1, 
             Function_new(
-              QSYMBOL("lambda001"),
+              Object_new_null(),
               lambda_env, 
               fn_lambda,
               (lambda_plen > 0 ? lambda_plen : -1),

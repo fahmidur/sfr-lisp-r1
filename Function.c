@@ -62,10 +62,13 @@ Function* Function_new(
 void Function_print(Function* self) {
   printf("Function(");
   Util_vt_set(VT_COLOR_BRIGHT_YELLOW_FG);
-  printf("addr=%p arity=%d", self, self->arity);
+  printf("addr=%p impl=%p arity=%d", self, self->impl, self->arity);
   Util_vt_set(VT_RESET);
   if(self->name) {
     ObjectUtil_eprintf(" name=%v", self->name);
+  }
+  if(!Object_is_null(self->body)) {
+    ObjectUtil_eprintf(" body=%v\n", self->body);
   }
   Util_vt_set(VT_COLOR_BRIGHT_YELLOW_FG);
   Util_vt_set(VT_RESET);
