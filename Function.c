@@ -67,8 +67,9 @@ void Function_print(Function* self) {
   if(self->name) {
     ObjectUtil_eprintf(" name=%v", self->name);
   }
+  ObjectUtil_eprintf(" env=%v", self->env);
   if(!Object_is_null(self->body)) {
-    ObjectUtil_eprintf(" body=%v\n", self->body);
+    ObjectUtil_eprintf(" body=%v", self->body);
   }
   Util_vt_set(VT_COLOR_BRIGHT_YELLOW_FG);
   Util_vt_set(VT_RESET);

@@ -143,7 +143,7 @@ Object* fn_lambda(Function* fn, Object* env, Object* argv) {
   // but first we must take each argv and zip it with the known params,
   // setting each of these into a new child environment.
   Object* env2 = Object_new(SYMBOL_ENVIRONMENT, 1, Environment_new());
-  Object_bop_child_attach(env, env2);
+  Object_bop_child_attach(fn->env, env2);
 
   if(fn->arity > 0) {
     Object* params = Object_accept(fn->params);
