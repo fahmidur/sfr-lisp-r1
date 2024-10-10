@@ -112,6 +112,16 @@ int main(int argc, char** argv) {
   ObjectUtil_eprintf("tc6_parsed = %v\n", tc6_parsed);
   nassert(Object_is_error(tc6_parsed));
 
+  printf("\n=== === lambda test 1 === ===\n");
+  Object* tclam1_str = QSTRING_NEW1("(lambda (x) (+ 0 x))");
+  ObjectUtil_eprintf("tclam1_str = %v\n", tclam1_str);
+  Object* tclam1_tokens = Object_accept(Lisp_tokenize(tclam1_str));
+  Object* tclam1_parsed = Object_accept(Lisp_parse_tokens(tclam1_tokens));
+  ObjectUtil_eprintf("tclam1_parsed = %v\n", tclam1_parsed);
+  Object* tclam1_value = Lisp_eval_sexp(tclam1_parsed);
+  ObjectUtil_eprintf("tclam1_value = %v\n", tclam1_value);
+  nassert(Object_type(tclam1_value) == SYMBOL_FUNCTION);
+
   Lisp_done();
   Runtime_done();
 

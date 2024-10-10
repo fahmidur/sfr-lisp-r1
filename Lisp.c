@@ -182,9 +182,13 @@ Object* fn_lambda(Function* fn, Object* env, Object* argv) {
     ListIter_del(body_iter);
   }
   Object_assign(&body, NULL);
-
   Object_assign(&env2, NULL);
-  return Object_new_null();
+  if(!Object_is_null(ret)) {
+    Object_return(ret);
+    Object_rc_decr(ret);
+  }
+  return ret;
+  /* return Object_new_null(); */
 }
 
 Object* fn_cmp_lt(Function* fn, Object* env, Object* argv) {
