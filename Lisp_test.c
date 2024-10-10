@@ -112,6 +112,12 @@ int main(int argc, char** argv) {
   ObjectUtil_eprintf("tc6_parsed = %v\n", tc6_parsed);
   nassert(Object_is_error(tc6_parsed));
 
+  printf("\n=== === bad op test === ===\n");
+  Object* tcbadop1_string = QSTRING_NEW1("(+ abc def)");
+  Object* tcbadop1_value = Object_accept(Lisp_eval_string(tcbadop1_string));
+  ObjectUtil_eprintf("tcbadop1_value = %v\n", tcbadop1_value);
+  nassert(Object_type(tcbadop1_value) == SYMBOL_ERROR);
+
   printf("\n=== === lambda test 1 === ===\n");
   Object* tclam1_str = QSTRING_NEW1("(lambda (x) (+ 0 x))");
   ObjectUtil_eprintf("tclam1_str = %v\n", tclam1_str);

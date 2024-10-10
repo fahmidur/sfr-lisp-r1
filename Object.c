@@ -970,6 +970,10 @@ Object* Object_rc_incr(Object* self) {
   if(self == NULL) {
     return self;
   }
+  if(Object_is_null(self)) {
+    // do nothing
+    return self;
+  }
   self->rc++;
   return self;
 }
@@ -991,6 +995,11 @@ Object* Object_gc(Object* self) {
 Object* Object_rc_decr(Object* self) {
   /* assert(self != NULL); */
   if(self == NULL) {
+    return self;
+  }
+  if(Object_is_null(self) && object_system->done_called == 0) {
+    // the object_system is still running.
+    // do nothing.
     return self;
   }
   if(self->rc >= 1) {
