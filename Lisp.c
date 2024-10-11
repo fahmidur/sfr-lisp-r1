@@ -168,6 +168,7 @@ Object* fn_lambda(Function* fn, Object* env, Object* argv) {
 
   /* ObjectUtil_eprintf("donuts. fn_lambda. body=%v\n", fn->body); */
 
+  // now eval the lambda body
   Object* body = Object_accept(fn->body);
   if(body != NULL && !Object_is_null(body)) {
     ListIter* body_iter = ListIter_new(body->impl);
