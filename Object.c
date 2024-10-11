@@ -1183,6 +1183,10 @@ Object* Object_bop_addx_char(Object* a, char ch) {
 
 Object* Object_top_hset(Object* self, Object* key, Object* val) {
   assert(self != NULL);
+  Object_rc_incr(self);
+  Object_rc_incr(key);
+  Object_rc_incr(val);
+
   Object* ret = NULL;
 
   if(Object_type(self) == SYMBOL_HASH) {
@@ -1199,6 +1203,10 @@ Object* Object_top_hset(Object* self, Object* key, Object* val) {
   if(ret == NULL) {
     ret = Object_new_null();
   }
+  
+  Object_rc_decr(key);
+  Object_rc_decr(val);
+  Object_rc_decr(self);
   return ret;
 }
 

@@ -183,9 +183,10 @@ Object* fn_lambda(Function* fn, Object* env, Object* argv) {
   }
   Object_assign(&body, NULL);
   Object_assign(&env2, NULL);
-  if(!Object_is_null(ret)) {
+  if(ret != NULL && !Object_is_null(ret)) {
     Object_return(ret);
     Object_rc_decr(ret);
+    printf("donuts. env2->rc = %d\n", env2->rc);
   }
   return ret;
   /* return Object_new_null(); */
@@ -237,47 +238,47 @@ void Lisp_init() {
   LispEnv_root = Object_new(SYMBOL_ENVIRONMENT, 1, Environment_new());
 
   Object* fnobj_display = Object_new(SYMBOL_FUNCTION, 1, 
-    Function_new(QSYMBOL("display"), NULL, fn_display, -1, NULL, NULL)
+    Function_new(QSYMBOL("display"), LispEnv_root, fn_display, -1, NULL, NULL)
   );
   Object_top_hset(LispEnv_root, QSYMBOL("display"), fnobj_display);
   
   Object* fnobj_displayln = Object_new(SYMBOL_FUNCTION, 1, 
-    Function_new(QSYMBOL("displayln"), NULL, fn_displayln, -1, NULL, NULL)
+    Function_new(QSYMBOL("displayln"), LispEnv_root, fn_displayln, -1, NULL, NULL)
   );
   Object_top_hset(LispEnv_root, QSYMBOL("displayln"), fnobj_displayln);
 
   Object* fnobj_newline = Object_new(SYMBOL_FUNCTION, 1,
-      Function_new(QSYMBOL("newline"), NULL, fn_newline, -1, NULL, NULL)
+      Function_new(QSYMBOL("newline"), LispEnv_root, fn_newline, -1, NULL, NULL)
   );
   Object_top_hset(LispEnv_root, QSYMBOL("newline"), fnobj_newline);
 
 
   Object* fnobj_add = Object_new(SYMBOL_FUNCTION, 1, 
-    Function_new(QSYMBOL("+"), NULL, fn_add, 2, Object_new_list(1, 2, QSYMBOL("a"), QSYMBOL("b")), NULL)
+    Function_new(QSYMBOL("+"), LispEnv_root, fn_add, 2, Object_new_list(1, 2, QSYMBOL("a"), QSYMBOL("b")), NULL)
   );
   Object_top_hset(LispEnv_root, QSYMBOL("+"), fnobj_add);
   Object_assign(&fnobj_add, NULL);
 
   Object* fnobj_sub = Object_new(SYMBOL_FUNCTION, 1, 
-    Function_new(QSYMBOL("-"), NULL, fn_sub, 2, Object_new_list(1, 2, QSYMBOL("a"), QSYMBOL("b")), NULL)
+    Function_new(QSYMBOL("-"), LispEnv_root, fn_sub, 2, Object_new_list(1, 2, QSYMBOL("a"), QSYMBOL("b")), NULL)
   );
   Object_top_hset(LispEnv_root, QSYMBOL("-"), fnobj_sub);
   Object_assign(&fnobj_sub, NULL);
 
   Object* fnobj_mul = Object_new(SYMBOL_FUNCTION, 1, 
-    Function_new(QSYMBOL("*"), NULL, fn_mul, 2, Object_new_list(1, 2, QSYMBOL("a"), QSYMBOL("b")), NULL)
+    Function_new(QSYMBOL("*"), LispEnv_root, fn_mul, 2, Object_new_list(1, 2, QSYMBOL("a"), QSYMBOL("b")), NULL)
   );
   Object_top_hset(LispEnv_root, QSYMBOL("*"), fnobj_mul);
   Object_assign(&fnobj_mul, NULL);
   
   Object* fnobj_div = Object_new(SYMBOL_FUNCTION, 1, 
-    Function_new(QSYMBOL("/"), NULL, fn_div, 2, Object_new_list(1, 2, QSYMBOL("a"), QSYMBOL("b")), NULL)
+    Function_new(QSYMBOL("/"), LispEnv_root, fn_div, 2, Object_new_list(1, 2, QSYMBOL("a"), QSYMBOL("b")), NULL)
   );
   Object_top_hset(LispEnv_root, QSYMBOL("/"), fnobj_div);
   Object_assign(&fnobj_div, NULL);
 
   Object* fnobj_begin = Object_new(SYMBOL_FUNCTION, 1,
-    Function_new(QSYMBOL("begin"), NULL, fn_begin, -1, NULL, NULL)
+    Function_new(QSYMBOL("begin"), LispEnv_root, fn_begin, -1, NULL, NULL)
   );
   Object_top_hset(LispEnv_root, QSYMBOL("begin"), fnobj_begin);
   Object_assign(&fnobj_begin, NULL);
@@ -750,7 +751,7 @@ Object* Lisp_eval_string(Object* str) {
 }
 
 void Lisp_printenv2(Object* env_obj) {
-  printf("--- { Object<Environment>(%p) { ---\n", env_obj);
+  printf("--- { Object<Environment>(%p) Environment(%p) { ---\n", env_obj, env_obj->impl);
   Environment* env = env_obj->impl;
   Object_print(env->objects);
   ListIter* iter = ListIter_new(env->children->impl);
@@ -767,7 +768,7 @@ void Lisp_printenv2(Object* env_obj) {
     i++;
   }
   ListIter_del(iter);
-  printf("--- } Object<Environment>(%p) } ---\n", env_obj);
+  printf("--- } Object<Environment>(%p) Environment(%p) } ---\n", env_obj, env_obj->impl);
 }
 
 void Lisp_printenv() {
