@@ -600,6 +600,8 @@ Object* Lisp_parse_string(Object* str) {
 }
 
 Object* Lisp_eval_sexp2(Object* sexp, Object* env) {
+  Object_rc_incr(sexp);
+  Object_rc_incr(env);
   Object* ret = Object_new_null();
   Object* tmp = NULL;
   Object* tmp2 = NULL;
@@ -733,6 +735,8 @@ _return:
     Object_return(ret);
     Object_rc_decr(ret);
   }
+  Object_rc_decr(sexp);
+  Object_rc_decr(env);
   /* ObjectUtil_eprintf("donuts. eval. ret=%v\n", ret); */
   return ret;
 }
