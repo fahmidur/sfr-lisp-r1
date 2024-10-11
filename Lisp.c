@@ -442,7 +442,7 @@ Object* Lisp_tokenize(Object* string) {
     }
     else
     if(state == ts_InBareWord) {
-      if(TokenizerUtil_wordlike(ch)) {
+      if(TokenizerUtil_wordlike(ch) || TokenizerUtil_numlike(ch)) {
         Object_bop_addx_char(tmp_str, ch);
       }
       else {
@@ -512,6 +512,7 @@ Object* Lisp_tokenize(Object* string) {
   Object_return(ret);
   Object_rc_decr(ret);
 
+  ObjectUtil_eprintf("donuts. got tokens = %v\n", ret);
   return ret;
 }
 
