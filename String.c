@@ -247,8 +247,11 @@ ssize_t String_getline(String* self, FILE *stream) {
  * Remove the last newline in the string if there is one
  **/
 void String_chomp(String* self) {
+  if(String_len(self) == 0) {
+    return;
+  }
   char ch;
-  for(size_t i = (self->len-1); i >= 0; i--) {
+  for(ssize_t i = (self->len-1); i >= 0; i--) {
     ch = self->buf[i];
     if(ch == '\0') { 
       continue;
