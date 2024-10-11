@@ -186,7 +186,7 @@ Object* fn_lambda(Function* fn, Object* env, Object* argv) {
   if(ret != NULL && !Object_is_null(ret)) {
     Object_return(ret);
     Object_rc_decr(ret);
-    printf("donuts. env2->rc = %d\n", env2->rc);
+    /* printf("donuts. env2->rc = %d\n", env2->rc); */
   }
   return ret;
   /* return Object_new_null(); */
@@ -679,7 +679,7 @@ Object* Lisp_eval_sexp2(Object* sexp, Object* env) {
           ListIter_next(iter);
         }
         ListIter_del(iter);
-        ObjectUtil_eprintf("donuts. calling function opval=%v\n", opval);
+        ObjectUtil_eprintf("donuts. calling function opval=%v opargs2=%v\n", opval, opargs2);
         ret = Object_bop_call(opval, opargs2);
       }
       else
@@ -692,8 +692,9 @@ Object* Lisp_eval_sexp2(Object* sexp, Object* env) {
         }
         else {
           ret = Object_new_null();
-          Object* lambda_env = Object_new(SYMBOL_ENVIRONMENT, 1, Environment_new());
-          Object_bop_child_attach(env, lambda_env);
+          /* Object* lambda_env = Object_new(SYMBOL_ENVIRONMENT, 1, Environment_new()); */
+          /* Object_bop_child_attach(env, lambda_env); */
+          Object* lambda_env = Object_rc_incr(env);
           Object* lambda_params = Object_accept(Object_uop_head(Object_uop_rest(sexp)));
           ssize_t lambda_plen = Object_len(lambda_params);
           Object* lambda_body = Object_accept(Object_uop_rest(Object_uop_rest(sexp)));
