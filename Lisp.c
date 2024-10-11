@@ -146,6 +146,7 @@ Object* fn_lambda(Function* fn, Object* env, Object* argv) {
   Object_bop_child_attach(fn->env, env2);
 
   if(fn->arity > 0) {
+    // @params.zip(argv).to_h
     Object* params = Object_accept(fn->params);
     ListIter* params_iter = ListIter_new(params->impl);
     ListIter_head(params_iter);
@@ -167,8 +168,8 @@ Object* fn_lambda(Function* fn, Object* env, Object* argv) {
 
   /* ObjectUtil_eprintf("donuts. fn_lambda. body=%v\n", fn->body); */
 
-  Object* body = fn->body;
-  if(!Object_is_null(body)) {
+  Object* body = Object_accept(fn->body);
+  if(body != NULL && !Object_is_null(body)) {
     ListIter* body_iter = ListIter_new(body->impl);
     ListIter_head(body_iter);
     while(!ListIter_at_end(body_iter)) {
@@ -177,7 +178,7 @@ Object* fn_lambda(Function* fn, Object* env, Object* argv) {
         Object_assign(&ret, NULL);
       }
       ret = Object_accept(Lisp_eval_sexp2(ListIter_get_val(body_iter), env2));
-      ListIter_next(body_iter);
+      ListIter_next(body_iter); 
     }
     ListIter_del(body_iter);
   }
@@ -698,6 +699,7 @@ Object* Lisp_eval_sexp2(Object* sexp, Object* env) {
           Object* lambda_params = Object_accept(Object_uop_head(Object_uop_rest(sexp)));
           ssize_t lambda_plen = Object_len(lambda_params);
           Object* lambda_body = Object_accept(Object_uop_rest(Object_uop_rest(sexp)));
+          ObjectUtil_eprintf("donuts. lambda_body = %v\n", lambda_body);
           ret = Object_new(
             SYMBOL_FUNCTION, 
             1, 
