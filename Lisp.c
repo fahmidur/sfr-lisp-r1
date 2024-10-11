@@ -145,8 +145,9 @@ Object* fn_lambda(Function* fn, Object* env, Object* argv) {
   Object* env2 = Object_new(SYMBOL_ENVIRONMENT, 1, Environment_new());
   Object_bop_child_attach(fn->env, env2);
 
+  // zip all the args into a new environment.
+  // @params.zip(argv).to_h
   if(fn->arity > 0) {
-    // @params.zip(argv).to_h
     Object* params = Object_accept(fn->params);
     ListIter* params_iter = ListIter_new(params->impl);
     ListIter_head(params_iter);
@@ -188,10 +189,8 @@ Object* fn_lambda(Function* fn, Object* env, Object* argv) {
   if(ret != NULL && !Object_is_null(ret)) {
     Object_return(ret);
     Object_rc_decr(ret);
-    /* printf("donuts. env2->rc = %d\n", env2->rc); */
   }
   return ret;
-  /* return Object_new_null(); */
 }
 
 Object* fn_cmp_lt(Function* fn, Object* env, Object* argv) {
