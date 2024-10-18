@@ -165,6 +165,7 @@ Object* Object_bop_hrem(Object* self, Object* key);
 // Mainly Environment Ops or anything Tree-Like (future)
 Object* Object_bop_child_attach(Object* self, Object* child);
 Object* Object_bop_child_detach(Object* self, Object* child);
+Object* Object_bop_rfind(Object* self, Object* key);
 
 // Mainly String ops
 char    Object_bop_charat(Object* self, size_t idx);

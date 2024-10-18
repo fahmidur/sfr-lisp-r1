@@ -1507,6 +1507,16 @@ Object* Object_bop_child_detach(Object* self, Object* child) {
   return ret;
 }
 
+Object* Object_bop_rfind(Object* self, Object* key) {
+  assert(self != NULL);
+  assert(key != NULL);
+  assert(Object_type(self) == SYMBOL_ENVIRONMENT);
+  Environment* env = (Environment*) self->impl;
+  // TODO: we want to recursively find the environment that has 
+  // the given key.
+  return NULL;
+}
+
 /**
  * Get the hash of the object for use in Hash tables
  * or anywhere else that a hash might be needed.
