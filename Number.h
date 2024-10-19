@@ -31,5 +31,6 @@ int     Number_cmp(Number* self, Number* other);
 void    Number_del(Number* self);
 ssize_t Number_len(Number* self);
 void    Number_print(Number* self);
+void    Number_print_bare(Number* self);
 
 #endif

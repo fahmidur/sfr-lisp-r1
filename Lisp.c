@@ -102,7 +102,7 @@ Object* fn_display(Function* fn, Object* env, Object* argv) {
     } 
     else
     if(tmp_type == SYMBOL_NUMBER) {
-      printf("%f", (((Number*)tmp->impl)->rep));
+      Number_print_bare(tmp->impl);
     }
     else {
       Object_print(tmp);
