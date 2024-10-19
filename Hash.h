@@ -47,6 +47,7 @@ Hash*   Hash_new();
 Object* Hash_get(Hash* self, Object* key);
 Object* Hash_set(Hash* self, Object* key, Object* val);
 void    Hash_rem(Hash* self, Object* key);
+char    Hash_has(Hash* self, Object* key);
 void    Hash_del(Hash* self);
 ssize_t  Hash_len(Hash* self);
 ssize_t  Hash_size(Hash* self);

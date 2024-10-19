@@ -114,6 +114,13 @@ Object* Environment_set(Environment* self, Object* key, Object* val) {
   return Object_top_hset(self->objects, key, val);
 }
 
+char Environment_has(Environment* self, Object* key) {
+  assert(self != NULL);
+  assert(self->objects != NULL);
+  assert(key != NULL);
+  return Object_bop_hhas(self->objects, key);
+}
+
 /**
  * Same interface as Hash_get.
  * Get a value given key, if it does not exist

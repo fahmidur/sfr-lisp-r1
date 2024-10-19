@@ -658,8 +658,16 @@ Object* Lisp_eval_sexp2(Object* sexp, Object* env) {
         }
         else {
           //TODO: check that key exists, that is the only difference between define and set!
-          opargs2 = Object_accept(Object_bop_at(opargs1, 1));
-          Object_reject(Object_top_hset(env, Object_uop_head(opargs1), Lisp_eval_sexp2(opargs2, env)));
+          tmp = Object_accept(Object_uop_head(opargs1));
+          Object* tenv = Object_accept(Object_bop_rfind(env, tmp));
+          opargs2 = Object_accept(Object_bop_at(opargs1, 1)); // 2nd arg to 'set!'
+          if(Object_is_null(tenv)) {
+            Object_reject(Object_top_hset(env, tmp, Lisp_eval_sexp2(opargs2, env)));
+          }
+          else {
+            Object_reject(Object_top_hset(tenv, tmp, Lisp_eval_sexp2(opargs2, env)));
+          }
+          Object_assign(&tenv, NULL);
         }
       }
       else

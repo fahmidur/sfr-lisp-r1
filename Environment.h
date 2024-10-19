@@ -24,6 +24,7 @@ void Environment_child_detach(Object* self_obj, Object* child_obj);
 Object* Environment_get(Environment* self, Object* key);
 Object* Environment_set(Environment* self, Object* key, Object* val);
 Object* Environment_rem(Environment* self, Object* key);
+char    Environment_has(Environment* self, Object* key);
 
 ssize_t Environment_len(Environment* self);
 

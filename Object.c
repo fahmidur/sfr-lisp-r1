@@ -1210,6 +1210,20 @@ Object* Object_top_hset(Object* self, Object* key, Object* val) {
   return ret;
 }
 
+char Object_bop_hhas(Object* self, Object* key) {
+  assert(self != NULL);
+  char ret = 0;
+
+  if(Object_type(self) == SYMBOL_HASH) {
+    ret = Hash_has(self->impl, key);
+  }
+  else
+  if(Object_type(self) == SYMBOL_ENVIRONMENT) {
+    ret = Environment_has(self->impl, key);
+  }
+  return ret;
+}
+
 Object* Object_bop_hget(Object* self, Object* key) {
   assert(self != NULL);
   Object* ret = NULL;
@@ -1511,10 +1525,19 @@ Object* Object_bop_rfind(Object* self, Object* key) {
   assert(self != NULL);
   assert(key != NULL);
   assert(Object_type(self) == SYMBOL_ENVIRONMENT);
+
   Environment* env = (Environment*) self->impl;
-  // TODO: we want to recursively find the environment that has 
-  // the given key.
-  return NULL;
+
+  Object* ret = Object_new_null();
+  if(Object_bop_hhas(self, key)) {
+    ret = Object_return(self);
+  }
+  else
+  if(env->parent != NULL) {
+    ret = Object_bop_rfind(env->parent, key);
+  }
+  
+  return ret;
 }
 
 /**

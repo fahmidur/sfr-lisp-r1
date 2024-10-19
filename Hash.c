@@ -228,6 +228,21 @@ Object* Hash_get(Hash* self, Object* key) {
   return ret;
 }
 
+char Hash_has(Hash* self, Object* key) {
+  Object_rc_incr(key);
+  size_t index = Object_hash(key) % HASH_BUCKET_SIZE;
+  char ret = 0;
+  HashNode* iter = self->buckets[index];
+  while(iter != NULL) {
+    if(Object_cmp(iter->key, key) == 0) {
+      ret = 1;
+    }
+    iter = iter->next;
+  }
+  Object_rc_decr(key);
+  return ret;
+}
+
 void Hash_print(Hash* self) {
   HashNode* iter = NULL;
   size_t i = 0;
