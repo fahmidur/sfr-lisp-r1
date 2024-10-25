@@ -79,6 +79,7 @@ void repl() {
     /*   printf("getline. ERROR=%ld\n", inp_ret); */
     /*   break; */
     /* } */
+    inp_ret = strlen(line);
     String_zero(inp);
     String_addx_cstr(inp, line);
     printf("OK. READ 001. %ld chars. buf=|%s| buf_size=%ld\n", inp_ret, inp->buf, inp->buf_size);
