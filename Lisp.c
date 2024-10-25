@@ -20,6 +20,7 @@ enum TokenizerState {
   ts_InNumber,
   ts_InNumberFloat,
   ts_InNumberNegMaybe,
+  ts_InNumberPosMaybe,
   ts_InBareWord,
 };
 
@@ -379,6 +380,10 @@ Object* Lisp_tokenize(Object* string) {
         state = ts_InNumberNegMaybe;
       }
       else
+      if(ch == '+') {
+        state = ts_InNumberPosMaybe;
+      }
+      else
       if(ch == ' ') {
         // eat it
       }
@@ -455,8 +460,21 @@ Object* Lisp_tokenize(Object* string) {
         // now we handle the rest as we would any other number.
       }
       else {
-        // the previous '-' will be treated as BareWord
+        // the previous '-' will be treated as part of BareWord
         Object_bop_addx_char(tmp_str, '-');
+        i--;
+        state = ts_InBareWord;
+      }
+    }
+    else
+    if(state == ts_InNumberPosMaybe) {
+      if(TokenizerUtil_isdigit(ch)) {
+        i--;
+        state = ts_InNumber;
+      }
+      else {
+        // the previous '+' will be treated as part of a BareWord
+        Object_bop_addx_char(tmp_str, '+');
         i--;
         state = ts_InBareWord;
       }
