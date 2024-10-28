@@ -915,7 +915,7 @@ void Object_system_done() {
       obj_next = obj_curr->next; 
       if(obj_curr->rc <= 1) {
         if(Object_is_container(obj_curr)) {
-#ifdef DEBug
+#ifdef DEBUG
           ObjectUtil_eprintf("[OSDK] || Object(%p) || type=%s || CONTAINER", obj_curr, Object_type(obj_curr)->str);
 #endif
         } else {
