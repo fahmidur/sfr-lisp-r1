@@ -524,7 +524,7 @@ Object* Lisp_tokenize(Object* string) {
   Object_return(ret);
   Object_rc_decr(ret);
 
-  ObjectUtil_eprintf("donuts. got tokens = %v\n", ret);
+  /* ObjectUtil_eprintf("donuts. got tokens = %v\n", ret); */
   return ret;
 }
 
@@ -704,7 +704,7 @@ Object* Lisp_eval_sexp2(Object* sexp, Object* env) {
           ListIter_next(iter);
         }
         ListIter_del(iter);
-        ObjectUtil_eprintf("donuts. calling function opval=%v opargs2=%v\n", opval, opargs2);
+        /* ObjectUtil_eprintf("donuts. calling function opval=%v opargs2=%v\n", opval, opargs2); */
         ret = Object_bop_call(opval, opargs2);
       }
       else
@@ -723,7 +723,7 @@ Object* Lisp_eval_sexp2(Object* sexp, Object* env) {
           Object* lambda_params = Object_accept(Object_uop_head(Object_uop_rest(sexp)));
           ssize_t lambda_plen = Object_len(lambda_params);
           Object* lambda_body = Object_accept(Object_uop_rest(Object_uop_rest(sexp)));
-          ObjectUtil_eprintf("donuts. lambda_body = %v\n", lambda_body);
+          /* ObjectUtil_eprintf("donuts. lambda_body = %v\n", lambda_body); */
           ret = Object_new(
             SYMBOL_FUNCTION, 
             1, 

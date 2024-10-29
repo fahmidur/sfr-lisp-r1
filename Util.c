@@ -32,6 +32,9 @@ size_t Util_cstr_hash_djb2(char* str) {
 }
 
 void Util_vt_set(int code) {
+  if(code != VT_RESET && getenv("NO_COLOR") != NULL) {
+    return;
+  }
   printf("\033[%dm", code);
 }
 

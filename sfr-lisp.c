@@ -38,7 +38,7 @@ void print_usage(const char* progname) {
 }
 
 int run_file(char* path) {
-  printf("donuts. run_file: %s\n", path);
+  /* printf("run_file: %s\n", path); */
   FILE* file = fopen(path, "r");
   if(file == NULL) {
     printf("ERROR: Failed to open file at %s\n", path);
