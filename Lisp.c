@@ -72,6 +72,48 @@ Object* fn_div(Function* fn, Object* env, Object* argv) {
   return ret;
 }
 
+Object* fn_print(Function* fn, Object* env, Object* argv) {
+  assert(fn != NULL);
+  assert(argv != NULL);
+  if(Object_is_null(argv)) {
+    dbg_printf("\n");
+    return Object_new_null();
+  }
+  assert(Object_type(argv) == SYMBOL_LIST);
+  int argv_len = Object_len(argv);
+  Object* tmp;
+  Symbol* tmp_type;
+  int i = 0;
+  ListIter* argv_iter = ListIter_new(argv->impl);
+  ListIter_head(argv_iter);
+  while(!ListIter_at_end(argv_iter)) {
+    tmp = ListIter_get_val(argv_iter);
+    tmp_type = Object_type(tmp);
+    if(i > 0) {
+      printf(" ");
+    }
+    if(tmp_type == SYMBOL_STRING) {
+      String_print_quoted(tmp->impl);
+    } 
+    else
+    if(tmp_type == SYMBOL_NUMBER) {
+      Number_print_bare(tmp->impl);
+    }
+    else
+    if(tmp_type == SYMBOL_FUNCTION) {
+      printf("#<procedure:%p>", tmp);
+    }
+    else {
+      Object_print(tmp);
+    }
+    ListIter_next(argv_iter);
+    i++;
+  }
+  ListIter_del(argv_iter);
+  fflush(stdout);
+  return Object_new_null();
+}
+
 Object* fn_display(Function* fn, Object* env, Object* argv) {
   assert(fn != NULL);
   assert(argv != NULL);
@@ -105,6 +147,10 @@ Object* fn_display(Function* fn, Object* env, Object* argv) {
     if(tmp_type == SYMBOL_NUMBER) {
       Number_print_bare(tmp->impl);
     }
+    /* else */
+    /* if(tmp_type == SYMBOL_FUNCTION) { */
+    /*   printf("#<procedure:%p>", tmp); */
+    /* } */
     else {
       Object_print(tmp);
     }
@@ -112,11 +158,18 @@ Object* fn_display(Function* fn, Object* env, Object* argv) {
     i++;
   }
   ListIter_del(argv_iter);
+  fflush(stdout);
   return Object_new_null();
 }
 
 Object* fn_displayln(Function* fn, Object* env, Object* argv) {
   fn_display(fn, env, argv);
+  printf("\n");
+  return Object_new_null();
+}
+
+Object* fn_println(Function* fn, Object* env, Object* argv) {
+  fn_print(fn, env, argv);
   printf("\n");
   return Object_new_null();
 }
@@ -243,6 +296,16 @@ void Lisp_init() {
     Function_new(QSYMBOL("displayln"), LispEnv_root, fn_displayln, -1, NULL, NULL)
   );
   Object_top_hset(LispEnv_root, QSYMBOL("displayln"), fnobj_displayln);
+
+  Object* fnobj_print = Object_new(SYMBOL_FUNCTION, 1, 
+    Function_new(QSYMBOL("print"), LispEnv_root, fn_print, -1, NULL, NULL)
+  );
+  Object_top_hset(LispEnv_root, QSYMBOL("print"), fnobj_print);
+  
+  Object* fnobj_println = Object_new(SYMBOL_FUNCTION, 1, 
+    Function_new(QSYMBOL("println"), LispEnv_root, fn_println, -1, NULL, NULL)
+  );
+  Object_top_hset(LispEnv_root, QSYMBOL("println"), fnobj_println);
 
   Object* fnobj_newline = Object_new(SYMBOL_FUNCTION, 1,
       Function_new(QSYMBOL("newline"), LispEnv_root, fn_newline, -1, NULL, NULL)
@@ -664,7 +727,6 @@ Object* Lisp_eval_sexp2(Object* sexp, Object* env) {
           opargs2 = Object_accept(Object_bop_at(opargs1, 1));
           Object_reject(Object_top_hset(env, Object_uop_head(opargs1), Lisp_eval_sexp2(opargs2, env)));
         }
-
       }
       else
       if(op == QSYMBOL("set!")) {

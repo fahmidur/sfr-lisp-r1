@@ -276,6 +276,12 @@ int String_cmp(String* self, String* other) {
   return strcmp(self->buf, other->buf);
 }
 
+void String_print_quoted(String* self) {
+  Util_vt_set(VT_COLOR_CYAN_FG);
+  Util_cstr_print(self->buf);
+  Util_vt_set(VT_RESET);
+}
+
 void String_print(String* self) {
   /*dbg_printf("String(%s)", self->buf);*/
   printf("String(");
