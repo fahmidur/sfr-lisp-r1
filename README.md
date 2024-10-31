@@ -1,8 +1,8 @@
 # SFR-Lisp
 
-A simple toy lisp-1. 
-This is not designed to be
-used for anything important, it is merely a learning exercise.
+A simple toy lisp-1 interpreter written in C.
+
+This is not designed to be used for anything important, it is merely a learning exercise.
 
 > What I cannot create [in C], I do not understand.
 > -- Richard P. Feynman
@@ -50,7 +50,7 @@ The tokenizer should return a flat List of objects where each object is either:
 - Symbol -- Parenthesis and BareWords
 
 There is no reason to have a temporary Token type object which points to objects
-that will be later created during parsing regardless. 
+which will be later created during parsing regardless. 
 
 Unlike the current broken Tokenizer, we will return a complete List, there
 is no reason to have 'streams' which implies there is some value in partial
