@@ -788,7 +788,6 @@ Object* Lisp_eval_sexp2(Object* sexp, Object* env) {
       if(op == QSYMBOL("lambda")) {
         // lambda (a b c) (+ a b c)
         // lambda <params> <body>
-        // we create a closure environment
         if(Object_len(sexp) < 3) {
           ret = QERROR("invalid use of 'lambda'");
         }
@@ -813,6 +812,26 @@ Object* Lisp_eval_sexp2(Object* sexp, Object* env) {
           Object_assign(&lambda_body, NULL);
           Object_assign(&lambda_params, NULL);
           Object_assign(&lambda_env, NULL);
+        }
+      }
+      else
+      if(op == QSYMBOL("if")) {
+        // (if (test-expr) (then-expr) (else-expr))
+        if(Object_len(sexp) != 4) {
+          ret = QERROR("invalid use of 'if'");
+        }
+        else {
+          Object* test_expr = Object_bop_at(sexp, 1);
+          Object* then_expr = Object_bop_at(sexp, 2);
+          Object* else_expr = Object_bop_at(sexp, 3);
+
+          Object* test_result = Lisp_eval_sexp2(test_expr, env);
+          if(!Object_is_null(test_result)) {
+            // all non-null objects are treated as truthy
+            ret = Lisp_eval_sexp2(then_expr, env);
+          } else {
+            ret = Lisp_eval_sexp2(else_expr, env);
+          }
         }
       }
     }
