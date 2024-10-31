@@ -349,6 +349,18 @@ void Lisp_init() {
   Object_top_hset(LispEnv_root, QSYMBOL(">="), fnobj_cmp_gte);
   Object_assign(&fnobj_cmp_gte, NULL);
 
+  Object* fnobj_cmp_lt = Object_new(SYMBOL_FUNCTION, 1,
+    Function_new(QSYMBOL("<"), LispEnv_root, fn_cmp_lt, 2, Object_new_list(1, 2, QSYMBOL("a"), QSYMBOL("b")), NULL)
+  );
+  Object_top_hset(LispEnv_root, QSYMBOL("<"), fnobj_cmp_lt);
+  Object_assign(&fnobj_cmp_lt, NULL);
+
+  Object* fnobj_cmp_lte = Object_new(SYMBOL_FUNCTION, 1,
+    Function_new(QSYMBOL("<="), LispEnv_root, fn_cmp_lte, 2, Object_new_list(1, 2, QSYMBOL("a"), QSYMBOL("b")), NULL)
+  );
+  Object_top_hset(LispEnv_root, QSYMBOL("<="), fnobj_cmp_lte);
+  Object_assign(&fnobj_cmp_lte, NULL);
+
   Object* fnobj_begin = Object_new(SYMBOL_FUNCTION, 1,
     Function_new(QSYMBOL("begin"), LispEnv_root, fn_begin, -1, NULL, NULL)
   );
