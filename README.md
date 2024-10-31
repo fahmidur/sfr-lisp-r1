@@ -22,11 +22,11 @@ used for anything important, it is merely a learning exercise.
       - Symbol -- Just like Ruby Symbols
       - String -- Mutable Strings
       - Number -- Generic Numbers
-    - Composits:
+    - Containers:
       - List   -- List of things.
       - Hash   -- Similar to Ruby hash.
-  - Object
-  - Shared Ptr Garbage Collection
+  - Object -- Generic wrapper type which points to one of the above primitives.
+  - Reference counted garbage collection for all objects
 - Write a toy lisp using the object-system created in C.
 
 - Common object methods:
