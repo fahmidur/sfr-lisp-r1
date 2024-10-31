@@ -9,10 +9,11 @@ used for anything important, it is merely a learning exercise.
 
 ## Build Requirements
 
+* GCC or Clang
 * Valgrind >= v3.20
 * [Racket](https://racket-lang.org/) -- We test our implementation against racket to confirm that this implementation is roughly working the same way. Racket is a far more mature lisp, and this is a tiny learning project.
-* Ruby and Rake
-* GCC or Clang
+* Ruby and Rake -- Used for building and running tests.
+* Linenoise -- A small self-contained alternative to Readline by Antirez. Vendored as a Git submodule in this repo under ./sub/linenoise). Used mainly for the REPL.
 
 ## The Plan
 
