@@ -337,6 +337,18 @@ void Lisp_init() {
   Object_top_hset(LispEnv_root, QSYMBOL("/"), fnobj_div);
   Object_assign(&fnobj_div, NULL);
 
+  Object* fnobj_cmp_gt = Object_new(SYMBOL_FUNCTION, 1,
+    Function_new(QSYMBOL(">"), LispEnv_root, fn_cmp_gt, 2, Object_new_list(1, 2, QSYMBOL("a"), QSYMBOL("b")), NULL)
+  );
+  Object_top_hset(LispEnv_root, QSYMBOL(">"), fnobj_cmp_gt);
+  Object_assign(&fnobj_cmp_gt, NULL);
+
+  Object* fnobj_cmp_gte = Object_new(SYMBOL_FUNCTION, 1,
+    Function_new(QSYMBOL(">="), LispEnv_root, fn_cmp_gte, 2, Object_new_list(1, 2, QSYMBOL("a"), QSYMBOL("b")), NULL)
+  );
+  Object_top_hset(LispEnv_root, QSYMBOL(">="), fnobj_cmp_gte);
+  Object_assign(&fnobj_cmp_gte, NULL);
+
   Object* fnobj_begin = Object_new(SYMBOL_FUNCTION, 1,
     Function_new(QSYMBOL("begin"), LispEnv_root, fn_begin, -1, NULL, NULL)
   );
@@ -369,7 +381,10 @@ char TokenizerUtil_wordlike(char ch) {
     (ch == '+') || 
     (ch == '*') ||
     (ch == '/') ||
-    (ch == '!')
+    (ch == '!') ||
+    (ch == '>') ||
+    (ch == '<') ||
+    (ch == '=')
   );
 }
 
@@ -677,6 +692,7 @@ Object* Lisp_parse_string(Object* str) {
   /* ObjectUtil_eprintf("donuts. calling Lisp_parse_tokens(tokens) ...\n"); */
   Object* parsed = Object_return(Lisp_parse_tokens(tokens));
   Object_rc_decr(tokens); tokens = NULL;
+  /* ObjectUtil_eprintf("donuts. parsed=%v\n", parsed); */
   return parsed;
 }
 
