@@ -1,6 +1,7 @@
 # SFR-Lisp
 
-A simple toy lisp-1. This is not designed to be
+A simple toy lisp-1. 
+This is not designed to be
 used for anything important, it is merely a learning exercise.
 
 > What I cannot create [in C], I do not understand.
@@ -19,15 +20,17 @@ used for anything important, it is merely a learning exercise.
 - Make C at least as usable as Ruby
   - Primitives:
     - Atomics:
-      - Symbol -- Just like Ruby Symbols
-      - String -- Mutable Strings
-      - Number -- Generic Numbers
+      - Symbol -- Like Ruby Symbols.
+      - String -- Mutable Strings.
+      - Number -- Generic Numbers.
     - Containers:
-      - List   -- List of things.
-      - Hash   -- Similar to Ruby hash.
+      - List   -- List of objects.
+      - Hash   -- A Hashmap of objects. (Similar to Ruby Hash).
+      - Environment -- A tree-like object used to store Function scope.
+    - Function -- A wrapper object for function pointers.
   - Object -- Generic wrapper type which points to one of the above primitives.
   - Reference counted garbage collection for all objects
-- Write a toy lisp using the object-system created in C.
+- Write a Lisp interpreter using the object-system created in C.
 
 - Common object methods:
   - `new`      -- constructor
