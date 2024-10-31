@@ -6,11 +6,12 @@ used for anything important, it is merely a learning exercise.
 > What I cannot create [in C], I do not understand.
 > -- Richard P. Feynman
 
-## Requirements
+## Build Requirements
 
 * Valgrind >= v3.20
 * [Racket](https://racket-lang.org/) -- We test our implementation against racket to confirm that this implementation is roughly working the same way. Racket is a far more mature lisp, and this is a tiny learning project.
 * Ruby and Rake
+* GCC or Clang
 
 ## The Plan
 
