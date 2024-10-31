@@ -1,17 +1,20 @@
 # SFR-Lisp
 
-A very simple lisp-1. This is not designed to be
-used for anything important, it is merely a self-learning exercise.
+A simple toy lisp-1. This is not designed to be
+used for anything important, it is merely a learning exercise.
 
 > What I cannot create [in C], I do not understand.
+> -- Richard P. Feynman
 
 ## Requirements
 
 * Valgrind >= v3.20
 * [Racket](https://racket-lang.org/) -- We test our implementation against racket to confirm that this implementation is roughly working the same way. Racket is a far more mature lisp, and this is a tiny learning project.
+* Ruby and Rake
 
 ## The Plan
 
+- Write a lisp interpreter in Ruby (see ./sfr-lisp.rb).
 - Make C at least as usable as Ruby
   - Primitives:
     - Atomics:
@@ -23,6 +26,7 @@ used for anything important, it is merely a self-learning exercise.
       - Hash   -- Similar to Ruby hash.
   - Object
   - Shared Ptr Garbage Collection
+- Write a toy lisp using the object-system created in C.
 
 - Common object methods:
   - `new`      -- constructor
