@@ -20,15 +20,17 @@ This is not designed to be used for anything important, it is merely a learning 
 - Write a lisp interpreter in Ruby (see ./sfr-lisp.rb).
 - Make C at least as usable as Ruby
   - Primitives:
-    - Atomics:
+    - Single:
       - Symbol -- Like Ruby Symbols.
       - String -- Mutable Strings.
       - Number -- Generic Numbers.
+      - Error  -- Generic Errors.
     - Containers:
       - List   -- List of objects.
       - Hash   -- A Hashmap of objects. (Similar to Ruby Hash).
       - Environment -- A tree-like object used to store Function scope.
-    - Function -- A wrapper object for function pointers.
+    - Callable:
+      - Function -- A wrapper object for function pointers.
   - Object -- Generic wrapper type which points to one of the above primitives.
   - Reference counted garbage collection for all objects
 - Write a Lisp interpreter using the object-system created in C.
