@@ -1,10 +1,11 @@
+- Finish Hash, Hash_test, and Hash+Object integration.
+
+- Cycle detection and cycle breaking in garbage collector.
+
+=== ABOVE DONE ===
+
 - Create memsafe.h/memsafe.c to export
   void* memsafe_malloc(size_t)
   void* memsafe_calloc(size_t)
   void  memsafe_free(void* ptr)
-
-- Finish Hash, Hash_test, and Hash+Object integration.
-
-- Cycle detection and cycle breaking.
-
 
