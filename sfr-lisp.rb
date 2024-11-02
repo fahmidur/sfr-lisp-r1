@@ -18,7 +18,7 @@ def dputs(str)
 end
 
 class ParseError < Exception; end
-OPERATORS = ['+', '-', '/', '*', '>', '<', '=', '==']
+OPERATORS = ['+', '-', '/', '*', '>', '<', '=', '==', '<=', '>=']
 
 class LispEnv
   attr_reader :parent
@@ -69,6 +69,7 @@ $env_global = LispEnv.new(nil, {
   :<           => lambda {|a, b| a < b },
   :>=          => lambda {|a, b| a >= b },
   :<=          => lambda {|a, b| a <= b },
+  :equal?      => lambda {|a, b| a == b },
   :begin       => lambda {|*args| args[-1] },
   :print       => lambda {|obj| print(schemestr(obj)) },
   :println     => lambda {|obj| puts(schemestr(obj))  },
@@ -111,6 +112,12 @@ class LispNumber
     else
       return @rep.to_s
     end
+  end
+  def ==(other) 
+    @rep == other.rep
+  end
+  def <=>(other)
+    @rep <=> other.rep
   end
   def method_missing(m, *args)
     resp = @rep.send(m, *args)
@@ -164,7 +171,7 @@ def token_to_atom(token)
     return token
   elsif token =~ /^\-?[0-9\.]+$/
     return LispNumber.new(token.to_f)
-  elsif token =~ /^[a-z][a-z0-9\-\_\!]*$/i || OPERATORS.member?(token)
+  elsif token =~ /^[a-z][a-z0-9\-\_\!\?]*$/i || OPERATORS.member?(token)
     return token.to_sym
   else
     raise ParseError.new("Invalid atom token: #{token}")
@@ -291,6 +298,10 @@ def schemestr(obj)
     "#<LispProcedure(ID=#{obj.id})>"
   elsif obj.is_a?(Proc)
     obj.to_s
+  elsif obj.is_a?(TrueClass)
+    '#t'
+  elsif obj.is_a?(FalseClass)
+    '#f'
   end
 end
 

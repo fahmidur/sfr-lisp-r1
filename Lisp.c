@@ -282,6 +282,16 @@ Object* fn_cmp_gte(Function* fn, Object* env, Object* argv) {
   }
 }
 
+Object* fn_cmp_equal(Function* fn, Object* env, Object* argv) {
+  Object* a = Object_accept(Object_bop_hget(env, QSYMBOL("a")));
+  Object* b = Object_accept(Object_bop_hget(env, QSYMBOL("b")));
+  if(Object_cmp(a, b) == 0) {
+    return QSYMBOL("true");
+  } else {
+    return Object_new_null();
+  }
+}
+
 void Lisp_init() {
   LISP_PAREN_BEG = QSYMBOL_NEW1("(");
   LISP_PAREN_END = QSYMBOL_NEW1(")");
@@ -361,6 +371,12 @@ void Lisp_init() {
   Object_top_hset(LispEnv_root, QSYMBOL("<="), fnobj_cmp_lte);
   Object_assign(&fnobj_cmp_lte, NULL);
 
+  Object* fnobj_cmp_equal = Object_new(SYMBOL_FUNCTION, 1,
+    Function_new(QSYMBOL("equal?"), LispEnv_root, fn_cmp_equal, 2, Object_new_list(1, 2, QSYMBOL("a"), QSYMBOL("b")), NULL)
+  );
+  Object_top_hset(LispEnv_root, QSYMBOL("equal?"), fnobj_cmp_equal);
+  Object_assign(&fnobj_cmp_equal, NULL);
+
   Object* fnobj_begin = Object_new(SYMBOL_FUNCTION, 1,
     Function_new(QSYMBOL("begin"), LispEnv_root, fn_begin, -1, NULL, NULL)
   );
@@ -396,7 +412,8 @@ char TokenizerUtil_wordlike(char ch) {
     (ch == '!') ||
     (ch == '>') ||
     (ch == '<') ||
-    (ch == '=')
+    (ch == '=') ||
+    (ch == '?')
   );
 }
 

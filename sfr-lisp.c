@@ -82,9 +82,9 @@ void repl() {
     inp_ret = strlen(line);
     String_zero(inp);
     String_addx_cstr(inp, line);
-    printf("OK. READ 001. %ld chars. buf=|%s| buf_size=%ld\n", inp_ret, inp->buf, inp->buf_size);
+    /* printf("OK. READ 001. %ld chars. buf=|%s| buf_size=%ld\n", inp_ret, inp->buf, inp->buf_size); */
     String_chomp(inp);
-    printf("OK. READ 002. %ld chars. buf=|%s| buf_size=%ld\n", inp_ret, inp->buf, inp->buf_size);
+    /* printf("OK. READ 002. %ld chars. buf=|%s| buf_size=%ld\n", inp_ret, inp->buf, inp->buf_size); */
 
     linenoiseHistoryAdd(line);
     linenoiseHistorySave("history.txt");
@@ -105,7 +105,7 @@ void repl() {
     if(strlen(inp->buf) > 1 && inp->buf[0] == '.') {
     }
     else {
-      ObjectUtil_eprintf("OK. Got input = %v\n", obj_inp);
+      /* ObjectUtil_eprintf("OK. Got input = %v\n", obj_inp); */
 
       if(rvalue == NULL) {
       }
@@ -114,9 +114,10 @@ void repl() {
         Object_assign(&rvalue, NULL);
       }
       rvalue = Object_accept(Lisp_eval_string(obj_inp));
-      if(!Object_is_null(rvalue)) {
-        ObjectUtil_eprintf("rvalue = %v\n", rvalue);
-      }
+      ObjectUtil_eprintf("%v\n", rvalue);
+      /* if(!Object_is_null(rvalue)) { */
+      /*   ObjectUtil_eprintf("rvalue = %v\n", rvalue); */
+      /* } */
     }
     free(line);
     line = NULL;
