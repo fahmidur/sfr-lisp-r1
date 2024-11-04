@@ -123,7 +123,7 @@ void Number_print_bare(Number* self) {
   if( self->rep - (long long)self->rep == 0.0) {
     printf("%lld", (long long)self->rep);
   } else {
-    printf("%f", self->rep);
+    printf("%g", self->rep);
   }
   Util_vt_set(VT_RESET);
 }
@@ -132,7 +132,7 @@ void Number_print(Number* self) {
   /*printf("Number(%f)", self->rep);*/
   printf("Number(");
   Util_vt_set(VT_COLOR_YELLOW_FG);
-  printf("%f", self->rep);
+  printf("%g", self->rep);
   Util_vt_set(VT_RESET);
   printf(")");
 }
