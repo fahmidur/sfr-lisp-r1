@@ -1568,21 +1568,19 @@ size_t Object_hash(Object* self) {
  * Mainly for debugging. 
  */
 void Object_system_print() {
-  dbg_printf("--- { Object_system_print() { ---\n");
+  printf("--- { Object_system_print() { ---\n");
   Object* iter = object_system->head;
   int i = 0;
   while(iter != NULL) {
-    dbg_printf("[i=%03d] || Object(%p, rc=%03d/%03d, rt=%03d) || ", i, iter, iter->rc, iter->rc_gc, iter->returning);
-#ifdef DEBUG
+    printf("[i=%03d] || Object(%p, rc=%03d/%03d, rt=%03d) || ", i, iter, iter->rc, iter->rc_gc, iter->returning);
     Object_print(iter);
-#endif
-    dbg_printf("\n");
+    printf("\n");
     iter = iter->next;
     i++;
   }
-  dbg_printf("--------------------------------------\n");
-  dbg_printf("SIZE: %zu\n", object_system->size);
-  dbg_printf("--- } Object_system_print() } ---\n");
+  printf("--------------------------------------\n");
+  printf("SIZE: %zu\n", object_system->size);
+  printf("--- } Object_system_print() } ---\n");
 }
 
 /**

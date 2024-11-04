@@ -24,6 +24,17 @@ enum TokenizerState {
   ts_InBareWord,
 };
 
+Object* fn_gc_run(Function* fn, Object* env, Object* argv) {
+  printf("Calling Object_system_gc() ...\n");
+  Object_system_gc();
+  return NULL;
+}
+
+Object* fn_gc_info(Function* fn, Object* env, Object* argv) {
+  Object_system_print();
+  return NULL;
+}
+
 Object* fn_add(Function* fn, Object* env, Object* argv) {
   Object* a = Object_accept(Object_bop_hget(env, QSYMBOL("a")));
   Object* b = Object_accept(Object_bop_hget(env, QSYMBOL("b")));
@@ -318,7 +329,7 @@ void Lisp_init() {
   Object_top_hset(LispEnv_root, QSYMBOL("println"), fnobj_println);
 
   Object* fnobj_newline = Object_new(SYMBOL_FUNCTION, 1,
-      Function_new(QSYMBOL("newline"), LispEnv_root, fn_newline, -1, NULL, NULL)
+      Function_new(QSYMBOL("newline"), LispEnv_root, fn_newline, 0, NULL, NULL)
   );
   Object_top_hset(LispEnv_root, QSYMBOL("newline"), fnobj_newline);
 
@@ -382,6 +393,19 @@ void Lisp_init() {
   );
   Object_top_hset(LispEnv_root, QSYMBOL("begin"), fnobj_begin);
   Object_assign(&fnobj_begin, NULL);
+
+  Object* fnobj_gc_info = Object_new(SYMBOL_FUNCTION, 1, 
+    Function_new(QSYMBOL("gc_info"), LispEnv_root, fn_gc_info, 0, NULL, NULL)
+  );
+  Object_top_hset(LispEnv_root, QSYMBOL("gc_info"), fnobj_gc_info);
+  Object_assign(&fnobj_gc_info, NULL);
+
+  Object* fnobj_gc_run = Object_new(SYMBOL_FUNCTION, 1, 
+    Function_new(QSYMBOL("gc_run"), LispEnv_root, fn_gc_run, 0, NULL, NULL)
+  );
+  Object_top_hset(LispEnv_root, QSYMBOL("gc_run"), fnobj_gc_run);
+  Object_assign(&fnobj_gc_run, NULL);
+
 }
 
 void Lisp_done() {
