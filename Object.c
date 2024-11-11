@@ -833,7 +833,9 @@ void Object_system_done() {
   }
   dbg_printf("--- { Object_system_done() { ---\n");
   object_system->done_called = 1;
+#ifdef DEBUG
   Object_system_print();
+#endif
 
   Object* obj_curr = NULL;
   Object* obj_next = NULL;

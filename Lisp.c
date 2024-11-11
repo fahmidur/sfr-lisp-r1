@@ -11,6 +11,10 @@ Object* LISP_PAREN_END;
 // It is this Environment that contains the core functions
 // that user-defined Lisp functions will use.
 Object* LispEnv_root;
+Object* LispSymbol_quote;
+Object* LispSymbol_define;
+Object* LispSymbol_setbang;
+Object* LispSymbol_lambda;
 
 typedef enum TokenizerState TokenizerState;
 enum TokenizerState {
@@ -307,6 +311,11 @@ void Lisp_init() {
   LISP_PAREN_BEG = QSYMBOL_NEW1("(");
   LISP_PAREN_END = QSYMBOL_NEW1(")");
   LispEnv_root = Object_new(SYMBOL_ENVIRONMENT, 1, Environment_new());
+
+  LispSymbol_quote = QSYMBOL_NEW1("quote");
+  LispSymbol_define = QSYMBOL_NEW1("define");
+  LispSymbol_setbang = QSYMBOL_NEW1("set!");
+  LispSymbol_lambda = QSYMBOL_NEW1("lambda");
 
   Object* fnobj_display = Object_new(SYMBOL_FUNCTION, 1, 
     Function_new(QSYMBOL("display"), LispEnv_root, fn_display, -1, NULL, NULL)
@@ -750,8 +759,10 @@ Object* Lisp_parse_string(Object* str) {
 }
 
 Object* Lisp_eval_sexp2(Object* sexp, Object* env) {
-  Object_rc_incr(sexp);
-  Object_rc_incr(env);
+  /* Object_rc_incr(sexp); */
+  Object_accept(sexp);
+  /* Object_rc_incr(env); */
+  Object_accept(env);
   Object* ret = Object_new_null();
   Object* tmp = NULL;
   Object* tmp2 = NULL;
@@ -775,9 +786,9 @@ Object* Lisp_eval_sexp2(Object* sexp, Object* env) {
   if(sexp_type == SYMBOL_LIST) {
     // it is in this case that we can have various lisp forms
     op = Object_accept(Object_uop_head(sexp));
-    opval = Lisp_eval_sexp2(op, env);
+    opval = Object_accept(Lisp_eval_sexp2(op, env));
     if(Object_type(op) == SYMBOL_SYMBOL) {
-      if(op == QSYMBOL("quote")) {
+      if(op == LispSymbol_quote) {
         if(Object_len(sexp) != 2) {
           ret = QERROR("invalid use of 'quote'");
         }
@@ -786,7 +797,7 @@ Object* Lisp_eval_sexp2(Object* sexp, Object* env) {
         }
       }
       else
-      if(op == QSYMBOL("define")) {
+      if(op == LispSymbol_define) {
         opargs1 = Object_accept(Object_uop_rest(sexp));
         if(Object_len(opargs1) != 2) {
           // return an error
@@ -798,7 +809,7 @@ Object* Lisp_eval_sexp2(Object* sexp, Object* env) {
         }
       }
       else
-      if(op == QSYMBOL("set!")) {
+      if(op == LispSymbol_setbang) {
         opargs1 = Object_accept(Object_uop_rest(sexp));
         // set the value of a variable which has been already defined
         if(Object_len(opargs1) != 2) {
@@ -838,7 +849,7 @@ Object* Lisp_eval_sexp2(Object* sexp, Object* env) {
         ret = Object_bop_call(opval, opargs2);
       }
       else
-      if(op == QSYMBOL("lambda")) {
+      if(op == LispSymbol_lambda) {
         // lambda (a b c) (+ a b c)
         // lambda <params> <body>
         if(Object_len(sexp) < 3) {
