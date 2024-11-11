@@ -225,6 +225,7 @@ Object* Object_new(Symbol* type, int rc, void* impl) {
       }
       iter = iter->next;
     }
+    Object_assign(&iter, NULL);
   }
 
   Object* self = calloc(1, sizeof(Object));
@@ -542,6 +543,9 @@ void Object_action_unset_unreachable(Object* referer, Object* referend) {
 /*   } */
 /* } */
 
+/**
+ * Intentionally non-recursive.
+ **/
 void Object_system_walkrefs(void fn(Object* referer, Object* referend)) {
   Object* obj_curr;
   Object* obj_temp;
@@ -621,8 +625,11 @@ void Object_system_gc() {
     iter = iter->next;
   }
 
-  //unset any objects that can be reached from a reachable
-  Object_system_walkrefs(&Object_action_unset_unreachable);
+  /* int i = 0; */
+  /* for(i = 0; i < object_system->size; i++) { */
+    //unset any objects that can be reached from a reachable
+    Object_system_walkrefs(&Object_action_unset_unreachable);
+  /* } */
 
   //now anything that is left marked unreachable is truly unreachable
   //we must now safely delete these unreachable objects
@@ -983,9 +990,10 @@ Object* Object_gc(Object* self) {
   if(self->rc <= 0) {
     if(self->returning) {
       /*dbg_printf("Object_gc(%p). Object is returning. -SKIPPED-\n", self);*/
-      /*ObjectUtil_eprintf("Object_gc(%p). SKIPPED returning object: %v\n", self, self);*/
+      /* ObjectUtil_eprintf("Object_gc(%p). SKIPPED returning object: %v\n", self, self); */
       return self;
     }
+    /* ObjectUtil_eprintf("donuts. Object_gc. deleting obj p=%p v=%v\n", self, self); */
     Object_del(self);
     return NULL;
   }

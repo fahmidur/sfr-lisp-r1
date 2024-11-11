@@ -93,19 +93,25 @@ int main(int argc, char** argv) {
   //===========================================================================
   Util_heading1(1, "STRING OPERATIONS");
 
-  int objsize = Object_system_size();
+  size_t objsize = Object_system_size();
+  printf("old object_system_size() = %ld\n", objsize);
   Object* str1 = Object_new(SYMBOL_STRING, 1, String_new("Hello there 001"));
   Object* str2 = Object_new(SYMBOL_STRING, 1, String_new("Hello there 002"));
   Object* str3 = Object_new(SYMBOL_STRING, 1, String_new("Hello there 003"));
-  nassert(objsize - Object_system_size() >= 3); // gained at least 3 objects
+  printf("new object_system_size() = %ld\n", Object_system_size());
+  // we gain 3 more objects
+  nassert(Object_system_size() - objsize == 3);
   Object_system_gc();
-  nassert(objsize - Object_system_size() >= 3);
+  // GC does not delete any of these objects
+  nassert(Object_system_size() - objsize  == 3);
   Object* tmp1 = Object_new(SYMBOL_STRING, 0, String_new("This too will pass."));
   tmp1->returning = 0; // manually mark it as no longer returning
   nassert(tmp1->rc == 0);
-  nassert(objsize - Object_system_size() >= 4);
+  // one more object gained
+  nassert(Object_system_size() - objsize == 4);
   objsize = Object_system_size();
   Object_system_gc();
+  // this tmp1 object is deleted
   nassert(objsize - Object_system_size() == 1);
 
   Object* tmp2 = Object_new(SYMBOL_STRING, 1, String_new("So long and thanks for all the fish."));

@@ -21,6 +21,10 @@
 { TODO {
 ------------------------------------------------------------------------------
 
+- bug. Function calls are incrementing the reference count for the called
+  function object. There must be unbalanced rc incr/decr somewhere in the 
+  call chain.
+
 - Create memsafe.h/memsafe.c to export
   void* memsafe_malloc(size_t)
   void* memsafe_calloc(size_t)
