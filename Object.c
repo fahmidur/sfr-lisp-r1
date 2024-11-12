@@ -529,7 +529,8 @@ void Object_action_set_unreachable(Object* referer, Object* referend) {
 }
 
 void Object_action_unset_unreachable(Object* referer, Object* referend) {
-  if(referer->unreachable == 0 && referend->unreachable != 0) {
+  if(referer->unreachable == 0 && referend->unreachable == 1) {
+    printf("donuts. unset_unreachable. referend = %p\n", referend);
     referend->unreachable = 0;
   }
 }
@@ -608,6 +609,7 @@ void Object_system_gc() {
   iter = object_system->head;
   while(iter != NULL) {
     iter->rc_gc = iter->rc;
+    iter->unreachable = 0;
     iter = iter->next;
   }
 
