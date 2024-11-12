@@ -669,6 +669,7 @@ Object* Lisp_tokenize(Object* string) {
 }
 
 Object* Lisp_parse_tokens2(Object* tokenlist, int depth) {
+  assert(tokenlist != NULL);
   Object* tmp = Object_new_null();
   Object* ret = Object_new_null();
   Object* sublist = Object_new_null();
@@ -688,6 +689,7 @@ Object* Lisp_parse_tokens2(Object* tokenlist, int depth) {
     if(Object_cmp(tmp, LISP_PAREN_BEG) == 0) {
       // create a sublist to append to ret
       sublist = Object_accept(Lisp_parse_tokens2(tokenlist, depth+1));
+      assert(sublist->rc == 1);
       if(Object_is_null(ret)) {
         ret = QLIST_NEW1();
       }
@@ -715,12 +717,9 @@ Object* Lisp_parse_tokens2(Object* tokenlist, int depth) {
     if(softbreak) {
       // cleanup
       Object_assign(&tmp, NULL);
+      Object_assign(&sublist, NULL);
       break;
     }
-  }
-  //cleanup
-  if(!Object_is_null(sublist)) {
-    Object_assign(&sublist, NULL);
   }
   if(depth == 0 && Object_len(tokenlist) != 0) {
     // at depth 0 we have reached the end with left over tokens 

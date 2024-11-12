@@ -218,17 +218,17 @@ Object* List_at(List* self, size_t idx) {
 
 void List_del(List* self) {
   dbg_printf("{ List_del(%p) {\n", self);
-  Object* tmp;
+  Object* tmp = NULL;
 
   while(self->size > 0) {
     tmp = List_pop(self);
     // tmp is now damaged
-    dbg_printf("List_del(%p). dbg. 001 tmp=%p | Object_reject(tmp)\n", self, tmp);
-    // below is unsafe, because tmp may no longer exist
     if(Object_system_delete_recurse()) {
+      dbg_printf("List_del(%p). tmp=%p | Object_reject(tmp)\n", self, tmp);
       Object_reject(tmp);
+    } else {
+      dbg_printf("List_del(%p). tmp=%p | delete recurse disabled\n", self, tmp);
     }
-    dbg_printf("List_del(%p). dbg. 002\n", self);
   }
 
   dbg_printf("List_del(%p). free(self)\n", self);
