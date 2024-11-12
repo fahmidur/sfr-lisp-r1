@@ -625,11 +625,11 @@ void Object_system_gc() {
     iter = iter->next;
   }
 
-  /* int i = 0; */
-  /* for(i = 0; i < object_system->size; i++) { */
+  int i = 0;
+  for(i = 0; i < object_system->size; i++) {
     //unset any objects that can be reached from a reachable
     Object_system_walkrefs(&Object_action_unset_unreachable);
-  /* } */
+  }
 
   //now anything that is left marked unreachable is truly unreachable
   //we must now safely delete these unreachable objects
@@ -640,7 +640,7 @@ void Object_system_gc() {
     next = iter->next;
     if(iter->unreachable) {
       /* ObjectUtil_eprintf("unreachable obj(p=%p rc=%d)\n", iter, iter->rc); */
-      /* ObjectUtil_eprintf("unreachable obj(p=%p, rc=%d) = %v\n", iter, iter->rc, iter); */
+      ObjectUtil_eprintf("unreachable obj(p=%p, rc=%d) = %v\n", iter, iter->rc, iter);
       iter->rc = 0;
     }
     iter = Object_gc(iter);
@@ -1582,7 +1582,7 @@ void Object_system_print() {
   Object* iter = object_system->head;
   int i = 0;
   while(iter != NULL) {
-    printf("[i=%03d] || Object(%p, rc=%03d/%03d, rt=%03d) || ", i, iter, iter->rc, iter->rc_gc, iter->returning);
+    printf("[i=%03d] || Object(%p, rc=%03d/%03d, rt=%03d, u=%d) || ", i, iter, iter->rc, iter->rc_gc, iter->returning, iter->unreachable);
     Object_print(iter);
     printf("\n");
     iter = iter->next;
