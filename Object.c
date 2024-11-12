@@ -1583,15 +1583,20 @@ void Object_system_print() {
   printf("--- { Object_system_print() { ---\n");
   Object* iter = object_system->head;
   int i = 0;
+  int env_count = 0;
   while(iter != NULL) {
     printf("[i=%03d] || Object(%p, rc=%03d/%03d, rt=%03d, u=%d) || ", i, iter, iter->rc, iter->rc_gc, iter->returning, iter->unreachable);
     Object_print(iter);
     printf("\n");
+    if(Object_type(iter) == SYMBOL_ENVIRONMENT) {
+      env_count++;
+    }
     iter = iter->next;
     i++;
   }
   printf("--------------------------------------\n");
   printf("SIZE: %zu\n", object_system->size);
+  printf("ENV_COUNT: %d\n", env_count);
   printf("--- } Object_system_print() } ---\n");
 }
 
