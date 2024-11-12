@@ -397,6 +397,17 @@ int main(int argc, char** argv) {
   Object* list5_r1_exp = Object_new_list(1, 2, QNUMBER(5.2), QNUMBER(5.3));
   nassert(Object_cmp(list5_r1, list5_r1_exp) == 0);
 
+  // test simple deletion of elements
+  Object* list6 = Object_new_list(1, 3, QNUMBER(6.1), QNUMBER(6.2), QNUMBER(6.3));
+  int obj_begsize = Object_system_size();
+  Object_assign(&list6, NULL);
+  int obj_endsize = Object_system_size();
+  printf("list6. obj_begsize = %d\n", obj_begsize);
+  printf("list6. obj_endsize = %d\n", obj_endsize);
+  // we lose 4 objects, one for the list, 3 for the members
+  nassert(obj_begsize - obj_endsize == 4);
+  
+
   Util_heading1(0, "LIST OPERATIONS");
 
   //===========================================================================
