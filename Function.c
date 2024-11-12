@@ -84,9 +84,10 @@ Object* Function_call(Function* self, Object* argv) {
   assert(self != NULL);
   if(argv == NULL) {
     argv = Object_new_null();
+  } else {
+    argv = Object_accept(argv);
   }
-  /* Object_rc_incr(argv); */
-  Object_accept(argv);
+
   /* if(self->arity >= 0) { */
   /*   if(Object_len(argv) == (self->arity+1)) { */
   /*     ErrorSystem_set(1, "Function_call. argv arity mismatch"); */
@@ -130,7 +131,9 @@ Object* Function_call(Function* self, Object* argv) {
   }
   /* dbg_printf("donuts. F=%s L=%d. rtcount = %zu\n", __FILE__, __LINE__, Object_system_rtcount()); */
   // release the argv object, we do not need it anymore.
-  Object_rc_decr(argv);
+  /* Object_rc_decr(argv); */
+  Object_assign(&argv, NULL);
+  assert(Object_is_null(argv));
   Environment_child_detach(self->env, tmpEnv);
   Object_assign(&tmpEnv, NULL);
   // at this point we expect the tmpEnv to be destroyed.
