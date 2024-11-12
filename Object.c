@@ -639,7 +639,7 @@ void Object_system_gc() {
   while(iter != NULL) {
     next = iter->next;
     if(iter->unreachable) {
-      /* ObjectUtil_eprintf("unreachable obj(p=%p rc=%d)\n", iter, iter->rc); */
+      ObjectUtil_eprintf("unreachable obj(p=%p rc=%d)\n", iter, iter->rc);
       /* ObjectUtil_eprintf("unreachable obj(p=%p, rc=%d) = %v\n", iter, iter->rc, iter); */
       iter->rc = 0;
     }
