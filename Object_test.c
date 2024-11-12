@@ -384,7 +384,7 @@ int main(int argc, char** argv) {
   // 3 for each of the lists, 3 for each Object<String> in each list.
   nassert(clist_begsize - clist_endsize == 6);
 
-
+  // test head, tail, rest
   Object* list5 = Object_new_list(1, 3, QNUMBER(5.1), QNUMBER(5.2), QNUMBER(5.3));
   ObjectUtil_eprintf("list5 = %v\n", list5);
   nassert(Object_len(list5) == 3);
