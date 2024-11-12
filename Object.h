@@ -185,6 +185,9 @@ void    Object_system_gc();
 char    Object_system_delete_recurse();
 char    Object_system_delete_soft();
 
+
+int ObjectSystem_count_matching_number(double x);
+
 // Containers
 #include "List.h"
 #include "Hash.h"

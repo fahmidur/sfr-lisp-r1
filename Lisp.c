@@ -759,9 +759,9 @@ Object* Lisp_parse_string(Object* str) {
 
 Object* Lisp_eval_sexp2(Object* sexp, Object* env) {
   /* Object_rc_incr(sexp); */
-  Object_accept(sexp);
+  sexp = Object_accept(sexp);
   /* Object_rc_incr(env); */
-  Object_accept(env);
+  env = Object_accept(env);
   Object* ret = Object_new_null();
   Object* tmp = NULL;
   Object* tmp2 = NULL;
@@ -775,7 +775,9 @@ Object* Lisp_eval_sexp2(Object* sexp, Object* env) {
       sexp_type == SYMBOL_STRING ||
       sexp_type == SYMBOL_FUNCTION
   ) {
+    /* ObjectUtil_eprintf("donuts. here. 01. sexp.rc = %d sexp = %v\n", sexp->rc, sexp); */
     ret = Object_accept(sexp);
+    /* ObjectUtil_eprintf("donuts. here. 02. sexp.rc = %d sexp = %v\n", sexp->rc, sexp); */
   }
   else
   if(sexp_type == SYMBOL_SYMBOL) {
@@ -838,14 +840,23 @@ Object* Lisp_eval_sexp2(Object* sexp, Object* env) {
         ListIter_head(iter);
         while(!ListIter_at_end(iter)) {
           tmp = Object_accept(ListIter_get_val(iter));
+          /* ObjectUtil_eprintf("donuts. tmp_.rc = %d tmp_ = %v\n", tmp->rc, tmp); */
           tmp2 = Object_accept(Lisp_eval_sexp2(tmp, env));
+          /* ObjectUtil_eprintf("donuts. tmp2.rc = %d tmp2 = %v\n", tmp2->rc, tmp2); */
+          /* assert(tmp2->rc == 1); */
           Object_bop_push(opargs2, tmp2);
           Object_assign(&tmp, NULL);
           Object_assign(&tmp2, NULL);
           ListIter_next(iter);
         }
         ListIter_del(iter);
-        ret = Object_bop_call(opval, opargs2);
+        ret = Object_accept(Object_bop_call(opval, opargs2));
+        dbg_printf("{ delete opargs1 {\n");
+        Object_assign(&opargs1, NULL);
+        dbg_printf("} delete opargs1 }\n");
+        dbg_printf("{ delete opargs2 {\n");
+        Object_assign(&opargs2, NULL);
+        dbg_printf("} delete opargs2 }\n");
       }
       else
       if(op == LispSymbol_lambda) {
@@ -916,8 +927,10 @@ _return:
     Object_return(ret);
     Object_rc_decr(ret);
   }
-  Object_rc_decr(sexp);
-  Object_rc_decr(env);
+  /* Object_rc_decr(sexp); */
+  Object_assign(&sexp, NULL);
+  /* Object_rc_decr(env); */
+  Object_assign(&env, NULL);
   /* ObjectUtil_eprintf("donuts. eval. ret=%v\n", ret); */
   return ret;
 }

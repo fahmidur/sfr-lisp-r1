@@ -1755,3 +1755,19 @@ void ObjectUtil_eprintf(char* fmt, ...) {
   va_end(argv);
 }
 
+int ObjectSystem_count_matching_number(double x) {
+  int count = 0;
+  Object* iter = object_system->head;
+  Number* tmp;
+  while(iter != NULL) {
+    if(Object_type(iter) == SYMBOL_NUMBER) {
+      tmp = iter->impl;
+      if(tmp->rep == x) {
+        count++;
+      }
+    }
+    iter = iter->next;
+  }
+  return count;
+}
+

@@ -128,6 +128,34 @@ int main(int argc, char** argv) {
   ObjectUtil_eprintf("tclam1_value = %v\n", tclam1_value);
   nassert(Object_type(tclam1_value) == SYMBOL_FUNCTION);
 
+  printf("\n=== === simple rc tests === ===\n");
+  Object* num1 = QNUMBER_NEW1(3.4);
+  nassert(num1->rc == 1);
+  Object* num1_res1 = Object_accept(Lisp_eval_sexp(num1));
+  nassert(num1->rc == 2);
+  Object_assign(&num1_res1, NULL);
+  nassert(num1->rc == 1);
+
+  Object* numstr1 = QSTRING_NEW1("1.987");
+  Object* numstr1_val = Object_accept(Lisp_eval_string(numstr1));
+  int numstr1_count = ObjectSystem_count_matching_number(1.987);
+  printf("numstr1_count = %d\n", numstr1_count);
+  nassert(numstr1_count == 1);
+  Object_assign(&numstr1_val, NULL);
+  numstr1_count = ObjectSystem_count_matching_number(1.987);
+  printf("numstr1_count = %d\n", numstr1_count);
+  nassert(numstr1_count == 0);
+
+  // TODO: make test below green
+  Object* addstr1 = QSTRING_NEW1("(+ 1.987 2.987)");
+  Object* addstr1_res1 = Object_accept(Lisp_eval_string(addstr1));
+  int addstr1_e1_count = ObjectSystem_count_matching_number(1.987);
+  printf("addstr1_e1_count = %d\n", addstr1_e1_count);
+  /* nassert(addstr1_e1_count == 0); */
+  int addstr1_e2_count = ObjectSystem_count_matching_number(2.987);
+  printf("addstr1_e2_count = %d\n", addstr1_e2_count);
+  /* nassert(addstr1_e2_count == 0); */
+
   Lisp_done();
   Runtime_done();
 
