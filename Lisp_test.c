@@ -129,12 +129,16 @@ int main(int argc, char** argv) {
   nassert(Object_type(tclam1_value) == SYMBOL_FUNCTION);
 
   printf("\n=== === simple rc tests === ===\n");
-  Object* num1 = QNUMBER_NEW1(3.4);
+  Object* num1 = QNUMBER_NEW1(3.456);
   nassert(num1->rc == 1);
   Object* num1_res1 = Object_accept(Lisp_eval_sexp(num1));
   nassert(num1->rc == 2);
   Object_assign(&num1_res1, NULL);
   nassert(num1->rc == 1);
+  Object_assign(&num1, NULL);
+  int num1_count = ObjectSystem_count_matching_number(3.456);
+  printf("num1_count = %d\n", num1_count);
+  nassert(num1_count == 0);
 
   Object* numstr1 = QSTRING_NEW1("1.987");
   Object* numstr1_val = Object_accept(Lisp_eval_string(numstr1));
