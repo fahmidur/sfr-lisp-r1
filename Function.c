@@ -108,12 +108,13 @@ Object* Function_call(Function* self, Object* argv) {
       !Object_is_null(self->params) && Object_type(self->params) == SYMBOL_LIST &&
       Object_len(argv) > 0 && Object_len(self->params) > 0
     ) {
+    // construct temporary environment with keys params x argv
     ListIter* argv_iter = ListIter_new(argv->impl);
     ListIter_head(argv_iter); // go to head
     ListIter* params_iter = ListIter_new(self->params->impl);
     ListIter_head(params_iter);
     while(!(ListIter_at_end(argv_iter) || ListIter_at_end(params_iter))) {
-      Object_top_hset(tmpEnv, ListIter_get_val(params_iter), ListIter_get_val(argv_iter));
+      Object_reject(Object_top_hset(tmpEnv, ListIter_get_val(params_iter), ListIter_get_val(argv_iter)));
       //---
       ListIter_next(argv_iter);
       ListIter_next(params_iter);
@@ -123,6 +124,8 @@ Object* Function_call(Function* self, Object* argv) {
   }
 
   /* dbg_printf("donuts. F=%s L=%d. rtcount = %zu\n", __FILE__, __LINE__, Object_system_rtcount()); */
+  // NOTE: there is some problem before and after this line causing rc of the argv elements
+  // to be 1 higher than expected.
   Object* ret = (self->impl)(self, tmpEnv, argv);
   if(ret == NULL) {
     ret = Object_new_null();

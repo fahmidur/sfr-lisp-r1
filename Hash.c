@@ -42,7 +42,7 @@ void HashNode_del(HashNode* self) {
   }
   if(self->val != NULL && Object_system_delete_recurse()) {
 #ifdef DEBUG
-    printf("Releasing HashNode val(%p)\n", self->val);
+    printf("Releasing HashNode val(%p, rc=%d)\n", self->val, self->val->rc);
     if(self->val != NULL && !Object_is_container(self->val)) {
       ObjectUtil_eprintf("  HashNode val(%p, rc=%d) = %v\n", self->val, self->val->rc, self->val);
     }

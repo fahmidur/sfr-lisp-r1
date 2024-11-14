@@ -155,10 +155,10 @@ int main(int argc, char** argv) {
   Object* addstr1_res1 = Object_accept(Lisp_eval_string(addstr1));
   int addstr1_e1_count = ObjectSystem_count_matching_number(1.987);
   printf("addstr1_e1_count = %d\n", addstr1_e1_count);
-  /* nassert(addstr1_e1_count == 0); */
+  nassert(addstr1_e1_count == 0);
   int addstr1_e2_count = ObjectSystem_count_matching_number(2.987);
   printf("addstr1_e2_count = %d\n", addstr1_e2_count);
-  /* nassert(addstr1_e2_count == 0); */
+  nassert(addstr1_e2_count == 0);
 
   Lisp_done();
   Runtime_done();

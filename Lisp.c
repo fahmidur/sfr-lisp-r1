@@ -40,15 +40,24 @@ Object* fn_gc_info(Function* fn, Object* env, Object* argv) {
 }
 
 Object* fn_add(Function* fn, Object* env, Object* argv) {
-  Object* a = Object_accept(Object_bop_hget(env, QSYMBOL("a")));
-  Object* b = Object_accept(Object_bop_hget(env, QSYMBOL("b")));
-  /* ObjectUtil_eprintf("fn_add. got a = %v\n", a); */
-  /* ObjectUtil_eprintf("fn_add. got b = %v\n", b); */
-  Object* ret = Object_return(Object_accept(Object_bop_add(a, b)));
-  Object_rc_decr(a);
-  Object_rc_decr(b);
-  Object_rc_decr(ret);
-  return ret;
+  Object_reject(Object_bop_hget(env, QSYMBOL("a")));
+  Object_reject(Object_bop_hget(env, QSYMBOL("b")));
+  return Object_new_null();
+  /* return Object_return( */
+  /*     Object_bop_add( */
+  /*       Object_bop_hget(env, QSYMBOL("a")), */
+  /*       Object_bop_hget(env, QSYMBOL("b")) */
+  /*     ) */
+  /* ); */
+  /* Object* a = Object_accept(Object_bop_hget(env, QSYMBOL("a"))); */
+  /* Object* b = Object_accept(Object_bop_hget(env, QSYMBOL("b"))); */
+  /* /1* ObjectUtil_eprintf("fn_add. got a = %v\n", a); *1/ */
+  /* /1* ObjectUtil_eprintf("fn_add. got b = %v\n", b); *1/ */
+  /* Object* ret = Object_return(Object_accept(Object_bop_add(a, b))); */
+  /* Object_assign(&a, NULL); */
+  /* Object_assign(&b, NULL); */
+  /* Object_rc_decr(ret); */
+  /* return ret; */
 }
 
 Object* fn_sub(Function* fn, Object* env, Object* argv) {
@@ -670,6 +679,7 @@ Object* Lisp_tokenize(Object* string) {
 
 Object* Lisp_parse_tokens2(Object* tokenlist, int depth) {
   assert(tokenlist != NULL);
+  tokenlist = Object_accept(tokenlist);
   Object* tmp = Object_new_null();
   Object* ret = Object_new_null();
   Object* sublist = Object_new_null();
@@ -714,9 +724,9 @@ Object* Lisp_parse_tokens2(Object* tokenlist, int depth) {
       }
     }
     idx++;
+    Object_assign(&tmp, NULL);
     if(softbreak) {
       // cleanup
-      Object_assign(&tmp, NULL);
       Object_assign(&sublist, NULL);
       break;
     }
@@ -737,6 +747,14 @@ Object* Lisp_parse_tokens2(Object* tokenlist, int depth) {
     // be accepted or reject with rc=0;
     assert(ret->rc == 0);
   }
+  Object_assign(&tokenlist, NULL);
+#ifdef DEBUG
+  if(depth == 0) {
+    printf("--- { donutshop --- {\n");
+    Object_system_print();
+    printf("--- } donutshop --- }\n");
+  }
+#endif
   return ret;
 }
 

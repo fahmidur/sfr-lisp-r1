@@ -223,7 +223,7 @@ void List_del(List* self) {
   while(self->size > 0) {
     tmp = Object_accept(List_pop(self));
     // The list element tmp is now damaged
-    if(Object_system_delete_recurse()) {
+    if(tmp != NULL && Object_system_delete_recurse()) {
       dbg_printf("List_del(%p). tmp=%p | Object_reject(tmp) rc = %d\n", self, tmp, tmp->rc);
 #ifdef DEBUG
       if(!Object_is_container(tmp)) {
