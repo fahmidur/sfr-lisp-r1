@@ -183,11 +183,14 @@ int main(int argc, char** argv) {
 
   printf("Test Number + Number ...\n");
   Object* res1 = Object_accept(Object_bop_add(num1, num2));
+  nassert(res1->rc == 1);
   ObjectUtil_eprintf("%v + %v = %v\n", num1, num2, res1);
   Object* res1_expected = Object_new(SYMBOL_NUMBER, 1, Number_new(7));
   nassert(Object_cmp(res1, res1_expected) == 0);
   /*printf("res1 = "); Object_print(res1); printf("\n");*/
   ObjectUtil_eprintf("res1 = %v\n", res1);
+  nassert(num1->rc == 1);
+  nassert(num2->rc == 1);
 
   printf("Test Number - Number ...\n");
   Object* res2 = Object_accept(Object_bop_sub(num1, num2));
@@ -453,9 +456,14 @@ int main(int argc, char** argv) {
   nassert(hash1->rc == 1); // ensure that rc of hash1 has not changed
   nassert(Object_len(hash1) == 2);
 
+  nassert(str_apple->rc == 1);
   Object* expecting_red = Object_accept(Object_bop_hget(hash1, str_apple));
   nassert(Object_cmp(expecting_red, str_red) ==  0);
-  nassert(expecting_red->rc == 3); // referred by red, hash1, expecting_red
+  nassert(expecting_red->rc == 3); // referred by str_red, hash1, expecting_red
+  nassert(str_red->rc == 3);
+  nassert(str_apple->rc == 1); // the rc of str_apple is left alone
+  Object_assign(&expecting_red, NULL);
+  nassert(str_red->rc == 2);
 
   // modifying keys after they have been inserted into hash
   Object_bop_addx_char(str_apple, '2');
