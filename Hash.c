@@ -35,9 +35,18 @@ void HashNode_del(HashNode* self) {
   }
   assert(self->prev == NULL && self->next == NULL);
   if(self->key != NULL && Object_system_delete_recurse()) {
+#ifdef DEBUG
+    printf("Releasing HashNode key(%p)\n", self->key);
+#endif
     self->key = Object_rc_decr(self->key);
   }
   if(self->val != NULL && Object_system_delete_recurse()) {
+#ifdef DEBUG
+    printf("Releasing HashNode val(%p)\n", self->val);
+    if(self->val != NULL && !Object_is_container(self->val)) {
+      ObjectUtil_eprintf("  HashNode val(%p, rc=%d) = %v\n", self->val, self->val->rc, self->val);
+    }
+#endif
     self->val = Object_rc_decr(self->val);
   }
   self->key = NULL;

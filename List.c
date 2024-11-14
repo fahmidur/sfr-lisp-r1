@@ -100,7 +100,7 @@ Object* List_pop(List* self) {
   }
   ListNode* node;
   ListNode* new_tail;
-  Object* ret;
+  Object* ret = Object_new_null();
   if(self->size == 1) {
     assert(self->tail == self->head);
     node = self->tail;
@@ -121,7 +121,7 @@ Object* List_pop(List* self) {
   if(Object_system_delete_recurse()) {
     ret = Object_return(node->data);
   } else {
-    ret = NULL;
+    ret = Object_new_null();
   }
   ListNode_del(node);
   dbg_printf("List_pop(%p). size=%zu\n", self, self->size);
@@ -221,11 +221,17 @@ void List_del(List* self) {
   Object* tmp = NULL;
 
   while(self->size > 0) {
-    tmp = List_pop(self);
-    // tmp is now damaged
+    tmp = Object_accept(List_pop(self));
+    // The list element tmp is now damaged
     if(Object_system_delete_recurse()) {
-      dbg_printf("List_del(%p). tmp=%p | Object_reject(tmp)\n", self, tmp);
-      Object_reject(tmp);
+      dbg_printf("List_del(%p). tmp=%p | Object_reject(tmp) rc = %d\n", self, tmp, tmp->rc);
+#ifdef DEBUG
+      if(!Object_is_container(tmp)) {
+        ObjectUtil_eprintf("  tmp=%v\n", tmp);
+      }
+#endif
+      Object_assign(&tmp, NULL);
+      /* Object_reject(tmp); */
     } else {
       dbg_printf("List_del(%p). tmp=%p | delete recurse disabled\n", self, tmp);
     }

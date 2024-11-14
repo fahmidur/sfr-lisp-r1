@@ -758,10 +758,9 @@ Object* Lisp_parse_string(Object* str) {
 }
 
 Object* Lisp_eval_sexp2(Object* sexp, Object* env) {
-  /* Object_rc_incr(sexp); */
   sexp = Object_accept(sexp);
-  /* Object_rc_incr(env); */
   env = Object_accept(env);
+  ObjectUtil_eprintf("donuts. Lisp_eval_sexp2. sexp.rc = %d sexp = %v\n", sexp->rc, sexp);
   Object* ret = Object_new_null();
   Object* tmp = NULL;
   Object* tmp2 = NULL;
@@ -850,11 +849,13 @@ Object* Lisp_eval_sexp2(Object* sexp, Object* env) {
           ListIter_next(iter);
         }
         ListIter_del(iter);
+        dbg_printf("--- { Object_bop_call { ---\n");
         ret = Object_accept(Object_bop_call(opval, opargs2));
-        dbg_printf("{ delete opargs1 {\n");
+        dbg_printf("--- } Object_bop_call } ---\n");
+        dbg_printf("{ delete opargs1 | len=%d {\n", Object_len(opargs1));
         Object_assign(&opargs1, NULL);
         dbg_printf("} delete opargs1 }\n");
-        dbg_printf("{ delete opargs2 {\n");
+        dbg_printf("{ delete opargs2 | len=%d {\n", Object_len(opargs2));
         Object_assign(&opargs2, NULL);
         dbg_printf("} delete opargs2 }\n");
       }
@@ -928,10 +929,16 @@ _return:
     Object_rc_decr(ret);
   }
   /* Object_rc_decr(sexp); */
+  printf("{ delete sexp {\n");
   Object_assign(&sexp, NULL);
+  printf("} delete sexp }\n");
   /* Object_rc_decr(env); */
   Object_assign(&env, NULL);
   /* ObjectUtil_eprintf("donuts. eval. ret=%v\n", ret); */
+  /* assert(ret->rc == 0); */
+  /* if(ret->rc != 0) { */
+  /*   ObjectUtil_eprintf("donuts. strange. rc = %d for ret = %v\n", ret->rc, ret); */
+  /* } */
   return ret;
 }
 

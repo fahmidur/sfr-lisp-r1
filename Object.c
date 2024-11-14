@@ -1425,6 +1425,8 @@ Object* Object_uop_rest(Object* self) {
   if(Object_type(self) == SYMBOL_LIST) {
     Object* clone = Object_accept(Object_clone(self));
     Object_reject(Object_uop_shift(clone));
+    Object_return(clone);
+    Object_rc_decr(clone);
     return clone;
   }
   return Object_new_null();
