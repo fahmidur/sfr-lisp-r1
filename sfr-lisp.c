@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include "Object.h"
 #include "Runtime.h"
 #include "Lisp.h"
 #include "String.h"
@@ -106,7 +107,6 @@ void repl() {
     }
     else {
       /* ObjectUtil_eprintf("OK. Got input = %v\n", obj_inp); */
-
       if(rvalue == NULL) {
       }
       else
@@ -115,9 +115,7 @@ void repl() {
       }
       rvalue = Object_accept(Lisp_eval_string(obj_inp));
       ObjectUtil_eprintf("%v\n", rvalue);
-      /* if(!Object_is_null(rvalue)) { */
-      /*   ObjectUtil_eprintf("rvalue = %v\n", rvalue); */
-      /* } */
+      Object_assign(&rvalue, NULL);
     }
     free(line);
     line = NULL;

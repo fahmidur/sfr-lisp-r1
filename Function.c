@@ -141,7 +141,9 @@ Object* Function_call(Function* self, Object* argv) {
   Object_assign(&tmpEnv, NULL);
   // at this point we expect the tmpEnv to be destroyed.
   assert(Object_is_null(tmpEnv));
-  return Object_return(ret);
+  Object_return(ret);
+  Object_rc_decr(ret);
+  return ret;
 }
 
 // Set key/val in the Functions environment
