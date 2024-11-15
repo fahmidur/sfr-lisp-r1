@@ -502,8 +502,8 @@ void print_TokenizerState(TokenizerState x) {
 
 Object* Lisp_tokenize(Object* string) {
   assert(string != NULL);
-  Object_rc_incr(string);
   assert(Object_type(string) == SYMBOL_STRING);
+  string = Object_accept(string);
 
   size_t string_len = Object_len(string);
   Object* ret = QLIST_NEW1();
@@ -764,6 +764,7 @@ Object* Lisp_parse_tokens(Object* tokenlist) {
 }
 
 Object* Lisp_parse_string(Object* str) {
+  assert(str != NULL);
   Object* tokens = Object_accept(Lisp_tokenize(str));
   /* ObjectUtil_eprintf("donuts. tokens = %v\n", tokens); */
   if(Object_is_error(tokens)) {
