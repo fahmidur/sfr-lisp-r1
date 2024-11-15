@@ -150,7 +150,6 @@ int main(int argc, char** argv) {
   printf("numstr1_count = %d\n", numstr1_count);
   nassert(numstr1_count == 0);
 
-  // TODO: make test below green
   Object* addstr1 = QSTRING_NEW1("(+ 1.987 2.987)");
   Object* addstr1_res1 = Object_accept(Lisp_eval_string(addstr1));
   int addstr1_e1_count = ObjectSystem_count_matching_number(1.987);
