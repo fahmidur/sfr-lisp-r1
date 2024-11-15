@@ -128,6 +128,7 @@ char Environment_has(Environment* self, Object* key) {
  **/
 Object* Environment_get(Environment* self, Object* key) {
   assert(self != NULL);
+  assert(key != NULL);
   assert(self->objects != NULL);
   Object* ret = Object_bop_hget(self->objects, key);
   if(ret == NULL) {
@@ -135,13 +136,16 @@ Object* Environment_get(Environment* self, Object* key) {
   }
   ret = Object_accept(ret);
   if(Object_is_null(ret) && self->parent != NULL) {
+    Object_assign(&ret, NULL);
     ret = Environment_get(self->parent->impl, key);
     if(ret == NULL) {
       ret = Object_new_null();
     }
     ret = Object_accept(ret);
   }
-  return Object_return(ret);
+  Object_return(ret);
+  Object_rc_decr(ret);
+  return ret;
 }
 
 Object* Environment_rem(Environment* self, Object* key) {

@@ -63,3 +63,4 @@ flycheck_*.el
 
 .ccls-cache
 history.txt
+.gdb_history

@@ -500,6 +500,10 @@ int main(int argc, char** argv) {
   Util_heading1(1, "Environment Operations");
   Object* env1 = Object_new(SYMBOL_ENVIRONMENT, 1, Environment_new());
   Object_top_hset(env1, str_apple, str_red);
+  int str_apple_rc = str_apple->rc;
+  int str_red_rc = str_red->rc;
+  printf("bef. str_apple_rc = %d\n", str_apple_rc);
+  printf("bef. str_red_rc = %d\n", str_red_rc);
   nassert(Object_len(env1) == 1);
   nassert(
       Object_cmp(
@@ -507,6 +511,12 @@ int main(int argc, char** argv) {
         str_red
       ) == 0
   )
+  printf("aft. str_apple.rc = %d\n", str_apple->rc);
+  printf("aft. str_red.rc = %d\n", str_red->rc);
+  // the rc for tor the key str_apple is left alone.
+  nassert(str_apple_rc == str_apple->rc);
+  // the rc for the val str_red is left alone
+  nassert(str_red_rc == str_red->rc);
   Util_heading1(0, "Environment Operations");
 
   //===========================================================================

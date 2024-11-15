@@ -1253,6 +1253,7 @@ Object* Object_bop_hget(Object* self, Object* key) {
   if(ret == NULL) {
     ret = Object_new_null();
   }
+  Object_return(ret);
   return ret;
 }
 

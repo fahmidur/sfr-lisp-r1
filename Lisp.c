@@ -40,24 +40,25 @@ Object* fn_gc_info(Function* fn, Object* env, Object* argv) {
 }
 
 Object* fn_add(Function* fn, Object* env, Object* argv) {
-  Object_reject(Object_bop_hget(env, QSYMBOL("a")));
-  Object_reject(Object_bop_hget(env, QSYMBOL("b")));
-  return Object_new_null();
+  /* Object_reject(Object_bop_hget(env, QSYMBOL("a"))); */
+  /* Object_reject(Object_bop_hget(env, QSYMBOL("b"))); */
+  /* return Object_new_null(); */
   /* return Object_return( */
   /*     Object_bop_add( */
   /*       Object_bop_hget(env, QSYMBOL("a")), */
   /*       Object_bop_hget(env, QSYMBOL("b")) */
   /*     ) */
   /* ); */
-  /* Object* a = Object_accept(Object_bop_hget(env, QSYMBOL("a"))); */
-  /* Object* b = Object_accept(Object_bop_hget(env, QSYMBOL("b"))); */
-  /* /1* ObjectUtil_eprintf("fn_add. got a = %v\n", a); *1/ */
-  /* /1* ObjectUtil_eprintf("fn_add. got b = %v\n", b); *1/ */
-  /* Object* ret = Object_return(Object_accept(Object_bop_add(a, b))); */
-  /* Object_assign(&a, NULL); */
-  /* Object_assign(&b, NULL); */
-  /* Object_rc_decr(ret); */
-  /* return ret; */
+  Object* a = Object_accept(Object_bop_hget(env, QSYMBOL("a")));
+  Object* b = Object_accept(Object_bop_hget(env, QSYMBOL("b")));
+  /* ObjectUtil_eprintf("fn_add. got a = %v\n", a); */
+  /* ObjectUtil_eprintf("fn_add. got b = %v\n", b); */
+  Object* ret = Object_accept(Object_bop_add(a, b));
+  Object_assign(&a, NULL);
+  Object_assign(&b, NULL);
+  Object_return(ret);
+  Object_rc_decr(ret);
+  return ret;
 }
 
 Object* fn_sub(Function* fn, Object* env, Object* argv) {
