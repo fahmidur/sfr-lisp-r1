@@ -160,14 +160,47 @@ int main(int argc, char** argv) {
   printf("addstr1_e2_count = %d\n", addstr1_e2_count);
   nassert(addstr1_e2_count == 0);
 
-  // test that repeated eval of + does not increase object count
-  int old_obj_sys_size = Object_system_size();
-  printf("old_obj_sys_size = %d\n", old_obj_sys_size);
   int i = 0;
+  int old_obj_sys_size;
+  int new_obj_sys_size;
+
+  // test that repeated eval does not increase object count
+  old_obj_sys_size = Object_system_size();
+  printf("old_obj_sys_size = %d\n", old_obj_sys_size);
   for(i = 0; i < 100; i++) {
     Object_reject(Lisp_eval_string(QSTRING("(+ 1 2)")));
   }
-  int new_obj_sys_size = Object_system_size();
+  new_obj_sys_size = Object_system_size();
+  printf("new_obj_sys_size = %d\n", new_obj_sys_size);
+  nassert(new_obj_sys_size == old_obj_sys_size);
+
+  // test that repeated eval does not increase object count
+  old_obj_sys_size = Object_system_size();
+  printf("old_obj_sys_size = %d\n", old_obj_sys_size);
+  for(i = 0; i < 100; i++) {
+    Object_reject(Lisp_eval_string(QSTRING("(- 1 2)")));
+  }
+  new_obj_sys_size = Object_system_size();
+  printf("new_obj_sys_size = %d\n", new_obj_sys_size);
+  nassert(new_obj_sys_size == old_obj_sys_size);
+
+  // test that repeated eval does not increase object count
+  old_obj_sys_size = Object_system_size();
+  printf("old_obj_sys_size = %d\n", old_obj_sys_size);
+  for(i = 0; i < 100; i++) {
+    Object_reject(Lisp_eval_string(QSTRING("(* 1 2)")));
+  }
+  new_obj_sys_size = Object_system_size();
+  printf("new_obj_sys_size = %d\n", new_obj_sys_size);
+  nassert(new_obj_sys_size == old_obj_sys_size);
+
+  // test that repeated eval does not increase object count
+  old_obj_sys_size = Object_system_size();
+  printf("old_obj_sys_size = %d\n", old_obj_sys_size);
+  for(i = 0; i < 100; i++) {
+    Object_reject(Lisp_eval_string(QSTRING("(/ 1 2)")));
+  }
+  new_obj_sys_size = Object_system_size();
   printf("new_obj_sys_size = %d\n", new_obj_sys_size);
   nassert(new_obj_sys_size == old_obj_sys_size);
 
