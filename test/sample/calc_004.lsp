@@ -1,2 +1,2 @@
 #lang racket
-(+ 1.987 2.987)
+(displayln (+ 1.987 2.987))
