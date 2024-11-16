@@ -780,7 +780,6 @@ Object* Lisp_parse_string(Object* str) {
 Object* Lisp_eval_sexp2(Object* sexp, Object* env) {
   sexp = Object_accept(sexp);
   env = Object_accept(env);
-  ObjectUtil_eprintf("donuts. Lisp_eval_sexp2. sexp.rc = %d sexp = %v\n", sexp->rc, sexp);
   Object* ret = Object_new_null();
   Object* tmp = NULL;
   Object* tmp2 = NULL;
@@ -794,9 +793,7 @@ Object* Lisp_eval_sexp2(Object* sexp, Object* env) {
       sexp_type == SYMBOL_STRING ||
       sexp_type == SYMBOL_FUNCTION
   ) {
-    /* ObjectUtil_eprintf("donuts. here. 01. sexp.rc = %d sexp = %v\n", sexp->rc, sexp); */
     ret = Object_accept(sexp);
-    /* ObjectUtil_eprintf("donuts. here. 02. sexp.rc = %d sexp = %v\n", sexp->rc, sexp); */
   }
   else
   if(sexp_type == SYMBOL_SYMBOL) {
@@ -859,10 +856,7 @@ Object* Lisp_eval_sexp2(Object* sexp, Object* env) {
         ListIter_head(iter);
         while(!ListIter_at_end(iter)) {
           tmp = Object_accept(ListIter_get_val(iter));
-          /* ObjectUtil_eprintf("donuts. tmp_.rc = %d tmp_ = %v\n", tmp->rc, tmp); */
           tmp2 = Object_accept(Lisp_eval_sexp2(tmp, env));
-          /* ObjectUtil_eprintf("donuts. tmp2.rc = %d tmp2 = %v\n", tmp2->rc, tmp2); */
-          /* assert(tmp2->rc == 1); */
           Object_bop_push(opargs2, tmp2);
           Object_assign(&tmp, NULL);
           Object_assign(&tmp2, NULL);
@@ -948,17 +942,10 @@ _return:
     Object_return(ret);
     Object_rc_decr(ret);
   }
-  /* Object_rc_decr(sexp); */
   dbg_printf("{ delete sexp {\n");
   Object_assign(&sexp, NULL);
   dbg_printf("} delete sexp }\n");
-  /* Object_rc_decr(env); */
   Object_assign(&env, NULL);
-  /* ObjectUtil_eprintf("donuts. eval. ret=%v\n", ret); */
-  /* assert(ret->rc == 0); */
-  /* if(ret->rc != 0) { */
-  /*   ObjectUtil_eprintf("donuts. strange. rc = %d for ret = %v\n", ret->rc, ret); */
-  /* } */
   return ret;
 }
 
