@@ -949,9 +949,9 @@ _return:
     Object_rc_decr(ret);
   }
   /* Object_rc_decr(sexp); */
-  printf("{ delete sexp {\n");
+  dbg_printf("{ delete sexp {\n");
   Object_assign(&sexp, NULL);
-  printf("} delete sexp }\n");
+  dbg_printf("} delete sexp }\n");
   /* Object_rc_decr(env); */
   Object_assign(&env, NULL);
   /* ObjectUtil_eprintf("donuts. eval. ret=%v\n", ret); */
