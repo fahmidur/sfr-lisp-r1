@@ -749,13 +749,6 @@ Object* Lisp_parse_tokens2(Object* tokenlist, int depth) {
     assert(ret->rc == 0);
   }
   Object_assign(&tokenlist, NULL);
-#ifdef DEBUG
-  if(depth == 0) {
-    printf("--- { donutshop --- {\n");
-    Object_system_print();
-    printf("--- } donutshop --- }\n");
-  }
-#endif
   return ret;
 }
 
@@ -766,14 +759,11 @@ Object* Lisp_parse_tokens(Object* tokenlist) {
 Object* Lisp_parse_string(Object* str) {
   assert(str != NULL);
   Object* tokens = Object_accept(Lisp_tokenize(str));
-  /* ObjectUtil_eprintf("donuts. tokens = %v\n", tokens); */
   if(Object_is_error(tokens)) {
     return tokens;
   }
-  /* ObjectUtil_eprintf("donuts. calling Lisp_parse_tokens(tokens) ...\n"); */
   Object* parsed = Object_return(Lisp_parse_tokens(tokens));
   Object_rc_decr(tokens); tokens = NULL;
-  /* ObjectUtil_eprintf("donuts. parsed=%v\n", parsed); */
   return parsed;
 }
 

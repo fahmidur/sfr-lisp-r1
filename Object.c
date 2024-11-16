@@ -530,7 +530,6 @@ void Object_action_set_unreachable(Object* referer, Object* referend) {
 
 void Object_action_unset_unreachable(Object* referer, Object* referend) {
   if(referer->unreachable == 0 && referend->unreachable == 1) {
-    printf("donuts. unset_unreachable. referend = %p\n", referend);
     referend->unreachable = 0;
   }
 }
@@ -642,7 +641,6 @@ void Object_system_gc() {
     next = iter->next;
     if(iter->unreachable) {
       ObjectUtil_eprintf("unreachable obj(p=%p rc=%d)\n", iter, iter->rc);
-      /* ObjectUtil_eprintf("unreachable obj(p=%p, rc=%d) = %v\n", iter, iter->rc, iter); */
       iter->rc = 0;
     }
     iter = Object_gc(iter);
@@ -997,7 +995,6 @@ Object* Object_gc(Object* self) {
       /* ObjectUtil_eprintf("Object_gc(%p). SKIPPED returning object: %v\n", self, self); */
       return self;
     }
-    /* ObjectUtil_eprintf("donuts. Object_gc. deleting obj p=%p v=%v\n", self, self); */
     Object_del(self);
     return NULL;
   }
