@@ -162,8 +162,12 @@ int main(int argc, char** argv) {
   int i = 0;
   int old_obj_sys_size;
   int new_obj_sys_size;
+  int old_op_rc;
+  int new_op_rc;
 
   // test that repeated eval does not increase object count
+  Object* symbol_plus = QSYMBOL_NEW1("+");
+  old_op_rc = symbol_plus->rc;
   old_obj_sys_size = Object_system_size();
   printf("old_obj_sys_size = %d\n", old_obj_sys_size);
   for(i = 0; i < 100; i++) {
@@ -172,6 +176,8 @@ int main(int argc, char** argv) {
   new_obj_sys_size = Object_system_size();
   printf("new_obj_sys_size = %d\n", new_obj_sys_size);
   nassert(new_obj_sys_size == old_obj_sys_size);
+  new_op_rc = symbol_plus->rc;
+  nassert(old_op_rc == new_op_rc);
 
   // test that repeated eval does not increase object count
   old_obj_sys_size = Object_system_size();
