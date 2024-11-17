@@ -537,6 +537,23 @@ int main(int argc, char** argv) {
   nassert(str_red_rc == str_red->rc);
   Util_heading1(0, "Environment Operations");
 
+  Object* env2 = Object_new(SYMBOL_ENVIRONMENT, 1, Environment_new());
+  Object* env2_key1 = QSYMBOL_NEW1("key1");
+  Object* env2_val1 = QNUMBER_NEW1(11.987);
+  Object* env2_val2 = QNUMBER_NEW1(12.987);
+  nassert(env2_val1->rc == 1);
+  nassert(ObjectSystem_count_matching_number(11.987) == 1);
+  nassert(ObjectSystem_count_matching_number(12.987) == 1);
+  Object_reject(Object_top_hset(env2, env2_key1, env2_val1));
+  nassert(Object_len(env2) == 1);
+  nassert(env2_val1->rc == 2);
+  Object_assign(&env2_val1, NULL);
+  nassert(Object_is_null(env2_val1));
+  nassert(ObjectSystem_count_matching_number(11.987) == 1);
+  Object_reject(Object_top_hset(env2, env2_key1, env2_val2));
+  nassert(env2_val2->rc == 2);
+  nassert(ObjectSystem_count_matching_number(11.987) == 0);
+
   //===========================================================================
   
   Util_heading1(1, "Function Operations");

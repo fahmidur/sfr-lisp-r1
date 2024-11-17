@@ -1192,9 +1192,9 @@ Object* Object_bop_addx_char(Object* a, char ch) {
 
 Object* Object_top_hset(Object* self, Object* key, Object* val) {
   assert(self != NULL);
-  Object_rc_incr(self);
-  Object_rc_incr(key);
-  Object_rc_incr(val);
+  Object_accept(self);
+  Object_accept(key);
+  Object_accept(val);
 
   Object* ret = NULL;
 
@@ -1213,9 +1213,9 @@ Object* Object_top_hset(Object* self, Object* key, Object* val) {
     ret = Object_new_null();
   }
   
-  Object_rc_decr(key);
-  Object_rc_decr(val);
-  Object_rc_decr(self);
+  Object_assign(&key, NULL);
+  Object_assign(&val, NULL);
+  Object_assign(&self, NULL);
   return ret;
 }
 
