@@ -475,6 +475,24 @@ int main(int argc, char** argv) {
   Object* expecting_red2 = Object_accept(Object_bop_hget(hash1, QSTRING_NEW0("apple")));
   nassert(Object_cmp(expecting_red2, str_red) == 0);
 
+  nassert(ObjectSystem_count_matching_number(5.987) == 0);
+  Object* hash2 = QHASH_NEW1();
+  Object* key1 = QSYMBOL_NEW1("key1");
+  Object* val1 = QNUMBER_NEW1(5.987);
+  Object* val2 = QNUMBER_NEW1(6.987);
+  nassert(key1->rc == 1);
+  Object_reject(Object_top_hset(hash2, key1, val1));
+  nassert(ObjectSystem_count_matching_number(5.987) == 1);
+  nassert(ObjectSystem_count_matching_number(6.987) == 1);
+  nassert(val1->rc == 2);
+  Object_assign(&val1, NULL);
+  nassert(Object_is_null(val1));
+  nassert(ObjectSystem_count_matching_number(5.987) == 1);
+  Object_reject(Object_top_hset(hash2, key1, val2));
+  nassert(ObjectSystem_count_matching_number(5.987) == 0);
+  nassert(ObjectSystem_count_matching_number(6.987) == 1);
+  nassert(val2->rc == 2);
+
   Util_heading1(0, "HASH OPERATIONS");
 
   //keywords: circle, circular
