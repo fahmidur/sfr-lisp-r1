@@ -209,6 +209,22 @@ int main(int argc, char** argv) {
   printf("new_obj_sys_size = %d\n", new_obj_sys_size);
   nassert(new_obj_sys_size == old_obj_sys_size);
 
+  Object* tvar1 = QSYMBOL("tvar1");
+  char* dstr1 = calloc(255, sizeof(char));
+  old_obj_sys_size = Object_system_size();
+  printf("old_obj_sys_size = %d\n", old_obj_sys_size);
+  for(i = 0; i < 100; i++) {
+    memset(dstr1, 0, 255);
+    sprintf(dstr1, "(define tvar1 %d)", i+1);
+    /* printf("dstr1 = |%s|\n", dstr1); */
+    Object_reject(Lisp_eval_string(QSTRING(dstr1)));
+  }
+  free(dstr1); dstr1 = NULL;
+  new_obj_sys_size = Object_system_size();
+  printf("new_obj_sys_size = %d\n", new_obj_sys_size);
+  // we should only gain 1 new object, the last defined integer 100
+  nassert(new_obj_sys_size - old_obj_sys_size == 1);
+
   Lisp_done();
   Runtime_done();
 
