@@ -2,10 +2,33 @@
 
 A simple toy lisp-1 interpreter written in C.
 
-This is not designed to be used for anything important, it is merely a learning exercise.
+This is not designed to be used for anything important, it is simply a learning
+exercise. It is really a test bed to play with ideas around the design of C
+object systems, memory management, macros, and etc. Writing a Lisp interpreter
+in some language is one of those programming exercises that touches many
+things, which makes it a great exercise. I chose C because it is about as
+low-level as one can get before assembler, and the most popular implementations
+of other interpreted languages (Perl, Python, Ruby, Raku) are all written in C. 
+
+To paraphrase one of my favorite physicists:
 
 > What I cannot create [in C], I do not understand.
 > -- Richard P. Feynman
+
+There are better ways to do it than what you see here, efficiency is not the
+goal for this implementation. This implementation is meant to be as
+self-contained a possible. There are no third-party parsers, memory-management
+libraries, or complex build systems. The building is done by Ruby via a
+Rakefile. There is a prototype implementation written in Ruby that I wrote
+first. There is a test suite, which tests the correctness of
+the output against Racket. There are memory leak tests using Valgrind, called
+by the test suite.
+
+The only third-party library used here is Linenoise, a tiny alternative to
+Readline written by Antirez. The reason for this is because keyboard handling
+for REPLs is somewhat outside of the scope of what I intend on learning. And
+keyboard handling for REPLs is notoriously hard to get right across different
+systems. But one day, I might switch this out as well.
 
 ## Build Requirements
 
