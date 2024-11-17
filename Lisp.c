@@ -771,12 +771,12 @@ Object* Lisp_eval_sexp2(Object* sexp, Object* env) {
   sexp = Object_accept(sexp);
   env = Object_accept(env);
   Object* ret = Object_new_null();
-  Object* tmp = NULL;
-  Object* tmp2 = NULL;
-  Object* op = NULL;
-  Object* opval = NULL;
-  Object* opargs1 = NULL;
-  Object* opargs2 = NULL;
+  Object* tmp1 = Object_new_null();
+  Object* tmp2 = Object_new_null();
+  Object* op = Object_new_null();
+  Object* opval = Object_new_null();
+  Object* opargs1 = Object_new_null();
+  Object* opargs2 = Object_new_null();
   Symbol* sexp_type = Object_type(sexp);
   if(
       sexp_type == SYMBOL_NUMBER ||
@@ -813,7 +813,9 @@ Object* Lisp_eval_sexp2(Object* sexp, Object* env) {
         else {
           opargs2 = Object_accept(Object_bop_at(opargs1, 1));
           Object_reject(Object_top_hset(env, Object_uop_head(opargs1), Lisp_eval_sexp2(opargs2, env)));
+          Object_assign(&opargs2, NULL);
         }
+        Object_assign(&opargs1, NULL);
       }
       else
       if(op == LispSymbol_setbang) {
@@ -824,15 +826,15 @@ Object* Lisp_eval_sexp2(Object* sexp, Object* env) {
           ret = QERROR("invalid use of 'set!'");
         }
         else {
-          tmp = Object_accept(Object_uop_head(opargs1));
-          Object* tenv = Object_accept(Object_bop_rfind(env, tmp));
+          tmp1 = Object_accept(Object_uop_head(opargs1));
+          Object* tenv = Object_accept(Object_bop_rfind(env, tmp1));
           opargs2 = Object_accept(Object_bop_at(opargs1, 1)); // 2nd arg to 'set!'
           if(Object_is_null(tenv)) {
             /* Object_reject(Object_top_hset(env, tmp, Lisp_eval_sexp2(opargs2, env))); */
             ret = QERROR("called 'set!' on non-existent var");
           }
           else {
-            Object_reject(Object_top_hset(tenv, tmp, Lisp_eval_sexp2(opargs2, env)));
+            Object_reject(Object_top_hset(tenv, tmp1, Lisp_eval_sexp2(opargs2, env)));
           }
           Object_assign(&tenv, NULL);
         }
@@ -845,10 +847,10 @@ Object* Lisp_eval_sexp2(Object* sexp, Object* env) {
         ListIter* iter = ListIter_new(opargs1->impl);
         ListIter_head(iter);
         while(!ListIter_at_end(iter)) {
-          tmp = Object_accept(ListIter_get_val(iter));
-          tmp2 = Object_accept(Lisp_eval_sexp2(tmp, env));
+          tmp1 = Object_accept(ListIter_get_val(iter));
+          tmp2 = Object_accept(Lisp_eval_sexp2(tmp1, env));
           Object_bop_push(opargs2, tmp2);
-          Object_assign(&tmp, NULL);
+          Object_assign(&tmp1, NULL);
           Object_assign(&tmp2, NULL);
           ListIter_next(iter);
         }
@@ -919,23 +921,20 @@ _return:
   if(ret == NULL) {
     ret = Object_new_null();
   }
-  if(op != NULL) {
-    Object_assign(&op,  NULL);
-  }
-  if(opval != NULL) {
-    Object_assign(&opval, NULL);
-  }
-  if(Object_is_null(ret)) {
-    // don't do anything to the null object
-  }
-  else {
+  // cleanup stack vars
+  Object_assign(&op,  NULL);
+  Object_assign(&opval, NULL);
+  Object_assign(&opargs1, NULL);
+  Object_assign(&opargs2, NULL);
+  Object_assign(&tmp1, NULL);
+  Object_assign(&tmp2, NULL);
+  Object_assign(&sexp, NULL);
+  Object_assign(&env, NULL);
+  //----
+  if(!Object_is_null(ret)){
     Object_return(ret);
     Object_rc_decr(ret);
   }
-  dbg_printf("{ delete sexp {\n");
-  Object_assign(&sexp, NULL);
-  dbg_printf("} delete sexp }\n");
-  Object_assign(&env, NULL);
   return ret;
 }
 
