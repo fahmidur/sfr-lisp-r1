@@ -40,9 +40,6 @@ Object* fn_gc_info(Function* fn, Object* env, Object* argv) {
 }
 
 Object* fn_add(Function* fn, Object* env, Object* argv) {
-  /* Object_reject(Object_bop_hget(env, QSYMBOL("a"))); */
-  /* Object_reject(Object_bop_hget(env, QSYMBOL("b"))); */
-  /* return Object_new_null(); */
   /* return Object_return( */
   /*     Object_bop_add( */
   /*       Object_bop_hget(env, QSYMBOL("a")), */
@@ -172,10 +169,10 @@ Object* fn_display(Function* fn, Object* env, Object* argv) {
     if(tmp_type == SYMBOL_NUMBER) {
       Number_print_bare(tmp->impl);
     }
-    /* else */
-    /* if(tmp_type == SYMBOL_FUNCTION) { */
-    /*   printf("#<procedure:%p>", tmp); */
-    /* } */
+    else
+    if(tmp_type == SYMBOL_FUNCTION) {
+      printf("#<procedure:%p>", tmp);
+    }
     else {
       Object_print(tmp);
     }
