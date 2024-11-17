@@ -17,7 +17,11 @@ This is not designed to be used for anything important, it is merely a learning 
 
 ## The Plan
 
-- Write a lisp interpreter in Ruby (see ./sfr-lisp.rb).
+- Write a prototype Lisp interpreter in Ruby (see ./sfr-lisp.rb).
+  This will help us understand the basic workings of Lisp without any of the
+  memory management complications of C.
+- Test this prototype Lisp interpreter against Racket.
+- Now that we know how to do it in Ruby ...
 - Make C at least as usable as Ruby
   - Primitives:
     - Single:
@@ -31,8 +35,8 @@ This is not designed to be used for anything important, it is merely a learning 
       - Environment -- A tree-like object used to store Function scope.
     - Callable:
       - Function -- A wrapper object for function pointers.
-  - Object -- Generic wrapper type which points to one of the above primitives.
-  - Reference counted garbage collection for all objects
+  - Object -- Generic wrapper type which points to one of the above things.
+  - Reference counted garbage collection for all objects.
 - Write a Lisp interpreter using the object-system created in C.
 
 - Common object methods:
@@ -61,7 +65,7 @@ tokenization. At the moment, we cannot see any value in doing it this way.
 ### The Parser
 
 The parser will convert the flat list of objects into a nested list of objects
-representing the parser tree. 
+representing the Lisp parse-tree. 
 
 ## Links and References
 
