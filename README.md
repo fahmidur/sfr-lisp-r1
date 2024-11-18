@@ -18,16 +18,18 @@ To paraphrase one of my favorite physicists:
 There are definitely better ways to do it than what you see here, efficiency is
 not the goal for this implementation. This implementation is meant to be as
 self-contained a possible. There are no third-party parsers, memory-management
-libraries, or complex build systems. The building is done by Ruby via a readable
-Rakefile. There is a prototype implementation written in Ruby that I wrote
-first. There is a test suite, which tests the correctness of the output against
-Racket. There are memory leak tests using Valgrind, called by the test suite.
+libraries, or complex build systems. The building is done by Ruby via a simple
+readable Rakefile. There is a prototype implementation written in Ruby that I
+wrote first. There is a test suite, which tests the correctness of the output
+against Racket. There are memory leak tests using Valgrind, called by the test
+suite.
 
 The only third-party library used here is Linenoise, a tiny alternative to
-Readline written by Antirez. The reason for this is because keyboard handling
-for REPLs is somewhat outside of the scope of what I intend on learning. And
-keyboard handling for REPLs is notoriously hard to get right across different
-systems. But one day, I might switch this out as well.
+Readline written by Antirez. The reason for this is because keyboard handling,
+terminal specific escape codes for REPLs, and etc is somewhat outside of the
+scope of what I intend on learning here. The functionality that Linenoise
+provides is notoriously hard to get right across different systems. But one
+day, I might switch this out as well.
 
 ## Building
 
@@ -74,7 +76,7 @@ rake test
 ## Usage
 
 The interpreter without any arguments will start 
-a REPL interface.
+a REPL.
 With a file path as the first argument, it will evaluate
 the file as Lisp source and exit.
 
