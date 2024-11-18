@@ -90,7 +90,7 @@ the file as Lisp source and exit.
 - Make C at least as usable as Ruby
   - Primitives:
     - Single:
-      - Symbol -- Like Ruby Symbols.
+      - Symbol -- Generic Symbols, long-lived. (Similar to old Ruby symbols).
       - String -- Mutable Strings.
       - Number -- Generic Numbers.
       - Error  -- Generic Errors.
@@ -105,27 +105,39 @@ the file as Lisp source and exit.
 - Write a Lisp interpreter using the object-system created in C.
 
 - Common object methods:
-  - `new`      -- constructor
-  - `del`      -- destructor
-  - `clone`    -- cloner
-  - `cmp`      -- compare, returns -1, 0, 1
-  - `print`    -- print yourself
+  - `new`      -- Constructor.
+  - `del`      -- Destructor.
+  - `clone`    -- Clone this object.
+  - `cmp`      -- Compare with another object, returns -1, 0, 1.
+  - `print`    -- Print this object.
 
-## Major Components
+## Design and Major Components
+
+### The C Object System
+
+TODO: Add notes about the object system.
+
+### The C Garbage Collector
+
+TODO: Add notes about the garbage collector
 
 ### The Tokenizer
 
-The tokenizer should return a flat List of objects where each object is either:
-- String
-- Number
-- Symbol -- Parenthesis and BareWords
+The tokenizer should return a flat Object<List> of Objects where each Object is either:
+- `Object<String>` -- Basic String type Object
+- `Object<Number>` -- Basic Number type Object
+- `Object<Symbol>` -- Parenthesis and BareWords
 
-There is no reason to have a temporary Token type object which points to objects
-which will be later created during parsing regardless. 
+The current Tokenizer, written a long time ago, returns a stream-like thing,
+that spits out a series of tokens each time it is called. This design has some
+issues and is being scrapped. These tokens are of type Token, an object that
+refers to slices of the stream. This has many drawbacks and issues.
 
-Unlike the current broken Tokenizer, we will return a complete List, there
-is no reason to have 'streams' which implies there is some value in partial
-tokenization. At the moment, we cannot see any value in doing it this way. 
+Instead, the new and current tokenizer returns a complete List of Objects.
+
+There is no reason to have 'streams' which implies there is some value in
+partial tokenization. There is no reason to have a temporary Token type object
+which points to objects which will be later created during parsing anyway.
 
 ### The Parser
 
@@ -134,5 +146,13 @@ representing the Lisp parse-tree.
 
 ## Links and References
 
-https://docs.racket-lang.org/guide/scheme-forms.html
+- [Racket Scheme Forms](https://docs.racket-lang.org/guide/scheme-forms.html)
+- [Python Garbage Collector Design](https://github.com/python/cpython/blob/main/InternalDocs/garbage_collector.md)
+
+## TODO
+
+There's a lot that is missing from this implementation, such as but not limited
+to Tail-Call-Optimization (TCO).
+
+See [Todo-List](./TODO.txt) for an updated running list.
 
