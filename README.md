@@ -5,24 +5,23 @@ A simple toy lisp-1 interpreter written in C.
 This is not designed to be used for anything important, it is simply a learning
 exercise. It is really a test bed to play with ideas around the design of C
 object systems, memory management, macros, and etc. Writing a Lisp interpreter
-in some language is one of those programming exercises that touches many
-things, which makes it a great exercise. I chose C because it is about as
-low-level as one can get before assembler, and the most popular implementations
-of other interpreted languages (Perl, Python, Ruby, Raku) are all written in C. 
+is one of those programming exercises that touches many things, which makes it
+a great exercise. I chose C because it is about as low-level as one can get
+before assembler, and the most popular implementations of other interpreted
+languages (Perl, Python, Ruby, Raku) are all written in C. 
 
 To paraphrase one of my favorite physicists:
 
 > What I cannot create [in C], I do not understand.
 > -- Richard P. Feynman
 
-There are better ways to do it than what you see here, efficiency is not the
-goal for this implementation. This implementation is meant to be as
+There are definitely better ways to do it than what you see here, efficiency is
+not the goal for this implementation. This implementation is meant to be as
 self-contained a possible. There are no third-party parsers, memory-management
-libraries, or complex build systems. The building is done by Ruby via a
+libraries, or complex build systems. The building is done by Ruby via a readable
 Rakefile. There is a prototype implementation written in Ruby that I wrote
-first. There is a test suite, which tests the correctness of
-the output against Racket. There are memory leak tests using Valgrind, called
-by the test suite.
+first. There is a test suite, which tests the correctness of the output against
+Racket. There are memory leak tests using Valgrind, called by the test suite.
 
 The only third-party library used here is Linenoise, a tiny alternative to
 Readline written by Antirez. The reason for this is because keyboard handling
@@ -30,13 +29,54 @@ for REPLs is somewhat outside of the scope of what I intend on learning. And
 keyboard handling for REPLs is notoriously hard to get right across different
 systems. But one day, I might switch this out as well.
 
-## Build Requirements
+## Building
+
+### Requirements:
 
 * GCC or Clang
 * Valgrind >= v3.20
-* [Racket](https://racket-lang.org/) -- We test our implementation against racket to confirm that this implementation is roughly working the same way. Racket is a far more mature lisp, and this is a tiny learning project.
+* [Racket](https://racket-lang.org/) -- This implementation is tested against
+  Racket to confirm it is roughly working the same way. Racket is a far more
+  mature lisp, and this is a tiny learning project.
 * Ruby and Rake -- Used for building and running tests.
-* Linenoise -- A small self-contained alternative to Readline by Antirez. Vendored as a Git submodule in this repo under ./sub/linenoise). Used mainly for the REPL.
+* Linenoise -- A small self-contained alternative to Readline by Antirez. 
+  Vendored as a Git submodule in this repo under ./sub/linenoise). Used mainly
+  for the REPL. [link](https://github.com/antirez/linenoise).
+
+### Build Instructions
+
+First clone this repository with the `--recursive` flag.
+This will ensure that the submodule for `./sub/linenoise` is present.
+
+With all of the above requirements met and available
+run the following command
+
+```
+rake
+```
+
+This will populate the build directory `./build`.
+You will a number of built executables, most of which
+are test programs.
+
+The executable for the interpreter will be located at
+`./build/sfr-lisp`.
+
+### Testing
+
+To run all tests, simply run:
+
+bash
+```
+rake test
+```
+
+## Usage
+
+The interpreter without any arguments will start 
+a REPL interface.
+With a file path as the first argument, it will evaluate
+the file as Lisp source and exit.
 
 ## The Plan
 
