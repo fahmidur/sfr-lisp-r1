@@ -54,7 +54,7 @@ With all of the above requirements met and available
 run the following command
 
 ```
-rake
+$ rake
 ```
 
 This will populate the build directory `./build`.
@@ -68,9 +68,8 @@ The executable for the interpreter will be located at
 
 To run all tests, simply run:
 
-bash
 ```
-rake test
+$ rake test
 ```
 
 ## Usage
