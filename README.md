@@ -157,11 +157,55 @@ For a full list see the header file `./String.h`
 
 #### Error Class
 
+The Error class helps manage errors that occur throughout the 
+lifetime of the C Runtime.
+The class itself is a mainly String-like Object containing an Error message.
+Object of type Error are given special handling in methods in the Object class.
+
+Sometimes Errors can happen in functions that cannot return an Error object or cannot 
+return an error signal in the return type.
+For this purpose there is ErrorSystem defined alongside the Error class. 
+Inspired in part by libc's `errno.h`, it uses a global Error instance which can be set by any other class.
+
+At the moment the global Error state is not thread safe, and threads are not yet a consideration in this toy
+implementation.
+
+#### Object Class
+
+The Object class is a wrapper around all of the other classes, with a `Symbol*`
+type, and a `void* impl` pointer which points to the underlying implementation
+class.
+The Object class is provides reference-counted object collection by holding a reference count 
+defined in the field `rc`.
+All objects have a reference count, they are initialized either with reference count 1 or 0.
+An object with reference count 1 is one that is immediately assigned to a `Object*` variable.
+An object with reference count 0 only makes sense if the object is being returned and it 
+is not known whether it has a referencing variable or not.
+
+The reference count field is meant to be incremeneted or decremented by a set of methods 
+like `Object_rc_incr`, `Object_rc_decr`, and `Object_assign`.
+
+When the reference count of a non-returning object reaches zero, the object is destroyed.
+I will describe what that means below.
+
+In some cases, such as when we pop an object from a List, or when a factory function creates a new 
+object, we do not want the object to be garbage collected immediately.
+For these cases the, the Object class maintains a `returning` field, and this field is set to `1`.
+This prevents the Garbage collector from destroying the Object immediately.
+
+But wouldn't this result in an accumilation of non-destructable garbage objects?
+For this reason, the following scheme has been constructed for passing Objects between
+function-call barriers. 
+Inspired in part by object-ownership principles, every function call returning
+an object must be accepted or reject by using the functions `Object_accept(Object*)` or 
+`Object_reject(Object*)` (respectively).
+When an Object is accepted, it's reference count is incremented and its returning state is reset to zero.
+When an Object is rejected, if it has a zero reference count, it is destroyed.
+
 #### List Class
 
 #### Hash Class
 
-#### Object Class
 
 ### The C Garbage Collector
 
