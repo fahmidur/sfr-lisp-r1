@@ -183,9 +183,9 @@ using the same Object System and Runtime.
 #### The Tokenizer
 
 The tokenizer should return a flat Object<List> of Objects where each Object is either:
+- `Object<Symbol>` -- Parenthesis and BareWords
 - `Object<String>` -- Basic String type Object
 - `Object<Number>` -- Basic Number type Object
-- `Object<Symbol>` -- Parenthesis and BareWords
 
 The current Tokenizer, written a long time ago, returns a stream-like thing,
 that spits out a series of tokens each time it is called. This design has some
