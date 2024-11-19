@@ -115,13 +115,72 @@ the file as Lisp source and exit.
 
 ### The C Object System
 
-TODO: Add notes about the object system.
+The Object System designed here is primarily meant to make C 
+as usable as any other Garbage Collected language.
+Objects are a thin pointer-to-implementation wrapper around
+more primitive types like Symbol, String, Number, List, and so on.
+
+#### Implementation Classes
+
+The following are notes on the implementation classes that are
+wrapped by the Object class. 
+
+It is the role of the implementation class to handle the memory of its members.
+While it is the responsibility of the Object class to manage to memory of the
+implementation class instance.
+
+#### Symbol Class
+
+The first primitive type created was the **Symbol**.
+In some other implementations these are called Atoms, but here
+I've named it Symbol after Ruby Symbols.
+
+Symbols are treated differently from normal Objects in in that they are
+are not garbage collected until the very end. Like an older version of Ruby,
+Symbols only ever grow in quantitity. It's not great. But the idea, here 
+is that Symbols should not be dynamically created by a program from user input,
+and relatively few symbols should exist.
+
+#### Number Class
+
+The Number class is a simple wrapper around double. 
+For the sake of simplicity, all numbers are doubles.
+In the future, we may want to use a separate implementation for Integers,
+BigIntegers, BigFloats, and so on.
+But for now a Number as a double is a good start.
+
+#### String Class
+
+The String class is a simple wrapper around a `char* str`, which is a dynamically
+allocated buffer. The buffer is resized as necessary by the string class.
+This class handles things like concatenation, comparison and so on.
+For a full list see the header file `./String.h`
+
+#### Error Class
+
+#### List Class
+
+#### Hash Class
+
+#### Object Class
 
 ### The C Garbage Collector
 
 TODO: Add notes about the garbage collector
 
-### The Tokenizer
+
+### The Lisp Implementation
+
+The Lisp implementation is mainly defined in `lisp.c` with the driver
+program `sfr-lisp.c`.
+These files are consumers of the C Object System described above.
+These two files are essentially 1-1 in functionality to the prototype implementation
+`sfr-lisp.rb`.
+
+It should be possible in the future to implement some other scripting language
+using the same Object System and Runtime.
+
+#### The Tokenizer
 
 The tokenizer should return a flat Object<List> of Objects where each Object is either:
 - `Object<String>` -- Basic String type Object
@@ -139,7 +198,7 @@ There is no reason to have 'streams' which implies there is some value in
 partial tokenization. There is no reason to have a temporary Token type object
 which points to objects which will be later created during parsing anyway.
 
-### The Parser
+#### The Parser
 
 The parser will convert the flat list of objects into a nested list of objects
 representing the Lisp parse-tree. 
