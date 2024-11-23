@@ -230,8 +230,25 @@ to `Object_system_gc()`.
 
 ### The C Garbage Collector
 
-TODO: Add notes about the garbage collector
+Outside of the usual reference counting garbage collection that occurs
+during the lifetime of the interpreter. 
+There is also a function `Object_system_gc()` which scans all objects to determine
+which of these objects are no longer reachable.
 
+To determine reachability, all Object types must be able to enumerate all objects that
+they reference.
+First this gc methood, copies the current reference count to temporary field called
+`rc_gc`, which represents the reference count for this GC cycle.
+It then enumerates all objects to subtract references to the referred object. 
+Any object which now has a `rc_gc` value of 0, is marked as tentatively unreachable,
+because the totality of their reference count is equal to known objects.
+This indicates that there are no stack variables which refers to these objects.
+However, for each of these tentaively unreachabel objects, there may be a reachable object 
+still capable of reaching this one.
+The GC now scans all objects again to ummark those objects that can be reached by a reachable
+object.
+Now all remaining objects marked as unreachable, are truly unreachable, and those objects are 
+destroyed.
 
 ### The Lisp Implementation
 
