@@ -15,6 +15,7 @@ Object* LispSymbol_quote;
 Object* LispSymbol_define;
 Object* LispSymbol_setbang;
 Object* LispSymbol_lambda;
+Object* LispSymbol_eval;
 
 typedef enum TokenizerState TokenizerState;
 enum TokenizerState {
@@ -323,6 +324,7 @@ void Lisp_init() {
   LispSymbol_define = QSYMBOL_NEW1("define");
   LispSymbol_setbang = QSYMBOL_NEW1("set!");
   LispSymbol_lambda = QSYMBOL_NEW1("lambda");
+  LispSymbol_eval = QSYMBOL_NEW1("eval");
 
   Object* fnobj_display = Object_new(SYMBOL_FUNCTION, 1, 
     Function_new(QSYMBOL("display"), LispEnv_root, fn_display, -1, NULL, NULL)
@@ -828,6 +830,25 @@ Object* Lisp_eval_sexp2(Object* sexp, Object* env) {
           Object_assign(&tenv, NULL);
         }
       }
+      /* else */
+      /* if(op == LispSymbol_eval) { */
+      /*   if(Object_len(sexp) != 2) { */
+      /*     ret = QERROR_NEW1("invalid number of args to 'eval'"); */
+      /*   } else { */
+      /*     opargs1 = Object_accept(Object_uop_rest(sexp)); */
+      /*     tmp1 = Object_accept(Object_uop_head(opargs1)); */
+      /*     tmp2 = Object_accept(Lisp_eval_sexp2(tmp1, env)); */
+      /*     ret = Object_accept( */
+      /*       Lisp_eval_sexp2( */
+      /*         tmp2, */ 
+      /*         env */
+      /*       ) */
+      /*     ); */
+      /*     Object_assign(&opargs1, NULL); */
+      /*     Object_assign(&tmp1, NULL); */
+      /*     Object_assign(&tmp2, NULL); */
+      /*   } */
+      /* } */
       else
       if(Object_type(opval) == SYMBOL_FUNCTION) {
         // map each arg to values
