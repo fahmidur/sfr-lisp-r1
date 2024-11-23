@@ -199,13 +199,34 @@ function-call barriers.
 Inspired in part by object-ownership principles, every function call returning
 an object must be accepted or reject by using the functions `Object_accept(Object*)` or 
 `Object_reject(Object*)` (respectively).
-When an Object is accepted, it's reference count is incremented and its returning state is reset to zero.
+When an Object is accepted, its reference count is incremented and its returning state is reset to zero.
 When an Object is rejected, if it has a zero reference count, it is destroyed.
 
 #### List Class
 
+The List implementation class is a simple doubly linked list of ListNodes which
+hold a reference to an Object.
+The List class can and does in many cases hold references to other lists.
+
+It is possible to Lists with circular references back to itself or to another container
+class which points back to the original list.
+
+Standard reference counting cannot destroy circular lists. 
+But such circular lists can be destroyed by the GC scan of all objects.
+Here the mechanism, of internal reference elimination, is fundamentally the same
+as that of the the CPython garbage collector.
+
 #### Hash Class
 
+The Hash class implements a Hashmap, where keys are stored in a buckets based on 
+the Hash value of the key. 
+At the moment, keys must be Object<String> or Object<Symbol>.
+To ensure consistency of the Hash, all keys are duplicated when added to the Hash,
+values are not. Value references can therefore be mutated, but key values cannot.
+
+As a container class, hashes can also have circular references.
+Circular hashes can only be destroyed by the garbage collector during a call
+to `Object_system_gc()`.
 
 ### The C Garbage Collector
 
