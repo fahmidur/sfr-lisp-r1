@@ -1402,10 +1402,15 @@ Object* Object_bop_at(Object* self, size_t idx) {
  * if it exists or object_null.
  */
 Object* Object_uop_head(Object* self) {
+  Object_accept(self);
+  Object* ret = Object_new_null();
   if(Object_type(self) == SYMBOL_LIST) {
-    return List_head(self->impl);
+    ret = Object_accept(List_head(self->impl));
   }
-  return Object_new_null();
+  Object_assign(&self, NULL);
+  Object_return(ret);
+  Object_rc_decr(ret);
+  return ret;
 }
 
 /**

@@ -225,6 +225,20 @@ int main(int argc, char** argv) {
   // we should only gain 1 new object, the last defined integer 100
   nassert(new_obj_sys_size - old_obj_sys_size == 1);
 
+  old_obj_sys_size = Object_system_size();
+  printf("old_obj_sys_size = %d\n", old_obj_sys_size);
+  char* dstr2 = calloc(255, sizeof(char));
+  for(i = 0; i < 100; i++) {
+    memset(dstr2, 0, 255);
+    sprintf(dstr2, "(quote %f)", (0.987 + i));
+    Object_reject(Lisp_eval_string(QSTRING(dstr2)));
+  }
+  free(dstr2); dstr2 = NULL;
+  new_obj_sys_size = Object_system_size();
+  printf("new_obj_sys_size = %d\n", new_obj_sys_size);
+  // no new objects have been created
+  nassert(new_obj_sys_size == old_obj_sys_size);
+
   Lisp_done();
   Runtime_done();
 
