@@ -134,9 +134,9 @@ The first primitive type created was the **Symbol**.
 In some other implementations these are called Atoms, but here
 I've named it Symbol after Ruby Symbols.
 
-Symbols are treated differently from normal Objects in in that they are
+Symbols are treated differently from normal Objects in that they are
 are not garbage collected until the very end. Like an older version of Ruby,
-Symbols only ever grow in quantitity. It's not great. But the idea, here 
+Symbols only ever grow in quantitity. It's not great. But the idea here 
 is that Symbols should not be dynamically created by a program from user input,
 and relatively few symbols should exist.
 
