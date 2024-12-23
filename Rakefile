@@ -78,6 +78,10 @@ compile_file_task(:program, build('Tokenizer_test'), ['Tokenizer_test.c', build(
 
 compile_file_task(:program, build('sfr-lisp'), ['sfr-lisp.c', 'sub/linenoise/linenoise.c', runtime_ofiles, build('Lisp.o'), test_common])
 
+compile_file_task(:program, build('sfr-lisp-wasm'), ['sfr-lisp-wasm.c' , runtime_ofiles, build('Lisp.o'), test_common])
+
+# compile_file_task(:wasm_lib, build('sfr-lisp-wasm.wasm'), ['sfr-lisp-wasm.c' , runtime_ofiles, build('Lisp.o'), test_common])
+
 desc "Run all tests"
 task :test => :build do
   sh "mkdir -p ./tmp"
