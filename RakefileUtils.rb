@@ -3,9 +3,16 @@ $version = `git describe --tags HEAD`.strip
 
 $target_to_inputs = {}
 
-def runc(command, opts)
+$dry = false
+def dry
+  $dry = true
+  yield
+  $dry = false
+end
+
+def runc(command)
   command = command.gsub(/\s+/m, ' ')
-  if opts[:dry]
+  if $dry
     puts "--- { runc.dry { ---"
     puts command
     puts "--- } runc.dry } ---"
@@ -84,9 +91,7 @@ if has_flag?('asan')
 end
 $cflags = $cflags.join(' ')
 
-def compile(type, ofile, sources, opts=nil)
-  opts ||= {}
-  opts[:dry] ||= false
+def compile(type, ofile, sources)
   com = <<~EOS
     #{$cc} #{$cflags}
     -DVERSION='"#{$version}"'
@@ -106,12 +111,10 @@ def compile(type, ofile, sources, opts=nil)
   # as used by the calling Task.
   sources.select! {|e| File.extname(e) != '.h'}
   com += sources.join(' ')
-  runc(com, opts)
+  runc(com)
 end
 
-def compile_file_task(type, target, deplist, opts=nil)
-  opts ||= {}
-  opts[:dry] ||= false
+def compile_file_task(type, target, deplist)
   basename = File.basename(target)
   typename = sprintf("%-9s", type);
   desc "Build #{typename} : #{basename}"
@@ -119,8 +122,10 @@ def compile_file_task(type, target, deplist, opts=nil)
   # ensure that target is not itself in the deplist
   deplist = deplist - [target]
   $target_to_inputs[target] = deplist
+  dry_save = $dry
   file(target => deplist) do
-    compile(type, target, deplist, opts)
+    $dry = dry_save
+    compile(type, target, deplist)
   end
 end
 
