@@ -1,5 +1,9 @@
+require 'yaml'
+
 $git_sha = `git rev-parse HEAD`.strip
 $version = `git describe --tags HEAD`.strip
+
+$conf = YAML::load_file('./rakeconfig.yaml')
 
 $target_to_inputs = {}
 
@@ -92,8 +96,37 @@ end
 $cflags = $cflags.join(' ')
 
 def compile(type, ofile, sources)
+  cc = $cc
+  use_wasm = false
+  if type.to_s =~ /^wasm/
+    use_wasm = true
+    wasm_err = []
+    if $conf['wasm_cc']
+      unless File.exist?($conf['wasm_cc'])
+        wasm_err << "wasm. wasm_cc. No such file at #{$conf['wasm_cc']}"
+      end
+    else
+      wasm_err << 'wasm. Missing conf :wasm_cc'
+    end
+    unless $conf['wasm_sysroot']
+      wasm_err << 'wasm. Missing conf :wasm_sysroot'
+    end
+    unless $conf['wasm_target']
+      wasm_err << 'wasm. Missing conf :wasm_target'
+    end
+    if wasm_err.size > 0 
+      puts "=== WASM Related Errors: ===\n"
+      wasm_err.each do |err|
+        puts "* #{err}"
+      end
+      exit 1
+    end
+    cc = $conf['wasm_cc']
+  end
+
   com = <<~EOS
-    #{$cc} #{$cflags}
+    #{cc} 
+    #{$cflags}
     -DVERSION='"#{$version}"'
     -DGIT_SHA='"#{$git_sha}"'
   EOS
@@ -101,10 +134,14 @@ def compile(type, ofile, sources)
     com += ""
   elsif type == :object 
     com += " -c "
+  elsif type == :wasm_program
+    com += " -target #{$conf['wasm_target']}"
+    com += " --sysroot=#{$conf['wasm_sysroot']}"
   else
     raise "compile(). Invalid type=#{type}"
   end
   com += " -o #{ofile} "
+
   sources = sources.flatten.uniq
   # Remove header files.
   # This allows us to use the same dependency list

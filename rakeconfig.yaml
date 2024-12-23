@@ -1,4 +1,5 @@
 ---
 wasm_cc: /usr/lib/llvm-18/bin/clang
 wasm_sysroot: /home/syed/xrepos/wasi-libc/sysroot
+wasm_target: wasm32-wasi
 
