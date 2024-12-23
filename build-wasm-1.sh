@@ -4,6 +4,7 @@
   -O3 \
   -target wasm32-wasi \
   --sysroot=/home/syed/xrepos/wasi-libc/sysroot \
+  -nodefaultlibs \
   -lc \
   -o ./build/sfr-lisp.wasm \
   sfr-lisp.c \
@@ -20,3 +21,4 @@
   build/Runtime.o \
   build/Lisp.o \
   build/Error.o
+

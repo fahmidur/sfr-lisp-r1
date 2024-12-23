@@ -1,9 +1,17 @@
 $git_sha = `git rev-parse HEAD`.strip
 $version = `git describe --tags HEAD`.strip
 
-def runc(command)
+$target_to_inputs = {}
+
+def runc(command, opts)
   command = command.gsub(/\s+/m, ' ')
-  sh(command)
+  if opts[:dry]
+    puts "--- { runc.dry { ---"
+    puts command
+    puts "--- } runc.dry } ---"
+  else
+    sh(command)
+  end
 end
 
 def env_truthy?(name)
@@ -28,7 +36,7 @@ $build_targets = {}
 $deps_by_path = {}
 def build(name)
   name_ext = File.extname(name)
-  unless ['.o', ''].member?(name_ext)
+  unless ['.o', '.wasm', ''].member?(name_ext)
     raise "Invalid build file name: #{name}"
   end
   if $build_targets.has_key?(name)
@@ -76,7 +84,9 @@ if has_flag?('asan')
 end
 $cflags = $cflags.join(' ')
 
-def compile(type, ofile, sources)
+def compile(type, ofile, sources, opts=nil)
+  opts ||= {}
+  opts[:dry] ||= false
   com = <<~EOS
     #{$cc} #{$cflags}
     -DVERSION='"#{$version}"'
@@ -96,18 +106,21 @@ def compile(type, ofile, sources)
   # as used by the calling Task.
   sources.select! {|e| File.extname(e) != '.h'}
   com += sources.join(' ')
-  runc(com)
+  runc(com, opts)
 end
 
-def compile_file_task(type, target, deplist)
+def compile_file_task(type, target, deplist, opts=nil)
+  opts ||= {}
+  opts[:dry] ||= false
   basename = File.basename(target)
   typename = sprintf("%-9s", type);
   desc "Build #{typename} : #{basename}"
   deplist = deps(deplist)
   # ensure that target is not itself in the deplist
   deplist = deplist - [target]
+  $target_to_inputs[target] = deplist
   file(target => deplist) do
-    compile(type, target, deplist)
+    compile(type, target, deplist, opts)
   end
 end
 
