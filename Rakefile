@@ -78,9 +78,9 @@ compile_file_task(:program, build('Tokenizer_test'), ['Tokenizer_test.c', build(
 
 compile_file_task(:program, build('sfr-lisp'), ['sfr-lisp.c', 'sub/linenoise/linenoise.c', runtime_ofiles, build('Lisp.o'), test_common])
 
-dry do
-  compile_file_task(:wasm_program, build('sfr-lisp-wasm.wasm'), ['sfr-lisp-wasm.c' , runtime_ofiles, build('Lisp.o'), test_common])
-end
+# dry do
+  compile_file_task(:wasm_program, build('sfr-lisp-wasm.wasm'), ['sfr-lisp-wasm.c' , inputs_for(runtime_ofiles), inputs_for(build('Lisp.o')), inputs_for(test_common)])
+# end
 
 desc "Run all tests"
 task :test => :build do

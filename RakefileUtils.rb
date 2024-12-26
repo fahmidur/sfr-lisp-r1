@@ -3,7 +3,7 @@ require 'yaml'
 $git_sha = `git rev-parse HEAD`.strip
 $version = `git describe --tags HEAD`.strip
 
-$conf = YAML::load_file('./rakeconfig.yaml')
+$conf = YAML::load_file('./RakefileConfig.yaml')
 
 $target_to_inputs = {}
 
@@ -101,6 +101,9 @@ def compile(type, ofile, sources)
   if type.to_s =~ /^wasm/
     use_wasm = true
     wasm_err = []
+    unless File::extname(ofile) == '.wasm'
+      wasm_err << 'WASM ofile must end in .wasm'
+    end
     if $conf['wasm_cc']
       unless File.exist?($conf['wasm_cc'])
         wasm_err << "wasm. wasm_cc. No such file at #{$conf['wasm_cc']}"
@@ -137,6 +140,8 @@ def compile(type, ofile, sources)
   elsif type == :wasm_program
     com += " -target #{$conf['wasm_target']}"
     com += " --sysroot=#{$conf['wasm_sysroot']}"
+    com += " -nodefaultlibs"
+    com += " -lc"
   else
     raise "compile(). Invalid type=#{type}"
   end
@@ -149,6 +154,17 @@ def compile(type, ofile, sources)
   sources.select! {|e| File.extname(e) != '.h'}
   com += sources.join(' ')
   runc(com)
+end
+
+def inputs_for(targets)
+  out = []
+  unless targets.is_a?(Array)
+    targets = [targets]
+  end
+  targets.each do |e|
+    out << $target_to_inputs[e]
+  end
+  return out.flatten.compact.uniq
 end
 
 def compile_file_task(type, target, deplist)
