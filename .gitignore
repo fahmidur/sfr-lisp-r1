@@ -64,3 +64,7 @@ flycheck_*.el
 .ccls-cache
 history.txt
 .gdb_history
+
+node_modules
+node_modules/**
+
