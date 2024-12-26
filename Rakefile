@@ -87,3 +87,9 @@ task :test => :build do
   sh "mkdir -p ./tmp"
   sh "ruby ./test/all.rb | tee tmp/testresults.txt"
 end
+
+desc "Start a webserver at CWD"
+task :server do
+  sh "ruby -run -e httpd ."
+end
+
