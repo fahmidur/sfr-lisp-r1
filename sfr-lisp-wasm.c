@@ -179,7 +179,7 @@ int main(int argc, char** argv) {
     }
   }
   else 
-  if(argc == 1) {
+  if(argc == 0 || argc == 1) {
     // REPL
     print_banner();
     repl();
