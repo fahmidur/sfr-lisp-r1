@@ -48,18 +48,23 @@ function make_wasm_instance() {
       fd_close: function(fd) {
         console.log('fd_close. fd=', fd);
       },
-      args_get: function(argv, argv_buf_ptr) {
-        console.log('args_get. argv=', argv, 'argv_buf_ptr = ', argv_buf_ptr);
-        const memory = wasm_memory_buffer();
+      args_get: function(argv_ptr, argv_buf_ptr) {
+        console.log('args_get. argv_ptr=', argv_ptr, 'argv_buf_ptr = ', argv_buf_ptr);
         var arg1 = "lisp\0";
         var arg1_encoded = (new TextEncoder()).encode(arg1);
         console.log('arg1_encoded = ', arg1_encoded);
+        var argv_total_size = wasm_args.reduce((s,e) => (s+e.length+1), 0);
+        var argv_arr = new Uint32Array(wasm_memory_buffer(), argv_ptr, wasm_args.length);
+        var argv_buf_arr = new Uint32Array(wasm_memory_buffer, argv_buf_ptr, argv_total_size);
+        for(i = 0; i < wasm_args.length; i++) {
+          let arg = warm_args[i];
+        }
         return null;
       },
       args_sizes_get: function(ret_ptr) {
         var ret_arr = new Uint32Array(wasm_memory_buffer(), ret_ptr, 2);
         ret_arr[0] = wasm_args.length;
-        ret_arr[1] = wasm_args.reduce((s, e) => (s+(e.length+1)), 0);
+        ret_arr[1] = wasm_args.reduce((s, e) => (s+e.length+1), 0);
       },
       environ_get: function() {
       },
