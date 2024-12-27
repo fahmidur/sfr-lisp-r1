@@ -33,26 +33,38 @@ function make_wasm_instance() {
       fd_close: function(fd) {
         console.log('fd_close. fd=', fd);
       },
-      args_get: function() {
+      args_get: function(argv, argv_buf) {
+        console.log('args_get. argv=', argv, 'argv_buf = ', argv_buf);
       },
       args_sizes_get: function() {
+        return 0;
       },
       environ_get: function() {
       },
       environ_sizes_get: function() {
+        return 0;
       },
       fd_fdstat_get: function(fd) {
         console.log('fd_fdstat_get. fd=', fd);
       },
+      fd_fdstat_set_flags: function() {
+      },
+      fd_prestat_get: function() {
+      },
+      fd_prestat_dir_name: function() {
+      },
       fd_seek: function() {
         console.log('fd_seek');
       },
-      //fd_write: function() {
-      //  console.log('fd_write');
-      //},
+      fd_read: function(fd, iovs) {
+        console.log('fd_read. fd=', fd, 'iovs=', iovs);
+        const memory = new Uint32Array(wasm_instance.exports.memory.buffer);
+      },
+      path_open: function() {
+      },
       fd_write: function(fd, iovs, iovs_len, ret_ptr) {
         console.log('ret_ptr =', ret_ptr);
-        const memory = new Uint32Array(wb.instance.exports.memory.buffer);
+        const memory = new Uint32Array(wasm_instance.exports.memory.buffer);
         console.log('*ret_ptr = ', memory[ret_ptr]);
         
         let nwritten = 0;
@@ -63,9 +75,10 @@ function make_wasm_instance() {
             const bytes = new Uint8Array(memory.buffer, iov[0], iov[1]);
             const data = new TextDecoder("utf8").decode(bytes);
             console.log('fd=', fd, '||', data);
+            var term_data = data.replaceAll("\n", "\r\n");
+            term.write(term_data);
             nwritten += iov[1];
         }
-
         console.log('nwritten =', nwritten);
         // Set the nwritten in ret_ptr
         // const bytes_written = new Uint32Array(memory.buffer, ret_ptr, 1);
@@ -74,12 +87,15 @@ function make_wasm_instance() {
         console.log('fd=', fd, `| bytes written =`, nwritten);
         return nwritten;
       },
-      proc_exit: function(){
-        console.log('proc_exit');
+      proc_exit: function(exitcode){
+        console.log('proc_exit. exitcode=', exitcode);
+        return exitcode;
       }
     }
   }).then(function(out) {
     console.log('out = ', out);
+    wasm_instance = out.instance;
+    wasm_instance.exports._start();
   });
 }
 

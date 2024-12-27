@@ -138,6 +138,7 @@ def compile(type, ofile, sources)
   elsif type == :object 
     com += " -c "
   elsif type == :wasm_program
+    com += " -O3"
     com += " -target #{$conf['wasm_target']}"
     com += " --sysroot=#{$conf['wasm_sysroot']}"
     com += " -nodefaultlibs"
