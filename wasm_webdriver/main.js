@@ -5,6 +5,15 @@ var term = new Terminal();
 term.open(document.getElementById('terminal'));
 // term.write('Hello from \x1B[1;3;31mxterm.js\x1B[0m $ ')
 
+async function term_read() {
+  return new Promise(function(resolve, reject) {
+    setTimeout(function() {
+      console.log('term read done');
+      resolve();
+    }, 5000);
+  });
+}
+
 var wasm_memory = new WebAssembly.Memory({
   initial: 2
 });
@@ -56,7 +65,7 @@ function make_wasm_instance() {
       fd_seek: function() {
         console.log('fd_seek');
       },
-      fd_read: function(fd, iovs) {
+      fd_read: function(fd, iovs, iovs_len, ret_ptr) {
         console.log('fd_read. fd=', fd, 'iovs=', iovs);
         const memory = new Uint32Array(wasm_instance.exports.memory.buffer);
       },
