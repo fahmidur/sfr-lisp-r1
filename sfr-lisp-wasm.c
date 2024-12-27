@@ -171,6 +171,7 @@ int main(int argc, char** argv) {
   int ret = 0;
   Runtime_init();
   Lisp_init();
+  printf("--- argc = %d\n", argc);
   if(argc == 2) {
     if(strcmp_onedash(argv[1], "-help", "-h") == 0) {
       print_usage(argv[0]);

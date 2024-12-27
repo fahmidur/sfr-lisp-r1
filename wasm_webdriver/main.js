@@ -33,6 +33,12 @@ function fetch_wasm_bytes() {
   });
 }
 
+function wasm_memory_buffer() {
+  return wasm_instance.exports.memory.buffer;
+}
+
+var wasm_args = ["lisp"];
+
 function make_wasm_instance() {
   WebAssembly.instantiate(wasm_bytes, {
     env: {
@@ -42,11 +48,18 @@ function make_wasm_instance() {
       fd_close: function(fd) {
         console.log('fd_close. fd=', fd);
       },
-      args_get: function(argv, argv_buf) {
-        console.log('args_get. argv=', argv, 'argv_buf = ', argv_buf);
+      args_get: function(argv, argv_buf_ptr) {
+        console.log('args_get. argv=', argv, 'argv_buf_ptr = ', argv_buf_ptr);
+        const memory = wasm_memory_buffer();
+        var arg1 = "lisp\0";
+        var arg1_encoded = (new TextEncoder()).encode(arg1);
+        console.log('arg1_encoded = ', arg1_encoded);
+        return null;
       },
-      args_sizes_get: function() {
-        return 0;
+      args_sizes_get: function(ret_ptr) {
+        var ret_arr = new Uint32Array(wasm_memory_buffer(), ret_ptr, 2);
+        ret_arr[0] = wasm_args.length;
+        ret_arr[1] = wasm_args.reduce((s, e) => (s+(e.length+1)), 0);
       },
       environ_get: function() {
       },
