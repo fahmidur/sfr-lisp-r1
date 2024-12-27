@@ -22,6 +22,12 @@
 #define GIT_SHA "unknown"
 #endif
 
+__attribute__((export_name("stdout_flush")))
+void stdout_flush() {
+  fflush(stdout);
+}
+
+__attribute__((export_name("print_banner")))
 void print_banner() {
   printf("+----------------------------------------------\n");
   printf("| SFR-LISP \n");
@@ -32,6 +38,7 @@ void print_banner() {
   printf("\n");
 }
 
+__attribute__((export_name("print_usage")))
 void print_usage(const char* progname) {
   print_banner();
   printf("Usage: %s [OPTIONS]\n", progname);
@@ -68,6 +75,7 @@ int run_file(char* path) {
   return 0;
 }
 
+__attribute__((export_name("repl")))
 void repl() {
   Object* obj_inp = QSTRING_NEW1("");
   String* inp = obj_inp->impl;
@@ -114,6 +122,12 @@ void repl() {
     }
   }
   Object_assign(&obj_inp, NULL);
+}
+
+__attribute__((export_name("repl_prompt")))
+void repl_prompt() {
+    printf("\n> ");
+    fflush(stdout);
 }
 
 char file_exists(const char *path) {
