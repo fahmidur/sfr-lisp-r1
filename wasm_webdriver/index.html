@@ -4,9 +4,26 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <title>SFR-Lisp Wasm WebDriver</title>
+    <style>
+      body {
+        background-color: #222;
+        color: #fff;
+        font-family: monospace;
+        scrollbar-color: #ddd #000;
+        scrollbar-width: thin;
+      }
+      #terminal {
+        border: 1px solid #444;
+        background-color: #000;
+        padding: 0.5em;
+      }
+    </style>
+  <link rel="stylesheet" href="node_modules/@xterm/xterm/css/xterm.css" />
+  <script src="node_modules/@xterm/xterm/lib/xterm.js"></script>
   </head>
   <body>
     <h1>SFR-Lisp Wasm WebDriver</h1>
-    <hr>
+    <div id='terminal'></div>
+    <script src='main.js'></script>
   </body>
 </html>
