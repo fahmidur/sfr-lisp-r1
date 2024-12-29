@@ -57,7 +57,7 @@ function make_wasm_instance() {
         var argv_arr = new Uint32Array(wasm_memory_buffer(), argv_ptr, wasm_args.length);
         var argv_buf_arr = new Uint32Array(wasm_memory_buffer, argv_buf_ptr, argv_total_size);
         for(i = 0; i < wasm_args.length; i++) {
-          let arg = warm_args[i];
+          let arg = wasm_args[i];
         }
         return null;
       },
