@@ -37,7 +37,7 @@ function wasm_memory_buffer() {
   return wasm_instance.exports.memory.buffer;
 }
 
-var wasm_args = ["lisp"];
+var wasm_args = ["sfr-lisp-wasm"];
 
 function make_wasm_instance() {
   WebAssembly.instantiate(wasm_bytes, {
@@ -50,15 +50,26 @@ function make_wasm_instance() {
       },
       args_get: function(argv_ptr, argv_buf_ptr) {
         console.log('args_get. argv_ptr=', argv_ptr, 'argv_buf_ptr = ', argv_buf_ptr);
-        var arg1 = "lisp\0";
-        var arg1_encoded = (new TextEncoder()).encode(arg1);
-        console.log('arg1_encoded = ', arg1_encoded);
+        // var arg1 = "lisp\0";
+        // var arg1_encoded = (new TextEncoder()).encode(arg1);
+        // console.log('arg1_encoded = ', arg1_encoded);
         var argv_total_size = wasm_args.reduce((s,e) => (s+e.length+1), 0);
         var argv_arr = new Uint32Array(wasm_memory_buffer(), argv_ptr, wasm_args.length);
-        var argv_buf_arr = new Uint32Array(wasm_memory_buffer, argv_buf_ptr, argv_total_size);
+        var argv_buf_arr = new Uint32Array(wasm_memory_buffer(), argv_buf_ptr, argv_total_size);
+        var pos = 0;
         for(i = 0; i < wasm_args.length; i++) {
-          let arg = wasm_args[i];
+          let arg = wasm_args[i] + "\0";
+          let arg_encoded = (new TextEncoder()).encode(arg);
+          console.log('arg = ', arg);
+          console.log('arg_encoded = ', arg_encoded);
+          for(j = 0; j < arg_encoded.length; j++) {
+            argv_buf_arr[pos+j] = arg_encoded[j];
+          }
+          argv_arr[i] = argv_buf_ptr+pos;
+          pos += arg_encoded.length;
         }
+        console.log('argv_buf_arr = ', argv_buf_arr);
+        console.log('argv_arr = ', argv_arr);
         return null;
       },
       args_sizes_get: function(ret_ptr) {
