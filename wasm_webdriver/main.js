@@ -138,7 +138,9 @@ function make_wasm_instance() {
   }).then(function(out) {
     console.log('out = ', out);
     wasm_instance = out.instance;
+    console.log('wasm _start() ...');
     wasm_instance.exports._start();
+    console.log('wasm _start() ... DONE');
   });
 }
 
