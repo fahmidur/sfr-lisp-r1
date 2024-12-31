@@ -243,10 +243,7 @@ char String_zero(String* self) {
 ssize_t String_getline(String* self, FILE *stream) {
   String_zero(self);
   ssize_t ret = 0;
-#ifdef WASM
-#else
   ret = getline(&(self->buf), &(self->buf_size), stream);
-#endif
   dbg_printf("String_getline. ret=%ld buf_size=%ld\n", ret, self->buf_size);
   String_len(self);
   return ret;
