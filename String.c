@@ -335,6 +335,10 @@ void StringIO_init() {
 }
 
 int StringIO_push(char ch) {
+#ifdef WASM
+  printf("%c", ch);
+  fflush(stdout);
+#endif
   if(StringIO_buf == NULL) {
     StringIO_init();
   }
@@ -343,6 +347,7 @@ int StringIO_push(char ch) {
     StringIO_buf = realloc(StringIO_buf, 2*StringIO_buf_size);
     if(StringIO_buf == NULL) {
       printf("ERROR: realloc failure in StringIO_push\n");
+      fflush(stdout);
       return -1;
     }
     StringIO_buf_size = 2*StringIO_buf_size;
@@ -367,6 +372,7 @@ ssize_t StringIO_getline(char** buf_ptr, size_t* buf_size_ptr) {
   int i = 0;
   while(1) {
     if(StringIO_getline_ready()) {
+      printf("+"); fflush(stdout);
       *buf_ptr = realloc(*buf_ptr, StringIO_buf_size);
       *buf_size_ptr = StringIO_buf_size;
       for(i = 0; i < StringIO_buf_size; i++) {
@@ -376,8 +382,11 @@ ssize_t StringIO_getline(char** buf_ptr, size_t* buf_size_ptr) {
       // reset
       StringIO_buf_kb13 = 0;
       memset(StringIO_buf, '\0', StringIO_buf_size);
+      break;
+    } else {
+      printf("."); fflush(stdout);
     }
-    sleep(1);
+    sleep(5);
   }
   return ret;
 }
