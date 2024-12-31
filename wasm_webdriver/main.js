@@ -9,6 +9,13 @@ term.onKey(function(e) {
   // term.write(e.key);
 });
 
+
+var wasm_memory = new WebAssembly.Memory({
+  initial: 2,
+  maximum: 1000,
+  shared: true,
+});
+
 var worker1 = new Worker('./worker1.js');
 
 worker1.onmessage = function(ev) {
@@ -21,3 +28,10 @@ worker1.onmessage = function(ev) {
     default:
   }
 };
+
+worker1.postMessage({
+  type: 'init',
+  data: {
+    wasm_memory: wasm_memory
+  }
+});

@@ -7,24 +7,22 @@ async function term_read() {
   });
 }
 
-var wasm_memory = new WebAssembly.Memory({
-  initial: 2
-});
 
 var wasm_bytes = null;
+var wasm_memory = null;
 var wasm_instance = null;
 
-function fetch_wasm_bytes() {
-  var respPromise = fetch("./build/sfr-lisp-wasm.wasm");
-  respPromise.then(function(response) {
-    console.log('response = ', response);
-    response.arrayBuffer().then(function(bytes) {
-      console.log('got bytes = ', bytes);
-      wasm_bytes = bytes;
-      make_wasm_instance();
-    });
-  });
-}
+// function fetch_wasm_bytes() {
+//   var respPromise = fetch("./build/sfr-lisp-wasm.wasm");
+//   respPromise.then(function(response) {
+//     console.log('response = ', response);
+//     response.arrayBuffer().then(function(bytes) {
+//       console.log('got bytes = ', bytes);
+//       wasm_bytes = bytes;
+//       make_wasm_instance();
+//     });
+//   });
+// }
 
 function wasm_memory_buffer() {
   return wasm_instance.exports.memory.buffer;
@@ -33,7 +31,7 @@ function wasm_memory_buffer() {
 var wasm_args = ["sfr-lisp-wasm"];
 
 function make_wasm_instance() {
-  WebAssembly.instantiate(wasm_bytes, {
+  WebAssembly.instantiateStreaming(fetch("./build/sfr-lisp-wasm.wasm"), {
     env: {
       memory: wasm_memory
     },
@@ -141,5 +139,14 @@ function make_wasm_instance() {
   });
 }
 
-fetch_wasm_bytes();
+onmessage = function(ev) {
+  var msg = ev.data;
+  console.log('ev = ', ev, 'msg=', msg);
+  switch(msg.type) {
+    case 'init':
+
+      break;
+    default:
+  }
+};
 
