@@ -2,25 +2,7 @@ var wasm_bytes = null;
 var wasm_memory = null;
 var wasm_instance = null;
 
-var logprefix = 'worker1';
-
-// function fetch_wasm_bytes() {
-//   var respPromise = fetch("./build/sfr-lisp-wasm.wasm");
-//   respPromise.then(function(response) {
-//     console.log('response = ', response);
-//     response.arrayBuffer().then(function(bytes) {
-//       console.log('got bytes = ', bytes);
-//       wasm_bytes = bytes;
-//       make_wasm_instance();
-//     });
-//   });
-// }
-
-function wasm_memory_buffer() {
-  return wasm_instance.exports.memory.buffer;
-}
-
-var wasm_args = ["sfr-lisp-wasm"];
+var logprefix = 'worker2';
 
 function make_wasm_instance() {
   WebAssembly.instantiate(wasm_bytes, {
@@ -124,9 +106,6 @@ function make_wasm_instance() {
   }).then(function(out) {
     console.log('out = ', out);
     wasm_instance = out.instance;
-    console.log('wasm _start() ...');
-    wasm_instance.exports._start();
-    console.log('wasm _start() ... DONE');
   });
 }
 
@@ -151,4 +130,3 @@ onmessage = function(ev) {
     default:
   }
 };
-

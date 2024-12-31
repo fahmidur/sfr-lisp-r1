@@ -16,6 +16,7 @@ var wasm_memory = new WebAssembly.Memory({
   shared: true,
 });
 
+var workers = [];
 var worker1 = new Worker('./worker1.js');
 worker1.onmessage = function(ev) {
   var msg = ev.data;
@@ -27,7 +28,21 @@ worker1.onmessage = function(ev) {
     default:
   }
 };
-var workers = [worker1];
+workers.push(worker1);
+
+var worker2 = new Worker('./worker2.js');
+worker2.onmessage = function(ev) {
+  var msg = ev.data;
+  console.log('worker2. ev=', ev, ' msg=', msg);
+  switch(msg.type) {
+    case 'term_stdout': 
+      term.write(msg.data);
+      break;
+    default:
+  }
+};
+workers.push(worker2);
+
 function workers_broadcast(msg) {
   workers.forEach(function(w) {
     w.postMessage(msg);
@@ -47,7 +62,6 @@ respPromise.then(function(response) {
         wasm_bytes: wasm_bytes,
       }
     });
-
   });
 });
 
