@@ -116,6 +116,8 @@ function make_wasm_instance() {
         console.log('fd=', fd, `| bytes written =`, nwritten);
         return nwritten;
       },
+      poll_oneoff: function() {
+      },
       proc_exit: function(exitcode){
         console.log('proc_exit. exitcode=', exitcode);
         return exitcode;

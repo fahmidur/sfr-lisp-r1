@@ -144,6 +144,7 @@ def compile(type, ofile, sources)
     com += " --sysroot=#{$conf['wasm_sysroot']}"
     com += " -nodefaultlibs"
     com += " -lc"
+    com += " -lclang_rt.builtins-wasm32"
   else
     raise "compile(). Invalid type=#{type}"
   end

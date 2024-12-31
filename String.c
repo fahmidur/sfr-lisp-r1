@@ -240,10 +240,20 @@ char String_zero(String* self) {
   return ret;
 }
 
-ssize_t String_getline(String* self, FILE *stream) {
+ssize_t String_getline(String* self, FILE* stream) {
   String_zero(self);
   ssize_t ret = 0;
-  ret = getline(&(self->buf), &(self->buf_size), stream);
+  if(stream == stdin) {
+    // stdin
+    #ifdef WASM
+      ret = StringIO_getline(&(self->buf), &(self->buf_size));
+    #else
+      ret = getline(&(self->buf), &(self->buf_size), stream);
+    #endif
+  } 
+  else {
+    ret = getline(&(self->buf), &(self->buf_size), stream);
+  }
   dbg_printf("String_getline. ret=%ld buf_size=%ld\n", ret, self->buf_size);
   String_len(self);
   return ret;
@@ -352,12 +362,20 @@ char StringIO_getline_ready() {
   return StringIO_buf_kb13;
 }
 
-char* StringIO_getline() {
-  char* ret = NULL;
+ssize_t StringIO_getline(char** buf_ptr, size_t* buf_size_ptr) {
+  ssize_t ret = 0;
+  int i = 0;
   while(1) {
     if(StringIO_getline_ready()) {
-      ret = StringIO_buf;
+      *buf_ptr = realloc(*buf_ptr, StringIO_buf_size);
+      *buf_size_ptr = StringIO_buf_size;
+      for(i = 0; i < StringIO_buf_size; i++) {
+        (*buf_ptr)[i] = StringIO_buf[i];
+      }
+      ret = strlen(StringIO_buf);
+      // reset
       StringIO_buf_kb13 = 0;
+      memset(StringIO_buf, '\0', StringIO_buf_size);
     }
     sleep(1);
   }
