@@ -108,6 +108,9 @@ function make_wasm_instance() {
   }).then(function(out) {
     console.log('out = ', out);
     wasm_instance = out.instance;
+    postMessage({
+      type: 'inited'
+    });
   });
 }
 
