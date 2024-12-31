@@ -31,7 +31,7 @@ function wasm_memory_buffer() {
 var wasm_args = ["sfr-lisp-wasm"];
 
 function make_wasm_instance() {
-  WebAssembly.instantiateStreaming(fetch("./build/sfr-lisp-wasm.wasm"), {
+  WebAssembly.instantiate(wasm_bytes, {
     env: {
       memory: wasm_memory
     },
@@ -100,7 +100,6 @@ function make_wasm_instance() {
         console.log('ret_ptr =', ret_ptr);
         const memory = new Uint32Array(wasm_instance.exports.memory.buffer);
         console.log('*ret_ptr = ', memory[ret_ptr]);
-        
         let nwritten = 0;
         for (let i = 0; i < iovs_len; i++) {
           const offset = i * 8; // = jump over 2 i32 values per iteration
@@ -144,7 +143,18 @@ onmessage = function(ev) {
   console.log('ev = ', ev, 'msg=', msg);
   switch(msg.type) {
     case 'init':
-
+      let data = msg.data;
+      if(!data.wasm_memory) {
+        console.error('worker1. Expecting wasm_memory in msg.data');
+        return;
+      }
+      if(!data.wasm_bytes) {
+        console.error('worker1. Expecting wasm_bytes in msg.data');
+        return;
+      }
+      wasm_memory = data.wasm_memory;
+      wasm_bytes = data.wasm_bytes;
+      make_wasm_instance();
       break;
     default:
   }

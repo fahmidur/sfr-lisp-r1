@@ -17,7 +17,6 @@ var wasm_memory = new WebAssembly.Memory({
 });
 
 var worker1 = new Worker('./worker1.js');
-
 worker1.onmessage = function(ev) {
   var msg = ev.data;
   console.log('worker1. ev=', ev, ' msg=', msg);
@@ -28,10 +27,27 @@ worker1.onmessage = function(ev) {
     default:
   }
 };
+var workers = [worker1];
+function workers_broadcast(msg) {
+  workers.forEach(function(w) {
+    w.postMessage(msg);
+  });
+}
 
-worker1.postMessage({
-  type: 'init',
-  data: {
-    wasm_memory: wasm_memory
-  }
+var respPromise = fetch("./build/sfr-lisp-wasm.wasm");
+respPromise.then(function(response) {
+  console.log('response = ', response);
+  response.arrayBuffer().then(function(bytes) {
+    console.log('got bytes = ', bytes);
+    var wasm_bytes = bytes;
+    workers_broadcast({
+      type: 'init',
+      data: {
+        wasm_memory: wasm_memory,
+        wasm_bytes: wasm_bytes,
+      }
+    });
+
+  });
 });
+
