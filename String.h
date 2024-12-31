@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 #include "Util.h"
 #include "Error.h"
 
@@ -17,6 +18,11 @@ struct String {
   size_t buf_size;
   char* buf;
 };
+
+void StringIO_init();
+void StringIO_done();
+int  StringIO_push(char ch);
+char StringIO_getline_ready();
 
 String* String_new(char* buf);
 String* String_clone(String* self);

@@ -5,6 +5,11 @@
 #include "Util.h"
 #include "Error.h"
 
+char*   StringIO_buf = NULL;
+ssize_t StringIO_len = 0;
+ssize_t StringIO_buf_size = 0;
+char    StringIO_buf_kb13 = 0;
+
 String* String_new(char* istr) {
   /* dbg_printf("String_new(%s)\n", istr); */
   String* self = calloc(1, sizeof(String));
@@ -237,7 +242,11 @@ char String_zero(String* self) {
 
 ssize_t String_getline(String* self, FILE *stream) {
   String_zero(self);
-  ssize_t ret = getline(&(self->buf), &(self->buf_size), stream);
+  ssize_t ret = 0;
+#ifdef WASM
+#else
+  ret = getline(&(self->buf), &(self->buf_size), stream);
+#endif
   dbg_printf("String_getline. ret=%ld buf_size=%ld\n", ret, self->buf_size);
   String_len(self);
   return ret;
@@ -310,4 +319,57 @@ void String_print(String* self) {
 
 char* String_cstr(String* self) {
   return self->buf;
+}
+
+void StringIO_init() {
+  StringIO_buf_size = 4;
+  StringIO_buf = calloc(StringIO_buf_size, 1);
+  StringIO_len = 0;
+}
+
+int StringIO_push(char ch) {
+  if(StringIO_buf == NULL) {
+    StringIO_init();
+  }
+  ssize_t new_len = StringIO_len+1;
+  if(new_len >= StringIO_buf_size) {
+    StringIO_buf = realloc(StringIO_buf, 2*StringIO_buf_size);
+    if(StringIO_buf == NULL) {
+      printf("ERROR: realloc failure in StringIO_push\n");
+      return -1;
+    }
+    StringIO_buf_size = 2*StringIO_buf_size;
+    int i;
+    for(i = StringIO_len; i < StringIO_buf_size; i++) {
+      StringIO_buf[i] = '\0';
+    }
+  }
+  StringIO_buf[StringIO_len++] = ch;
+  if(ch == '\n') { // newline
+    StringIO_buf_kb13 = 1;
+  }
+  return 0;
+}
+
+char StringIO_getline_ready() {
+  return StringIO_buf_kb13;
+}
+
+char* StringIO_getline() {
+  char* ret = NULL;
+  while(1) {
+    if(StringIO_getline_ready()) {
+      ret = StringIO_buf;
+      StringIO_buf_kb13 = 0;
+    }
+    sleep(1);
+  }
+  return ret;
+}
+
+void StringIO_done() {
+  if(StringIO_buf != NULL) {
+    free(StringIO_buf);
+    StringIO_buf = NULL;
+  }
 }
