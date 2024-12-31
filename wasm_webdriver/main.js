@@ -48,20 +48,21 @@ function make_wasm_instance() {
       fd_close: function(fd) {
         console.log('fd_close. fd=', fd);
       },
-      args_get: function(argv_ptr, argv_buf_ptr) {
+      args_get: function(argv_ptr, argv_buf_ptr, ret) {
+        var ret_arr = new Uint32Array(wasm_memory_buffer(), ret, 2);
         console.log('args_get. argv_ptr=', argv_ptr, 'argv_buf_ptr = ', argv_buf_ptr);
         // var arg1 = "lisp\0";
         // var arg1_encoded = (new TextEncoder()).encode(arg1);
         // console.log('arg1_encoded = ', arg1_encoded);
         var argv_total_size = wasm_args.reduce((s,e) => (s+e.length+1), 0);
         var argv_arr = new Uint32Array(wasm_memory_buffer(), argv_ptr, wasm_args.length);
-        var argv_buf_arr = new Uint32Array(wasm_memory_buffer(), argv_buf_ptr, argv_total_size);
+        var argv_buf_arr = new Uint8Array(wasm_memory_buffer(), argv_buf_ptr, argv_total_size);
         var pos = 0;
         for(i = 0; i < wasm_args.length; i++) {
           let arg = wasm_args[i] + "\0";
           let arg_encoded = (new TextEncoder()).encode(arg);
-          console.log('arg = ', arg);
-          console.log('arg_encoded = ', arg_encoded);
+          console.log('i = ', i, 'arg = ', arg);
+          console.log('i = ', i, 'arg_encoded = ', arg_encoded);
           for(j = 0; j < arg_encoded.length; j++) {
             argv_buf_arr[pos+j] = arg_encoded[j];
           }
@@ -70,12 +71,16 @@ function make_wasm_instance() {
         }
         console.log('argv_buf_arr = ', argv_buf_arr);
         console.log('argv_arr = ', argv_arr);
-        return null;
+        ret_arr[0] = 0; // 
+        ret_arr[1] = 0; // errno=0
       },
       args_sizes_get: function(ret_ptr) {
-        var ret_arr = new Uint32Array(wasm_memory_buffer(), ret_ptr, 2);
+        var ret_arr = new Uint32Array(wasm_memory_buffer(), ret_ptr, 3);
+        // the number of args
         ret_arr[0] = wasm_args.length;
+        // the total size of the args in bytes
         ret_arr[1] = wasm_args.reduce((s, e) => (s+e.length+1), 0);
+        ret_arr[2] = 0 // errno=0
       },
       environ_get: function() {
       },
