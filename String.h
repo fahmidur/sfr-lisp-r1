@@ -19,10 +19,11 @@ struct String {
   char* buf;
 };
 
-void StringIO_init();
-void StringIO_done();
-int  StringIO_push(char ch);
-char StringIO_getline_ready();
+void    StringIO_init();
+void    StringIO_done();
+int     StringIO_push(char ch);
+char    StringIO_getline_ready();
+ssize_t StringIO_getline(char** buf_ptr, size_t* buf_size_ptr);
 
 String* String_new(char* buf);
 String* String_clone(String* self);

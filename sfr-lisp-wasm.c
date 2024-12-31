@@ -83,7 +83,7 @@ void repl() {
   Object* rvalue = NULL;
 
   while(1) {
-    printf("> ");
+    printf("> "); fflush(stdout);
     inp_ret = String_getline(inp, stdin);
     if(inp_ret < 0) {
       printf("getline. ERROR=%ld\n", inp_ret);
