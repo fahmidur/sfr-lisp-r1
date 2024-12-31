@@ -117,9 +117,9 @@ function make_wasm_instance() {
 onmessage = function(ev) {
   var msg = ev.data;
   console.log('ev = ', ev, 'msg=', msg);
+  let data = msg.data;
   switch(msg.type) {
     case 'init':
-      let data = msg.data;
       if(!data.wasm_memory) {
         console.error(logprefix, 'Expecting wasm_memory in msg.data');
         return;
@@ -132,6 +132,8 @@ onmessage = function(ev) {
       wasm_bytes = data.wasm_bytes;
       make_wasm_instance();
       break;
+    case 'stdin':
+      wasm_instance.exports.stringio_push(data.key_code);
     default:
   }
 };

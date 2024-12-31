@@ -25,6 +25,27 @@ function worker_add(name, worker) {
     worker: worker,
   }
 }
+
+var term_encoder = new TextEncoder();
+function maybe_init_term() {
+  for(var k in workers) {
+    if(workers[k].state.inited !== true) {
+      return;
+    }
+  }
+  term.onKey(function(ev) {
+    let key_code = ev.key.charCodeAt(0);
+    console.log('term. ev=', ev, 'key=', ev.key, 'key_code=', key_code);
+    let io_worker = workers['worker2'].worker;
+    io_worker.postMessage({
+      type: 'stdin',
+      data: {
+        key_code: key_code
+      }
+    });
+  });
+}
+
 var worker1 = new Worker('./worker1.js');
 worker1.onmessage = function(ev) {
   var msg = ev.data;
@@ -36,6 +57,7 @@ worker1.onmessage = function(ev) {
     case 'inited':
       console.log('heard worker1 inited');
       workers['worker1'].state.inited = true;
+      maybe_init_term();
     default:
   }
 };
@@ -52,6 +74,7 @@ worker2.onmessage = function(ev) {
     case 'inited':
       console.log('heard worker2 inited');
       workers['worker2'].state.inited = true;
+      maybe_init_term();
       break;
     default:
   }
