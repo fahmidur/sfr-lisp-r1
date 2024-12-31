@@ -16,7 +16,15 @@ var wasm_memory = new WebAssembly.Memory({
   shared: true,
 });
 
-var workers = [];
+var workers = {};
+function worker_add(name, worker) {
+  workers[name] = {
+    state: {
+      inited: false,
+    },
+    worker: worker,
+  }
+}
 var worker1 = new Worker('./worker1.js');
 worker1.onmessage = function(ev) {
   var msg = ev.data;
@@ -25,10 +33,13 @@ worker1.onmessage = function(ev) {
     case 'term_stdout': 
       term.write(msg.data);
       break;
+    case 'inited':
+      console.log('heard worker1 inited');
+      workers['worker1'].state.inited = true;
     default:
   }
 };
-workers.push(worker1);
+worker_add('worker1', worker1);
 
 var worker2 = new Worker('./worker2.js');
 worker2.onmessage = function(ev) {
@@ -38,15 +49,20 @@ worker2.onmessage = function(ev) {
     case 'term_stdout': 
       term.write(msg.data);
       break;
+    case 'inited':
+      console.log('heard worker2 inited');
+      workers['worker2'].state.inited = true;
+      break;
     default:
   }
 };
-workers.push(worker2);
+worker_add('worker2', worker2);
 
 function workers_broadcast(msg) {
-  workers.forEach(function(w) {
-    w.postMessage(msg);
-  });
+  for(var k in workers) {
+    let worker = workers[k].worker;
+    worker.postMessage(msg);
+  }
 }
 
 var respPromise = fetch("./build/sfr-lisp-wasm.wasm");
