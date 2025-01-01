@@ -335,6 +335,10 @@ void StringIO_init() {
 }
 
 int StringIO_push(char ch) {
+  if(StringIO_buf_kb13) {
+    printf("ERROR: getline buf is full\n");
+    return -1;
+  }
 #ifdef WASM
   printf("%c", ch);
   fflush(stdout);
@@ -357,7 +361,9 @@ int StringIO_push(char ch) {
     }
   }
   StringIO_buf[StringIO_len++] = ch;
-  if(ch == '\n') { // newline
+  if(ch == '\n' || ch == '\r') { // newline
+    printf("\n--- got newline ---\n");
+    fflush(stdout);
     StringIO_buf_kb13 = 1;
   }
   return 0;
@@ -367,26 +373,29 @@ char StringIO_getline_ready() {
   return StringIO_buf_kb13;
 }
 
+void StringIO_reset() {
+  memset(StringIO_buf, '\0', StringIO_buf_size);
+  StringIO_len = 0;
+  StringIO_buf_kb13 = 0;
+}
+
 ssize_t StringIO_getline(char** buf_ptr, size_t* buf_size_ptr) {
   ssize_t ret = 0;
   int i = 0;
   while(1) {
     if(StringIO_getline_ready()) {
-      printf("+"); fflush(stdout);
+      printf("\n --- stringio getline ready ---\n"); fflush(stdout);
       *buf_ptr = realloc(*buf_ptr, StringIO_buf_size);
       *buf_size_ptr = StringIO_buf_size;
       for(i = 0; i < StringIO_buf_size; i++) {
         (*buf_ptr)[i] = StringIO_buf[i];
       }
       ret = strlen(StringIO_buf);
-      // reset
-      StringIO_buf_kb13 = 0;
-      memset(StringIO_buf, '\0', StringIO_buf_size);
+      StringIO_reset();
       break;
     } else {
-      printf("."); fflush(stdout);
+      /* printf("."); fflush(stdout); */
     }
-    sleep(5);
   }
   return ret;
 }
