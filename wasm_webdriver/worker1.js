@@ -112,6 +112,8 @@ function make_wasm_instance() {
         Atomics.store(shared_view_i32, stringio_state_ptr, 0);
         var stringio_buf_ptr = wasm_instance.exports.stringio_get_buf();
         console.log(logprefix, 'fd_read. stringio_buf_ptr=', stringio_buf_ptr);
+        var stringio_buf = new Uint8Array(wasm_memory.buffer, stringio_buf_ptr, 4);
+        console.log(logprefix, 'stringio_buf=', stringio_buf);
         for(let i = 0; i < iovs_len; i++) {
           const offset = i * 8; // = jump over 2 i32 values per iteration
           const iov = new Uint32Array(wasm_memory.buffer, iovs + offset, 2);
