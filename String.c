@@ -7,8 +7,8 @@
 
 int     StringIO_state = 0;
 char*   StringIO_buf = NULL;
-ssize_t StringIO_len = 0;
-ssize_t StringIO_buf_size = 0;
+int     StringIO_len = 0;
+int     StringIO_buf_size = 0;
 char    StringIO_buf_kb13 = 0;
 
 String* String_new(char* istr) {
@@ -332,6 +332,7 @@ int* StringIO_init() {
   StringIO_state = 0;
   StringIO_buf_size = 4;
   StringIO_buf = calloc(StringIO_buf_size, 1);
+  printf("StringIO_init(). StringIO_buf = %p\n", StringIO_buf);
   StringIO_len = 0;
   return &StringIO_state;
 }
@@ -349,10 +350,7 @@ int StringIO_push(char ch) {
   printf("%c", ch);
   fflush(stdout);
 #endif
-  /* if(StringIO_buf == NULL) { */
-  /*   StringIO_init(); */
-  /* } */
-  ssize_t new_len = StringIO_len+1;
+  int new_len = StringIO_len+1;
   if(new_len >= StringIO_buf_size) {
     StringIO_buf = realloc(StringIO_buf, 2*StringIO_buf_size);
     if(StringIO_buf == NULL) {
@@ -366,13 +364,18 @@ int StringIO_push(char ch) {
       StringIO_buf[i] = '\0';
     }
   }
+  int ret = 0;
   StringIO_buf[StringIO_len++] = ch;
   if(ch == '\n' || ch == '\r') { // newline
     printf("\n--- got newline ---\n");
+    printf("\nbuf=|%s|\n", StringIO_buf);
     fflush(stdout);
     StringIO_buf_kb13 = 1;
+    ret = 1;
+  } else {
+    ret = 0;
   }
-  return 0;
+  return ret;
 }
 
 char StringIO_getline_ready() {
@@ -383,27 +386,43 @@ void StringIO_reset() {
   memset(StringIO_buf, '\0', StringIO_buf_size);
   StringIO_len = 0;
   StringIO_buf_kb13 = 0;
+  StringIO_state = 0;
 }
 
-ssize_t StringIO_getline(char** buf_ptr, size_t* buf_size_ptr) {
-  ssize_t ret = 0;
-  int i = 0;
-  while(1) {
-    if(StringIO_getline_ready()) {
-      printf("\n --- stringio getline ready ---\n"); fflush(stdout);
-      *buf_ptr = realloc(*buf_ptr, StringIO_buf_size);
-      *buf_size_ptr = StringIO_buf_size;
-      for(i = 0; i < StringIO_buf_size; i++) {
-        (*buf_ptr)[i] = StringIO_buf[i];
-      }
-      ret = strlen(StringIO_buf);
-      StringIO_reset();
-      break;
-    } else {
-      /* printf("."); fflush(stdout); */
-    }
+/* ssize_t StringIO_getline(char** buf_ptr, size_t* buf_size_ptr) { */
+/*   ssize_t ret = 0; */
+/*   int i = 0; */
+/*   while(1) { */
+/*     if(StringIO_getline_ready()) { */
+/*       printf("\n --- stringio getline ready ---\n"); fflush(stdout); */
+/*       *buf_ptr = realloc(*buf_ptr, StringIO_buf_size); */
+/*       *buf_size_ptr = StringIO_buf_size; */
+/*       for(i = 0; i < StringIO_buf_size; i++) { */
+/*         (*buf_ptr)[i] = StringIO_buf[i]; */
+/*       } */
+/*       ret = strlen(StringIO_buf); */
+/*       StringIO_reset(); */
+/*       break; */
+/*     } else { */
+/*       /1* printf("."); fflush(stdout); *1/ */
+/*     } */
+/*   } */
+/*   return ret; */
+/* } */
+
+char* StringIO_get_buf() {
+  printf("StringIO_get_buf(). StringIO_buf = %p\n", StringIO_buf);
+  return StringIO_buf;
+}
+
+int StringIO_get_buf_len() {
+  if(StringIO_buf == NULL) {
+    printf("StringIO_get_buf_len(). StringIO_buf = %p\n", StringIO_buf);
+    printf("ERROR: StringIO_buf is NULL\n");
+    fflush(stdout);
+    return 0;
   }
-  return ret;
+  return strlen(StringIO_buf);
 }
 
 void StringIO_done() {

@@ -2,9 +2,16 @@ var wasm_bytes = null;
 var wasm_memory = null;
 var wasm_instance = null;
 
-var logprefix = 'worker2';
+var stringio_state_ptr = null;
+var stringio_buf_ptr = null;
+
+var logprefix = 'worker2.';
 
 function make_wasm_instance() {
+  console.log(logprefix, 'make_wasm_instance. wasm_memory.buffer=', wasm_memory.buffer);
+  if(!(wasm_memory.buffer instanceof SharedArrayBuffer)) {
+    throw 'Expecting wasm_memory.buffer instanceof SharedArrayBuffer';
+  }
   WebAssembly.instantiate(wasm_bytes, {
     env: {
       memory: wasm_memory
@@ -108,12 +115,15 @@ function make_wasm_instance() {
   }).then(function(out) {
     console.log('out = ', out);
     wasm_instance = out.instance;
-    var stringio_state_ptr = wasm_instance.exports.stringio_init();
-    console.log('stringio_state_ptr =', stringio_state_ptr);
+    stringio_state_ptr = wasm_instance.exports.stringio_init();
+    console.log(logprefix, 'stringio_state_ptr=', stringio_state_ptr);
+    stringio_buf_ptr = wasm_instance.exports.stringio_get_buf();
+    console.log(logprefix, 'stringio_buf_ptr=', stringio_buf_ptr);
     postMessage({
       type: 'inited',
       data: {
         stringio_state_ptr: stringio_state_ptr,
+        stringio_buf_ptr: stringio_buf_ptr,
       }
     });
   });
@@ -121,7 +131,7 @@ function make_wasm_instance() {
 
 onmessage = function(ev) {
   var msg = ev.data;
-  console.log('ev = ', ev, 'msg=', msg);
+  console.log(logprefix, 'ev = ', ev, 'msg=', msg);
   let data = msg.data;
   switch(msg.type) {
     case 'init':
@@ -133,12 +143,20 @@ onmessage = function(ev) {
         console.error(logprefix, 'Expecting wasm_bytes in msg.data');
         return;
       }
+      console.log(logprefix, 'got wasm_memory=', data.wasm_memory, 'buffer=', data.wasm_memory.buffer);
       wasm_memory = data.wasm_memory;
       wasm_bytes = data.wasm_bytes;
       make_wasm_instance();
       break;
     case 'stdin':
-      wasm_instance.exports.stringio_push(data.key_code);
+      var ret = wasm_instance.exports.stringio_push(data.key_code);
+      console.log(logprefix, 'stdin. ret=', ret);
+      if(ret) {
+        // stdin has received a newline
+        var shared_view_i32 = new Int32Array(wasm_memory.buffer);
+        Atomics.store(shared_view_i32, stringio_state_ptr, 1);
+        Atomics.notify(shared_view_i32, stringio_state_ptr, 1);
+      }
     default:
   }
 };
