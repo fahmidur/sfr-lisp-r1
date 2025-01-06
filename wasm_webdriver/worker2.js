@@ -11,6 +11,8 @@ var stringio_buf_ptr = null;
 
 var logprefix = 'worker2.';
 
+var wasm_args = ["sfr-lisp-wasm"];
+
 function make_wasm_instance() {
   console.log(logprefix, 'make_wasm_instance. wasm_memory.buffer=', wasm_memory.buffer);
   if(!(wasm_memory.buffer instanceof SharedArrayBuffer)) {
