@@ -153,6 +153,12 @@ onmessage = function(ev) {
       console.log(logprefix, 'stdin. ret=', ret);
       if(ret) {
         // stdin has received a newline
+
+        var stringio_buf_ptr = wasm_instance.exports.stringio_get_buf();
+        console.log(logprefix, 'fd_read. stringio_buf_ptr=', stringio_buf_ptr);
+        var stringio_buf = new Uint8Array(wasm_memory.buffer, stringio_buf_ptr, 4);
+        console.log(logprefix, 'stringio_buf=', stringio_buf);
+
         var shared_view_i32 = new Int32Array(wasm_memory.buffer);
         Atomics.store(shared_view_i32, stringio_state_ptr, 1);
         Atomics.notify(shared_view_i32, stringio_state_ptr, 1);

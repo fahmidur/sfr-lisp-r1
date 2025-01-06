@@ -332,7 +332,7 @@ int* StringIO_init() {
   StringIO_state = 0;
   StringIO_buf_size = 128;
   StringIO_buf = calloc(StringIO_buf_size, 1);
-  printf("StringIO_init(). StringIO_buf = %p\n", StringIO_buf);
+  /* printf("StringIO_init(). StringIO_buf = %p\n", StringIO_buf); */
   StringIO_len = 0;
   return &StringIO_state;
 }
@@ -417,7 +417,7 @@ void StringIO_reset() {
 /* } */
 
 char* StringIO_get_buf() {
-  printf("StringIO_get_buf(). StringIO_buf = %p\n", StringIO_buf);
+  /* printf("StringIO_get_buf(). StringIO_buf = %p\n", StringIO_buf); */
   return StringIO_buf;
 }
 
