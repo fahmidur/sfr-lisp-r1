@@ -22,6 +22,16 @@
 #define GIT_SHA "unknown"
 #endif
 
+__attribute__((export_name("stringio_init")))
+int* stringio_init() {
+  return StringIO_init();
+}
+
+__attribute__((export_name("stringio_state_set")))
+void stringio_state_set(int val) {
+  return StringIO_state_set(val);
+}
+
 __attribute__((export_name("stringio_push")))
 void stringio_push(char ch) {
   StringIO_push(ch);

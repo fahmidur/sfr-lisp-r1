@@ -5,6 +5,7 @@
 #include "Util.h"
 #include "Error.h"
 
+int     StringIO_state = 0;
 char*   StringIO_buf = NULL;
 ssize_t StringIO_len = 0;
 ssize_t StringIO_buf_size = 0;
@@ -243,17 +244,16 @@ char String_zero(String* self) {
 ssize_t String_getline(String* self, FILE* stream) {
   String_zero(self);
   ssize_t ret = 0;
-  if(stream == stdin) {
-    // stdin
-    #ifdef WASM
-      ret = StringIO_getline(&(self->buf), &(self->buf_size));
-    #else
-      ret = getline(&(self->buf), &(self->buf_size), stream);
-    #endif
-  } 
-  else {
+  /* if(stream == stdin) { */
+  /*   #ifdef WASM */
+  /*     ret = StringIO_getline(&(self->buf), &(self->buf_size)); */
+  /*   #else */
+  /*     ret = getline(&(self->buf), &(self->buf_size), stream); */
+  /*   #endif */
+  /* } */ 
+  /* else { */
     ret = getline(&(self->buf), &(self->buf_size), stream);
-  }
+  /* } */
   dbg_printf("String_getline. ret=%ld buf_size=%ld\n", ret, self->buf_size);
   String_len(self);
   return ret;
@@ -328,10 +328,16 @@ char* String_cstr(String* self) {
   return self->buf;
 }
 
-void StringIO_init() {
+int* StringIO_init() {
+  StringIO_state = 0;
   StringIO_buf_size = 4;
   StringIO_buf = calloc(StringIO_buf_size, 1);
   StringIO_len = 0;
+  return &StringIO_state;
+}
+
+void StringIO_state_set(int new_state) {
+  StringIO_state = new_state;
 }
 
 int StringIO_push(char ch) {
@@ -343,9 +349,9 @@ int StringIO_push(char ch) {
   printf("%c", ch);
   fflush(stdout);
 #endif
-  if(StringIO_buf == NULL) {
-    StringIO_init();
-  }
+  /* if(StringIO_buf == NULL) { */
+  /*   StringIO_init(); */
+  /* } */
   ssize_t new_len = StringIO_len+1;
   if(new_len >= StringIO_buf_size) {
     StringIO_buf = realloc(StringIO_buf, 2*StringIO_buf_size);
