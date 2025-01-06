@@ -7,6 +7,8 @@ var stringio_state_ptr = null;
 
 var logprefix = 'worker1.';
 
+var wasm_args = ["sfr-lisp-wasm"];
+
 // function fetch_wasm_bytes() {
 //   var respPromise = fetch("./build/sfr-lisp-wasm.wasm");
 //   respPromise.then(function(response) {
@@ -30,7 +32,6 @@ function wasm_memory_buffer() {
   return wasm_memory.buffer;
 }
 
-var wasm_args = ["sfr-lisp-wasm"];
 
 function make_wasm_instance() {
   console.log(logprefix, 'make_wasm_instance. wasm_memory.buffer=', wasm_memory.buffer);
@@ -45,12 +46,9 @@ function make_wasm_instance() {
       fd_close: function(fd) {
         console.log('fd_close. fd=', fd);
       },
-      args_get: function(argv_ptr, argv_buf_ptr, ret) {
-        var ret_arr = new Uint32Array(wasm_memory_buffer(), ret, 2);
-        console.log('args_get. argv_ptr=', argv_ptr, 'argv_buf_ptr = ', argv_buf_ptr);
-        // var arg1 = "lisp\0";
-        // var arg1_encoded = (new TextEncoder()).encode(arg1);
-        // console.log('arg1_encoded = ', arg1_encoded);
+      args_get: function(argv_ptr, argv_buf_ptr, ret_ptr) {
+        var ret_arr = new Uint32Array(wasm_memory_buffer(), ret_ptr, 2);
+        console.log(logprefix, 'args_get. argv_ptr=', argv_ptr, 'argv_buf_ptr = ', argv_buf_ptr);
         var argv_total_size = wasm_args.reduce((s,e) => (s+e.length+1), 0);
         var argv_arr = new Uint32Array(wasm_memory_buffer(), argv_ptr, wasm_args.length);
         var argv_buf_arr = new Uint8Array(wasm_memory_buffer(), argv_buf_ptr, argv_total_size);
@@ -58,17 +56,17 @@ function make_wasm_instance() {
         for(i = 0; i < wasm_args.length; i++) {
           let arg = wasm_args[i] + "\0";
           let arg_encoded = (new TextEncoder()).encode(arg);
-          console.log('i = ', i, 'arg = ', arg);
-          console.log('i = ', i, 'arg_encoded = ', arg_encoded);
+          console.log(logprefix, 'i = ', i, 'arg = ', arg);
+          console.log(logprefix, 'i = ', i, 'arg_encoded = ', arg_encoded);
           for(j = 0; j < arg_encoded.length; j++) {
             argv_buf_arr[pos+j] = arg_encoded[j];
           }
           argv_arr[i] = argv_buf_ptr+pos;
           pos += arg_encoded.length;
         }
-        console.log('argv_buf_arr = ', argv_buf_arr);
-        console.log('argv_arr = ', argv_arr);
-        ret_arr[0] = 0; // 
+        console.log(logprefix, 'argv_buf_arr = ', argv_buf_arr);
+        console.log(logprefix, 'argv_arr = ', argv_arr);
+        ret_arr[0] = 1;
         ret_arr[1] = 0; // errno=0
       },
       args_sizes_get: function(ret_ptr) {
@@ -78,6 +76,7 @@ function make_wasm_instance() {
         // the total size of the args in bytes
         ret_arr[1] = wasm_args.reduce((s, e) => (s+e.length+1), 0);
         ret_arr[2] = 0 // errno=0
+        console.log(logprefix, 'arg_sizes_get. ret_arr=', ret_arr);
       },
       environ_get: function() {
       },
@@ -118,6 +117,8 @@ function make_wasm_instance() {
         }
 
         let iov = iovs[0];
+        var memory = wasm_memory.buffer;
+        console.log(logprefix, 'iov=', iov);
 
         ret_view[0] = bytes_read;
         // errno = 0

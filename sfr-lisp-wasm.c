@@ -22,6 +22,16 @@
 #define GIT_SHA "unknown"
 #endif
 
+__attribute__((export_name("x_malloc")))
+void* x_malloc(int size) {
+  return malloc(size);
+}
+
+__attribute__((export_name("x_free")))
+void x_free(void* ptr) {
+  return free(ptr);
+}
+
 __attribute__((export_name("stringio_init")))
 int* stringio_init() {
   return StringIO_init();
