@@ -7,7 +7,6 @@ var stringio_state_ptr = null;
 
 var logprefix = 'worker1.';
 
-var wasm_args = ["sfr-lisp-wasm"];
 
 // function fetch_wasm_bytes() {
 //   var respPromise = fetch("./build/sfr-lisp-wasm.wasm");
@@ -127,7 +126,7 @@ function make_wasm_instance() {
       path_open: function() {
       },
       fd_write: function(fd, iovs, iovs_len, ret_ptr) {
-        console.log(logprefix, 'ret_ptr =', ret_ptr);
+        console.log(logprefix, 'fd_write. fd=', fd, 'iovs=', iovs, 'ret_ptr =', ret_ptr);
         const memory = new Uint32Array(wasm_instance.exports.memory.buffer);
         console.log(logprefix, '*ret_ptr = ', memory[ret_ptr]);
         let nwritten = 0;
@@ -151,7 +150,7 @@ function make_wasm_instance() {
         // const bytes_written = new Uint32Array(memory.buffer, ret_ptr, 1);
         // bytes_written[0] = nwritten;
         memory[ret_ptr] = nwritten;
-        console.log(logprefix, 'fd=', fd, `| bytes written =`, nwritten);
+        console.log(logprefix, 'fd=', fd, '| bytes written =', nwritten);
         return nwritten;
       },
       poll_oneoff: function() {
