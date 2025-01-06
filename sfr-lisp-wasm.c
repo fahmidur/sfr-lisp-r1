@@ -47,6 +47,12 @@ int stringio_get_buf_len() {
   return StringIO_get_buf_len();
 }
 
+
+__attribute__((export_name("stringio_set")))
+void stringio_set(char* buf, int buf_size) {
+  StringIO_set(buf, buf_size);
+}
+
 __attribute__((export_name("stdout_flush")))
 void stdout_flush() {
   fflush(stdout);

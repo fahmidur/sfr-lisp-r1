@@ -2,6 +2,9 @@ var wasm_bytes = null;
 var wasm_memory = null;
 var wasm_instance = null;
 
+// 32bit pointer
+var wasm_stdin_addr = null;
+
 var stringio_state_ptr = null;
 
 var logprefix = 'worker1.';
@@ -103,8 +106,10 @@ function make_wasm_instance() {
         console.log(logprefix, 'fd_read. stringio_state_ptr=', stringio_state_ptr);
         var shared_view_i32 = new Int32Array(wasm_memory.buffer);
         console.log(logprefix, 'fd_read. stringio_state=', Atomics.load(shared_view_i32, stringio_state_ptr));
+        // keep waiting until mem[stringio_state_ptr] == 0
         Atomics.wait(shared_view_i32, stringio_state_ptr, 0);
         console.log(logprefix, 'fd_read. --- wait complete ---');
+        Atomics.store(shared_view_i32, stringio_state_ptr, 0);
         var stringio_buf_ptr = wasm_instance.exports.stringio_get_buf();
         console.log(logprefix, 'fd_read. stringio_buf_ptr=', stringio_buf_ptr);
         for(let i = 0; i < iovs_len; i++) {
@@ -194,7 +199,6 @@ onmessage = function(ev) {
 
       console.log(logprefix, 'got wasm_memory=', data.wasm_memory, 'buffer=', data.wasm_memory.buffer);
       wasm_memory = data.wasm_memory;
-
       wasm_bytes = data.wasm_bytes;
       make_wasm_instance();
       break;
@@ -202,6 +206,7 @@ onmessage = function(ev) {
       console.log(logprefix, 'got stringio_state_ptr=', data.stringio_state_ptr)
       stringio_state_ptr = data.stringio_state_ptr;
       console.log(logprefix, 'got stringio_buf_ptr=', data.stringio_buf_ptr);
+      wasm_instance.exports.stringio_set(data.stringio_buf_ptr, 4);
       var my_stringio_buf_ptr = wasm_instance.exports.stringio_get_buf();
       console.log(logprefix, 'my_stringio_buf_ptr=', my_stringio_buf_ptr);
       wasm_start();

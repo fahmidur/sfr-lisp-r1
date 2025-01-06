@@ -11,10 +11,9 @@ term.onKey(function(e) {
   // term.write(e.key);
 });
 
-
 var wasm_memory = new WebAssembly.Memory({
   initial: 2,
-  maximum: 1000,
+  maximum: 9000,
   shared: true,
 });
 
