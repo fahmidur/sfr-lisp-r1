@@ -22,13 +22,13 @@
 #define GIT_SHA "unknown"
 #endif
 
-__attribute__((export_name("x_malloc")))
-void* x_malloc(int size) {
+__attribute__((export_name("sfr_malloc")))
+void* sfr_malloc(int size) {
   return malloc(size);
 }
 
-__attribute__((export_name("x_free")))
-void x_free(void* ptr) {
+__attribute__((export_name("sfr_free")))
+void sfr_free(void* ptr) {
   return free(ptr);
 }
 
