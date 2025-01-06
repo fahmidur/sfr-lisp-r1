@@ -19,12 +19,23 @@ var logprefix = 'worker1.';
 // }
 
 function wasm_memory_buffer() {
-  return wasm_instance.exports.memory.buffer;
+  // return wasm_instance.exports.memory.buffer;
+  if(wasm_memory == null) {
+    throw 'wasm_memory is null';
+  }
+  if(!(wasm_memory.buffer instanceof SharedArrayBuffer)) {
+    throw 'wasm_memory.buffer is NOT instance of SharedArrayBuffer';
+  }
+  return wasm_memory.buffer;
 }
 
 var wasm_args = ["sfr-lisp-wasm"];
 
 function make_wasm_instance() {
+  console.log(logprefix, 'make_wasm_instance. wasm_memory.buffer=', wasm_memory.buffer);
+  if(!(wasm_memory.buffer instanceof SharedArrayBuffer)) {
+    throw 'Expecting wasm_memory.buffer instanceof SharedArrayBuffer';
+  }
   WebAssembly.instantiate(wasm_bytes, {
     env: {
       memory: wasm_memory
@@ -85,18 +96,38 @@ function make_wasm_instance() {
         console.log(logprefix, 'fd_seek');
       },
       fd_read: function(fd, iovs, iovs_len, ret_ptr) {
-        console.log(logprefix, 'fd_read. fd=', fd, 'iovs=', iovs);
+        console.log(logprefix, 'fd_read. fd=', fd, 'iovs=', iovs, 'iovs_len=', iovs_len, 'ret_ptr=', ret_ptr);
+        if(fd !== 0) {
+          throw 'only reading on STDIN fd=0 is currently supported';
+        }
         console.log(logprefix, 'fd_read. stringio_state_ptr=', stringio_state_ptr);
         var shared_view_i32 = new Int32Array(wasm_memory.buffer);
-        console.log(logprefix, 'fd_reade. stringio_state=', Atomics.load(shared_view_i32, stringio_state_ptr));
+        console.log(logprefix, 'fd_read. stringio_state=', Atomics.load(shared_view_i32, stringio_state_ptr));
         Atomics.wait(shared_view_i32, stringio_state_ptr, 0);
+        console.log(logprefix, 'fd_read. --- wait complete ---');
+        var stringio_buf_ptr = wasm_instance.exports.stringio_get_buf();
+        console.log(logprefix, 'fd_read. stringio_buf_ptr=', stringio_buf_ptr);
+        for(let i = 0; i < iovs_len; i++) {
+          const offset = i * 8; // = jump over 2 i32 values per iteration
+          const iov = new Uint32Array(wasm_memory.buffer, iovs + offset, 2);
+          console.log(logprefix, 'fd_read. iov=', iov);
+          iov[0] = stringio_buf_ptr;
+        }
+        // output size = 8 octets (64 bits), 2 (32bit, 4byte) uint values
+        var ret_view = new Uint32Array(wasm_memory.buffer, ret_ptr, 2);
+        // the number of byets read
+        var bytes_read = wasm_instance.exports.stringio_get_buf_len();
+        console.log(logprefix, 'fd_read. bytes_read=', bytes_read);
+        ret_view[0] = bytes_read;
+        // errno = 0
+        ret_view[1] = 0;
       },
       path_open: function() {
       },
       fd_write: function(fd, iovs, iovs_len, ret_ptr) {
-        console.log('ret_ptr =', ret_ptr);
+        console.log(logprefix, 'ret_ptr =', ret_ptr);
         const memory = new Uint32Array(wasm_instance.exports.memory.buffer);
-        console.log('*ret_ptr = ', memory[ret_ptr]);
+        console.log(logprefix, '*ret_ptr = ', memory[ret_ptr]);
         let nwritten = 0;
         for (let i = 0; i < iovs_len; i++) {
           const offset = i * 8; // = jump over 2 i32 values per iteration
@@ -104,7 +135,7 @@ function make_wasm_instance() {
           // use the iovs to read the data from the memory
           const bytes = new Uint8Array(memory.buffer, iov[0], iov[1]);
           const data = new TextDecoder("utf8").decode(bytes);
-          console.log('fd=', fd, '||', data);
+          console.log(logprefix, 'fd=', fd, '||', data);
           var term_data = data.replaceAll("\n", "\r\n");
           // term.write(term_data);
           postMessage({
@@ -113,18 +144,18 @@ function make_wasm_instance() {
           });
           nwritten += iov[1];
         }
-        console.log('nwritten =', nwritten);
+        console.log(logprefix, 'nwritten =', nwritten);
         // Set the nwritten in ret_ptr
         // const bytes_written = new Uint32Array(memory.buffer, ret_ptr, 1);
         // bytes_written[0] = nwritten;
         memory[ret_ptr] = nwritten;
-        console.log('fd=', fd, `| bytes written =`, nwritten);
+        console.log(logprefix, 'fd=', fd, `| bytes written =`, nwritten);
         return nwritten;
       },
       poll_oneoff: function() {
       },
       proc_exit: function(exitcode){
-        console.log('proc_exit. exitcode=', exitcode);
+        console.log(logprefix, 'proc_exit. exitcode=', exitcode);
         return exitcode;
       }
     }
@@ -141,14 +172,14 @@ function wasm_start() {
   if(stringio_state_ptr == null) {
     throw 'Expecting non-null stringio_state_ptr';
   }
-  console.log('wasm _start() ...');
+  console.log(logprefix, '=============================== wasm_start()');
   wasm_instance.exports._start();
-  console.log('wasm _start() ... DONE');
+  console.log(logprefix, '=============================== wasm_start() ... DONE');
 }
 
 onmessage = function(ev) {
   var msg = ev.data;
-  console.log('ev = ', ev, 'msg=', msg);
+  console.log(logprefix, 'ev = ', ev, 'msg=', msg);
   var data = msg.data;
   switch(msg.type) {
     case 'init':
@@ -161,7 +192,7 @@ onmessage = function(ev) {
         return;
       }
 
-      console.log(logprefix, 'got wasm_memory=', data.wasm_memory);
+      console.log(logprefix, 'got wasm_memory=', data.wasm_memory, 'buffer=', data.wasm_memory.buffer);
       wasm_memory = data.wasm_memory;
 
       wasm_bytes = data.wasm_bytes;
@@ -170,6 +201,9 @@ onmessage = function(ev) {
     case 'start':
       console.log(logprefix, 'got stringio_state_ptr=', data.stringio_state_ptr)
       stringio_state_ptr = data.stringio_state_ptr;
+      console.log(logprefix, 'got stringio_buf_ptr=', data.stringio_buf_ptr);
+      var my_stringio_buf_ptr = wasm_instance.exports.stringio_get_buf();
+      console.log(logprefix, 'my_stringio_buf_ptr=', my_stringio_buf_ptr);
       wasm_start();
     default:
   }

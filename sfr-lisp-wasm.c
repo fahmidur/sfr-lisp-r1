@@ -33,8 +33,18 @@ void stringio_state_set(int val) {
 }
 
 __attribute__((export_name("stringio_push")))
-void stringio_push(char ch) {
-  StringIO_push(ch);
+int stringio_push(char ch) {
+  return StringIO_push(ch);
+}
+
+__attribute__((export_name("stringio_get_buf")))
+char* stringio_get_buf() {
+  return StringIO_get_buf();
+}
+
+__attribute__((export_name("stringio_get_buf_len")))
+int stringio_get_buf_len() {
+  return StringIO_get_buf_len();
 }
 
 __attribute__((export_name("stdout_flush")))

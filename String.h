@@ -24,8 +24,10 @@ void    StringIO_state_set(int);
 void    StringIO_done();
 void    StringIO_reset();
 int     StringIO_push(char ch);
-char    StringIO_getline_ready();
-ssize_t StringIO_getline(char** buf_ptr, size_t* buf_size_ptr);
+/* char    StringIO_getline_ready(); */
+/* ssize_t StringIO_getline(char** buf_ptr, size_t* buf_size_ptr); */
+char*   StringIO_get_buf();
+int     StringIO_get_buf_len();
 
 String* String_new(char* buf);
 String* String_clone(String* self);

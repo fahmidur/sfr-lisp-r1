@@ -1,5 +1,7 @@
 console.log('--- main.js ---');
 
+var logprefix = 'main___.';
+
 var term_kbmode = false;
 var term = new Terminal();
 term.open(document.getElementById('terminal'));
@@ -49,13 +51,13 @@ function maybe_init_term() {
 var worker1 = new Worker('./worker1.js');
 worker1.onmessage = function(ev) {
   var msg = ev.data;
-  console.log('worker1. ev=', ev, ' msg=', msg);
+  console.log(logprefix, 'heard worker1. ev=', ev, ' msg=', msg);
   switch(msg.type) {
     case 'term_stdout': 
       term.write(msg.data);
       break;
     case 'inited':
-      console.log('heard worker1 inited');
+      console.log(logprefix, 'heard worker1 inited');
       workers['worker1'].state.inited = true;
       maybe_init_term();
     default:
@@ -66,22 +68,22 @@ worker_add('worker1', worker1);
 var worker2 = new Worker('./worker2.js');
 worker2.onmessage = function(ev) {
   var msg = ev.data;
-  console.log('worker2. ev=', ev, ' msg=', msg);
+  console.log(logprefix, 'heard worker2. ev=', ev, ' msg=', msg);
   switch(msg.type) {
     case 'term_stdout': 
       term.write(msg.data);
       break;
     case 'inited':
-      console.log('heard worker2 inited');
+      console.log(logprefix, 'heard worker2 inited');
       workers['worker2'].state.inited = true;
       var stringio_state_ptr = msg.data.stringio_state_ptr;
-      console.log('main. heard stringio_state_ptr=', stringio_state_ptr);
+      console.log(logprefix, 'from worker2 stringio_state_ptr=', stringio_state_ptr);
+      var stringio_buf_ptr = msg.data.stringio_buf_ptr;
+      console.log(logprefix, 'stringio_buf_ptr=', stringio_buf_ptr);
       maybe_init_term();
       worker1.postMessage({
         type: 'start',
-        data: {
-          stringio_state_ptr: stringio_state_ptr
-        }
+        data: msg.data,
       });
       break;
     default:
@@ -98,9 +100,9 @@ function workers_broadcast(msg) {
 
 var respPromise = fetch("./build/sfr-lisp-wasm.wasm");
 respPromise.then(function(response) {
-  console.log('response = ', response);
+  console.log(logprefix, 'response = ', response);
   response.arrayBuffer().then(function(bytes) {
-    console.log('got bytes = ', bytes);
+    console.log(logprefix, 'got bytes = ', bytes);
     var wasm_bytes = bytes;
     workers_broadcast({
       type: 'init',
