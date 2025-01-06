@@ -19,7 +19,8 @@ struct String {
   char* buf;
 };
 
-void    StringIO_init();
+int*    StringIO_init();
+void    StringIO_state_set(int);
 void    StringIO_done();
 void    StringIO_reset();
 int     StringIO_push(char ch);

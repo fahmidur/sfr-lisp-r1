@@ -108,8 +108,13 @@ function make_wasm_instance() {
   }).then(function(out) {
     console.log('out = ', out);
     wasm_instance = out.instance;
+    var stringio_state_ptr = wasm_instance.exports.stringio_init();
+    console.log('stringio_state_ptr =', stringio_state_ptr);
     postMessage({
-      type: 'inited'
+      type: 'inited',
+      data: {
+        stringio_state_ptr: stringio_state_ptr,
+      }
     });
   });
 }

@@ -2,7 +2,9 @@ var wasm_bytes = null;
 var wasm_memory = null;
 var wasm_instance = null;
 
-var logprefix = 'worker1';
+var stringio_state_ptr = null;
+
+var logprefix = 'worker1.';
 
 // function fetch_wasm_bytes() {
 //   var respPromise = fetch("./build/sfr-lisp-wasm.wasm");
@@ -71,7 +73,7 @@ function make_wasm_instance() {
         return 0;
       },
       fd_fdstat_get: function(fd) {
-        console.log('fd_fdstat_get. fd=', fd);
+        console.log(logprefix, 'fd_fdstat_get. fd=', fd);
       },
       fd_fdstat_set_flags: function() {
       },
@@ -80,11 +82,14 @@ function make_wasm_instance() {
       fd_prestat_dir_name: function() {
       },
       fd_seek: function() {
-        console.log('fd_seek');
+        console.log(logprefix, 'fd_seek');
       },
       fd_read: function(fd, iovs, iovs_len, ret_ptr) {
-        console.log('fd_read. fd=', fd, 'iovs=', iovs);
-        const memory = new Uint32Array(wasm_instance.exports.memory.buffer);
+        console.log(logprefix, 'fd_read. fd=', fd, 'iovs=', iovs);
+        console.log(logprefix, 'fd_read. stringio_state_ptr=', stringio_state_ptr);
+        var shared_view_i32 = new Int32Array(wasm_memory.buffer);
+        console.log(logprefix, 'fd_reade. stringio_state=', Atomics.load(shared_view_i32, stringio_state_ptr));
+        Atomics.wait(shared_view_i32, stringio_state_ptr, 0);
       },
       path_open: function() {
       },
@@ -129,18 +134,24 @@ function make_wasm_instance() {
     postMessage({
       type: 'inited'
     });
-    console.log('wasm _start() ...');
-    wasm_instance.exports._start();
-    console.log('wasm _start() ... DONE');
   });
+}
+
+function wasm_start() {
+  if(stringio_state_ptr == null) {
+    throw 'Expecting non-null stringio_state_ptr';
+  }
+  console.log('wasm _start() ...');
+  wasm_instance.exports._start();
+  console.log('wasm _start() ... DONE');
 }
 
 onmessage = function(ev) {
   var msg = ev.data;
   console.log('ev = ', ev, 'msg=', msg);
+  var data = msg.data;
   switch(msg.type) {
     case 'init':
-      let data = msg.data;
       if(!data.wasm_memory) {
         console.error(logprefix, 'Expecting wasm_memory in msg.data');
         return;
@@ -149,10 +160,17 @@ onmessage = function(ev) {
         console.error(logprefix, 'Expecting wasm_bytes in msg.data');
         return;
       }
+
+      console.log(logprefix, 'got wasm_memory=', data.wasm_memory);
       wasm_memory = data.wasm_memory;
+
       wasm_bytes = data.wasm_bytes;
       make_wasm_instance();
       break;
+    case 'start':
+      console.log(logprefix, 'got stringio_state_ptr=', data.stringio_state_ptr)
+      stringio_state_ptr = data.stringio_state_ptr;
+      wasm_start();
     default:
   }
 };
