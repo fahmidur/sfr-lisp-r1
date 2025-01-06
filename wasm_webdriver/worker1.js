@@ -1,9 +1,7 @@
 var wasm_bytes = null;
 var wasm_memory = null;
 var wasm_instance = null;
-
-// 32bit pointer
-var wasm_stdin_addr = null;
+var stdin = null;
 
 var stringio_state_ptr = null;
 
@@ -103,28 +101,24 @@ function make_wasm_instance() {
         if(fd !== 0) {
           throw 'only reading on STDIN fd=0 is currently supported';
         }
-        console.log(logprefix, 'fd_read. stringio_state_ptr=', stringio_state_ptr);
-        var shared_view_i32 = new Int32Array(wasm_memory.buffer);
-        console.log(logprefix, 'fd_read. stringio_state=', Atomics.load(shared_view_i32, stringio_state_ptr));
-        // keep waiting until mem[stringio_state_ptr] == 0
-        Atomics.wait(shared_view_i32, stringio_state_ptr, 0);
+        var stdin_i32 = new Int32Array(stdin);
+        console.log(logprefix, 'fd_read. waiting...');
+        Atomics.wait(stdin_i32, 0, 0);
         console.log(logprefix, 'fd_read. --- wait complete ---');
-        Atomics.store(shared_view_i32, stringio_state_ptr, 0);
-        var stringio_buf_ptr = wasm_instance.exports.stringio_get_buf();
-        console.log(logprefix, 'fd_read. stringio_buf_ptr=', stringio_buf_ptr);
-        var stringio_buf = new Uint8Array(wasm_memory.buffer, stringio_buf_ptr, 4);
-        console.log(logprefix, 'stringio_buf=', stringio_buf);
-        for(let i = 0; i < iovs_len; i++) {
-          const offset = i * 8; // = jump over 2 i32 values per iteration
-          const iov = new Uint32Array(wasm_memory.buffer, iovs + offset, 2);
-          console.log(logprefix, 'fd_read. iov=', iov);
-          iov[0] = stringio_buf_ptr;
-        }
+        Atomics.store(stdin_i32, 0, 0);
         // output size = 8 octets (64 bits), 2 (32bit, 4byte) uint values
         var ret_view = new Uint32Array(wasm_memory.buffer, ret_ptr, 2);
         // the number of byets read
-        var bytes_read = wasm_instance.exports.stringio_get_buf_len();
+        var bytes_read = stdin_i32[1];
         console.log(logprefix, 'fd_read. bytes_read=', bytes_read);
+        var stdin_view = new Uint8Array(stdin, 8, bytes_read);
+        for(i = 0; i < bytes_read; i++) {
+          let ch = stdin_view[i];
+          console.log(logprefix, 'ch=', String.fromCharCode(ch));
+        }
+
+        let iov = iovs[0];
+
         ret_view[0] = bytes_read;
         // errno = 0
         ret_view[1] = 0;
@@ -200,6 +194,8 @@ onmessage = function(ev) {
       }
 
       console.log(logprefix, 'got wasm_memory=', data.wasm_memory, 'buffer=', data.wasm_memory.buffer);
+      console.log(logprefix, 'got stdin=', data.stdin);
+      stdin = data.stdin;
       wasm_memory = data.wasm_memory;
       wasm_bytes = data.wasm_bytes;
       make_wasm_instance();

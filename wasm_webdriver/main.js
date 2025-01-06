@@ -11,6 +11,9 @@ term.onKey(function(e) {
   // term.write(e.key);
 });
 
+
+var stdin = new SharedArrayBuffer(1024);
+
 var wasm_memory = new WebAssembly.Memory({
   initial: 2,
   maximum: 9000,
@@ -41,9 +44,11 @@ function maybe_init_term() {
     io_worker.postMessage({
       type: 'stdin',
       data: {
+        key: ev.key,
         key_code: key_code
       }
     });
+
   });
 }
 
@@ -59,6 +64,10 @@ worker1.onmessage = function(ev) {
       console.log(logprefix, 'heard worker1 inited');
       workers['worker1'].state.inited = true;
       maybe_init_term();
+      break;
+    case 'term_echo':
+      term.write(msg.data.key);
+      break;
     default:
   }
 };
@@ -85,6 +94,9 @@ worker2.onmessage = function(ev) {
         data: msg.data,
       });
       break;
+    case 'term_echo':
+      term.write(msg.data.key);
+      break;
     default:
   }
 };
@@ -106,6 +118,7 @@ respPromise.then(function(response) {
     workers_broadcast({
       type: 'init',
       data: {
+        stdin: stdin,
         wasm_memory: wasm_memory,
         wasm_bytes: wasm_bytes,
       }
