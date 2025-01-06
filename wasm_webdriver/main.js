@@ -20,6 +20,8 @@ var wasm_memory = new WebAssembly.Memory({
   shared: true,
 });
 
+var wasm_args = ["sfr-lisp-wasm"];
+
 var workers = {};
 function worker_add(name, worker) {
   workers[name] = {
@@ -119,6 +121,7 @@ respPromise.then(function(response) {
       type: 'init',
       data: {
         stdin: stdin,
+        wasm_args: wasm_args,
         wasm_memory: wasm_memory,
         wasm_bytes: wasm_bytes,
       }
