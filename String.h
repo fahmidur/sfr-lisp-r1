@@ -12,12 +12,13 @@
 #define String_IBUFSIZE 4
 #define String_MBUFSIZE 8
 
-typedef struct String String;
-struct String {
-  size_t len;
-  size_t buf_size;
-  char* buf;
-};
+//--- { StringIO { ---
+
+extern int     StringIO_state;
+extern char*   StringIO_buf;
+extern int     StringIO_len;
+extern int     StringIO_buf_size;
+extern char    StringIO_buf_kb13;
 
 int*    StringIO_init();
 void    StringIO_state_set(int);
@@ -28,6 +29,16 @@ int     StringIO_push(char ch);
 /* ssize_t StringIO_getline(char** buf_ptr, size_t* buf_size_ptr); */
 char*   StringIO_get_buf();
 int     StringIO_get_buf_len();
+
+//--- } StringIO } ---
+
+typedef struct String String;
+struct String {
+  size_t len;
+  size_t buf_size;
+  char* buf;
+};
+
 
 String* String_new(char* buf);
 String* String_clone(String* self);
