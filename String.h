@@ -14,12 +14,6 @@
 
 //--- { StringIO { ---
 
-extern int     StringIO_state;
-extern char*   StringIO_buf;
-extern int     StringIO_len;
-extern int     StringIO_buf_size;
-extern char    StringIO_buf_kb13;
-
 int*    StringIO_init();
 void    StringIO_state_set(int);
 void    StringIO_done();
