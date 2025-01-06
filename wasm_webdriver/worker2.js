@@ -2,6 +2,10 @@ var wasm_bytes = null;
 var wasm_memory = null;
 var wasm_instance = null;
 
+var stdin = null;
+var stdin_pos = 0;
+var stdin_arr = [];
+
 var stringio_state_ptr = null;
 var stringio_buf_ptr = null;
 
@@ -129,6 +133,21 @@ function make_wasm_instance() {
   });
 }
 
+function isAlphaNumeric(keyCode) {
+  // Check for letters (A-Z)
+  if (keyCode >= 65 && keyCode <= 90) {
+    return true;
+  }
+
+  // Check for numbers (0-9)
+  if (keyCode >= 48 && keyCode <= 57) {
+    return true;
+  }
+
+  // Otherwise, not alphanumeric
+  return false;
+}
+
 onmessage = function(ev) {
   var msg = ev.data;
   console.log(logprefix, 'ev = ', ev, 'msg=', msg);
@@ -144,25 +163,52 @@ onmessage = function(ev) {
         return;
       }
       console.log(logprefix, 'got wasm_memory=', data.wasm_memory, 'buffer=', data.wasm_memory.buffer);
+      stdin = data.stdin;
       wasm_memory = data.wasm_memory;
       wasm_bytes = data.wasm_bytes;
       make_wasm_instance();
       break;
     case 'stdin':
-      var ret = wasm_instance.exports.stringio_push(data.key_code);
-      console.log(logprefix, 'stdin. ret=', ret);
-      if(ret) {
-        // stdin has received a newline
-
-        var stringio_buf_ptr = wasm_instance.exports.stringio_get_buf();
-        console.log(logprefix, 'fd_read. stringio_buf_ptr=', stringio_buf_ptr);
-        var stringio_buf = new Uint8Array(wasm_memory.buffer, stringio_buf_ptr, 4);
-        console.log(logprefix, 'stringio_buf=', stringio_buf);
-
-        var shared_view_i32 = new Int32Array(wasm_memory.buffer);
-        Atomics.store(shared_view_i32, stringio_state_ptr, 1);
-        Atomics.notify(shared_view_i32, stringio_state_ptr, 1);
+      var stdin_size = new Uint32Array(stdin, 4, 1);
+      var stdin_view = new Uint8Array(stdin, 8);
+      console.log('stdin_arr=', stdin_arr);
+      if(data.key_code === 13) {
+        console.log('--- return ---');
+        stdin_arr.push(0);
+        for(i = 0; i < stdin_arr.length; i++) {
+          stdin_view[i] = stdin_arr[i];
+        }
+        stdin_size[0] = stdin_arr.length-1;
+        stdin_arr = [];
+        console.log(logprefix, 'stdin=', stdin);
+        var stdin_i32 = new Int32Array(stdin);
+        Atomics.store(stdin_i32, 0, 1);
+        Atomics.notify(stdin_i32, 0);
       }
+      else {
+        stdin_arr.push(data.key_code);
+        postMessage({
+          type: 'term_echo',
+          data: {
+            key: data.key
+          }
+        });
+      }
+      // var ret = wasm_instance.exports.stringio_push(data.key_code);
+      // console.log(logprefix, 'stdin. ret=', ret);
+      // if(ret) {
+      //   // stdin has received a newline
+
+      //   var stringio_buf_ptr = wasm_instance.exports.stringio_get_buf();
+      //   console.log(logprefix, 'fd_read. stringio_buf_ptr=', stringio_buf_ptr);
+      //   var stringio_buf = new Uint8Array(wasm_memory.buffer, stringio_buf_ptr, 4);
+      //   console.log(logprefix, 'stringio_buf=', stringio_buf);
+
+      //   var shared_view_i32 = new Int32Array(wasm_memory.buffer);
+      //   Atomics.store(shared_view_i32, stringio_state_ptr, 1);
+      //   Atomics.notify(shared_view_i32, stringio_state_ptr, 1);
+      // }
+      break;
     default:
   }
 };
