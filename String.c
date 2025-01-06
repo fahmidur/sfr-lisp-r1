@@ -7,8 +7,8 @@
 
 int     StringIO_state = 0;
 char*   StringIO_buf = NULL;
-int     StringIO_len = 0;
 int     StringIO_buf_size = 0;
+int     StringIO_len = 0;
 char    StringIO_buf_kb13 = 0;
 
 String* String_new(char* istr) {
@@ -330,7 +330,7 @@ char* String_cstr(String* self) {
 
 int* StringIO_init() {
   StringIO_state = 0;
-  StringIO_buf_size = 4;
+  StringIO_buf_size = 128;
   StringIO_buf = calloc(StringIO_buf_size, 1);
   printf("StringIO_init(). StringIO_buf = %p\n", StringIO_buf);
   StringIO_len = 0;
@@ -380,6 +380,12 @@ int StringIO_push(char ch) {
 
 char StringIO_getline_ready() {
   return StringIO_buf_kb13;
+}
+
+void StringIO_set(char* buf, int buf_size) {
+  StringIO_buf = buf;
+  StringIO_buf_size = buf_size;
+  StringIO_len = strlen(StringIO_buf);
 }
 
 void StringIO_reset() {

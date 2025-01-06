@@ -23,6 +23,7 @@ extern char    StringIO_buf_kb13;
 int*    StringIO_init();
 void    StringIO_state_set(int);
 void    StringIO_done();
+void    StringIO_set(char* buf, int buf_size);
 void    StringIO_reset();
 int     StringIO_push(char ch);
 /* char    StringIO_getline_ready(); */
