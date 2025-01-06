@@ -22,14 +22,14 @@ var wasm_args = ["sfr-lisp-wasm"];
 // }
 
 function wasm_memory_buffer() {
-  // return wasm_instance.exports.memory.buffer;
-  if(wasm_memory == null) {
-    throw 'wasm_memory is null';
-  }
-  if(!(wasm_memory.buffer instanceof SharedArrayBuffer)) {
-    throw 'wasm_memory.buffer is NOT instance of SharedArrayBuffer';
-  }
-  return wasm_memory.buffer;
+  return wasm_instance.exports.memory.buffer;
+  // if(wasm_memory == null) {
+  //   throw 'wasm_memory is null';
+  // }
+  // if(!(wasm_memory.buffer instanceof SharedArrayBuffer)) {
+  //   throw 'wasm_memory.buffer is NOT instance of SharedArrayBuffer';
+  // }
+  // return wasm_memory.buffer;
 }
 
 
@@ -197,6 +197,7 @@ onmessage = function(ev) {
       console.log(logprefix, 'got wasm_memory=', data.wasm_memory, 'buffer=', data.wasm_memory.buffer);
       console.log(logprefix, 'got stdin=', data.stdin);
       stdin = data.stdin;
+      wasm_args = data.wasm_args;
       wasm_memory = data.wasm_memory;
       wasm_bytes = data.wasm_bytes;
       make_wasm_instance();
