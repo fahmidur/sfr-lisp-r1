@@ -173,14 +173,15 @@ onmessage = function(ev) {
     case 'stdin':
       var stdin_size = new Uint32Array(stdin, 4, 1);
       var stdin_view = new Uint8Array(stdin, 8);
-      console.log('stdin_arr=', stdin_arr);
       if(data.key_code === 13) {
         console.log('--- return ---');
+        // make sure we push null character into the array
         stdin_arr.push(0);
+        console.log('stdin_arr=', stdin_arr);
         for(i = 0; i < stdin_arr.length; i++) {
           stdin_view[i] = stdin_arr[i];
         }
-        stdin_size[0] = stdin_arr.length-1;
+        stdin_size[0] = stdin_arr.length;
         stdin_arr = [];
         console.log(logprefix, 'stdin=', stdin);
         var stdin_i32 = new Int32Array(stdin);
@@ -189,6 +190,7 @@ onmessage = function(ev) {
       }
       else {
         stdin_arr.push(data.key_code);
+        console.log('stdin_arr=', stdin_arr);
         postMessage({
           type: 'term_echo',
           data: {

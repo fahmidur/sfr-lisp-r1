@@ -110,11 +110,10 @@ function make_wasm_instance() {
         var bytes_read = stdin_i32[1];
         console.log(logprefix, 'fd_read. bytes_read=', bytes_read);
         var stdin_view = new Uint8Array(stdin, 8, bytes_read);
-        for(i = 0; i < bytes_read; i++) {
-          let ch = stdin_view[i];
-          console.log(logprefix, 'ch=', String.fromCharCode(ch));
-        }
-
+        // for(i = 0; i < bytes_read; i++) {
+        //   let ch = stdin_view[i];
+        //   console.log(logprefix, 'ch=', String.fromCharCode(ch));
+        // }
         var memory = new Uint32Array(wasm_memory_buffer());
         for(let i = 0; i < iovs_len; i++) {
           let offset = i * 8;
@@ -124,17 +123,18 @@ function make_wasm_instance() {
           let buf_size = iov[1];
           console.log('buf_ptr=', buf_ptr, 'memory[buf_ptr]=', memory[buf_ptr]);
           console.log('wasm_instance=', wasm_instance);
-          // var malloc_res = wasm_instance.exports.sfr_malloc(bytes_read+1);
-          // console.log('malloc_res=', malloc_res);
           let buf_view = new Uint8Array(memory.buffer, buf_ptr, buf_size);
-          buf_view.set(stdin_view);
+          // let fbytes = Math.min(buf_size, bytes_read);
+          buf_view.set(stdin_view.subarray(0, stdin_view.byteLength));
           console.log('buf_view=', buf_view);
         }
 
         var ret_view = new DataView(wasm_memory_buffer());
         // ret_view[0] = bytes_read;
         // ret_view[1] = 0;
-        ret_view.setUint32(ret_ptr, 0, true);
+        ret_view.setUint32(ret_ptr, bytes_read+1, true);
+        ret_view.setUint32(ret_ptr+4, 0, true);
+        return 0;
       },
       path_open: function() {
       },
