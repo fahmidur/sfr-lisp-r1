@@ -254,7 +254,7 @@ ssize_t String_getline(String* self, FILE* stream) {
   /* else { */
     ret = getline(&(self->buf), &(self->buf_size), stream);
   /* } */
-  printf("String_getline. ret=%ld buf_size=%ld\n", ret, self->buf_size);
+  /* dbg_printf("String_getline. ret=%ld buf_size=%ld\n", ret, self->buf_size); */
   String_len(self);
   return ret;
 }
