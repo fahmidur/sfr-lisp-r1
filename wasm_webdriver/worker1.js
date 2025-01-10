@@ -115,9 +115,22 @@ function make_wasm_instance() {
           console.log(logprefix, 'ch=', String.fromCharCode(ch));
         }
 
-        let iov = iovs[0];
-        var memory = wasm_memory.buffer;
-        console.log(logprefix, 'iov=', iov);
+        var memory = new Uint32Array(wasm_memory_buffer());
+        for(let i = 0; i < iovs_len; i++) {
+          let offset = i * 8;
+          let iov = new Uint32Array(memory.buffer, iovs + offset, 2);
+          console.log('iov[', i, ']=', iov);
+          let wptr = iov[0];
+          console.log('wptr=', wptr, 'memory[wptr]=', memory[wptr]);
+          console.log('wasm_instance=', wasm_instance);
+          // var malloc_res = wasm_instance.exports.sfr_malloc(bytes_read+1);
+          // console.log('malloc_res=', malloc_res);
+          let outview = new Uint8Array(memory.buffer, iov[0], iov[1]);
+          for(i = 0; i < bytes_read; i++) {
+            outview[i] = stdin_view[i];
+          }
+          console.log('outview=', outview);
+        }
 
         ret_view[0] = bytes_read;
         // errno = 0
