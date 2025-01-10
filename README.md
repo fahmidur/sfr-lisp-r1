@@ -296,3 +296,38 @@ to Tail-Call-Optimization (TCO).
 
 See [Todo-List](./TODO.txt) for an updated running list.
 
+## WASM/WASI Build Configuration
+
+The WASM-WASI build is slightly more complicated than the regular build for your host architecture.
+To get a better understanding of what/how WASM builds work, I am intentionally using the minimal set of 
+tools to get a functioning wasm file to use with my web-driver.
+
+Requirements:
+- LLVM Clang 18
+- [wasi-libc](https://github.com/WebAssembly/wasi-libc)
+- [libclang\_rt.builtins-wasm32-wasi] from (https://github.com/WebAssembly/wasi-sdk/releases/tag/wasi-sdk-25)
+
+First, we need to install LLVM Clang, because that is what we will use to cross-compile to the web-assembly target.
+If you are on Debian/Ubuntu, you can install this with `apt install clang`
+
+Next, we will need a linker that can link for the wasm target, that is provided by a the LLVM lld project, 
+which includes a tool called [wasm-lld](https://lld.llvm.org/WebAssembly.html)
+If you are on Debian/Ubuntu, you can install this with `apt install lld`.
+
+Next, we need to download and build wasi-libc, this provides a libc and related libraries for WASI. 
+Pull this from Github to some location, and build it. 
+The result will be a sysroot folder for the wasm32-wasi target. 
+This sysroot must be used as the sysroot parameter in ./RakefileConfig.yaml.
+
+At this point, the WASM/WASI build will still fail.
+
+Next, you need the following library file from the [wasi-sdk project](https://github.com/WebAssembly/wasi-sdk) -- `libclang_rt.builtins-wasm32.a`
+
+Go to the Releases page for the latest Release for
+[wasi-sdk](https://github.com/WebAssembly/wasi-sdk/releases/tag/wasi-sdk-25)
+and download the zipped file [here](https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-25/libclang_rt.builtins-wasm32-wasi-25.0.tar.gz).
+Unzip this file and place it into your sysroot/lib/wasm32-wasi directory.
+
+Now, at last the wasm build should succeed.
+
+
