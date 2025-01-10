@@ -104,8 +104,8 @@ function make_wasm_instance() {
         Atomics.wait(stdin_i32, 0, 0);
         console.log(logprefix, 'fd_read. --- wait complete ---');
         Atomics.store(stdin_i32, 0, 0);
-        // output size = 8 octets (64 bits), 2 (32bit, 4byte) uint values
-        var ret_view = new Uint32Array(wasm_memory.buffer, ret_ptr, 2);
+        // // output size = 8 octets (64 bits), 2 (32bit, 4byte) uint values
+        // var ret_view = new Uint32Array(wasm_memory.buffer, ret_ptr, 2);
         // the number of byets read
         var bytes_read = stdin_i32[1];
         console.log(logprefix, 'fd_read. bytes_read=', bytes_read);
@@ -120,21 +120,21 @@ function make_wasm_instance() {
           let offset = i * 8;
           let iov = new Uint32Array(memory.buffer, iovs + offset, 2);
           console.log('iov[', i, ']=', iov);
-          let wptr = iov[0];
-          console.log('wptr=', wptr, 'memory[wptr]=', memory[wptr]);
+          let buf_ptr = iov[0];
+          let buf_size = iov[1];
+          console.log('buf_ptr=', buf_ptr, 'memory[buf_ptr]=', memory[buf_ptr]);
           console.log('wasm_instance=', wasm_instance);
           // var malloc_res = wasm_instance.exports.sfr_malloc(bytes_read+1);
           // console.log('malloc_res=', malloc_res);
-          let outview = new Uint8Array(memory.buffer, iov[0], iov[1]);
-          for(i = 0; i < bytes_read; i++) {
-            outview[i] = stdin_view[i];
-          }
-          console.log('outview=', outview);
+          let buf_view = new Uint8Array(memory.buffer, buf_ptr, buf_size);
+          buf_view.set(stdin_view);
+          console.log('buf_view=', buf_view);
         }
 
-        ret_view[0] = bytes_read;
-        // errno = 0
-        ret_view[1] = 0;
+        var ret_view = new DataView(wasm_memory_buffer());
+        // ret_view[0] = bytes_read;
+        // ret_view[1] = 0;
+        ret_view.setUint32(ret_ptr, 0, true);
       },
       path_open: function() {
       },
