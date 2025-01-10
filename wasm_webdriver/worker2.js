@@ -168,7 +168,12 @@ onmessage = function(ev) {
       stdin = data.stdin;
       wasm_memory = data.wasm_memory;
       wasm_bytes = data.wasm_bytes;
-      make_wasm_instance();
+      // make_wasm_instance();
+      postMessage({
+        type: 'inited',
+        data: {
+        }
+      });
       break;
     case 'stdin':
       var stdin_size = new Uint32Array(stdin, 4, 1);

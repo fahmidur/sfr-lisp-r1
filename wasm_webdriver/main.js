@@ -85,10 +85,10 @@ worker2.onmessage = function(ev) {
     case 'inited':
       console.log(logprefix, 'heard worker2 inited');
       workers['worker2'].state.inited = true;
-      var stringio_state_ptr = msg.data.stringio_state_ptr;
-      console.log(logprefix, 'from worker2 stringio_state_ptr=', stringio_state_ptr);
-      var stringio_buf_ptr = msg.data.stringio_buf_ptr;
-      console.log(logprefix, 'stringio_buf_ptr=', stringio_buf_ptr);
+      // var stringio_state_ptr = msg.data.stringio_state_ptr;
+      // console.log(logprefix, 'from worker2 stringio_state_ptr=', stringio_state_ptr);
+      // var stringio_buf_ptr = msg.data.stringio_buf_ptr;
+      // console.log(logprefix, 'stringio_buf_ptr=', stringio_buf_ptr);
       maybe_init_term();
       worker1.postMessage({
         type: 'start',

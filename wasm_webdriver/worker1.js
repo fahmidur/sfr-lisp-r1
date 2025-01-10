@@ -3,7 +3,7 @@ var wasm_memory = null;
 var wasm_instance = null;
 var stdin = null;
 
-var stringio_state_ptr = null;
+// var stringio_state_ptr = null;
 
 var logprefix = 'worker1.';
 
@@ -78,18 +78,23 @@ function make_wasm_instance() {
         console.log(logprefix, 'arg_sizes_get. ret_arr=', ret_arr);
       },
       environ_get: function() {
+        console.log(logprefix, environ_get);
       },
       environ_sizes_get: function() {
+        console.log(logprefix, 'environ_sizes_get');
         return 0;
       },
       fd_fdstat_get: function(fd) {
         console.log(logprefix, 'fd_fdstat_get. fd=', fd);
       },
       fd_fdstat_set_flags: function() {
+        console.log(logprefix, 'fd_fdstat_set_flags');
       },
       fd_prestat_get: function() {
+        console.log(logprefix, 'fd_prestat_get');
       },
       fd_prestat_dir_name: function() {
+        console.log(logprefix, 'fd_prestat_dir_name');
       },
       fd_seek: function() {
         console.log(logprefix, 'fd_seek');
@@ -183,9 +188,9 @@ function make_wasm_instance() {
 }
 
 function wasm_start() {
-  if(stringio_state_ptr == null) {
-    throw 'Expecting non-null stringio_state_ptr';
-  }
+  // if(stringio_state_ptr == null) {
+  //   throw 'Expecting non-null stringio_state_ptr';
+  // }
   console.log(logprefix, '=============================== wasm_start()');
   wasm_instance.exports._start();
   console.log(logprefix, '=============================== wasm_start() ... DONE');
@@ -215,12 +220,12 @@ onmessage = function(ev) {
       make_wasm_instance();
       break;
     case 'start':
-      console.log(logprefix, 'got stringio_state_ptr=', data.stringio_state_ptr)
-      stringio_state_ptr = data.stringio_state_ptr;
-      console.log(logprefix, 'got stringio_buf_ptr=', data.stringio_buf_ptr);
-      wasm_instance.exports.stringio_set(data.stringio_buf_ptr, 4);
-      var my_stringio_buf_ptr = wasm_instance.exports.stringio_get_buf();
-      console.log(logprefix, 'my_stringio_buf_ptr=', my_stringio_buf_ptr);
+      // console.log(logprefix, 'got stringio_state_ptr=', data.stringio_state_ptr)
+      // stringio_state_ptr = data.stringio_state_ptr;
+      // console.log(logprefix, 'got stringio_buf_ptr=', data.stringio_buf_ptr);
+      // wasm_instance.exports.stringio_set(data.stringio_buf_ptr, 4);
+      // var my_stringio_buf_ptr = wasm_instance.exports.stringio_get_buf();
+      // console.log(logprefix, 'my_stringio_buf_ptr=', my_stringio_buf_ptr);
       wasm_start();
     default:
   }
