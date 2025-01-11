@@ -133,10 +133,11 @@ function make_wasm_instance() {
           console.log('buf_view=', buf_view);
         }
 
+        console.log('bytes_read=', bytes_read);
         var ret_view = new DataView(wasm_memory_buffer());
         // ret_view[0] = bytes_read;
         // ret_view[1] = 0;
-        ret_view.setUint32(ret_ptr, bytes_read+1, true);
+        ret_view.setUint32(ret_ptr, bytes_read, false);
         // ret_view.setUint32(ret_ptr+4, 0, true);
         return 0;
       },
