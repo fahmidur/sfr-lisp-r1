@@ -1,6 +1,8 @@
 var wasm_bytes = null;
 var wasm_memory = null;
 var wasm_instance = null;
+var term_inited = false;
+var wasm_started = false;
 var stdin = null;
 
 // var stringio_state_ptr = null;
@@ -132,13 +134,11 @@ function make_wasm_instance() {
           buf_view.set(stdin_view.subarray(0, stdin_view.byteLength));
           console.log('buf_view=', buf_view);
         }
-
         console.log('bytes_read=', bytes_read);
-        var ret_view = new DataView(wasm_memory_buffer());
+        // var ret_view = new Int32Array(wasm_memory_buffer(), ret_ptr, 2);
         // ret_view[0] = bytes_read;
-        // ret_view[1] = 0;
+        var ret_view = new DataView(wasm_memory_buffer());
         ret_view.setUint32(ret_ptr, bytes_read, false);
-        // ret_view.setUint32(ret_ptr+4, 0, true);
         return 0;
       },
       path_open: function() {
@@ -187,10 +187,17 @@ function make_wasm_instance() {
   });
 }
 
-function wasm_start() {
+function maybe_wasm_start() {
   // if(stringio_state_ptr == null) {
   //   throw 'Expecting non-null stringio_state_ptr';
   // }
+  if(!term_inited) {
+    return;
+  }
+  if(wasm_started) {
+    return;
+  }
+  wasm_started = true;
   console.log(logprefix, '=============================== wasm_start()');
   wasm_instance.exports._start();
   console.log(logprefix, '=============================== wasm_start() ... DONE');
@@ -219,14 +226,15 @@ onmessage = function(ev) {
       wasm_bytes = data.wasm_bytes;
       make_wasm_instance();
       break;
-    case 'start':
+    case 'term_inited':
       // console.log(logprefix, 'got stringio_state_ptr=', data.stringio_state_ptr)
       // stringio_state_ptr = data.stringio_state_ptr;
       // console.log(logprefix, 'got stringio_buf_ptr=', data.stringio_buf_ptr);
       // wasm_instance.exports.stringio_set(data.stringio_buf_ptr, 4);
       // var my_stringio_buf_ptr = wasm_instance.exports.stringio_get_buf();
       // console.log(logprefix, 'my_stringio_buf_ptr=', my_stringio_buf_ptr);
-      wasm_start();
+      term_inited = true;
+      maybe_wasm_start();
     default:
   }
 };
