@@ -99,8 +99,8 @@ function make_wasm_instance() {
       fd_seek: function() {
         console.log(logprefix, 'fd_seek');
       },
-      fd_read: function(fd, iovs, iovs_len, ret_ptr) {
-        console.log(logprefix, 'fd_read. fd=', fd, 'iovs=', iovs, 'iovs_len=', iovs_len, 'ret_ptr=', ret_ptr);
+      fd_read: function(fd, iovs_ptr, iovs_len, ret_ptr) {
+        console.log(logprefix, 'fd_read. fd=', fd, 'iovs_ptr=', iovs_ptr, 'iovs_len=', iovs_len, 'ret_ptr=', ret_ptr);
         if(fd !== 0) {
           throw 'only reading on STDIN fd=0 is currently supported';
         }
@@ -122,14 +122,13 @@ function make_wasm_instance() {
         var memory = new Uint32Array(wasm_memory_buffer());
         for(let i = 0; i < iovs_len; i++) {
           let offset = i * 8;
-          let iov = new Uint32Array(memory.buffer, iovs + offset, 2);
+          let iov = new Uint32Array(memory.buffer, iovs_ptr + offset, 2);
           console.log('iov[', i, ']=', iov);
           let buf_ptr = iov[0];
           let buf_size = iov[1];
-          console.log('buf_ptr=', buf_ptr, 'memory[buf_ptr]=', memory[buf_ptr]);
+          console.log('buf_ptr=', buf_ptr);
           console.log('wasm_instance=', wasm_instance);
           let buf_view = new Uint8Array(memory.buffer, buf_ptr, buf_size);
-          // let fbytes = Math.min(buf_size, bytes_read);
           buf_view.set(stdin_view.subarray(0, stdin_view.byteLength));
           console.log('buf_view=', buf_view);
         }
@@ -138,7 +137,7 @@ function make_wasm_instance() {
         // ret_view[0] = bytes_read;
         // ret_view[1] = 0;
         ret_view.setUint32(ret_ptr, bytes_read+1, true);
-        ret_view.setUint32(ret_ptr+4, 0, true);
+        // ret_view.setUint32(ret_ptr+4, 0, true);
         return 0;
       },
       path_open: function() {
