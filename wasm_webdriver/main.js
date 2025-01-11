@@ -3,7 +3,9 @@ console.log('--- main.js ---');
 var logprefix = 'main___.';
 
 var term_kbmode = false;
-var term = new Terminal();
+var term = new Terminal({
+  cursorBlink: true
+});
 term.open(document.getElementById('terminal'));
 // term.write('Hello from \x1B[1;3;31mxterm.js\x1B[0m $ ')
 // term.onKey(function(e) {
