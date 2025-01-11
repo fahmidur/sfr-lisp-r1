@@ -7,10 +7,8 @@ var term = new Terminal({
   cursorBlink: true
 });
 term.open(document.getElementById('terminal'));
-// term.write('Hello from \x1B[1;3;31mxterm.js\x1B[0m $ ')
-// term.onKey(function(e) {
-//   // term.write(e.key);
-// });
+var term_inited = false;
+var term_encoder = new TextEncoder();
 
 
 var stdin = new SharedArrayBuffer(1024);
@@ -33,13 +31,23 @@ function worker_add(name, worker) {
   }
 }
 
-var term_encoder = new TextEncoder();
-function maybe_init_term() {
+function workers_all_inited() {
   for(var k in workers) {
     if(workers[k].state.inited !== true) {
-      return;
+      return false;
     }
   }
+  return true;
+}
+
+function maybe_init_term() {
+  if(!workers_all_inited()) {
+    return;
+  }
+  if(term_inited) {
+    return;
+  }
+  term_inited = true;
   term.onKey(function(ev) {
     let key_code = ev.key.charCodeAt(0);
     console.log('term. ev=', ev, 'key=', ev.key, 'key_code=', key_code);
@@ -51,7 +59,11 @@ function maybe_init_term() {
         key_code: key_code
       }
     });
+  });
 
+  workers['worker1'].worker.postMessage({
+    type: 'term_inited',
+    data: {},
   });
 }
 
@@ -92,10 +104,6 @@ worker2.onmessage = function(ev) {
       // var stringio_buf_ptr = msg.data.stringio_buf_ptr;
       // console.log(logprefix, 'stringio_buf_ptr=', stringio_buf_ptr);
       maybe_init_term();
-      worker1.postMessage({
-        type: 'start',
-        data: msg.data,
-      });
       break;
     case 'term_echo':
       term.write(msg.data.key);
