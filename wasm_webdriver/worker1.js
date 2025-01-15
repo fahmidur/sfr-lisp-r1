@@ -117,6 +117,7 @@ function make_wasm_instance() {
         var bytes_read = stdin_i32[1];
         console.log(logprefix, 'fd_read. bytes_read=', bytes_read);
         var stdin_view = new Uint8Array(stdin, 8, bytes_read);
+        console.log('stdin_view=', stdin_view);
         // for(i = 0; i < bytes_read; i++) {
         //   let ch = stdin_view[i];
         //   console.log(logprefix, 'ch=', String.fromCharCode(ch));
@@ -124,6 +125,7 @@ function make_wasm_instance() {
         var memory = new Uint32Array(wasm_memory_buffer());
         for(let i = 0; i < iovs_len; i++) {
           let offset = i * 8;
+          // iov is 2 32-bit/4byte pointers
           let iov = new Uint32Array(wasm_memory_buffer(), iovs_ptr + offset, 2);
           console.log('iov[', i, ']=', iov);
           let buf_ptr = iov[0];
@@ -131,21 +133,20 @@ function make_wasm_instance() {
           console.log('buf_ptr=', buf_ptr);
           console.log('wasm_instance=', wasm_instance);
           let buf_view = new Uint8Array(wasm_memory_buffer(), buf_ptr, buf_size);
-          for(let j = 0; j < buf_size; j++) {
-            buf_view[j] = 0;
-          }
+          console.log('iov i=', i, ' buf_view=', buf_view, 'buf_size=', buf_size);
+          // for(let j = 0; j < buf_size; j++) {
+          //   buf_view[j] = 0;
+          // }
           buf_view.set(stdin_view.subarray(0, stdin_view.byteLength));
-          console.log('buf_view=', buf_view.subarray(0, 2*stdin_view.byteLength));
+          console.log('buf_view=', buf_view, 'buf_size=', buf_size);
         }
         console.log('bytes_read=', bytes_read);
         var ret_view = new Uint32Array(wasm_memory_buffer(), ret_ptr, 2);
-        ret_view[0] = 0x01_00_00_00;
+        ret_view[0] = bytes_read;
         ret_view[1] = 0;
-        // var ret_view = new DataView(wasm_memory_buffer());
-        // the false here indicates big-endian value
-        // ret_view.setUint32(ret_ptr, bytes_read, false);
         console.log('ret_view=', ret_view);
-        return 0;
+        wasm_instance.exports.stdout_flush();
+        return 0; // 0 = success
       },
       path_open: function() {
       },
