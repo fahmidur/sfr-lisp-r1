@@ -6,9 +6,15 @@ var term_kbmode = false;
 var term = new Terminal({
   cursorBlink: true
 });
+var fitAddon = new FitAddon.FitAddon();
+term.loadAddon(fitAddon);
+
 term.open(document.getElementById('terminal'));
+fitAddon.fit();
+
 var term_inited = false;
 var term_encoder = new TextEncoder();
+
 
 
 var stdin = new SharedArrayBuffer(1024);

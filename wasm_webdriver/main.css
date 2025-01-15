@@ -30,6 +30,7 @@ body {
 }
 .container .tab-body {
   flex-grow: 1;
+  margin-bottom: 2em;
 }
 .tab-head {
   padding-bottom: 0.5em;
@@ -51,5 +52,8 @@ body {
   color: orange;
 }
 .tab-body {
-  border: 1px solid red;
+  height: 100%;
+}
+#terminal {
+  height: 100%;
 }
