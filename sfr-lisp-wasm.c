@@ -130,9 +130,9 @@ void repl() {
       printf("getline. ERROR=%ld\n", inp_ret);
       break;
     }
-    printf("OK. READ 001. %ld chars. buf=|%s| buf_size=%ld\n", inp_ret, inp->buf, inp->buf_size);
+    /* printf("OK. READ 001. %ld chars. buf=|%s| buf_size=%ld\n", inp_ret, inp->buf, inp->buf_size); */
     String_chomp(inp);
-    printf("OK. READ 002. %ld chars. buf=|%s| buf_size=%ld\n", inp_ret, inp->buf, inp->buf_size);
+    /* printf("OK. READ 002. %ld chars. buf=|%s| buf_size=%ld\n", inp_ret, inp->buf, inp->buf_size); */
 
     if(strcmp(inp->buf, ".exit") == 0) {
       printf("goodbye\n");
