@@ -144,7 +144,9 @@ void repl() {
     }
     else
     if(strcmp(inp->buf, ".clear") == 0 || strcmp(inp->buf, ".cls") == 0) {
-      // do nothing
+      printf("\033[2J");
+      printf("\033[H");
+      fflush(stdout);
     }
     else
     if(strlen(inp->buf) > 1 && inp->buf[0] == '.') {
