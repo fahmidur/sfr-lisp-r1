@@ -4,67 +4,18 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <title>SFR-Lisp Wasm WebDriver</title>
-    <style>
-      html, body {
-        padding: 0px;
-        margin: 0px;
-        height: 100%;
-      }
-      body {
-        background-color: #222;
-        color: #fff;
-        font-family: 'Courier New', 'Ubuntu Mono', monospace !important;
-        scrollbar-color: #ddd #000;
-        scrollbar-width: thin;
-        display: flex;
-        flex-direction: column;
-      }
-      #terminal {
-        border: 1px solid #444;
-        background-color: #000;
-        padding: 0.5em;
-      }
-      .tab-body {
-      }
-      .container {
-        flex-grow: 1;
-        padding: 0.5em;
-      }
-      .tab-head {
-        padding-bottom: 0.5em;
-      }
-      .tab-head button {
-        background-color: #444;
-        border: 1px solid #555;
-        color: #fff;
-        padding: 0.3em;
-        padding-left: 0.5em;
-        padding-right: 0.5em;
-        border-radius: 0.3em;
-        margin-right: 0.5em;
-        font-weight: bold;
-        cursor: pointer;
-      }
-      .tab-head button:hover {
-        border: 1px solid orange;
-        color: orange;
-      }
-      .terminal-holder {
-        border: 1px solid red;
-      }
-    </style>
-  <link rel="stylesheet" href="node_modules/@xterm/xterm/css/xterm.css" />
-  <script src="node_modules/@xterm/xterm/lib/xterm.js"></script>
+    <link rel="stylesheet" href="node_modules/@xterm/xterm/css/xterm.css" />
+    <link rel="stylesheet" href="main.css" type="text/css" media="screen" title="no title" charset="utf-8">
+    <script src="node_modules/@xterm/xterm/lib/xterm.js"></script>
   </head>
   <body>
     <div class='container'>
       <h1>SFR-Lisp Wasm WebDriver</h1>
-
       <div class='tab-head'>
         <button>Terminal</button>
       </div>
       <div class='tab-body'>
-        <div class='terminal-holder'><div id='terminal'></div></div>
+        <div id='terminal'></div>
       </div>
     </div>
     <script src='main.js'></script>
