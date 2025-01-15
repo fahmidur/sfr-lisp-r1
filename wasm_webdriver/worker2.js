@@ -5,8 +5,8 @@ var wasm_instance = null;
 var stdin = null;
 var stdin_pos = 0;
 var stdin_arr = [];
-var stdin_hist = [];
-var stdin_hist_idx = null;
+var stdin_hist = [[]];
+var stdin_hist_idx = 0;
 
 var stringio_state_ptr = null;
 var stringio_buf_ptr = null;
@@ -170,6 +170,28 @@ function do_backspace() {
   });
 }
 
+function history_go(dir) {
+  if(stdin_hist.length == 0) {
+    return;
+  }
+  stdin_hist_idx = gmod(stdin_hist_idx+dir, stdin_hist.length);
+  // erase whatever is in the current stdin
+  while(stdin_arr.length > 0) {
+    do_backspace();
+  }
+  console.log('stdin_hist=', stdin_hist, 'stdin_hist_idx=', stdin_hist_idx);
+  stdin_arr = arr_clone(stdin_hist[stdin_hist_idx]);
+  console.log('stdin_arr=', stdin_arr);
+  if(stdin_arr.length > 0) {
+    postMessage({
+      type: 'term_echo',
+      data: {
+        key: stdin_arr.map((x) => String.fromCharCode(x)).join('')
+      }
+    });
+  }
+}
+
 onmessage = function(ev) {
   var msg = ev.data;
   console.log(logprefix, 'ev = ', ev, 'msg=', msg);
@@ -200,24 +222,11 @@ onmessage = function(ev) {
       var stdin_view = new Uint8Array(stdin, 8);
       if(data.key == '\x1B[A') { // arrow up
         console.log(logprefix, '-- arrow up --');
-        if(stdin_hist.length == 0) {
-          return;
-        }
-        if(stdin_hist_idx === null) {
-          stdin_hist_idx == stdin_hist.length - 1;
-        } else {
-          stdin_hist_idx = gmod(stdin_hist_idx-1, stdin_hist.length);
-        }
-        while(stdin_arr.length > 0) {
-          do_backspace();
-        }
-        console.log('stdin_hist=', stdin_hist);
-        stdin_arr = stdin_hist[stdin_hist_idx];
-        console.log('stdin_arr=', stdin_arr);
-        postMessage({
-          type: 'term_echo',
-          key: stdin_arr.join('')
-        });
+        history_go(-1);
+      }
+      if(data.key == '\x1B[B') { // arrow up
+        console.log(logprefix, '-- arrow down --');
+        history_go(+1);
       }
       else
       if(data.key == '\x7f') { //backspace key
