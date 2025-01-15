@@ -1,0 +1,55 @@
+html, body {
+  padding: 0px;
+  margin: 0px;
+  height: 100%;
+}
+body {
+  background-color: #222;
+  color: #fff;
+  font-family: 'Courier New', 'Ubuntu Mono', monospace !important;
+  scrollbar-color: #ddd #000;
+  scrollbar-width: thin;
+  display: flex;
+  flex-direction: column;
+}
+#terminal {
+  border: 1px solid #444;
+  background-color: #000;
+  padding: 0.5em;
+}
+.tab-body {
+}
+.container {
+  flex-grow: 1;
+  padding: 0.5em;
+  display: flex;
+  flex-direction: column;
+}
+.container h1 {
+  flex-grow: 0;
+}
+.container .tab-body {
+  flex-grow: 1;
+}
+.tab-head {
+  padding-bottom: 0.5em;
+}
+.tab-head button {
+  background-color: #444;
+  border: 1px solid #555;
+  color: #fff;
+  padding: 0.3em;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+  border-radius: 0.3em;
+  margin-right: 0.5em;
+  font-weight: bold;
+  cursor: pointer;
+}
+.tab-head button:hover {
+  border: 1px solid orange;
+  color: orange;
+}
+.tab-body {
+  border: 1px solid red;
+}
