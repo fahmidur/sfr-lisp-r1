@@ -181,7 +181,7 @@ onmessage = function(ev) {
       if(data.key_code === 13) {
         console.log('--- return ---');
         // make sure we push null character into the array
-        stdin_arr.push(0);
+        stdin_arr.push(10); // LF character
         console.log('stdin_arr=', stdin_arr);
         for(i = 0; i < stdin_arr.length; i++) {
           stdin_view[i] = stdin_arr[i];
