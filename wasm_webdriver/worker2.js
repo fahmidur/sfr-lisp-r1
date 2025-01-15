@@ -5,6 +5,8 @@ var wasm_instance = null;
 var stdin = null;
 var stdin_pos = 0;
 var stdin_arr = [];
+var stdin_hist = [];
+var stdin_hist_idx = null;
 
 var stringio_state_ptr = null;
 var stringio_buf_ptr = null;
@@ -12,6 +14,14 @@ var stringio_buf_ptr = null;
 var logprefix = 'worker2.';
 
 var wasm_args = ["sfr-lisp-wasm"];
+
+function gmod(n, m) {
+  return ((n%m)+m)%m;
+}
+
+function arr_clone(arr) {
+  return arr.map((x) => x);
+}
 
 function make_wasm_instance() {
   console.log(logprefix, 'make_wasm_instance. wasm_memory.buffer=', wasm_memory.buffer);
@@ -150,6 +160,16 @@ function isAlphaNumeric(keyCode) {
   return false;
 }
 
+function do_backspace() {
+  stdin_arr.pop();
+  postMessage({
+    type: 'term_echo',
+    data: {
+      key: '\x1b[D\x1b[K'
+    }
+  });
+}
+
 onmessage = function(ev) {
   var msg = ev.data;
   console.log(logprefix, 'ev = ', ev, 'msg=', msg);
@@ -178,22 +198,45 @@ onmessage = function(ev) {
     case 'stdin':
       var stdin_size = new Uint32Array(stdin, 4, 1);
       var stdin_view = new Uint8Array(stdin, 8);
+      if(data.key == '\x1B[A') { // arrow up
+        console.log(logprefix, '-- arrow up --');
+        if(stdin_hist.length == 0) {
+          return;
+        }
+        if(stdin_hist_idx === null) {
+          stdin_hist_idx == stdin_hist.length - 1;
+        } else {
+          stdin_hist_idx = gmod(stdin_hist_idx-1, stdin_hist.length);
+        }
+        while(stdin_arr.length > 0) {
+          do_backspace();
+        }
+        console.log('stdin_hist=', stdin_hist);
+        stdin_arr = stdin_hist[stdin_hist_idx];
+        console.log('stdin_arr=', stdin_arr);
+        postMessage({
+          type: 'term_echo',
+          key: stdin_arr.join('')
+        });
+      }
+      else
       if(data.key == '\x7f') { //backspace key
         console.log(logprefix, 'stdin. -- backspace --');
         if(stdin_arr.length == 0) {
           return;
         }
-        stdin_arr.pop();
-        postMessage({
-          type: 'term_echo',
-          data: {
-            key: '\x1b[D\x1b[K'
-          }
-        });
+        do_backspace();
       }
       else
       if(data.key_code === 13) {
         console.log('--- return ---');
+        postMessage({
+          type: 'term_echo',
+          data: {
+            key: "\r\n",
+          }
+        });
+        stdin_hist.push(arr_clone(stdin_arr));
         // make sure we push null character into the array
         stdin_arr.push(10); // LF character
         console.log('stdin_arr=', stdin_arr);
@@ -207,7 +250,8 @@ onmessage = function(ev) {
         Atomics.store(stdin_i32, 0, 1);
         Atomics.notify(stdin_i32, 0);
       }
-      else {
+      else 
+      if(data.key_code >= 32 && data.key_code <= 126) {
         stdin_arr.push(data.key_code);
         console.log('stdin_arr=', stdin_arr);
         postMessage({
