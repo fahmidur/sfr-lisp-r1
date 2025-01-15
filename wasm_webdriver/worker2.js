@@ -178,6 +178,20 @@ onmessage = function(ev) {
     case 'stdin':
       var stdin_size = new Uint32Array(stdin, 4, 1);
       var stdin_view = new Uint8Array(stdin, 8);
+      if(data.key == '\x7f') { //backspace key
+        console.log(logprefix, 'stdin. -- backspace --');
+        if(stdin_arr.length == 0) {
+          return;
+        }
+        stdin_arr.pop();
+        postMessage({
+          type: 'term_echo',
+          data: {
+            key: '\x1b[D\x1b[K'
+          }
+        });
+      }
+      else
       if(data.key_code === 13) {
         console.log('--- return ---');
         // make sure we push null character into the array

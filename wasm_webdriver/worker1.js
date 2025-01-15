@@ -134,9 +134,6 @@ function make_wasm_instance() {
           console.log('wasm_instance=', wasm_instance);
           let buf_view = new Uint8Array(wasm_memory_buffer(), buf_ptr, buf_size);
           console.log('iov i=', i, ' buf_view=', buf_view, 'buf_size=', buf_size);
-          // for(let j = 0; j < buf_size; j++) {
-          //   buf_view[j] = 0;
-          // }
           buf_view.set(stdin_view.subarray(0, stdin_view.byteLength));
           console.log('buf_view=', buf_view, 'buf_size=', buf_size);
         }
