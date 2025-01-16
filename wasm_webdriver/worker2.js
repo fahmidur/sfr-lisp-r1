@@ -242,7 +242,7 @@ onmessage = function(ev) {
         postMessage({
           type: 'term_echo',
           data: {
-            key: "\r\n",
+            key: "\n\r",
           }
         });
         stdin_hist.push(arr_clone(stdin_arr));
