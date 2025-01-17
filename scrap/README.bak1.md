@@ -220,7 +220,7 @@ as that of the the CPython garbage collector.
 
 The Hash class implements a Hashmap, where keys are stored in a buckets based on 
 the Hash value of the key. 
-At the moment, keys must be Object<String> or Object<Symbol>.
+At the moment, keys must be `Object<String>` or `Object<Symbol>`.
 To ensure consistency of the Hash, all keys are duplicated when added to the Hash,
 values are not. Value references can therefore be mutated, but key values cannot.
 
@@ -263,7 +263,7 @@ using the same Object System and Runtime.
 
 #### The Tokenizer
 
-The tokenizer should return a flat Object<List> of Objects where each Object is either:
+The tokenizer should return a flat `Object<List>` of Objects where each Object is either:
 - `Object<Symbol>` -- Parenthesis and BareWords
 - `Object<String>` -- Basic String type Object
 - `Object<Number>` -- Basic Number type Object
