@@ -10,26 +10,26 @@ a great exercise. I chose C because it is about as low-level as one can get
 before assembler, and the most popular implementations of other interpreted
 languages (Perl, Python, Ruby, Raku) are all written in C. 
 
-To paraphrase one of my favorite physicists:
+To misquote one of my favorite physicists:
 
 > What I cannot create [in C], I do not understand.
 > -- Richard P. Feynman
 
 There are definitely better ways to do it than what you see here, efficiency is
-not the goal for this implementation. This implementation is meant to be as
-self-contained a possible. There are no third-party parsers, memory-management
-libraries, or complex build systems. The building is done by Ruby via a simple
+not the goal for this implementation. This implementation tries to be as
+self-contained a possible. There are no parser generators, memory-management
+libraries, or complex build systems. Building is done by Ruby via a simple
 readable Rakefile. There is a prototype implementation written in Ruby that I
 wrote first. There is a test suite, which tests the correctness of the output
-against Racket. There are memory leak tests using Valgrind, called by the test
+against [Racket](https://racket-lang.org/). There are memory leak tests using Valgrind, called by the test
 suite.
 
 The only third-party library used here is Linenoise, a tiny alternative to
 Readline written by Antirez. The reason for this is because keyboard handling,
 terminal specific escape codes for REPLs, and etc is somewhat outside of the
-scope of what I intend on learning here. The functionality that Linenoise
-provides is notoriously hard to get right across different systems. But one
-day, I might switch this out as well.
+scope of what I intend on building/learning here. The functionality that
+Linenoise provides is notoriously hard to get right across different systems.
+But one day, I may switch this out as well.
 
 ## Building
 
@@ -41,9 +41,9 @@ day, I might switch this out as well.
   Racket to confirm it is roughly working the same way. Racket is a far more
   mature lisp, and this is a tiny learning project.
 * Ruby and Rake -- Used for building and running tests.
-* Linenoise -- A small self-contained alternative to Readline by Antirez. 
+* [Linenoise](https://github.com/antirez/linenoise) -- A small self-contained alternative to Readline by Antirez. 
   Vendored as a Git submodule in this repo under ./sub/linenoise). Used mainly
-  for the REPL. [link](https://github.com/antirez/linenoise).
+  for the REPL.
 
 ### Build Instructions
 
