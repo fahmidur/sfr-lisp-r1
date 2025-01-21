@@ -10,7 +10,7 @@ task :clean do
   sh "mkdir -p ./build"
   sh "rm -rf ./build/*"
   sh "rm -f *.o"
-  sh "rm -f README.pdf"
+  sh "rm -f *.pdf"
 
   # Remove any stray executable files which 
   # my be in non-build directory
