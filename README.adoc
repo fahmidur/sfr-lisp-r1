@@ -118,8 +118,11 @@ memory management complications of C.
 
 === The C Object System
 
-The Object System designed here is primarily meant to make C
+The Object System designed here is meant to make C
 as usable as any other Garbage Collected language.
+This is so we can effectively translate the prototype Ruby implementation 
+to C without much change to the underlying logic.
+
 Objects are a thin pointer-to-implementation wrapper around
 more primitive types like Symbol, String, Number, List, and so on.
 
@@ -142,14 +145,15 @@ Symbols are treated differently from normal Objects in that they are
 are not garbage collected until the very end. Like an older version of Ruby,
 Symbols only ever grow in quantitity. It's not great. But the idea here
 is that Symbols should not be dynamically created by a program from user input,
-and relatively few symbols should exist.
+and relatively few symbols should exist throughout the course of a program.
+In the future, we can eliminate unused symbols from the global symbol table.
 
 ==== Number Class
 
 The Number class is a simple wrapper around double.
 For the sake of simplicity, all numbers are doubles.
 In the future, we may want to use a separate implementation for Integers,
-BigIntegers, BigFloats, and so on.
+BigIntegers, BigFloats, Rationals, and so on.
 But for now a Number as a double is a good start.
 
 ==== String Class
