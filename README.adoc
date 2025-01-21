@@ -7,7 +7,7 @@
 == Introduction
 
 SFR-Lisp is a toy lisp-1 interpreter written in C. It is not designed to be
-used for anything important, it is simply a learning exercise. It is really a
+used for anything important, it is simply a learning exercise. It is also
 test bed to play with ideas around the design of C object systems, memory
 management, macros, and etc. 
 
@@ -51,7 +51,7 @@ Racket to confirm it is roughly working the same way. Racket is a far more
 mature lisp, and this is a tiny learning project.
 * Ruby and Rake -- Used for building and running tests.
 * https://github.com/antirez/linenoise[Linenoise] -- A small self-contained alternative to Readline by Antirez.
-Vendored as a Git submodule in this repo under ./sub/linenoise). Used mainly
+Vendored as a Git submodule in this repository under ./sub/linenoise). Used mainly
 for the REPL.
 
 === Build Instructions
@@ -339,4 +339,4 @@ https://github.com/WebAssembly/wasi-sdk/releases/tag/wasi-sdk-25[wasi-sdk]
 and download the zipped file https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-25/libclang_rt.builtins-wasm32-wasi-25.0.tar.gz[here].
 Unzip this file and place it into your sysroot/lib/wasm32-wasi directory.
 
-Now, at last the wasm build should succeed.
+Now, at last the WASM build should succeed.
