@@ -286,7 +286,7 @@ which points to objects which will be later created during parsing anyway.
 
 ==== The Parser
 
-The parser will convert the flat list of objects into a nested list of objects
+The parser converts the flat list of objects into a nested list of objects
 representing the Lisp parse-tree.
 
 == Links and References
@@ -296,7 +296,7 @@ representing the Lisp parse-tree.
 
 == TODO
 
-There's a lot that is missing from this implementation, such as but not limited
+There is a lot that is missing from this implementation, such as but not limited
 to Tail-Call-Optimization (TCO).
 
 See link:./TODO.txt[Todo-List] for an updated running list.
