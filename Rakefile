@@ -10,6 +10,7 @@ task :clean do
   sh "mkdir -p ./build"
   sh "rm -rf ./build/*"
   sh "rm -f *.o"
+  sh "rm -f README.pdf"
 
   # Remove any stray executable files which 
   # my be in non-build directory
@@ -91,5 +92,10 @@ end
 desc "Start a webserver at CWD"
 task :server do
   sh "ruby -run -e httpd ."
+end
+
+desc 'Create docs'
+task :docs do 
+  sh 'asciidoctor-pdf README.adoc'
 end
 
