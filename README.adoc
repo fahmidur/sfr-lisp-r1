@@ -150,7 +150,7 @@ In the future, we can eliminate unused symbols from the global symbol table.
 
 ==== Number Class
 
-The Number class is a simple wrapper around double.
+The Number class is a wrapper around a `double`.
 For the sake of simplicity, all numbers are doubles.
 In the future, we may want to use a separate implementation for Integers,
 BigIntegers, BigFloats, Rationals, and so on.
@@ -158,8 +158,8 @@ But for now a Number as a double is a good start.
 
 ==== String Class
 
-The String class is a simple wrapper around a `char* str`, which is a dynamically
-allocated buffer. The buffer is resized as necessary by the string class.
+The String class is a wrapper around a `char* buf`, which is a dynamically
+allocated buffer. The buffer is resized as necessary by the String class.
 This class handles things like concatenation, comparison and so on.
 For a full list see the header file `./String.h`
 
@@ -212,24 +212,25 @@ When an Object is rejected, if it has a zero reference count, it is destroyed.
 
 ==== List Class
 
-The List implementation class is a simple doubly linked list of ListNodes which
+The List implementation class is a doubly linked list of ListNodes which
 hold a reference to an Object.
 The List class can and does in many cases hold references to other lists.
 
-It is possible to Lists with circular references back to itself or to another container
+It is possible to have Lists with circular references back to itself or to another container
 class which points back to the original list.
 
 Standard reference counting cannot destroy circular lists.
-But such circular lists can be destroyed by the GC scan of all objects.
+
+However, such circular lists can be destroyed by the GC scan of all objects.
 Here the mechanism, of internal reference elimination, is fundamentally the same
 as that of the the CPython garbage collector.
 
 ==== Hash Class
 
-The Hash class implements a Hashmap, where keys are stored in a buckets based on
+The Hash class implements a Hashmap, where keys are stored in buckets based on
 the Hash value of the key.
 At the moment, keys must be `Object<String>` or `Object<Symbol>`.
-To ensure consistency of the Hash, all keys are duplicated when added to the Hash,
+To ensure consistency of the Hash, all keys are cloned when added to the Hash,
 values are not. Value references can therefore be mutated, but key values cannot.
 
 As a container class, hashes can also have circular references.
