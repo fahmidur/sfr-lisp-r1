@@ -95,27 +95,32 @@ if has_flag?('asan')
 end
 $cflags = $cflags.join(' ')
 
+def wasm_conf_check
+  wasm_err = []
+  if $conf['wasm_cc']
+    unless File.exist?($conf['wasm_cc'])
+      wasm_err << "wasm. wasm_cc. No such file at #{$conf['wasm_cc']}"
+    end
+  else
+    wasm_err << 'wasm. Missing conf :wasm_cc'
+  end
+  unless $conf['wasm_sysroot']
+    wasm_err << 'wasm. Missing conf :wasm_sysroot'
+  end
+  unless $conf['wasm_target']
+    wasm_err << 'wasm. Missing conf :wasm_target'
+  end
+  return wasm_err
+end
+
 def compile(type, ofile, sources)
   cc = $cc
   use_wasm = false
   if type.to_s =~ /^wasm/
     use_wasm = true
-    wasm_err = []
+    wasm_err = wasm_conf_check()
     unless File::extname(ofile) == '.wasm'
       wasm_err << 'WASM ofile must end in .wasm'
-    end
-    if $conf['wasm_cc']
-      unless File.exist?($conf['wasm_cc'])
-        wasm_err << "wasm. wasm_cc. No such file at #{$conf['wasm_cc']}"
-      end
-    else
-      wasm_err << 'wasm. Missing conf :wasm_cc'
-    end
-    unless $conf['wasm_sysroot']
-      wasm_err << 'wasm. Missing conf :wasm_sysroot'
-    end
-    unless $conf['wasm_target']
-      wasm_err << 'wasm. Missing conf :wasm_target'
     end
     if wasm_err.size > 0 
       puts "=== WASM Related Errors: ===\n"
