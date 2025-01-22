@@ -282,16 +282,18 @@ The tokenizer returns a flat `Object<List>` of Objects where each Object is eith
 * `Object<String>` -- Basic String type Object
 * `Object<Number>` -- Basic Number type Object
 
-The current Tokenizer, written a long time ago, returns a stream-like thing,
-that spits out a series of tokens each time it is called. This design has some
-issues and is being scrapped. These tokens are of type Token, an object that
-refers to slices of the stream. This has many drawbacks and issues.
+There was a Tokenizer, written a long time ago, which returned a stream-like
+thing that spits out a series of tokens. This tokenizer would return objects
+of type Token which refer to slices of the input stream. This design had some
+issues and has been scrapped.
+
+There is no reason to have streams for this toy implementation. A stream
+implies there is some value in partial tokenization. There is no reason to have
+a temporary Token type object which points to objects which will be later
+created during parsing anyway.
 
 Instead, the new and current tokenizer returns a complete List of Objects.
-
-There is no reason to have 'streams' which implies there is some value in
-partial tokenization. There is no reason to have a temporary Token type object
-which points to objects which will be later created during parsing anyway.
+The current Tokenizer implementation is defined in `Lisp.c`.
 
 ==== The Parser
 
