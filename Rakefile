@@ -80,9 +80,13 @@ compile_file_task(:program, build('Lisp_test'), ['Lisp_test.c', build('Lisp.o'),
 
 compile_file_task(:program, build('sfr-lisp'), ['sfr-lisp.c', 'sub/linenoise/linenoise.c', runtime_ofiles, build('Lisp.o'), test_common])
 
-# dry do
+pre_wasm_err = wasm_conf_check()
+if pre_wasm_err.size == 0
   compile_file_task(:wasm_program, build('sfr-lisp-wasm.wasm'), ['sfr-lisp-wasm.c' , inputs_for(runtime_ofiles), inputs_for(build('Lisp.o')), inputs_for(test_common)])
-# end
+else
+  puts "WARNING: Skipped WASM build because:"
+  puts pre_wasm_err.map {|e| "- #{e}" }
+end
 
 desc "Run all tests"
 task :test => :build do
