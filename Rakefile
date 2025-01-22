@@ -49,7 +49,7 @@ compile_file_task(:object, build('Runtime.o'), ['Runtime.c'])
 
 compile_file_task(:object, build('Lisp.o'), ['Lisp.h', 'Lisp.c'])
 
-compile_file_task(:object, build('Tokenizer.o'), ['Tokenizer.c', 'Tokenizer.h'])
+# compile_file_task(:object, build('Tokenizer.o'), ['Tokenizer.c', 'Tokenizer.h'])
 
 #=========================================================
 # Test Programs
@@ -75,7 +75,8 @@ compile_file_task(:program, build('Runtime_test'), ['Runtime_test.c', runtime_of
 
 compile_file_task(:program, build('Lisp_test'), ['Lisp_test.c', build('Lisp.o'), runtime_ofiles, test_common])
 
-compile_file_task(:program, build('Tokenizer_test'), ['Tokenizer_test.c', build('Tokenizer.o'), test_common])
+# SFR: This tokenizer is no longer used. Source moved to scrap.
+# compile_file_task(:program, build('Tokenizer_test'), ['Tokenizer_test.c', build('Tokenizer.o'), test_common])
 
 compile_file_task(:program, build('sfr-lisp'), ['sfr-lisp.c', 'sub/linenoise/linenoise.c', runtime_ofiles, build('Lisp.o'), test_common])
 
