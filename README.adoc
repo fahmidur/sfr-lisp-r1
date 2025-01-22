@@ -34,11 +34,11 @@ output against https://racket-lang.org/[Racket]. There are memory leak tests
 using Valgrind, called by the test suite.
 
 The only third-party library used here is Linenoise, a tiny alternative to
-Readline written by Antirez. The reason for this is because keyboard handling,
-terminal specific escape codes for REPLs, and etc is somewhat outside of the
-scope of what I intend on building/learning here. The functionality that
-Linenoise provides is notoriously hard to get right across different systems.
-But one day, I may switch this out as well.
+Readline written by https://github.com/Antirez[Antirez]. This is because
+keyboard handling, terminal specific escape codes for REPLs, and etc is
+somewhat outside of the scope of what I intend on building/learning here. The
+functionality that Linenoise provides is notoriously hard to get right across
+different systems. But one day, I may switch this out as well.
 
 == Building
 
@@ -84,6 +84,10 @@ a REPL.
 With a file path as the first argument, it will evaluate
 the file as Lisp source and exit.
 
+---
+Usage: sfr-lisp [/path/to/file.lsp]
+---
+
 == The Plan
 
 * Write a prototype Lisp interpreter in Ruby (see ./sfr-lisp.rb).
@@ -104,7 +108,7 @@ memory management complications of C.
    **** Environment -- A tree-like object used to store Function scope.
   *** Callable:
    **** Function -- A wrapper object for function pointers.
- ** Object -- Generic wrapper type which points to one of the above things.
+ ** Object -- Generic wrapper type which points to one of the above primitives.
  ** Reference counted garbage collection for all objects.
 * Write a Lisp interpreter using the object-system created in C.
 * Common object methods:
@@ -167,7 +171,7 @@ For a full list see the header file `./String.h`
 
 The Error class helps manage errors that occur throughout the
 lifetime of the C Runtime.
-The class itself is a mainly String-like Object containing an Error message.
+The class itself is a String-like Object containing an Error message.
 Object of type Error are given special handling in methods in the Object class.
 
 Sometimes Errors can happen in functions that cannot return an Error object or cannot
@@ -183,7 +187,7 @@ implementation.
 The Object class is a wrapper around all of the other classes, with a `Symbol*`
 type, and a `void* impl` pointer which points to the underlying implementation
 class.
-The Object class is provides reference-counted object collection by holding a reference count
+The Object class provides reference-counted object collection by holding a reference count
 defined in the field `rc`.
 All objects have a reference count, they are initialized either with reference count 1 or 0.
 An object with reference count 1 is one that is immediately assigned to a `Object*` variable.
@@ -246,7 +250,7 @@ which of these objects are no longer reachable.
 
 To determine reachability, all Object types must be able to enumerate all objects that
 they reference.
-First this gc methood, copies the current reference count to temporary field called
+First this gc methood, copies the current reference count to a temporary field called
 `rc_gc`, which represents the reference count for this GC cycle.
 It then enumerates all objects to subtract references to the referred object.
 Any object which now has a `rc_gc` value of 0, is marked as tentatively unreachable,
@@ -264,7 +268,7 @@ destroyed.
 The Lisp implementation is mainly defined in `lisp.c` with the driver
 program `sfr-lisp.c`.
 These files are consumers of the C Object System described above.
-These two files are essentially 1-1 in functionality to the prototype implementation
+These two files are essentially one-to-one in functionality to the prototype implementation
 `sfr-lisp.rb`.
 
 It should be possible in the future to implement some other scripting language
@@ -272,7 +276,7 @@ using the same Object System and Runtime.
 
 ==== The Tokenizer
 
-The tokenizer should return a flat `Object<List>` of Objects where each Object is either:
+The tokenizer returns a flat `Object<List>` of Objects where each Object is either:
 
 * `Object<Symbol>` -- Parenthesis and BareWords
 * `Object<String>` -- Basic String type Object
