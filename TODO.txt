@@ -29,6 +29,11 @@
 { TODO {
 ------------------------------------------------------------------------------
 
+- wasm build's '.env' printout does not show the Hash val correctly, it instead
+  repeats the key twice. Nothing is broken, but looks visually strange when printing
+  out the top-level Environment.
+  keywords: bug, bug-low-impact.
+
 - Create memsafe.h/memsafe.c to export
   void* memsafe_malloc(size_t)
   void* memsafe_calloc(size_t)
