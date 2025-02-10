@@ -11,4 +11,6 @@ app.use(function(req, res, next) {
 
 app.use(express.static('.'));
 
-app.listen(port);
+app.listen(port, function() {
+  console.log("Server runnong at\nhttp://localhost:"+port);
+});
