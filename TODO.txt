@@ -34,6 +34,9 @@
   out the top-level Environment.
   keywords: bug, bug-low-impact.
 
+- Create WASM tests using a runner like wasm-time. Similar to native build tests,
+  the runner's output should be the same as that of Racket.
+
 - Create memsafe.h/memsafe.c to export
   void* memsafe_malloc(size_t)
   void* memsafe_calloc(size_t)
