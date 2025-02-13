@@ -16,6 +16,8 @@
 
 ObjectSystem* object_system;
 
+int ObjectSystem_debug_eprintf;
+
 Symbol* SYMBOL_NEW;
 Symbol* SYMBOL_DEL;
 
@@ -30,6 +32,8 @@ Symbol* SYMBOL_HASH_ITER;
 Symbol* SYMBOL_NULL;
 Symbol* SYMBOL_ENVIRONMENT;
 Symbol* SYMBOL_FUNCTION;
+
+
 
 char Object_oti_set(Symbol* type, ObjectTypeInfo otiarg) {
   assert(type != NULL);
@@ -77,6 +81,7 @@ ObjectTypeInfo* Object_oti_get(Symbol* type) {
 
 void Object_system_init() {
   dbg_printf("--- BEG. Object_system_init() ---\n");
+  ObjectSystem_debug_eprintf = 0;
   size_t i;
   object_system = calloc(1, sizeof(ObjectSystem));
   object_system->init_called = 0;
@@ -1679,15 +1684,15 @@ ssize_t Object_len(Object* self) {
 /*   } */
 /* } */
 
-void ObjectUtil_eprintf_sig(int SIGSIZE, char** sigptr, int* sigposptr, va_list argv) {
+void ObjectUtil_eprintf_sig(int SIGSIZE, char** sigptr, int* sigposptr, va_list* argv) {
   /*dbg_printf("--- ObjectUtil_eprintf_sig ---\n");*/
   char* sig = *sigptr;
   /*dbg_printf("[sig=|%s|]", sig);*/
   if(strcmp(sig, "%v") == 0) {
-    Object_print(va_arg(argv, void*));
+    Object_print(va_arg(*argv, void*));
   }
   else {
-    vprintf(*sigptr, argv);
+    vprintf(*sigptr, *argv);
   }
   memset(*sigptr, 0, SIGSIZE);
   *sigposptr = 0;
@@ -1731,7 +1736,7 @@ void ObjectUtil_eprintf(char* fmt, ...) {
         sig[sigpos++] = ch;
       }
       else {
-        ObjectUtil_eprintf_sig(SIGSIZE, &sig, &sigpos, argv);
+        ObjectUtil_eprintf_sig(SIGSIZE, &sig, &sigpos, &argv);
         insig = 0;
         if(i > 0) { i--; }
       }
@@ -1749,7 +1754,7 @@ void ObjectUtil_eprintf(char* fmt, ...) {
     }
   }
   if(insig && sigpos > 0) {
-    ObjectUtil_eprintf_sig(SIGSIZE, &sig, &sigpos, argv);
+    ObjectUtil_eprintf_sig(SIGSIZE, &sig, &sigpos, &argv);
   }
   else
   if(bufpos > 0) {

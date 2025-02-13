@@ -28,6 +28,9 @@ extern Symbol* SYMBOL_NULL;
 extern Symbol* SYMBOL_ENVIRONMENT;
 extern Symbol* SYMBOL_FUNCTION;
 
+
+extern int ObjectSystem_debug_eprintf;
+
 typedef struct Object Object;
 struct Object {
   Symbol* type;
