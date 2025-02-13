@@ -315,12 +315,12 @@ See link:./TODO.txt[Todo-List] for an updated running list.
 == WASM/WASI Build Configuration
 
 The WASM-WASI build is slightly more complicated than the regular build for your host architecture.
-To get a better understanding of what/how WASM builds work, I am intentionally using the minimal set of
+To get a better understanding of how the WASM builds work, I am intentionally using the minimal set of
 tools to get a functioning wasm file to use with my web-driver.
 
 Requirements:
 
-* LLVM Clang 18
+* LLVM Clang >= 18
 * https://github.com/WebAssembly/wasi-libc[wasi-libc]
 * `libclang_rt.builtins-wasm32-wasi` from https://github.com/WebAssembly/wasi-sdk/releases/tag/wasi-sdk-25[wasi-sdk-releases]
 
@@ -346,3 +346,17 @@ and download the zipped file https://github.com/WebAssembly/wasi-sdk/releases/do
 Unzip this file and place it into your sysroot/lib/wasm32-wasi directory.
 
 Now, at last the WASM build should succeed.
+
+If the build succeeded you can expect a file named `./build/sfr-lisp-wasm.wasm` to be present.
+Now you can run the WASM build using something like Wasmtime as follows:
+```
+wasmtime ./build/sfr-lisp-wasm.wasm
+```
+
+Alternatively you can use the ./wasm_webdriver which is a set JS shim for
+the purpose of sharing this project on my blog.
+
+* CD to ./wasm_webdriver/build/
+* Run: `node server.js` 
+* Now in your browser, navigate to `http://localhost:3000`
+
