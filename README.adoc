@@ -53,6 +53,7 @@ mature lisp, and this is a tiny learning project.
 * https://github.com/antirez/linenoise[Linenoise] -- A small self-contained alternative to Readline by Antirez.
 Vendored as a Git submodule in this repository under ./sub/linenoise). Used mainly
 for the REPL.
+* Wasmtime -- used to test the WASM build against output from Racket.
 
 === Build Instructions
 
