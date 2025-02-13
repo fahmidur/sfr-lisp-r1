@@ -130,10 +130,16 @@ to C without much change to the underlying logic.
 Objects are a thin pointer-to-implementation wrapper around
 more primitive types like Symbol, String, Number, List, and so on.
 
+In the documentation, I will be using `Object<Type>` notation, for
+syntactic convenience. Although this looks like a C++ Template Parameter, it is
+not, and this project is entirely written in C. What this means is
+`Object<Type>` is an `Object` struct, with a pointer-to-implementation to a
+struct of type `Type`.
+
 ==== Implementation Classes
 
 The following are notes on the implementation classes that are
-wrapped by the Object class.
+wrapped by the `Object` class.
 
 It is the role of the implementation class to handle the memory of its members.
 While it is the responsibility of the Object class to manage to memory of the
