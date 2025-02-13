@@ -170,6 +170,15 @@ function do_backspace() {
   });
 }
 
+function do_form_feed() {
+  // postMessage({
+  //   type: 'term_echo',
+  //   data: {
+  //     key: '\x1b'
+  //   }
+  // });
+}
+
 function history_go(dir) {
   if(stdin_hist.length == 0) {
     return;
@@ -220,6 +229,7 @@ onmessage = function(ev) {
     case 'stdin':
       var stdin_size = new Uint32Array(stdin, 4, 1);
       var stdin_view = new Uint8Array(stdin, 8);
+      console.log('donuts. data key=', data.key, 'key_code=', data.key_code);
       if(data.key == '\x1B[A') { // arrow up
         console.log(logprefix, '-- arrow up --');
         history_go(-1);
@@ -235,6 +245,11 @@ onmessage = function(ev) {
           return;
         }
         do_backspace();
+      }
+      else
+      if(data.key_code == 12) { // form-feed character
+        console.log('--- form-feed ---');
+        do_form_feed();
       }
       else
       if(data.key_code === 13) {
