@@ -239,6 +239,11 @@ onmessage = function(ev) {
       // console.log(logprefix, 'my_stringio_buf_ptr=', my_stringio_buf_ptr);
       term_inited = true;
       maybe_wasm_start();
+      break;
+    case 'repl_prompt':
+      console.log(logprefix, 'heard repl_prompt');
+      wasm_instance.exports.repl_prompt();
+      break;
     default:
   }
 };

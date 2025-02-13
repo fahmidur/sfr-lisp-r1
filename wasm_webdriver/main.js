@@ -93,6 +93,13 @@ worker1.onmessage = function(ev) {
   }
 };
 worker_add('worker1', worker1);
+function repl_prompt() {
+  console.log(logprefix, 'sending repl_prompt to worker1');
+  worker1.postMessage({
+    type: 'repl_prompt',
+    data: {},
+  });
+}
 
 var worker2 = new Worker('./worker2.js');
 worker2.onmessage = function(ev) {
@@ -114,6 +121,29 @@ worker2.onmessage = function(ev) {
     case 'term_echo':
       term.write(msg.data.key);
       break;
+    case 'repl_prompt':
+      console.log(logprefix, 'heard worker2 repl_prompt msg=', msg);
+      repl_prompt();
+      break;
+    case 'form_feed':
+      console.log(logprefix, 'heard form feed');
+      let cursorY = term.buffer.active.cursorY;
+      let cursorX = term.buffer.active.cursorX;
+      let linecount = Math.max(0, cursorY);
+      console.log(logprefix, 'linecount=', linecount);
+      for(let i = 0; i < linecount; i++) {
+        term.write('\x1b[H\x1b[M');
+        for(let j = 0; j < linecount; j++) {
+          term.write('\x1b[B');
+        }
+      }
+      for(let i = 0; i < linecount; i++) {
+        term.write('\x1b[A');
+      }
+      term.write('\x1b[H');
+      for(let i = 0; i < cursorX; i++) {
+        term.write('\x1b[C');
+      }
     default:
   }
 };
@@ -125,6 +155,7 @@ function workers_broadcast(msg) {
     worker.postMessage(msg);
   }
 }
+
 
 var respPromise = fetch("./build/sfr-lisp-wasm.wasm");
 respPromise.then(function(response) {

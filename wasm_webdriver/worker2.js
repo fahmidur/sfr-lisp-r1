@@ -160,23 +160,32 @@ function isAlphaNumeric(keyCode) {
   return false;
 }
 
-function do_backspace() {
-  stdin_arr.pop();
+function term_echo(key) {
   postMessage({
     type: 'term_echo',
     data: {
-      key: '\x1b[D\x1b[K'
+      key: key
     }
   });
 }
 
+function term_backspace() {
+  stdin_arr.pop();
+  term_echo('\x1b[D\x1b[K');
+}
+
+function term_clear() {
+  term_echo('\x1b[2J');
+}
+
+function term_gohome() {
+  term_echo('\x1b[H');
+}
+
 function do_form_feed() {
-  // postMessage({
-  //   type: 'term_echo',
-  //   data: {
-  //     key: '\x1b'
-  //   }
-  // });
+  postMessage({
+    type: 'form_feed',
+  });
 }
 
 function history_go(dir) {
@@ -186,7 +195,7 @@ function history_go(dir) {
   stdin_hist_idx = gmod(stdin_hist_idx+dir, stdin_hist.length);
   // erase whatever is in the current stdin
   while(stdin_arr.length > 0) {
-    do_backspace();
+    term_backspace();
   }
   console.log('stdin_hist=', stdin_hist, 'stdin_hist_idx=', stdin_hist_idx);
   stdin_arr = arr_clone(stdin_hist[stdin_hist_idx]);
@@ -244,7 +253,7 @@ onmessage = function(ev) {
         if(stdin_arr.length == 0) {
           return;
         }
-        do_backspace();
+        term_backspace();
       }
       else
       if(data.key_code == 12) { // form-feed character
