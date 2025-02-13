@@ -1596,6 +1596,7 @@ void Object_system_print() {
   int env_count = 0;
   while(iter != NULL) {
     printf("[i=%03d] || Object(%p, rc=%03d/%03d, rt=%03d, u=%d) || ", i, iter, iter->rc, iter->rc_gc, iter->returning, iter->unreachable);
+    fflush(stdout);
     Object_print(iter);
     printf("\n");
     if(Object_type(iter) == SYMBOL_ENVIRONMENT) {
