@@ -25,6 +25,9 @@ extern Object* LISP_PAREN_END;
 void Lisp_init();
 void Lisp_done();
 
+
+void Lisp_print_repl_help(void);
+
 // Tokenize a String object into flat List of objects
 // where each Object is a Symbol, String, or Number
 Object* Lisp_tokenize(Object* string);

@@ -17,6 +17,14 @@ Object* LispSymbol_setbang;
 Object* LispSymbol_lambda;
 Object* LispSymbol_eval;
 
+void Lisp_print_repl_help() {
+  printf(".help    | Print this help message.\n");
+  printf(".clear   | Clear the screen.\n");
+  printf(".cls     | Clear the screen.\n");
+  printf(".env     | Print the top-level Environment.\n");
+  printf(".exit    | Exit the REPL.\n");
+}
+
 typedef enum TokenizerState TokenizerState;
 enum TokenizerState {
   ts_Init,

@@ -73,6 +73,7 @@ void repl() {
   Object* rvalue = NULL;
   char* line = NULL;
 
+  printf("Type '.help' for more information.\n\n");
   linenoiseHistoryLoad("history.txt"); /* Load the history at startup */
   while( (line=linenoise("> ")) != NULL) {
     /* inp_ret = String_getline(inp, stdin); */
@@ -101,6 +102,10 @@ void repl() {
     else
     if(strcmp(inp->buf, ".clear") == 0 || strcmp(inp->buf, ".cls") == 0) {
       linenoiseClearScreen();
+    }
+    else
+    if(strcmp(inp->buf, ".help") == 0) {
+      Lisp_print_repl_help();
     }
     else
     if(strlen(inp->buf) > 1 && inp->buf[0] == '.') {

@@ -123,6 +123,7 @@ void repl() {
   ssize_t inp_ret;
   Object* rvalue = NULL;
 
+  printf("Type '.help' for more information.\n\n");
   while(1) {
     printf("> "); fflush(stdout);
     inp_ret = String_getline(inp, stdin);
@@ -141,6 +142,10 @@ void repl() {
     else
     if(strcmp(inp->buf, ".env") == 0) {
       Lisp_printenv();
+    }
+    else
+    if(strcmp(inp->buf, ".help") == 0) {
+      Lisp_print_repl_help();
     }
     else
     if(strcmp(inp->buf, ".clear") == 0 || strcmp(inp->buf, ".cls") == 0) {
