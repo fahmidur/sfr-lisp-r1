@@ -19,6 +19,10 @@
   keywords: bug, bug-low-impact.
   DONE: This was caused by passing va_list as a value instead of as a pointer.
 
+- Create WASM tests using a runner like wasm-time. Similar to native build tests,
+  the runner's output should be the same as that of Racket.
+  DONE: tc_racket now compares output of wasm build using wasmtime.
+
 ------------------------------------------------------------------------------
 } DONE }
 ------------------------------------------------------------------------------
@@ -35,8 +39,6 @@
 { TODO {
 ------------------------------------------------------------------------------
 
-- Create WASM tests using a runner like wasm-time. Similar to native build tests,
-  the runner's output should be the same as that of Racket.
 
 - Create memsafe.h/memsafe.c to export
   void* memsafe_malloc(size_t)
