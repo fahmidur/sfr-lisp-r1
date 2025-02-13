@@ -21,7 +21,7 @@ _return:
 }
 
 void HashNode_print(HashNode* self) {
-  printf("HashNode(%p, %p, %p)\n", self, self->key, self->val);
+  // DEBUG
   ObjectUtil_eprintf("HashNode(%v => %v)", self->key, self->val);
 }
 
