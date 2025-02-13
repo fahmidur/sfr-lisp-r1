@@ -84,9 +84,9 @@ a REPL.
 With a file path as the first argument, it will evaluate
 the file as Lisp source and exit.
 
----
+```
 Usage: sfr-lisp [/path/to/file.lsp]
----
+```
 
 == The Plan
 
@@ -130,11 +130,10 @@ to C without much change to the underlying logic.
 Objects are a thin pointer-to-implementation wrapper around
 more primitive types like Symbol, String, Number, List, and so on.
 
-In the documentation, I will be using `Object<Type>` notation, for
-syntactic convenience. Although this looks like a C++ Template Parameter, it is
-not, and this project is entirely written in C. What this means is
-`Object<Type>` is an `Object` struct, with a pointer-to-implementation to a
-struct of type `Type`.
+In the documentation, I will be using `Object<Type>` notation, for syntactic
+convenience. Although this looks like a C++ Template Parameter, it is not, and
+this project is entirely written in C. What this means is `Object<Type>` is an
+`Object` struct, with a pointer-to-implementation to a struct of type `Type`.
 
 ==== Implementation Classes
 
