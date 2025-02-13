@@ -20,6 +20,10 @@ class TcRacket < Test::Unit::TestCase
       assert_equal(0, lispcc_out.exitstatus, "sfr-lisp.c | ecode FAILURE in #{fpath}")
       assert_equal(racket_out.stdout, lispcc_out.stdout, "sfr-lisp.c | stdout FAILURE in #{fpath}")
 
+      lispwasm_out = Util.run("wasmtime --dir . --env NO_COLOR=1 ./build/sfr-lisp-wasm.wasm #{fpath} | ./normalize-output.rb")
+      assert_equal(0, lispwasm_out.exitstatus, "sfr-lisp-wasm.c | ecode FAILURE in #{fpath}")
+      assert_equal(racket_out.stdout, lispwasm_out.stdout, "sfr-lisp-wasm.c | stdout FAILURE in #{fpath}")
+
 
     end
   end
