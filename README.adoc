@@ -140,9 +140,9 @@ this project is entirely written in C. What this means is `Object<Type>` is an
 The following are notes on the implementation classes that are
 wrapped by the `Object` class.
 
-It is the role of the implementation class to handle the memory of its members.
-While it is the responsibility of the Object class to manage to memory of the
-implementation class instance.
+It is the responsibility of the implementation class to handle the memory of
+its members. While it is the responsibility of the Object class to manage to
+memory of the implementation class instance.
 
 ==== Symbol Class
 
