@@ -655,7 +655,8 @@ void Object_system_gc() {
 }
 
 /**
- * TODO: make this idempotent.
+ * TODO: make this idempotent, such that adding the same Object* 
+ * n times only creates 1 reference in the global object system list.
  * May need to change object storage from List to Hash
  */
 void Object_add_to_system(Object* self) {
