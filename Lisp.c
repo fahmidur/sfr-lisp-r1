@@ -953,6 +953,9 @@ _return:
     Object_return(ret);
     Object_rc_decr(ret);
   }
+  if(env == LispEnv_root) {
+    Object_system_gc();
+  }
   return ret;
 }
 
