@@ -17,6 +17,10 @@
 ObjectSystem* object_system;
 
 int ObjectSystem_debug_eprintf;
+char ObjectSystem_debug_001;
+char ObjectSystem_debug_002;
+char ObjectSystem_debug_003;
+char ObjectSystem_debug_004;
 
 Symbol* SYMBOL_NEW;
 Symbol* SYMBOL_DEL;
@@ -82,6 +86,10 @@ ObjectTypeInfo* Object_oti_get(Symbol* type) {
 void Object_system_init() {
   dbg_printf("--- BEG. Object_system_init() ---\n");
   ObjectSystem_debug_eprintf = 0;
+  ObjectSystem_debug_001 = 0;
+  ObjectSystem_debug_002 = 0;
+  ObjectSystem_debug_003 = 0;
+  ObjectSystem_debug_004 = 0;
   size_t i;
   object_system = calloc(1, sizeof(ObjectSystem));
   object_system->init_called = 0;
@@ -637,19 +645,24 @@ void Object_system_gc() {
     Object_system_walkrefs(&Object_action_unset_unreachable);
   }
 
-  //now anything that is left marked unreachable is truly unreachable
+  //now anything that remains marked unreachable is truly unreachable
   //we must now safely delete these unreachable objects
 
   object_system->delete_recurse = 0;
   iter = object_system->head;
-  while(iter != NULL) {
+  size_t iter_count = 0;
+  size_t os_size = object_system->size;
+  while(iter != NULL && iter_count < os_size) {
     next = iter->next;
     if(iter->unreachable) {
-      ObjectUtil_eprintf("unreachable obj(p=%p rc=%d)\n", iter, iter->rc);
+#ifdef DEBUG
+      ObjectUtil_eprintf("unreachable obj(p=%p rc=%d rt=%d)\n", iter, iter->rc, iter->returning);
+#endif
       iter->rc = 0;
+      iter = Object_gc(iter);
     }
-    iter = Object_gc(iter);
     iter = next;
+    iter_count++;
   }
   object_system->delete_recurse = 1;
 }
