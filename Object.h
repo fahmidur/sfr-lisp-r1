@@ -29,7 +29,7 @@ extern Symbol* SYMBOL_ENVIRONMENT;
 extern Symbol* SYMBOL_FUNCTION;
 
 
-extern int ObjectSystem_debug_eprintf;
+extern char ObjectSystem_debug_eprintf;
 
 typedef struct Object Object;
 struct Object {
@@ -42,7 +42,6 @@ struct Object {
   char    returning;
   char    cloneable;
   int     visited;
-  char    mfd; 
   char    unreachable;
 };
 

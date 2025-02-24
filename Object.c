@@ -16,7 +16,7 @@
 
 ObjectSystem* object_system;
 
-int ObjectSystem_debug_eprintf;
+char ObjectSystem_debug_eprintf;
 char ObjectSystem_debug_001;
 char ObjectSystem_debug_002;
 char ObjectSystem_debug_003;
@@ -251,7 +251,6 @@ Object* Object_new(Symbol* type, int rc, void* impl) {
   self->returning = 0;
   self->cloneable = 1;
   self->visited = 0;
-  self->mfd = 0;
   self->unreachable = 0;
 
   Object_add_to_system(self);
