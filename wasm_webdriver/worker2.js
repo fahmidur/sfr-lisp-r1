@@ -265,7 +265,7 @@ onmessage = function(ev) {
     case 'stdin':
       var stdin_size = new Uint32Array(stdin, 4, 1);
       var stdin_view = new Uint8Array(stdin, 8);
-      console.log('donuts. data key=', data.key, 'key_code=', data.key_code);
+      console.log('data key=', data.key, 'key_code=', data.key_code);
       if(data.key == '\x1B[A') { // arrow up
         console.log(logprefix, '-- arrow up --');
         history_go(-1);
