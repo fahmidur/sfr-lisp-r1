@@ -1,3 +1,8 @@
+/**
+ * The IO Worker.
+ * This worker mainly handles IO -- dealing with STDIN/STDOUT, and so on.
+ **/
+
 var wasm_bytes = null;
 var wasm_memory = null;
 var wasm_instance = null;
@@ -145,20 +150,20 @@ function make_wasm_instance() {
   });
 }
 
-function isAlphaNumeric(keyCode) {
-  // Check for letters (A-Z)
-  if (keyCode >= 65 && keyCode <= 90) {
-    return true;
-  }
+// function isAlphaNumeric(keyCode) {
+//   // Check for letters (A-Z)
+//   if (keyCode >= 65 && keyCode <= 90) {
+//     return true;
+//   }
 
-  // Check for numbers (0-9)
-  if (keyCode >= 48 && keyCode <= 57) {
-    return true;
-  }
+//   // Check for numbers (0-9)
+//   if (keyCode >= 48 && keyCode <= 57) {
+//     return true;
+//   }
 
-  // Otherwise, not alphanumeric
-  return false;
-}
+//   // Otherwise, not alphanumeric
+//   return false;
+// }
 
 function term_echo(key) {
   postMessage({
@@ -188,26 +193,48 @@ function do_form_feed() {
   });
 }
 
-function history_go(dir) {
-  if(stdin_hist.length == 0) {
-    return;
-  }
-  stdin_hist_idx = gmod(stdin_hist_idx+dir, stdin_hist.length);
-  // erase whatever is in the current stdin
+function stdin_clear() {
+  console.log('stdin_clear. length=', stdin_arr.length);
   while(stdin_arr.length > 0) {
     term_backspace();
   }
-  console.log('stdin_hist=', stdin_hist, 'stdin_hist_idx=', stdin_hist_idx);
-  stdin_arr = arr_clone(stdin_hist[stdin_hist_idx]);
-  console.log('stdin_arr=', stdin_arr);
-  if(stdin_arr.length > 0) {
-    postMessage({
-      type: 'term_echo',
-      data: {
-        key: stdin_arr.map((x) => String.fromCharCode(x)).join('')
-      }
-    });
+}
+
+function stdin_set(new_val) {
+  console.log('stdin_set. new_val=', new_val);
+  stdin_clear();
+  var tmp = null;
+  if(new_val instanceof Array) {
+    tmp = new_val;
   }
+  else {
+    tmp = new_val.split('');
+  }
+  stdin_arr = tmp;
+  var keys = tmp.map((x) => String.fromCharCode(x)).join('');
+  console.log('stdin_set. keys=', keys);
+  term_echo(keys);
+}
+
+/**
+ * Go up or down in REPL history.
+ * @param {Number} delta - A number, usually +1 or -1 indicating the history offset.
+ **/
+function history_go(delta) {
+  if(stdin_hist.length == 0) {
+    // there is no history
+    console.log('history_go. ABORT. There is no stdin_hist.');
+    return;
+  }
+  stdin_hist_idx = gmod(stdin_hist_idx+delta, stdin_hist.length);
+  console.log('history_go. stdin_hist=', stdin_hist, 'stdin_hist_idx=', stdin_hist_idx);
+  var hist_val = arr_clone(stdin_hist[stdin_hist_idx]);
+  console.log('history_go. hist_val =', hist_val);
+  if(hist_val.length === 0) {
+    console.log('history_go. ABORT. Blank hist_val=', hist_val);
+    return;
+  }
+  stdin_set(hist_val);
 }
 
 onmessage = function(ev) {
