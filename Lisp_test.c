@@ -132,6 +132,7 @@ int main(int argc, char** argv) {
   Object* num1 = QNUMBER_NEW1(3.456);
   nassert(num1->rc == 1);
   Object* num1_res1 = Object_accept(Lisp_eval_sexp(num1));
+  printf("num1->rc = %d\n", num1->rc);
   nassert(num1->rc == 2);
   Object_assign(&num1_res1, NULL);
   nassert(num1->rc == 1);

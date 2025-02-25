@@ -757,12 +757,17 @@ Object* Lisp_parse_tokens(Object* tokenlist) {
 
 Object* Lisp_parse_string(Object* str) {
   assert(str != NULL);
+  Object_accept(str);
   Object* tokens = Object_accept(Lisp_tokenize(str));
   if(Object_is_error(tokens)) {
+    Object_rc_decr(str);
+    Object_return(tokens);
+    Object_rc_decr(tokens);
     return tokens;
   }
   Object* parsed = Object_return(Lisp_parse_tokens(tokens));
   Object_rc_decr(tokens); tokens = NULL;
+  Object_rc_decr(str); str = NULL;
   return parsed;
 }
 
@@ -952,9 +957,6 @@ _return:
   if(!Object_is_null(ret)){
     Object_return(ret);
     Object_rc_decr(ret);
-  }
-  if(env == LispEnv_root) {
-    Object_system_gc();
   }
   return ret;
 }
