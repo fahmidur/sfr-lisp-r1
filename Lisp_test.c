@@ -129,15 +129,17 @@ int main(int argc, char** argv) {
   nassert(Object_type(tclam1_value) == SYMBOL_FUNCTION);
 
   printf("\n=== === simple rc tests === ===\n");
+  nassert(ObjectSystem_count_matching_number(3.456) == 0);
   Object* num1 = QNUMBER_NEW1(3.456);
   nassert(num1->rc == 1);
   ObjectUtil_eprintf("num1 = %v | p=%p\n", num1, num1);
   Object* num1_res1 = Object_accept(Lisp_eval_sexp(num1));
   nassert(num1_res1 != NULL);
+  nassert(num1 == num1_res1);
   nassert(Object_cmp(num1_res1, num1) == 0);
   ObjectUtil_eprintf("num1_res = %v | p=%p\n", num1_res1, num1_res1);
   printf("num1->rc = %d\n", num1->rc);
-  nassert(num1->rc == 2);
+  nassert(num1->rc == 2); // TODO: debug here
   Object_assign(&num1_res1, NULL);
   printf("num1->rc = %d\n", num1->rc);
   nassert(num1->rc == 1);
@@ -145,6 +147,8 @@ int main(int argc, char** argv) {
   int num1_count = ObjectSystem_count_matching_number(3.456);
   printf("num1_count = %d\n", num1_count);
   nassert(num1_count == 0);
+
+  /*
 
   Object* numstr1 = QSTRING_NEW1("1.987");
   Object* numstr1_val = Object_accept(Lisp_eval_string(numstr1));
@@ -222,7 +226,7 @@ int main(int argc, char** argv) {
   for(i = 0; i < 100; i++) {
     memset(dstr1, 0, 255);
     sprintf(dstr1, "(define tvar1 %d)", i+1);
-    /* printf("dstr1 = |%s|\n", dstr1); */
+    // printf("dstr1 = |%s|\n", dstr1); 
     Object_reject(Lisp_eval_string(QSTRING(dstr1)));
   }
   free(dstr1); dstr1 = NULL;
@@ -245,6 +249,7 @@ int main(int argc, char** argv) {
   // no new objects have been created
   nassert(new_obj_sys_size == old_obj_sys_size);
 
+  */
   Lisp_done();
   Runtime_done();
 

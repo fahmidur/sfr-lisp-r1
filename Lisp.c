@@ -259,7 +259,7 @@ Object* fn_lambda(Function* fn, Object* env, Object* argv) {
       if(!Object_is_null(ret)) {
         Object_assign(&ret, NULL);
       }
-      ret = Object_accept(Lisp_eval_sexp2(ListIter_get_val(body_iter), env2));
+      ret = Object_accept(Lisp_eval_sexp2(ListIter_get_val(body_iter), env2, 0));
       ListIter_next(body_iter); 
     }
     ListIter_del(body_iter);
@@ -771,9 +771,13 @@ Object* Lisp_parse_string(Object* str) {
   return parsed;
 }
 
-Object* Lisp_eval_sexp2(Object* sexp, Object* env) {
+Object* Lisp_eval_sexp2(Object* sexp, Object* env, int depth) {
+  char gc_on_return = 0;
   sexp = Object_accept(sexp);
   env = Object_accept(env);
+  if(env == LispEnv_root && depth == 0) {
+    gc_on_return = 1;
+  }
   Object* ret = Object_new_null();
   Object* tmp1 = Object_new_null();
   Object* tmp2 = Object_new_null();
@@ -787,7 +791,14 @@ Object* Lisp_eval_sexp2(Object* sexp, Object* env) {
       sexp_type == SYMBOL_STRING ||
       sexp_type == SYMBOL_FUNCTION
   ) {
+    if(Object_type(sexp) == SYMBOL_NUMBER && ((Number*)sexp->impl)->rep == 3.456) {
+      ObjectUtil_eprintf("donuts. over here 001. sexp<Number>=%v rc=%d\n", sexp, sexp->rc);
+    }
     ret = Object_accept(sexp);
+    if(Object_type(sexp) == SYMBOL_NUMBER && ((Number*)sexp->impl)->rep == 3.456) {
+      ObjectUtil_eprintf("donuts. over here 002. sexp<Number>=%v rc=%d\n", sexp, sexp->rc);
+      ObjectUtil_eprintf("donuts. over here 003. ret<Number>=%v rc=%d\n", ret, ret->rc);
+    }
   }
   else
   if(sexp_type == SYMBOL_SYMBOL) {
@@ -797,7 +808,7 @@ Object* Lisp_eval_sexp2(Object* sexp, Object* env) {
   if(sexp_type == SYMBOL_LIST) {
     // it is in this case that we can have various lisp forms
     op = Object_accept(Object_uop_head(sexp));
-    opval = Object_accept(Lisp_eval_sexp2(op, env));
+    opval = Object_accept(Lisp_eval_sexp2(op, env, depth+1));
     if(Object_type(op) == SYMBOL_SYMBOL) {
       if(op == LispSymbol_quote) {
         if(Object_len(sexp) != 2) {
@@ -816,7 +827,7 @@ Object* Lisp_eval_sexp2(Object* sexp, Object* env) {
         }
         else {
           opargs2 = Object_accept(Object_bop_at(opargs1, 1));
-          Object_reject(Object_top_hset(env, Object_uop_head(opargs1), Lisp_eval_sexp2(opargs2, env)));
+          Object_reject(Object_top_hset(env, Object_uop_head(opargs1), Lisp_eval_sexp2(opargs2, env, depth+1)));
           Object_assign(&opargs2, NULL);
         }
         Object_assign(&opargs1, NULL);
@@ -834,11 +845,11 @@ Object* Lisp_eval_sexp2(Object* sexp, Object* env) {
           Object* tenv = Object_accept(Object_bop_rfind(env, tmp1));
           opargs2 = Object_accept(Object_bop_at(opargs1, 1)); // 2nd arg to 'set!'
           if(Object_is_null(tenv)) {
-            /* Object_reject(Object_top_hset(env, tmp, Lisp_eval_sexp2(opargs2, env))); */
+            /* Object_reject(Object_top_hset(env, tmp, Lisp_eval_sexp2(opargs2, env, depth+1))); */
             ret = QERROR("called 'set!' on non-existent var");
           }
           else {
-            Object_reject(Object_top_hset(tenv, tmp1, Lisp_eval_sexp2(opargs2, env)));
+            Object_reject(Object_top_hset(tenv, tmp1, Lisp_eval_sexp2(opargs2, env, depth+1)));
           }
           Object_assign(&tenv, NULL);
         }
@@ -850,11 +861,12 @@ Object* Lisp_eval_sexp2(Object* sexp, Object* env) {
         } else {
           opargs1 = Object_accept(Object_uop_rest(sexp));
           tmp1 = Object_accept(Object_uop_head(opargs1));
-          tmp2 = Object_accept(Lisp_eval_sexp2(tmp1, env));
+          tmp2 = Object_accept(Lisp_eval_sexp2(tmp1, env, depth+1));
           ret = Object_accept(
             Lisp_eval_sexp2(
               tmp2, 
-              env
+              env,
+              depth+1
             )
           );
           Object_assign(&opargs1, NULL);
@@ -871,7 +883,7 @@ Object* Lisp_eval_sexp2(Object* sexp, Object* env) {
         ListIter_head(iter);
         while(!ListIter_at_end(iter)) {
           tmp1 = Object_accept(ListIter_get_val(iter));
-          tmp2 = Object_accept(Lisp_eval_sexp2(tmp1, env));
+          tmp2 = Object_accept(Lisp_eval_sexp2(tmp1, env, depth+1));
           Object_bop_push(opargs2, tmp2);
           Object_assign(&tmp1, NULL);
           Object_assign(&tmp2, NULL);
@@ -929,12 +941,12 @@ Object* Lisp_eval_sexp2(Object* sexp, Object* env) {
           Object* then_expr = Object_bop_at(sexp, 2);
           Object* else_expr = Object_bop_at(sexp, 3);
 
-          Object* test_result = Lisp_eval_sexp2(test_expr, env);
+          Object* test_result = Lisp_eval_sexp2(test_expr, env, depth+1);
           if(!Object_is_null(test_result)) {
             // all non-null objects are treated as truthy
-            ret = Lisp_eval_sexp2(then_expr, env);
+            ret = Lisp_eval_sexp2(then_expr, env, depth+1);
           } else {
-            ret = Lisp_eval_sexp2(else_expr, env);
+            ret = Lisp_eval_sexp2(else_expr, env, depth+1);
           }
         }
       }
@@ -956,18 +968,28 @@ _return:
   //----
   if(!Object_is_null(ret)){
     Object_return(ret);
+    assert(ret->returning);
     Object_rc_decr(ret);
   }
-  /* Object_system_gc(); */
+  if(Object_type(ret) == SYMBOL_NUMBER && ((Number*)ret->impl)->rep == 3.456) {
+    ObjectUtil_eprintf("donuts. over here 004. ret<Number>=%v rc=%d\n", ret, ret->rc);
+  }
+  if(gc_on_return) {
+    printf("Calling Object_system_gc()\n");
+    Object_system_gc();
+  }
+  if(Object_type(ret) == SYMBOL_NUMBER && ((Number*)ret->impl)->rep == 3.456) {
+    ObjectUtil_eprintf("donuts. over here 005. ret<Number>=%v rc=%d\n", ret, ret->rc);
+  }
   return ret;
 }
 
 Object* Lisp_eval_sexp(Object* sexp) {
-  return Lisp_eval_sexp2(sexp, LispEnv_root);
+  return Lisp_eval_sexp2(sexp, LispEnv_root, 0);
 }
 
 Object* Lisp_eval_string2(Object* str, Object* env) {
-  return Lisp_eval_sexp2(Lisp_parse_string(str), env);
+  return Lisp_eval_sexp2(Lisp_parse_string(str), env, 0);
 }
 
 Object* Lisp_eval_string(Object* str) {
