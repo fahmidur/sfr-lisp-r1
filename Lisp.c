@@ -958,6 +958,7 @@ _return:
     Object_return(ret);
     Object_rc_decr(ret);
   }
+  /* Object_system_gc(); */
   return ret;
 }
 
