@@ -66,7 +66,7 @@ void Lisp_printenv();
 // Eval the code in the S-Expression
 // Code is represented as an S-Expression.
 // @return Object
-Object* Lisp_eval_sexp2(Object* sexp, Object* env);
+Object* Lisp_eval_sexp2(Object* sexp, Object* env, int depth);
 Object* Lisp_eval_sexp(Object* sexp);
 
 // Eval the given string 
