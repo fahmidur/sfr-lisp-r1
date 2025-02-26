@@ -139,7 +139,7 @@ int main(int argc, char** argv) {
   nassert(Object_cmp(num1_res1, num1) == 0);
   ObjectUtil_eprintf("num1_res = %v | p=%p\n", num1_res1, num1_res1);
   printf("num1->rc = %d\n", num1->rc);
-  nassert(num1->rc == 2); // TODO: debug here
+  nassert(num1->rc == 2); // this fails, debug here
   Object_assign(&num1_res1, NULL);
   printf("num1->rc = %d\n", num1->rc);
   nassert(num1->rc == 1);
