@@ -131,10 +131,15 @@ int main(int argc, char** argv) {
   printf("\n=== === simple rc tests === ===\n");
   Object* num1 = QNUMBER_NEW1(3.456);
   nassert(num1->rc == 1);
+  ObjectUtil_eprintf("num1 = %v | p=%p\n", num1, num1);
   Object* num1_res1 = Object_accept(Lisp_eval_sexp(num1));
+  nassert(num1_res1 != NULL);
+  nassert(Object_cmp(num1_res1, num1) == 0);
+  ObjectUtil_eprintf("num1_res = %v | p=%p\n", num1_res1, num1_res1);
   printf("num1->rc = %d\n", num1->rc);
   nassert(num1->rc == 2);
   Object_assign(&num1_res1, NULL);
+  printf("num1->rc = %d\n", num1->rc);
   nassert(num1->rc == 1);
   Object_assign(&num1, NULL);
   int num1_count = ObjectSystem_count_matching_number(3.456);

@@ -588,6 +588,40 @@ int main(int argc, char** argv) {
   Util_heading1(0, "Function Operations");
 
   //===========================================================================
+
+  Util_heading1(1, "Extra GC Tests 1");
+  objsize = Object_system_size();
+  Object* gc1_num1 = QNUMBER_NEW1(19.39);
+  Object* gc1_num2 = QNUMBER_NEW1(19.40);
+  Object* gc1_num3 = QNUMBER_NEW1(19.41);
+  // we gain these 3 number objects.
+  nassert(Object_system_size() - objsize == 3);
+  nassert(ObjectSystem_count_matching_number(19.39) == 1);
+  nassert(ObjectSystem_count_matching_number(19.40) == 1);
+  nassert(ObjectSystem_count_matching_number(19.41) == 1);
+  Object_system_gc();
+  // these numbers are NOT deleted.
+  nassert(Object_system_size() - objsize == 3);
+  nassert(ObjectSystem_count_matching_number(19.39) == 1);
+  nassert(ObjectSystem_count_matching_number(19.40) == 1);
+  nassert(ObjectSystem_count_matching_number(19.41) == 1);
+  Object_assign(&gc1_num1, NULL);
+  nassert(Object_is_null(gc1_num1));
+  nassert(ObjectSystem_count_matching_number(19.39) == 0);
+  nassert(ObjectSystem_count_matching_number(19.40) == 1);
+  nassert(ObjectSystem_count_matching_number(19.41) == 1);
+  Object_assign(&gc1_num2, NULL);
+  nassert(Object_is_null(gc1_num2));
+  nassert(ObjectSystem_count_matching_number(19.39) == 0);
+  nassert(ObjectSystem_count_matching_number(19.40) == 0);
+  nassert(ObjectSystem_count_matching_number(19.41) == 1);
+  Object_assign(&gc1_num3, NULL);
+  nassert(Object_is_null(gc1_num3));
+  nassert(ObjectSystem_count_matching_number(19.39) == 0);
+  nassert(ObjectSystem_count_matching_number(19.40) == 0);
+  nassert(ObjectSystem_count_matching_number(19.41) == 0);
+
+  Util_heading1(0, "Extra GC Tests 1");
   
   Util_heading1(1, "RUNTIME DONE");
   Object_system_print();
