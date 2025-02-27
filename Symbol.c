@@ -34,7 +34,7 @@ void Symbol_system_done() {
 }
 
 void Symbol_system_print() {
-  dbg_printf("--- { Symbol_system_print() { ---\n");
+  printf("--- { Symbol_system_print() { ---\n");
   int i, j;
   SymbolVector* av;
   Symbol* atom;
@@ -49,43 +49,41 @@ void Symbol_system_print() {
       if(nulls_count > nulls_max) {
         if(intrim) {
           if(i == ilast) {
-            dbg_printf("%05u] \t= (nil) count=%d\n", i, nulls_count);
+            printf("%05u] \t= (nil) count=%d\n", i, nulls_count);
             intrim = 0;
           }
         } 
         else {
-          dbg_printf("i[%05u..", i);
+          printf("i[%05u..", i);
           intrim = 1;
         }
       }
       else {
-        dbg_printf("i[%05u] \t\t= %p\n", i, av);
+        printf("i[%05u] \t\t= %p\n", i, av);
       }
     }
     else {
       if(intrim) {
-        dbg_printf("%05u] \t= (nil) count=%d\n", i, nulls_count);
+        printf("%05u] \t= (nil) count=%d\n", i, nulls_count);
         intrim = 0;
       }
-      dbg_printf("i[%05u] \t\t= %p\n", i, av);
+      printf("i[%05u] \t\t= %p\n", i, av);
       nulls_count = 0;
-      dbg_printf("  lidx=%zu size=%zu\n", av->lidx, av->size);
+      printf("  lidx=%zu size=%zu\n", av->lidx, av->size);
       for(j = 0; j < av->size; j++) {
         atom = av->list[j];
-        dbg_printf("  i[%05u] j[%03u] \t= %p", i, j, atom);
+        printf("  i[%05u] j[%03u] \t= %p", i, j, atom);
         if(atom == NULL) {
-          dbg_printf("\n");
+          printf("\n");
           break;
         }
-        dbg_printf(" || ");
-#ifdef DEBUG
+        printf(" || ");
         Symbol_print(atom);
-#endif
-        dbg_printf("\n");
+        printf("\n");
       }
     }
   }
-  dbg_printf("--- } Symbol_system_print() } ---\n");
+  printf("--- } Symbol_system_print() } ---\n");
 }
 
 SymbolVector* SymbolVector_new() {
