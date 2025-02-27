@@ -971,16 +971,16 @@ _return:
     assert(ret->returning);
     Object_rc_decr(ret);
   }
-  if(Object_type(ret) == SYMBOL_NUMBER && ((Number*)ret->impl)->rep == 3.456) {
-    ObjectUtil_eprintf("donuts. over here 004. ret<Number>=%v rc=%d\n", ret, ret->rc);
-  }
-  if(gc_on_return) {
-    printf("Calling Object_system_gc()\n");
-    Object_system_gc();
-  }
-  if(Object_type(ret) == SYMBOL_NUMBER && ((Number*)ret->impl)->rep == 3.456) {
-    ObjectUtil_eprintf("donuts. over here 005. ret<Number>=%v rc=%d\n", ret, ret->rc);
-  }
+  /* if(Object_type(ret) == SYMBOL_NUMBER && ((Number*)ret->impl)->rep == 3.456) { */
+  /*   ObjectUtil_eprintf("donuts. over here 004. ret<Number>=%v rc=%d\n", ret, ret->rc); */
+  /* } */
+  /* if(gc_on_return) { */
+  /*   printf("Calling Object_system_gc()\n"); */
+  /*   Object_system_gc(); */
+  /* } */
+  /* if(Object_type(ret) == SYMBOL_NUMBER && ((Number*)ret->impl)->rep == 3.456) { */
+  /*   ObjectUtil_eprintf("donuts. over here 005. ret<Number>=%v rc=%d\n", ret, ret->rc); */
+  /* } */
   return ret;
 }
 

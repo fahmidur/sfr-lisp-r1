@@ -531,6 +531,10 @@ size_t Object_system_rtcount() {
 }
 
 void Object_action_rc_gc_decr(Object* referer, Object* referend) {
+  /* if(Object_type(referend) == SYMBOL_SYMBOL) { */
+  /*   printf("donuts. critical error!\n"); */
+  /*   exit(1); */
+  /* } */
   if(Object_type(referend) == SYMBOL_NUMBER && ((Number*)referend->impl)->rep == 3.456) {
     printf("donuts. referer=%p ---> referend=%p\n", referer, referend);
     printf("donuts. break here\n");
@@ -659,7 +663,10 @@ void Object_system_gc() {
   while(iter != NULL && iter_count < os_size) {
     next = iter->next;
     if(iter->unreachable) {
-      ObjectUtil_eprintf("deleting unreachable obj(p=%p rc=%d/%d rt=%d)\n", iter, iter->rc, iter->rc_gc, iter->returning);
+      ObjectUtil_eprintf("unreachable obj(p=%p rc=%d/%d rt=%d t=%p)", iter, iter->rc, iter->rc_gc, iter->returning, iter->type);
+      printf(" | t=");
+      Symbol_print(Object_type(iter));
+      printf("\n");
       iter->rc = 0;
       iter = Object_gc(iter);
     }
@@ -1611,7 +1618,7 @@ void Object_system_print() {
   int i = 0;
   int env_count = 0;
   while(iter != NULL) {
-    printf("[i=%03d] || Object(%p, rc=%03d/%03d, rt=%03d, u=%d) || ", i, iter, iter->rc, iter->rc_gc, iter->returning, iter->unreachable);
+    printf("[i=%03d] || Object(%p, rc=%03d/%03d, rt=%03d, u=%d, t=%p) || ", i, iter, iter->rc, iter->rc_gc, iter->returning, iter->unreachable, iter->type);
     fflush(stdout);
     Object_print(iter);
     printf("\n");

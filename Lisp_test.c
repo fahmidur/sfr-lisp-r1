@@ -124,9 +124,11 @@ int main(int argc, char** argv) {
   Object* tclam1_tokens = Object_accept(Lisp_tokenize(tclam1_str));
   Object* tclam1_parsed = Object_accept(Lisp_parse_tokens(tclam1_tokens));
   ObjectUtil_eprintf("tclam1_parsed = %v\n", tclam1_parsed);
-  Object* tclam1_value = Lisp_eval_sexp(tclam1_parsed);
+  Object* tclam1_value = Object_accept(Lisp_eval_sexp(tclam1_parsed));
   ObjectUtil_eprintf("tclam1_value = %v\n", tclam1_value);
   nassert(Object_type(tclam1_value) == SYMBOL_FUNCTION);
+
+  Object_system_gc();
 
   printf("\n=== === simple rc tests === ===\n");
   nassert(ObjectSystem_count_matching_number(3.456) == 0);
