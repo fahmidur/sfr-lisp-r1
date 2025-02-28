@@ -32,6 +32,7 @@ int main(int argc, char** argv) {
   nassert(Object_cmp(tc1_value, QNUMBER(5.859)) == 0);
 
   ObjectUtil_eprintf("again.\ntc1_value = %v\n", tc1_value);
+  nassert(Object_system_rtcount() == 0);
 
   printf("\n=== === tc1_mul === ===\n");
   Object* tc1_mul_string = QSTRING_NEW1("(* 2.718 3.141)");
@@ -43,6 +44,8 @@ int main(int argc, char** argv) {
   Object* tc1_mul_value = Object_accept(Lisp_eval_sexp(tc1_mul_parsed));
   ObjectUtil_eprintf("tc1_mul_value = %v\n", tc1_mul_value);
   nassert(Object_cmp(tc1_mul_value, QNUMBER(8.537238)) == 0);
+
+  nassert(Object_system_rtcount() == 0);
 
   printf("\n=== === tc1_2 === ===\n");
   Object* tc1_2_string = QSTRING_NEW1("(+ 2.718 (* 2 3.141))");
@@ -57,6 +60,8 @@ int main(int argc, char** argv) {
   ObjectUtil_eprintf("tc1_2_val = %v\n", tc1_2_val);
   nassert(Object_cmp(tc1_2_val, QNUMBER(9.0)) == 0);
 
+  nassert(Object_system_rtcount() == 0);
+
   printf("\n=== === tc2 === ===\n");
   Object* tc2_string = QSTRING_NEW1("92.3");
   Object* tc2_tokens_got = Object_accept(Lisp_tokenize(tc2_string));
@@ -68,6 +73,8 @@ int main(int argc, char** argv) {
   nassert_obj_eq(tc2_parsed_got, tc2_parsed_exp);
   Object* tc2_val = Object_accept(Lisp_eval_sexp(tc2_parsed_got));
   nassert_obj_eq(tc2_val, tc2_parsed_exp);
+
+  nassert(Object_system_rtcount() == 0);
 
   printf("\n=== === tc3 === ===\n");
   Object* tc3_string = QSTRING_NEW1("(- 123 23)");
@@ -95,6 +102,8 @@ int main(int argc, char** argv) {
   Object* tc4_exp = QNUMBER_NEW1(-4);
   nassert_obj_eq(tc4_value, tc4_exp);
 
+  nassert(Object_system_rtcount() == 0);
+
   printf("\n=== === tc5 === ===\n");
   Object* tc5_string = QSTRING_NEW1("(displayln \"hello world\")");
   Object* tc5_tokens_got = Object_accept(Lisp_tokenize(tc5_string));
@@ -109,6 +118,8 @@ int main(int argc, char** argv) {
   nassert(Object_type(tc5_value) == SYMBOL_SYMBOL);
   ObjectUtil_eprintf("tc5_value = %v\n", tc5_value);
 
+  nassert(Object_system_rtcount() == 0);
+
   printf("\n=== === tc6 === ===\n");
   Object* tc6_string = QSTRING_NEW1(") invalid1 ()");
   ObjectUtil_eprintf("tc6_string = %v\n", tc6_string);
@@ -119,11 +130,15 @@ int main(int argc, char** argv) {
   ObjectUtil_eprintf("tc6_parsed = %v\n", tc6_parsed);
   nassert(Object_is_error(tc6_parsed));
 
+  nassert(Object_system_rtcount() == 0);
+
   printf("\n=== === bad op test === ===\n");
   Object* tcbadop1_string = QSTRING_NEW1("(+ abc def)");
   Object* tcbadop1_value = Object_accept(Lisp_eval_string(tcbadop1_string));
   ObjectUtil_eprintf("tcbadop1_value = %v\n", tcbadop1_value);
   nassert(Object_type(tcbadop1_value) == SYMBOL_ERROR);
+
+  nassert(Object_system_rtcount() == 0);
 
   printf("\n=== === lambda test 1 === ===\n");
   Object* tclam1_str = QSTRING_NEW1("(lambda (x) (+ 0 x))");
@@ -134,6 +149,8 @@ int main(int argc, char** argv) {
   Object* tclam1_value = Object_accept(Lisp_eval_sexp(tclam1_parsed));
   ObjectUtil_eprintf("tclam1_value = %v\n", tclam1_value);
   nassert(Object_type(tclam1_value) == SYMBOL_FUNCTION);
+
+  nassert(Object_system_rtcount() == 0);
 
   Object_system_gc();
 
