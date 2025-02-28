@@ -12,9 +12,12 @@ int main(int argc, char** argv) {
   // numbers evaluate to themselves
   Object* tc0_1_string = QSTRING_NEW1("2.718");
   Object* tc0_1_value = Object_accept(Lisp_eval_string(tc0_1_string));
+  Object* tc0_1_exp = QNUMBER_NEW1(2.718);
   ObjectUtil_eprintf("tc0_1_value = %v\n", tc0_1_value);
   nassert(Object_system_rtcount() == 0);
-  nassert_obj_eq(tc0_1_value, QNUMBER(2.718));
+  printf("rtcount 001 = %lu\n", Object_system_rtcount());
+  nassert_obj_eq(tc0_1_value, tc0_1_exp);
+  printf("rtcount 002 = %lu\n", Object_system_rtcount());
   nassert(Object_system_rtcount() == 0);
 
   printf("\n=== === tc1 === ===\n");
@@ -62,10 +65,9 @@ int main(int argc, char** argv) {
   Object* tc2_parsed_got = Object_accept(Lisp_parse_tokens(tc2_tokens_got));
   Object* tc2_parsed_exp = QNUMBER_NEW1(92.3);
   ObjectUtil_eprintf("tc2_parsed_got = %v\n", tc2_parsed_got);
-  ObjectSystem_debug_001 = 1;
   nassert_obj_eq(tc2_parsed_got, tc2_parsed_exp);
   Object* tc2_val = Object_accept(Lisp_eval_sexp(tc2_parsed_got));
-  nassert_obj_eq(tc2_val, QNUMBER(92.3));
+  nassert_obj_eq(tc2_val, tc2_parsed_exp);
 
   printf("\n=== === tc3 === ===\n");
   Object* tc3_string = QSTRING_NEW1("(- 123 23)");
@@ -77,7 +79,8 @@ int main(int argc, char** argv) {
   Object* tc3_parsed_exp = Object_new_list(1, 3, QSYMBOL("-"), QNUMBER(123), QNUMBER(23));
   nassert_obj_eq(tc3_parsed_got, tc3_parsed_exp);
   Object* tc3_value = Object_accept(Lisp_eval_sexp(tc3_parsed_got));
-  nassert_obj_eq(tc3_value, QNUMBER(100));
+  Object* tc3_exp = QNUMBER_NEW1(100);
+  nassert_obj_eq(tc3_value, tc3_exp);
 
   printf("\n=== === tc4 ===  ===\n");
   // testing addition of positive and negative number
@@ -89,7 +92,8 @@ int main(int argc, char** argv) {
   Object* tc4_parsed_exp = Object_new_list(1, 3, QSYMBOL("+"), QNUMBER(5), QNUMBER(-9));
   nassert_obj_eq(tc4_parsed_got, tc4_parsed_exp);
   Object* tc4_value = Object_accept(Lisp_eval_sexp(tc4_parsed_got));
-  nassert_obj_eq(tc4_value, QNUMBER(-4));
+  Object* tc4_exp = QNUMBER_NEW1(-4);
+  nassert_obj_eq(tc4_value, tc4_exp);
 
   printf("\n=== === tc5 === ===\n");
   Object* tc5_string = QSTRING_NEW1("(displayln \"hello world\")");

@@ -54,6 +54,10 @@ static int __nassert_cmp_res = 0;
   do { \
     printf("NASSERT_OBJ_EQ. F=%s L=%05d. || Object_cmp(%s, %s) == 0\n", __FILE__, __LINE__, #a, #b); \
     general_count++; \
+    assert(a != NULL); \
+    assert(b != NULL); \
+    assert(a->rc >= 1); \
+    assert(b->rc >= 1); \
     ObjectUtil_eprintf("%s = %v\n%s = %v\n", #a, a, #b, b); \
     __nassert_cmp_res = Object_cmp(a, b); \
     printf("NASSERT_OBJ_EQ. cmp_res = %d\n", __nassert_cmp_res); \

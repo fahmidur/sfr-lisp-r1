@@ -1054,7 +1054,7 @@ void Object_print(Object* self) {
     printf("(NULL)");
     goto _return;
   }
-  /* Object_accept(self); */
+  assert(self->type != NULL);
   if((self->visited & OBJECT_PRINT_VFLAG) != 0) {
     // this object has already been visited;
     printf("CYCLE(%p)", self);
@@ -1078,7 +1078,6 @@ void Object_print(Object* self) {
 _return:
   if(self != NULL) {
     self->visited = self->visited & ~OBJECT_PRINT_VFLAG;
-    /* Object_assign(&self, NULL); */
   }
   return;
 }
