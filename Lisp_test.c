@@ -157,8 +157,6 @@ int main(int argc, char** argv) {
   printf("num1_count = %d\n", num1_count);
   nassert(num1_count == 0);
 
-  /*
-
   Object* numstr1 = QSTRING_NEW1("1.987");
   Object* numstr1_val = Object_accept(Lisp_eval_string(numstr1));
   int numstr1_count = ObjectSystem_count_matching_number(1.987);
@@ -258,7 +256,6 @@ int main(int argc, char** argv) {
   // no new objects have been created
   nassert(new_obj_sys_size == old_obj_sys_size);
 
-  */
 _shutdown:
   Lisp_done();
   Runtime_done();
