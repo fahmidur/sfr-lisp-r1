@@ -135,7 +135,7 @@ int main(int argc, char** argv) {
   ObjectUtil_eprintf("tclam1_value = %v\n", tclam1_value);
   nassert(Object_type(tclam1_value) == SYMBOL_FUNCTION);
 
-  /* Object_system_gc(); */
+  Object_system_gc();
 
   printf("\n=== === simple rc tests === ===\n");
   nassert(ObjectSystem_count_matching_number(3.456) == 0);
