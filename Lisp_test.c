@@ -13,7 +13,9 @@ int main(int argc, char** argv) {
   Object* tc0_1_string = QSTRING_NEW1("2.718");
   Object* tc0_1_value = Object_accept(Lisp_eval_string(tc0_1_string));
   ObjectUtil_eprintf("tc0_1_value = %v\n", tc0_1_value);
+  nassert(Object_system_rtcount() == 0);
   nassert_obj_eq(tc0_1_value, QNUMBER(2.718));
+  nassert(Object_system_rtcount() == 0);
 
   printf("\n=== === tc1 === ===\n");
   Object* tc1_string = QSTRING_NEW1("(+ 2.718 3.141)");
@@ -58,8 +60,9 @@ int main(int argc, char** argv) {
   Object* tc2_tokens_exp = Object_new_list(1, 1, QNUMBER(92.3));
   nassert_obj_eq(tc2_tokens_got, tc2_tokens_exp);
   Object* tc2_parsed_got = Object_accept(Lisp_parse_tokens(tc2_tokens_got));
-  Object* tc2_parsed_exp = QNUMBER(92.3);
+  Object* tc2_parsed_exp = QNUMBER_NEW1(92.3);
   ObjectUtil_eprintf("tc2_parsed_got = %v\n", tc2_parsed_got);
+  ObjectSystem_debug_001 = 1;
   nassert_obj_eq(tc2_parsed_got, tc2_parsed_exp);
   Object* tc2_val = Object_accept(Lisp_eval_sexp(tc2_parsed_got));
   nassert_obj_eq(tc2_val, QNUMBER(92.3));
@@ -128,7 +131,7 @@ int main(int argc, char** argv) {
   ObjectUtil_eprintf("tclam1_value = %v\n", tclam1_value);
   nassert(Object_type(tclam1_value) == SYMBOL_FUNCTION);
 
-  Object_system_gc();
+  /* Object_system_gc(); */
 
   printf("\n=== === simple rc tests === ===\n");
   nassert(ObjectSystem_count_matching_number(3.456) == 0);
@@ -252,6 +255,7 @@ int main(int argc, char** argv) {
   nassert(new_obj_sys_size == old_obj_sys_size);
 
   */
+_shutdown:
   Lisp_done();
   Runtime_done();
 
