@@ -93,7 +93,7 @@ end
 if has_flag?('asan')
   $cflags << "-fsanitize=address"
 end
-$cflags = $cflags.join(' ')
+# $cflags = $cflags.join(' ')
 
 def wasm_conf_check
   wasm_err = []
@@ -132,9 +132,15 @@ def compile(type, ofile, sources)
     cc = $conf['wasm_cc']
   end
 
+  cflags = $cflags.clone
+  if use_wasm
+    # address sanitizer is not supported for wasm targets
+    cflags = cflags.reject {|e| e == "-fsanitize=address" }
+  end
+
   com = <<~EOS
     #{cc} 
-    #{$cflags}
+    #{cflags.join(' ')}
     -DVERSION='"#{$version}"'
     -DGIT_SHA='"#{$git_sha}"'
   EOS
