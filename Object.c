@@ -1054,7 +1054,7 @@ void Object_print(Object* self) {
     printf("(NULL)");
     goto _return;
   }
-  Object_accept(self);
+  /* Object_accept(self); */
   if((self->visited & OBJECT_PRINT_VFLAG) != 0) {
     // this object has already been visited;
     printf("CYCLE(%p)", self);
@@ -1078,7 +1078,7 @@ void Object_print(Object* self) {
 _return:
   if(self != NULL) {
     self->visited = self->visited & ~OBJECT_PRINT_VFLAG;
-    Object_assign(&self, NULL);
+    /* Object_assign(&self, NULL); */
   }
   return;
 }
@@ -1632,6 +1632,7 @@ void Object_system_print() {
   Object* iter = object_system->head;
   int i = 0;
   int env_count = 0;
+  int ret_count = 0;
   while(iter != NULL) {
     printf("[i=%03d] || Object(%p, rc=%03d/%03d, rt=%03d, u=%d, t=%p) || ", i, iter, iter->rc, iter->rc_gc, iter->returning, iter->unreachable, iter->type);
     fflush(stdout);
@@ -1640,12 +1641,16 @@ void Object_system_print() {
     if(Object_type(iter) == SYMBOL_ENVIRONMENT) {
       env_count++;
     }
+    if(iter->returning) {
+      ret_count++;
+    }
     iter = iter->next;
     i++;
   }
   printf("--------------------------------------\n");
   printf("SIZE: %zu\n", object_system->size);
   printf("ENV_COUNT: %d\n", env_count);
+  printf("RET_COUNT: %d\n", ret_count);
   printf("--- } Object_system_print() } ---\n");
 }
 
