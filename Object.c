@@ -1039,6 +1039,10 @@ Object* Object_rc_decr(Object* self) {
     // do nothing.
     return self;
   }
+  /* printf("donuts. Object_rc_decr. self p=%p t=%p | ", self, self->type); */
+  /* Object_print(self); */
+  /* printf("\n"); */
+  /* ObjectUtil_eprintf("donuts. Object_rc_decr. self = %v p = %p\n", self, self); */
   if(self->rc >= 1) {
     self->rc--;
   }
@@ -1050,6 +1054,7 @@ void Object_print(Object* self) {
     printf("(NULL)");
     goto _return;
   }
+  Object_accept(self);
   if((self->visited & OBJECT_PRINT_VFLAG) != 0) {
     // this object has already been visited;
     printf("CYCLE(%p)", self);
@@ -1073,6 +1078,7 @@ void Object_print(Object* self) {
 _return:
   if(self != NULL) {
     self->visited = self->visited & ~OBJECT_PRINT_VFLAG;
+    Object_assign(&self, NULL);
   }
   return;
 }
@@ -1146,7 +1152,10 @@ Object* Object_zero(Object* self) {
 int Object_cmp(Object* a, Object* b) {
   assert(a != NULL); assert(b != NULL);
   /* Object_rc_incr(a); Object_rc_incr(b); */
-  Object_accept(a); Object_accept(b);
+  Object_accept(a); 
+  Object_accept(b);
+  assert(a->returning == 0); 
+  assert(b->returning == 0);
   int ret = -9;
   if(a == b) {
     // two objects that point to the same memory address
@@ -1172,6 +1181,12 @@ int Object_cmp(Object* a, Object* b) {
   else
   if(Object_type(a) == SYMBOL_HASH && Object_type(b) == SYMBOL_HASH) {
     ret = Hash_cmp(a->impl, b->impl);
+  }
+  else {
+    if(ObjectSystem_debug_001) {
+      printf("donuts. here. debug_001\n");
+      ObjectSystem_debug_001 = 0;
+    }
   }
   Object_rc_decr(a); Object_rc_decr(b);
   return ret;

@@ -773,8 +773,8 @@ Object* Lisp_parse_string(Object* str) {
 
 Object* Lisp_eval_sexp2(Object* sexp, Object* env, int depth) {
   char gc_on_return = 0;
-  sexp = Object_accept(sexp);
-  env = Object_accept(env);
+  Object_accept(sexp);
+  Object_accept(env);
   if(env == LispEnv_root && depth == 0) {
     gc_on_return = 1;
   }

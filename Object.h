@@ -30,6 +30,10 @@ extern Symbol* SYMBOL_FUNCTION;
 
 
 extern char ObjectSystem_debug_eprintf;
+extern char ObjectSystem_debug_001;
+extern char ObjectSystem_debug_002;
+extern char ObjectSystem_debug_003;
+extern char ObjectSystem_debug_004;
 
 typedef struct Object Object;
 struct Object {
