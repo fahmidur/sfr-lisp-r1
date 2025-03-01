@@ -1467,14 +1467,22 @@ Object* Object_uop_tail(Object* self) {
 }
 
 Object* Object_uop_rest(Object* self) {
+  assert(self != NULL);
+  Object_accept(self);
+  Object* ret = Object_new_null();
   if(Object_type(self) == SYMBOL_LIST) {
+    // clone the list
     Object* clone = Object_accept(Object_clone(self));
+    // delete head item of clone list.
     Object_reject(Object_uop_shift(clone));
-    Object_return(clone);
-    Object_rc_decr(clone);
-    return clone;
+    ret = clone;
   }
-  return Object_new_null();
+  Object_assign(&self, NULL);
+  if(!Object_is_null(ret)) {
+    Object_return(ret); // mark for returning
+    Object_rc_decr(ret);
+  }
+  return ret;
 }
 
 Object* Object_bop_push(Object* a, Object* b) {
