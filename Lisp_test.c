@@ -89,6 +89,8 @@ int main(int argc, char** argv) {
   Object* tc3_exp = QNUMBER_NEW1(100);
   nassert_obj_eq(tc3_value, tc3_exp);
 
+  nassert(Object_system_rtcount() == 0);
+
   printf("\n=== === tc4 ===  ===\n");
   // testing addition of positive and negative number
   Object* tc4_string = QSTRING_NEW1("(+ 5 -9)");
@@ -152,7 +154,7 @@ int main(int argc, char** argv) {
 
   nassert(Object_system_rtcount() == 0);
 
-  Object_system_gc();
+  /* Object_system_gc(); */
 
   printf("\n=== === simple rc tests === ===\n");
   nassert(ObjectSystem_count_matching_number(3.456) == 0);
@@ -272,6 +274,8 @@ int main(int argc, char** argv) {
   printf("new_obj_sys_size = %d\n", new_obj_sys_size);
   // no new objects have been created
   nassert(new_obj_sys_size == old_obj_sys_size);
+
+  nassert(Object_system_rtcount() == 0);
 
 _shutdown:
   Lisp_done();
