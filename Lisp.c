@@ -4,6 +4,10 @@
 #include "Object.h"
 #include "Lisp.h"
 
+size_t LispAutoGC;
+size_t LispAutoGC_counter;
+size_t LispAutoGC_oldsize;
+
 Object* LISP_PAREN_BEG;
 Object* LISP_PAREN_END;
 
@@ -432,6 +436,9 @@ void Lisp_init() {
   Object_top_hset(LispEnv_root, QSYMBOL("gc_run"), fnobj_gc_run);
   Object_assign(&fnobj_gc_run, NULL);
 
+  LispAutoGC = 5;
+  LispAutoGC_counter = 0;
+  LispAutoGC_oldsize = 0;
 }
 
 void Lisp_done() {
@@ -974,13 +981,24 @@ _return:
   /* if(Object_type(ret) == SYMBOL_NUMBER && ((Number*)ret->impl)->rep == 3.456) { */
   /*   ObjectUtil_eprintf("donuts. over here 004. ret<Number>=%v rc=%d\n", ret, ret->rc); */
   /* } */
-  /* if(gc_on_return) { */
-  /*   printf("Calling Object_system_gc()\n"); */
-  /*   Object_system_gc(); */
-  /* } */
   /* if(Object_type(ret) == SYMBOL_NUMBER && ((Number*)ret->impl)->rep == 3.456) { */
   /*   ObjectUtil_eprintf("donuts. over here 005. ret<Number>=%v rc=%d\n", ret, ret->rc); */
   /* } */
+  LispAutoGC_counter = (LispAutoGC_counter + 1) % LispAutoGC;
+  ssize_t cursize = Object_system_size();
+  /* printf("LispAutoGC_counter = %lu | cursize=%lu | oldsize=%lu\n", LispAutoGC_counter, cursize, LispAutoGC_oldsize); */
+  if(
+      gc_on_return
+      && cursize > 0 
+      && LispAutoGC > 0
+      && LispAutoGC_counter == 0
+      && LispAutoGC_oldsize != cursize
+    ) {
+    /* printf("LispAutoGC. Calling Object_system_gc(). size=%lu\n", Object_system_size()); */
+    Object_system_gc();
+    LispAutoGC_oldsize = Object_system_size();
+    /* printf("LispAutoGC. ..................... Post. size=%lu\n", LispAutoGC_oldsize); */
+  }
   return ret;
 }
 
