@@ -234,7 +234,7 @@ int main(int argc, char** argv) {
   //===========================================================================
   Util_heading1(1, "BOOLEAN OPERATIONS");
   Object* null_obj1 = Object_new_null();
-  Object* truthy_obj1 = QSYMBOL("True");
+  Object* truthy_obj1 = QSYMBOL_NEW1("True");
   nassert(Object_is_truthy(truthy_obj1));
   nassert(!Object_is_truthy(null_obj1));
   Util_heading1(0, "BOOLEAN OPERATIONS");
@@ -623,6 +623,9 @@ int main(int argc, char** argv) {
 
   Util_heading1(0, "Extra GC Tests 1");
   
+  nassert(Object_system_rtcount() == 0);
+
+_shutdown:
   Util_heading1(1, "RUNTIME DONE");
   Object_system_print();
   Object_system_done();
