@@ -663,10 +663,10 @@ void Object_system_gc() {
   while(iter != NULL && iter_count < os_size) {
     next = iter->next;
     if(iter->unreachable) {
-      ObjectUtil_eprintf("unreachable obj(p=%p rc=%d/%d rt=%d t=%p)", iter, iter->rc, iter->rc_gc, iter->returning, iter->type);
-      printf(" | t=");
-      Symbol_print(Object_type(iter));
-      printf("\n");
+      /* ObjectUtil_eprintf("unreachable obj(p=%p rc=%d/%d rt=%d t=%p)", iter, iter->rc, iter->rc_gc, iter->returning, iter->type); */
+      /* printf(" | t="); */
+      /* Symbol_print(Object_type(iter)); */
+      /* printf("\n"); */
       iter->rc = 0;
       iter = Object_gc(iter);
     }
