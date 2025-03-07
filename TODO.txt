@@ -40,7 +40,7 @@
 ------------------------------------------------------------------------------
 
 - bug. Function calls to lambda are leaving behind tmp Environment 
-  in memory.
+  in memory. See ./test/sample/lambda_003.lsp
 
 - Create memsafe.h/memsafe.c to export
   void* memsafe_malloc(size_t)
