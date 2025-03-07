@@ -39,6 +39,8 @@
 { TODO {
 ------------------------------------------------------------------------------
 
+- bug. Function calls to lambda are leaving behind tmp Environment 
+  in memory.
 
 - Create memsafe.h/memsafe.c to export
   void* memsafe_malloc(size_t)
