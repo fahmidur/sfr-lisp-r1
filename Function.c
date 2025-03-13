@@ -70,7 +70,7 @@ void Function_print(Function* self) {
     if(self->name) {
       ObjectUtil_eprintf(" name=%v", self->name);
     }
-    ObjectUtil_eprintf(" env=Object<Environment>(%p, %v)", self->env, self->env);
+    ObjectUtil_eprintf(" env=Environment(%p; %v)", self->env, self->env);
     if(self->body != NULL && !Object_is_null(self->body)) {
       ObjectUtil_eprintf(" body=%v", self->body);
     }
@@ -95,6 +95,9 @@ Object* Function_call(Function* self, Object* argv) {
   /*   } */
   /* } */
 
+  if(Object_is_null(self->name)) {
+    ObjectUtil_eprintf("donuts. Function_call(%p name=%v). Making tmpEnv ...\n", self, self->name);
+  }
   Object* tmpEnv = Object_new(SYMBOL_ENVIRONMENT, 1, Environment_new());
   assert(tmpEnv->rc == 1);
   /* if(Object_cmp(self->name, QSTRING("lambda001")) == 0) { */

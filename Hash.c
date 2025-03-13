@@ -21,8 +21,11 @@ _return:
 }
 
 void HashNode_print(HashNode* self) {
-  // DEBUG
+#ifdef DEBUG
   ObjectUtil_eprintf("HashNode(%v => %v)", self->key, self->val);
+#else 
+  ObjectUtil_eprintf("  %v => %v", self->key, self->val);
+#endif
 }
 
 void HashNode_del(HashNode* self) {
