@@ -225,6 +225,9 @@ Object* fn_begin(Function* fn, Object* env, Object* argv) {
   return ret;
 }
 
+/**
+ * This is the core implementation for all lambdas.
+ **/
 Object* fn_lambda(Function* fn, Object* env, Object* argv) {
   printf("donuts. fn_lambda. --- over here --- fn=%p\n", fn);
   Object* env2 = Object_new(SYMBOL_ENVIRONMENT, 1, Environment_new());
@@ -917,6 +920,7 @@ Object* Lisp_eval_sexp2(Object* sexp, Object* env, int depth) {
         }
         else {
           ret = Object_new_null();
+          // The lambda captures a reference to the calling Environment env.
           Object* lambda_env = Object_rc_incr(env);
           Object* lambda_params = Object_accept(Object_uop_head(Object_uop_rest(sexp)));
           ssize_t lambda_plen = Object_len(lambda_params);
@@ -1016,24 +1020,24 @@ Object* Lisp_eval_string(Object* str) {
 }
 
 void Lisp_printenv2(Object* env_obj) {
-  printf("--- { Object<Environment>(%p) Environment(%p) { ---\n", env_obj, env_obj->impl);
+  printf("--- { Environment(%p; impl=%p) { ---\n", env_obj, env_obj->impl);
   Environment* env = env_obj->impl;
   Object_print(env->objects);
   ListIter* iter = ListIter_new(env->children->impl);
   ListIter_head(iter);
-  int i = 0;
+  int i = 1;
   Object* child_env_obj = NULL;
   while(!ListIter_at_end(iter)) {
-    printf("--- { Object<Environment>(%p) child %d { ---\n", env_obj, i);
+    printf("--- { Environment(%p; impl=%p) > child %d { ---\n", env_obj, env_obj->impl, i);
     child_env_obj = Object_accept(ListIter_get_val(iter));
     /* printf("%p : [%d] obj= %p obj->impl=%p\n", env_obj, i, child_env_obj, child_env_obj->impl); */
     Lisp_printenv2(child_env_obj);
-    printf("--- } Object<Environment>(%p) child %d } ---\n", env_obj, i);
+    printf("--- } Environment(%p; impl=%p) > child %d } ---\n", env_obj, env_obj->impl, i);
     ListIter_next(iter);
     i++;
   }
   ListIter_del(iter);
-  printf("--- } Object<Environment>(%p) Environment(%p) } ---\n", env_obj, env_obj->impl);
+  printf("--- } Environment(%p; impl=%p) } ---\n", env_obj, env_obj->impl);
 }
 
 void Lisp_printenv() {
