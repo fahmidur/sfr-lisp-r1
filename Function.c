@@ -70,7 +70,7 @@ void Function_print(Function* self) {
     if(self->name) {
       ObjectUtil_eprintf(" name=%v", self->name);
     }
-    ObjectUtil_eprintf(" env=%v", self->env);
+    ObjectUtil_eprintf(" env=Object<Environment>(%p, %v)", self->env, self->env);
     if(self->body != NULL && !Object_is_null(self->body)) {
       ObjectUtil_eprintf(" body=%v", self->body);
     }
