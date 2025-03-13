@@ -226,6 +226,7 @@ Object* fn_begin(Function* fn, Object* env, Object* argv) {
 }
 
 Object* fn_lambda(Function* fn, Object* env, Object* argv) {
+  printf("donuts. fn_lambda. --- over here --- fn=%p\n", fn);
   Object* env2 = Object_new(SYMBOL_ENVIRONMENT, 1, Environment_new());
   Object_bop_child_attach(fn->env, env2);
 
@@ -251,7 +252,7 @@ Object* fn_lambda(Function* fn, Object* env, Object* argv) {
 
   Object* ret = Object_new_null();
 
-  /* ObjectUtil_eprintf("donuts. fn_lambda. body=%v\n", fn->body); */
+  ObjectUtil_eprintf("donuts. fn_lambda. body=%v\n", fn->body);
 
   // now eval the lambda body
   Object* body = Object_accept(fn->body);
