@@ -15,6 +15,7 @@
 #define OBJECT_PRINT_VFLAG   0b00001
 #define OBJECT_DEL_VFLAG     0b00010
 #define OBJECT_RC_DONE_VFLAG 0b00100
+#define OBJECT_OSG_VFLAG     0b01000
 
 extern Symbol* SYMBOL_SYMBOL;
 extern Symbol* SYMBOL_STRING;
@@ -190,7 +191,7 @@ void    Object_system_print();
 void    Object_system_gc();
 char    Object_system_delete_recurse();
 char    Object_system_delete_soft();
-
+void    Object_system_graph();
 
 int ObjectSystem_count_matching_number(double x);
 

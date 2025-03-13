@@ -21,6 +21,7 @@ char ObjectSystem_debug_001;
 char ObjectSystem_debug_002;
 char ObjectSystem_debug_003;
 char ObjectSystem_debug_004;
+FILE *osg_ofile;
 
 Symbol* SYMBOL_NEW;
 Symbol* SYMBOL_DEL;
@@ -1659,6 +1660,31 @@ void Object_system_print() {
   printf("ENV_COUNT: %d\n", env_count);
   printf("RET_COUNT: %d\n", ret_count);
   printf("--- } Object_system_print() } ---\n");
+}
+
+void _osg_print(Object* object) {
+  if(object->visited & OBJECT_OSG_VFLAG) {
+    return;
+  }
+  object->visited = object->visited | OBJECT_OSG_VFLAG;
+  fprintf(osg_ofile, "  obj_%p [label=\"%s(%p)", object, object->type->str, object);
+  if(object->type == SYMBOL_SYMBOL) {
+    fprintf(osg_ofile, "\\n%s", ((Symbol*)(object->impl))->str);
+  }
+  fprintf(osg_ofile, "\"];\n");
+}
+void _os_graph_walker(Object* referer, Object* referend) {
+  _osg_print(referer);
+  _osg_print(referend);
+  fprintf(osg_ofile, "  obj_%p -> obj_%p;\n", referer, referend);
+}
+void Object_system_graph() {
+  osg_ofile = fopen("tmp/osg.dot", "w");
+  fprintf(osg_ofile, "digraph G {\n");
+  fprintf(osg_ofile, "  node[shape=\"box\"]\n");
+  Object_system_walkrefs(_os_graph_walker);
+  fprintf(osg_ofile, "}\n");
+  fclose(osg_ofile);
 }
 
 /**
