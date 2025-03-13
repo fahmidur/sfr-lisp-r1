@@ -1020,7 +1020,7 @@ Object* Lisp_eval_string(Object* str) {
 }
 
 void Lisp_printenv2(Object* env_obj) {
-  printf("--- { Environment(%p; impl=%p) { ---\n", env_obj, env_obj->impl);
+  printf("--- { Environment(%p; impl=%p rc=%d) { ---\n", env_obj, env_obj->impl, env_obj->rc);
   Environment* env = env_obj->impl;
   Object_print(env->objects);
   ListIter* iter = ListIter_new(env->children->impl);
@@ -1032,12 +1032,13 @@ void Lisp_printenv2(Object* env_obj) {
     child_env_obj = Object_accept(ListIter_get_val(iter));
     /* printf("%p : [%d] obj= %p obj->impl=%p\n", env_obj, i, child_env_obj, child_env_obj->impl); */
     Lisp_printenv2(child_env_obj);
+    Object_assign(&child_env_obj, NULL);
     printf("--- } Environment(%p; impl=%p) > child %d } ---\n", env_obj, env_obj->impl, i);
     ListIter_next(iter);
     i++;
   }
   ListIter_del(iter);
-  printf("--- } Environment(%p; impl=%p) } ---\n", env_obj, env_obj->impl);
+  printf("--- } Environment(%p; impl=%p rc=%d) } ---\n", env_obj, env_obj->impl, env_obj->rc);
 }
 
 void Lisp_printenv() {
