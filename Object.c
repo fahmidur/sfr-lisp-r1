@@ -1671,6 +1671,14 @@ void _osg_print(Object* object) {
   if(object->type == SYMBOL_SYMBOL) {
     fprintf(osg_ofile, "\\n%s", ((Symbol*)(object->impl))->str);
   }
+  else
+  if(object->type == SYMBOL_NUMBER) {
+    fprintf(osg_ofile, "\\n%f", ((Number*)(object->impl))->rep);
+  }
+  else 
+  if(object->type == SYMBOL_NUMBER) {
+    fprintf(osg_ofile, "\\n%s", ((String*)(object->impl))->buf);
+  }
   fprintf(osg_ofile, "\"];\n");
 }
 void _os_graph_walker(Object* referer, Object* referend) {
