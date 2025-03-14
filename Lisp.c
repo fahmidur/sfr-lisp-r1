@@ -234,28 +234,28 @@ Object* fn_begin(Function* fn, Object* env, Object* argv) {
  * This is the core implementation for all lambdas.
  **/
 Object* fn_lambda(Function* fn, Object* env, Object* argv) {
-  Object* env2 = Object_new(SYMBOL_ENVIRONMENT, 1, Environment_new());
-  Object_bop_child_attach(fn->env, env2);
+  /* Object* env2 = Object_new(SYMBOL_ENVIRONMENT, 1, Environment_new()); */
+  /* Object_bop_child_attach(fn->env, env2); */
 
   // zip all the args into a new environment.
   // @params.zip(argv).to_h
-  if(fn->arity > 0) {
-    Object* params = Object_accept(fn->params);
-    ListIter* params_iter = ListIter_new(params->impl);
-    ListIter_head(params_iter);
-    ListIter* argv_iter = ListIter_new(argv->impl);
-    ListIter_head(argv_iter);
-    while( ! (ListIter_at_end(params_iter) || ListIter_at_end(argv_iter)) ) {
-      Object_top_hset(env2, ListIter_get_val(params_iter), ListIter_get_val(argv_iter));
-      ListIter_next(params_iter);
-      ListIter_next(argv_iter);
-    }
-    ListIter_del(argv_iter);
-    argv_iter = NULL;
-    ListIter_del(params_iter);
-    params_iter = NULL;
-    Object_assign(&params, NULL);
-  }
+  /* if(fn->arity > 0) { */
+  /*   Object* params = Object_accept(fn->params); */
+  /*   ListIter* params_iter = ListIter_new(params->impl); */
+  /*   ListIter_head(params_iter); */
+  /*   ListIter* argv_iter = ListIter_new(argv->impl); */
+  /*   ListIter_head(argv_iter); */
+  /*   while( ! (ListIter_at_end(params_iter) || ListIter_at_end(argv_iter)) ) { */
+  /*     Object_top_hset(env2, ListIter_get_val(params_iter), ListIter_get_val(argv_iter)); */
+  /*     ListIter_next(params_iter); */
+  /*     ListIter_next(argv_iter); */
+  /*   } */
+  /*   ListIter_del(argv_iter); */
+  /*   argv_iter = NULL; */
+  /*   ListIter_del(params_iter); */
+  /*   params_iter = NULL; */
+  /*   Object_assign(&params, NULL); */
+  /* } */
 
   Object* ret = Object_new_null();
 
@@ -270,7 +270,7 @@ Object* fn_lambda(Function* fn, Object* env, Object* argv) {
         Object_assign(&ret, NULL);
       }
       body_item = Object_accept(ListIter_get_val(body_iter));
-      ret = Object_accept(Lisp_eval_sexp2(body_item, env2, 0));
+      ret = Object_accept(Lisp_eval_sexp2(body_item, env, 0));
       Object_assign(&body_item, NULL);
       ListIter_next(body_iter); 
     }
@@ -284,7 +284,7 @@ Object* fn_lambda(Function* fn, Object* env, Object* argv) {
   //TODO: there is a serious issue here -- why does detaching
   // the env2 destroy the returning variable?
   /* Object_bop_child_detach(env, env2); */
-  Object_assign(&env2, NULL);
+  /* Object_assign(&env2, NULL); */
   return ret;
 }
 
