@@ -281,7 +281,7 @@ Object* fn_lambda(Function* fn, Object* env, Object* argv) {
     Object_return(ret);
     Object_rc_decr(ret);
   }
-  //TODO: there is a seirous issue here -- why does detaching
+  //TODO: there is a serious issue here -- why does detaching
   // the env2 destroy the returning variable?
   /* Object_bop_child_detach(env, env2); */
   Object_assign(&env2, NULL);
