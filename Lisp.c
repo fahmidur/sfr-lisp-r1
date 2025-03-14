@@ -287,13 +287,14 @@ Object* fn_lambda(Function* fn, Object* env, Object* argv) {
   }
   ObjectUtil_eprintf("donuts. fn_lambda. ret=%v\n", ret);
   Object_assign(&body, NULL);
-  Object_bop_child_detach(env, env2);
-  printf("donuts. fn_lambda. finally. env2 rc=%d\n", env2->rc);
-  Object_assign(&env2, NULL);
   if(!Object_is_null(ret)) {
     Object_return(ret);
     Object_rc_decr(ret);
   }
+  printf("donuts. fn_lambda. finally 1. env2 rc=%d\n", env2->rc);
+  /* Object_bop_child_detach(env, env2); */
+  printf("donuts. fn_lambda. finally 2. env2 rc=%d\n", env2->rc);
+  Object_assign(&env2, NULL);
   return ret;
 }
 

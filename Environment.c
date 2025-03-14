@@ -69,7 +69,11 @@ void Environment_child_detach(Object* self_obj, Object* child_obj) {
 
   Object* self_children = Object_rc_incr(self->children);
 
-  Object_bop_rem(self_children, child_obj);
+  Object* err = Object_accept(Object_bop_rem(self_children, child_obj));
+  if(Object_is_error(err)) {
+    printf("ERROR: failed to remove child_obj\n");
+  }
+  Object_assign(&err, NULL);
 
 _return:
   Object_rc_decr(self_children);
