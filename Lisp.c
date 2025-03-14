@@ -234,11 +234,8 @@ Object* fn_begin(Function* fn, Object* env, Object* argv) {
  * This is the core implementation for all lambdas.
  **/
 Object* fn_lambda(Function* fn, Object* env, Object* argv) {
-  printf("donuts. fn_lambda. --- over here --- fn=%p\n", fn);
   Object* env2 = Object_new(SYMBOL_ENVIRONMENT, 1, Environment_new());
   Object_bop_child_attach(fn->env, env2);
-  printf("donuts. fn_lambda. env2 rc=%d\n", env2->rc);
-  ObjectUtil_eprintf("donuts. fn_lambda. env2=%v\n", env2);
 
   // zip all the args into a new environment.
   // @params.zip(argv).to_h
@@ -262,8 +259,6 @@ Object* fn_lambda(Function* fn, Object* env, Object* argv) {
 
   Object* ret = Object_new_null();
 
-  ObjectUtil_eprintf("donuts. fn_lambda. body=%v\n", fn->body);
-
   // now eval the lambda body
   Object* body = Object_accept(fn->body);
   Object* body_item = NULL;
@@ -271,29 +266,24 @@ Object* fn_lambda(Function* fn, Object* env, Object* argv) {
     ListIter* body_iter = ListIter_new(body->impl);
     ListIter_head(body_iter);
     while(!ListIter_at_end(body_iter)) {
-      /* ObjectUtil_eprintf("donuts. fn_lambda. body el=%v\n", ListIter_get_val(body_iter)); */
       if(!Object_is_null(ret)) {
         Object_assign(&ret, NULL);
       }
       body_item = Object_accept(ListIter_get_val(body_iter));
-      ObjectUtil_eprintf("donuts. fn_lambda. body. item=%v\n", body_item);
-      printf("donuts. fn_lambda. body. env2 (bef) rc=%d\n", env2->rc);
       ret = Object_accept(Lisp_eval_sexp2(body_item, env2, 0));
       Object_assign(&body_item, NULL);
-      printf("donuts. fn_lambda. body. env2 (aft) rc=%d\n", env2->rc);
       ListIter_next(body_iter); 
     }
     ListIter_del(body_iter);
   }
-  ObjectUtil_eprintf("donuts. fn_lambda. ret=%v\n", ret);
   Object_assign(&body, NULL);
   if(!Object_is_null(ret)) {
     Object_return(ret);
     Object_rc_decr(ret);
   }
-  printf("donuts. fn_lambda. finally 1. env2 rc=%d\n", env2->rc);
+  //TODO: there is a seirous issue here -- why does detaching
+  // the env2 destroy the returning variable?
   /* Object_bop_child_detach(env, env2); */
-  printf("donuts. fn_lambda. finally 2. env2 rc=%d\n", env2->rc);
   Object_assign(&env2, NULL);
   return ret;
 }

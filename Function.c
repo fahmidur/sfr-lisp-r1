@@ -95,9 +95,6 @@ Object* Function_call(Function* self, Object* argv) {
   /*   } */
   /* } */
 
-  if(Object_is_null(self->name)) {
-    ObjectUtil_eprintf("donuts. Function_call(%p name=%v). Making tmpEnv ...\n", self, self->name);
-  }
   Object* tmpEnv = Object_new(SYMBOL_ENVIRONMENT, 1, Environment_new());
   assert(tmpEnv->rc == 1);
   /* if(Object_cmp(self->name, QSTRING("lambda001")) == 0) { */
