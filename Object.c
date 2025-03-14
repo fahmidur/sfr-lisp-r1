@@ -1579,13 +1579,18 @@ Object* Object_bop_child_attach(Object* self, Object* child) {
 Object* Object_bop_child_detach(Object* self, Object* child) {
   assert(self != NULL);
   assert(child != NULL);
+  Object_accept(self);
+  Object_accept(child);
   Object* ret = Object_new_null();
   if(Object_type(self) == SYMBOL_ENVIRONMENT && Object_type(child) == SYMBOL_ENVIRONMENT) {
+    printf("donuts. detaching child ...\n");
     Environment_child_detach(self, child);
   }
   else {
     ret = QERROR("invalid types for bop_child_detach");
   }
+  Object_assign(&self, NULL);
+  Object_assign(&child, NULL);
   return ret;
 }
 
