@@ -52,6 +52,11 @@ Object* fn_gc_info(Function* fn, Object* env, Object* argv) {
   return NULL;
 }
 
+/* Object* fn_printenv(Function* fn, Object* env, Object* argv) { */
+/*   Lisp_printenv(); */
+/*   return NULL; */
+/* } */
+
 Object* fn_add(Function* fn, Object* env, Object* argv) {
   /* return Object_return( */
   /*     Object_bop_add( */
@@ -232,6 +237,8 @@ Object* fn_lambda(Function* fn, Object* env, Object* argv) {
   printf("donuts. fn_lambda. --- over here --- fn=%p\n", fn);
   Object* env2 = Object_new(SYMBOL_ENVIRONMENT, 1, Environment_new());
   Object_bop_child_attach(fn->env, env2);
+  printf("donuts. fn_lambda. env2 rc=%d\n", env2->rc);
+  ObjectUtil_eprintf("donuts. fn_lambda. env2=%v\n", env2);
 
   // zip all the args into a new environment.
   // @params.zip(argv).to_h
@@ -259,6 +266,7 @@ Object* fn_lambda(Function* fn, Object* env, Object* argv) {
 
   // now eval the lambda body
   Object* body = Object_accept(fn->body);
+  Object* body_item = NULL;
   if(body != NULL && !Object_is_null(body)) {
     ListIter* body_iter = ListIter_new(body->impl);
     ListIter_head(body_iter);
@@ -267,14 +275,22 @@ Object* fn_lambda(Function* fn, Object* env, Object* argv) {
       if(!Object_is_null(ret)) {
         Object_assign(&ret, NULL);
       }
-      ret = Object_accept(Lisp_eval_sexp2(ListIter_get_val(body_iter), env2, 0));
+      body_item = Object_accept(ListIter_get_val(body_iter));
+      ObjectUtil_eprintf("donuts. fn_lambda. body. item=%v\n", body_item);
+      printf("donuts. fn_lambda. body. env2 (bef) rc=%d\n", env2->rc);
+      ret = Object_accept(Lisp_eval_sexp2(body_item, env2, 0));
+      Object_assign(&body_item, NULL);
+      printf("donuts. fn_lambda. body. env2 (aft) rc=%d\n", env2->rc);
       ListIter_next(body_iter); 
     }
     ListIter_del(body_iter);
   }
+  ObjectUtil_eprintf("donuts. fn_lambda. ret=%v\n", ret);
   Object_assign(&body, NULL);
+  Object_bop_child_detach(env, env2);
+  printf("donuts. fn_lambda. finally. env2 rc=%d\n", env2->rc);
   Object_assign(&env2, NULL);
-  if(ret != NULL && !Object_is_null(ret)) {
+  if(!Object_is_null(ret)) {
     Object_return(ret);
     Object_rc_decr(ret);
   }
@@ -433,6 +449,12 @@ void Lisp_init() {
   );
   Object_top_hset(LispEnv_root, QSYMBOL("gc_info"), fnobj_gc_info);
   Object_assign(&fnobj_gc_info, NULL);
+
+  /* Object* fnobj_printenv = Object_new(SYMBOL_FUNCTION, 1, */ 
+  /*   Function_new(QSYMBOL("printenv"), LispEnv_root, fn_printenv, 0, NULL, NULL) */
+  /* ); */
+  /* Object_top_hset(LispEnv_root, QSYMBOL("printenv"), fnobj_printenv); */
+  /* Object_assign(&fnobj_printenv, NULL); */
 
   Object* fnobj_gc_run = Object_new(SYMBOL_FUNCTION, 1, 
     Function_new(QSYMBOL("gc_run"), LispEnv_root, fn_gc_run, 0, NULL, NULL)
