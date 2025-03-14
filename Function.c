@@ -97,11 +97,14 @@ Object* Function_call(Function* self, Object* argv) {
 
   Object* tmpEnv = Object_new(SYMBOL_ENVIRONMENT, 1, Environment_new());
   assert(tmpEnv->rc == 1);
+  printf("donuts. Function_call. L%d tmpEnv=%p rc=%d\n", __LINE__, tmpEnv, tmpEnv->rc);
   /* if(Object_cmp(self->name, QSTRING("lambda001")) == 0) { */
   /*   printf("donuts. Function_call over here"); */
   /* } */
   assert(self->env != NULL);
   Environment_child_attach(self->env, tmpEnv);
+  printf("donuts. Function_call. L%d tmpEnv=%p rc=%d\n", __LINE__, tmpEnv, tmpEnv->rc);
+  int prev_tmpEnv_rc = tmpEnv->rc;
 
   if(
       !Object_is_null(argv) && Object_type(argv) == SYMBOL_LIST &&
@@ -137,7 +140,14 @@ Object* Function_call(Function* self, Object* argv) {
   /* Object_rc_decr(argv); */
   Object_assign(&argv, NULL);
   assert(Object_is_null(argv));
-  Environment_child_detach(self->env, tmpEnv);
+  printf("donuts. Function_call. L%d tmpEnv=%p rc=%d\n", __LINE__, tmpEnv, tmpEnv->rc);
+  if(tmpEnv->rc <= prev_tmpEnv_rc) {
+    // the implementation has not resulted in an increase to the tmpEnv->rc
+    // this means that this tmpEnv is no longer being used. 
+    // we can safely detach tmpEnv as a child of self->env.
+    Environment_child_detach(self->env, tmpEnv);
+  }
+  // release reference to tmpEnv
   Object_assign(&tmpEnv, NULL);
   // at this point we expect the tmpEnv to be destroyed.
   assert(Object_is_null(tmpEnv));
