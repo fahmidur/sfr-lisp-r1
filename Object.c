@@ -1871,3 +1871,15 @@ int ObjectSystem_count_matching_number(double x) {
   return count;
 }
 
+int ObjectSystem_count_type(Symbol* type) {
+  int count = 0;
+  Object* iter = object_system->head;
+  while(iter != NULL) {
+    if(Object_type(iter) == type) {
+      count++;
+    }
+    iter = iter->next;
+  }
+  return count;
+}
+

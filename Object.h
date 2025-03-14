@@ -194,6 +194,7 @@ char    Object_system_delete_soft();
 void    Object_system_graph();
 
 int ObjectSystem_count_matching_number(double x);
+int ObjectSystem_count_type(Symbol* type);
 
 // Containers
 #include "List.h"

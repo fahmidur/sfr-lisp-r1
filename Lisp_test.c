@@ -277,6 +277,22 @@ int main(int argc, char** argv) {
 
   nassert(Object_system_rtcount() == 0);
 
+  printf("\n=== === lambda env leak test 2 === ===\n");
+  Object* tclam2_line1 = QSTRING_NEW1("(define make_account (lambda (balance) (lambda (amt) (begin (set! balance (+ balance amt)) balance ))))");
+  Object_reject(Lisp_eval_string(tclam2_line1));
+  Object* tclam2_line2 = QSTRING_NEW1("(define acc (make_account 100))");
+  Object_reject(Lisp_eval_string(tclam2_line2));
+  int environment_count_bef = ObjectSystem_count_type(SYMBOL_ENVIRONMENT);
+  printf("environment_count_bef = %d\n", environment_count_bef);
+  Object* tclam2_line3 = QSTRING_NEW1("(acc 1)");
+  for(i = 0; i < 5; i++) {
+    printf("adding 1 to account balance with (acc 1) ...\n");
+    Object_reject(Lisp_eval_string(tclam2_line3));
+  }
+  int environment_count_aft = ObjectSystem_count_type(SYMBOL_ENVIRONMENT);
+  printf("environment_count_aft = %d\n", environment_count_aft);
+  nassert(environment_count_bef == environment_count_aft);
+
 _shutdown:
   Lisp_done();
   Runtime_done();
