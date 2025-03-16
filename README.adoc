@@ -230,9 +230,10 @@ class which points back to the original list.
 
 Standard reference counting cannot destroy circular lists.
 
-However, such circular lists can be destroyed by the GC scan of all objects.
-Here the mechanism, of internal reference elimination, is fundamentally the same
-as that of the the CPython garbage collector.
+These circular lists, however, can be destroyed by a full scan over all objects
+which is done by the main garbage collector. The main garbage collector uses a
+mechanism of internal reference elimination similar to that of the CPython
+garbage collector.
 
 ==== Hash Class
 
