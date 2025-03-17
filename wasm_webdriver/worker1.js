@@ -9,6 +9,24 @@ var stdin = null;
 
 var logprefix = 'worker1.';
 
+// A virtual file system of preopened.
+var vfs = {
+  '/main.lsp': {
+    fd: 3,
+    content: '(displayln "hello from main")'
+  },
+};
+
+function VirtFs() {
+  var self = this;
+  self.files = {
+  };
+}
+
+VirtFs.prototype.file_add = function(path) {
+  var self = this;
+
+};
 
 // function fetch_wasm_bytes() {
 //   var respPromise = fetch("./build/sfr-lisp-wasm.wasm");
@@ -92,11 +110,13 @@ function make_wasm_instance() {
       fd_fdstat_set_flags: function() {
         console.log(logprefix, 'fd_fdstat_set_flags');
       },
-      fd_prestat_get: function() {
-        console.log(logprefix, 'fd_prestat_get');
+      fd_prestat_get: function(fd, ret_ptr) {
+        console.log(logprefix, 'fd_prestat_get, fd=', fd, ' ret_ptr=', ret_ptr);
+        return 8; // WASI_EBADF
       },
-      fd_prestat_dir_name: function() {
-        console.log(logprefix, 'fd_prestat_dir_name');
+      fd_prestat_dir_name: function(fd, path_ptr, path_len) {
+        console.log(logprefix, 'fd_prestat_dir_name. fd=', fd, 'path_ptr=', path_ptr, 'path_len=', path_len);
+        return 8; // WASI_EBADF
       },
       fd_seek: function() {
         console.log(logprefix, 'fd_seek');

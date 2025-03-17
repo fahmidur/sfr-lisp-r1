@@ -34,7 +34,9 @@ body {
   margin-bottom: 2em;
 }
 .tab-head {
-  padding-bottom: 0.5em;
+  padding: 0px;
+  border-bottom: 2px solid #444;
+  margin-bottom: 0.2px;
 }
 .tab-head button {
   background-color: #444;
@@ -44,7 +46,10 @@ body {
   padding-left: 0.5em;
   padding-right: 0.5em;
   border-radius: 0.3em;
-  margin-right: 0.5em;
+  border-bottom-left-radius: 0px;
+  border-bottom-right-radius: 0px;
+  margin: 0px;
+  margin-right: 0.2em;
   font-weight: bold;
   cursor: pointer;
 }
@@ -57,4 +62,7 @@ body {
 }
 #terminal {
   height: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+  font-size: 1em;
 }
