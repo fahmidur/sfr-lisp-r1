@@ -26,6 +26,7 @@ void Lisp_init();
 void Lisp_done();
 
 
+int Lisp_runfile(char* path);
 void Lisp_print_repl_help(void);
 
 // Tokenize a String object into flat List of objects

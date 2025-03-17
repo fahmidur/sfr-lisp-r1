@@ -38,33 +38,6 @@ void print_usage(const char* progname) {
   printf("\n\n");
 }
 
-int run_file(char* path) {
-  /* printf("run_file: %s\n", path); */
-  FILE* file = fopen(path, "r");
-  if(file == NULL) {
-    printf("ERROR: Failed to open file at %s\n", path);
-    return 1;
-  }
-  Object* content_obj = QSTRING_NEW1("");
-  String* content = content_obj->impl;
-  String* fline = String_new("");
-  while(String_getline(fline, file) != -1) {
-    if(fline->len > 0 && fline->buf[0] == '#') {
-      // ignore lines starting with '#'. These are Racket lang-line pragmas
-      continue;
-    }
-    /* printf("%s\n", fline->buf); */
-    String_addx(content, fline);
-  }
-  String_del(fline);
-  fclose(file);
-  /* printf("--- { content { ---\n"); */
-  /* printf("%s\n", content->buf); */
-  /* printf("--- } content } ---\n"); */
-  Object* fresult = Object_accept(Lisp_eval_string(content_obj));
-  /* ObjectUtil_eprintf("\ndonuts. fresult = %v\n", fresult); */
-  return 0;
-}
 
 void repl() {
   Object* obj_inp = QSTRING_NEW1("");
@@ -185,7 +158,7 @@ int main(int argc, char** argv) {
     }
     else
     if(file_exists(argv[1])) {
-      if(run_file(argv[1]) != 0) {
+      if(Lisp_runfile(argv[1]) != 0) {
         goto _return;
       }
     }

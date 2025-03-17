@@ -41,6 +41,17 @@ enum TokenizerState {
   ts_InBareWord,
 };
 
+Object* fn_load(Function* fn, Object* env, Object* argv) {
+  printf("--- fn_load ---\n");
+  Object* path = Object_accept(Object_bop_hget(env, QSYMBOL("path")));
+  ObjectUtil_eprintf("fn_load. got path = %v\n", path);
+  // todo: create a Object_to_cstr(...) function
+  char* path_cstr = ((String*)path->impl)->buf;
+  Lisp_runfile(path_cstr);
+  Object_assign(&path, NULL);
+  return NULL;
+}
+
 Object* fn_gc_run(Function* fn, Object* env, Object* argv) {
   printf("Calling Object_system_gc() ...\n");
   Object_system_gc();
@@ -452,6 +463,12 @@ void Lisp_init() {
   );
   Object_top_hset(LispEnv_root, QSYMBOL("gc_run"), fnobj_gc_run);
   Object_assign(&fnobj_gc_run, NULL);
+
+  Object* fnobj_load = Object_new(SYMBOL_FUNCTION, 1,
+    Function_new(QSYMBOL("load"), LispEnv_root, fn_load, 1, Object_new_list(1, 1, QSYMBOL("path")), NULL)
+  );
+  Object_top_hset(LispEnv_root, QSYMBOL("load"), fnobj_load);
+  Object_assign(&fnobj_load, NULL);
 
   LispAutoGC = 5;
   LispAutoGC_counter = 0;
@@ -1056,4 +1073,32 @@ void Lisp_printenv2(Object* env_obj) {
 
 void Lisp_printenv() {
   Lisp_printenv2(LispEnv_root);
+}
+
+int Lisp_runfile(char* path) {
+  /* printf("runfile: %s\n", path); */
+  FILE* file = fopen(path, "r");
+  if(file == NULL) {
+    printf("ERROR: Failed to open file at %s\n", path);
+    return 1;
+  }
+  Object* content_obj = QSTRING_NEW1("");
+  String* content = content_obj->impl;
+  String* fline = String_new("");
+  while(String_getline(fline, file) != -1) {
+    if(fline->len > 0 && fline->buf[0] == '#') {
+      // ignore lines starting with '#'. These are Racket lang-line pragmas
+      continue;
+    }
+    /* printf("%s\n", fline->buf); */
+    String_addx(content, fline);
+  }
+  String_del(fline);
+  fclose(file);
+  /* printf("--- { content { ---\n"); */
+  /* printf("%s\n", content->buf); */
+  /* printf("--- } content } ---\n"); */
+  Object* fresult = Object_accept(Lisp_eval_string(content_obj));
+  /* ObjectUtil_eprintf("\ndonuts. fresult = %v\n", fresult); */
+  return 0;
 }
