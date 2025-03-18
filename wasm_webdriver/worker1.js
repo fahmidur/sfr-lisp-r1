@@ -10,23 +10,41 @@ var stdin = null;
 var logprefix = 'worker1.';
 
 // A virtual file system of preopened.
-var vfs = {
-  '/main.lsp': {
+var files = {
+  '/sandbox': {
+    path: '/sandbox',
+    type: 'directory',
     fd: 3,
+    preopened: true,
+  },
+  '/sandbox/main.lsp': {
+    path: '/sandbox/main.lsp',
+    type: 'file',
+    fd: 4,
     content: '(displayln "hello from main")'
   },
 };
 
-function VirtFs() {
-  var self = this;
-  self.files = {
-  };
+function files_getentry_by_fd(fd) {
+  let entry = null;
+  for(var path in files) {
+    let tmp = files[path];
+    if(tmp.fd == fd) {
+      entry = tmp;
+    }
+  }
+  return entry;
 }
 
-VirtFs.prototype.file_add = function(path) {
-  var self = this;
+// function VirtFs() {
+//   var self = this;
+//   self.files = {
+//   };
+// }
 
-};
+// VirtFs.prototype.file_add = function(path, fd, content) {
+//   var self = this;
+// };
 
 // function fetch_wasm_bytes() {
 //   var respPromise = fetch("./build/sfr-lisp-wasm.wasm");
@@ -111,12 +129,58 @@ function make_wasm_instance() {
         console.log(logprefix, 'fd_fdstat_set_flags');
       },
       fd_prestat_get: function(fd, ret_ptr) {
+        /**
+         * Write to wasm memory a description of 
+         * virtual fd that is 'preopened'.
+         * 4 bytes -- the type of the file 0=directory
+         **/
         console.log(logprefix, 'fd_prestat_get, fd=', fd, ' ret_ptr=', ret_ptr);
-        return 8; // WASI_EBADF
+        var path_length = 0;
+        var entry = files_getentry_by_fd(fd);
+        if(!entry) {
+          console.error(logprefix, 'fd_prestat_get. could not find entry from fd=', fd);
+          return 8; // WASI_EBADF
+        }
+        console.log(logprefix, 'fd_prestat_get. entry=', entry);
+        // if(!(entry.preopened )) {
+        //   console.error(logprefix, 'fd_prestat_get. expecting entry to be preopened');
+        //   return 8; // WASI_EBADF
+        // }
+        // if(entry.type !== 'directory') {
+        //   console.error(logprefix, 'fd_prestat_get. expecting entry type to be directory');
+        //   return 8; // WASI_EBADF
+        // }
+        var ret_view = new DataView(wasm_memory_buffer());
+        if(entry.type == 'directory') {
+          // 0 indicates type directory
+          ret_view.setUint32(ret_ptr, 0); 
+        } else {
+          ret_view.setUint32(ret_ptr, 1);
+        }
+        ret_view.setUint32(ret_ptr+4, entry.path.length, true);
+        return 0; // success
       },
       fd_prestat_dir_name: function(fd, path_ptr, path_len) {
-        console.log(logprefix, 'fd_prestat_dir_name. fd=', fd, 'path_ptr=', path_ptr, 'path_len=', path_len);
-        return 8; // WASI_EBADF
+        /**
+         * Write to memory the path of the virtual file at
+         * the path_ptr location.
+         **/
+        let prefix = logprefix + 'fd_prestat_dir_name. ';
+        console.log(prefix, 'fd=', fd, 'path_ptr=', path_ptr, 'path_len=', path_len);
+        var entry = files_getentry_by_fd(fd);
+        if(!entry) {
+          console.error(prefix, 'could not find find entry from fd=', fd);
+          return 8; // WASI_EBADF
+        }
+        console.log(prefix, 'entry=', entry);
+        var path_bytes = (new TextEncoder()).encode(entry.path);
+
+        console.log(prefix, 'path_bytes=', path_bytes);
+
+        var memory_view = new Uint8Array(wasm_memory_buffer(), path_ptr, path_len);
+        memory_view.set(path_bytes);
+
+        return 0; // success
       },
       fd_seek: function() {
         console.log(logprefix, 'fd_seek');
