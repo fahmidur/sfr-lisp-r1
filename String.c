@@ -1,3 +1,4 @@
+#define _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -252,7 +253,16 @@ ssize_t String_getline(String* self, FILE* stream) {
   /*   #endif */
   /* } */ 
   /* else { */
-    ret = getline(&(self->buf), &(self->buf_size), stream);
+
+  if(stream == stdin) {
+    printf("donuts. String_getline. calling getline on stdin stream=%p\n", stream);
+  } else {
+    printf("donuts. String_getline. calling getline on stream=%p\n", stream);
+  }
+  fflush(stdout);
+  ret = getline(&(self->buf), &(self->buf_size), stream);
+  printf("donuts. String_getline. ret=%ld\n", ret);
+  fflush(stdout);
   /* } */
   /* dbg_printf("String_getline. ret=%ld buf_size=%ld\n", ret, self->buf_size); */
   String_len(self);

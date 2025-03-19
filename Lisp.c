@@ -1076,16 +1076,20 @@ void Lisp_printenv() {
 }
 
 int Lisp_runfile(char* path) {
-  /* printf("runfile: %s\n", path); */
+  printf("Lisp_runfile: %s\n", path); fflush(stdout);
   FILE* file = fopen(path, "r");
   if(file == NULL) {
     printf("ERROR: Failed to open file at %s\n", path);
+    fflush(stdout);
     return 1;
   }
+  printf("Lisp_runfile. fopen SUCCESS. file=%p\n", file);
+  fflush(stdout);
   Object* content_obj = QSTRING_NEW1("");
   String* content = content_obj->impl;
   String* fline = String_new("");
   while(String_getline(fline, file) != -1) {
+    /* printf("donuts. inloop\n"); fflush(stdout); */
     if(fline->len > 0 && fline->buf[0] == '#') {
       // ignore lines starting with '#'. These are Racket lang-line pragmas
       continue;
@@ -1095,9 +1099,9 @@ int Lisp_runfile(char* path) {
   }
   String_del(fline);
   fclose(file);
-  /* printf("--- { content { ---\n"); */
-  /* printf("%s\n", content->buf); */
-  /* printf("--- } content } ---\n"); */
+  printf("--- { content { ---\n");
+  printf("%s\n", content->buf);
+  printf("--- } content } ---\n");
   Object* fresult = Object_accept(Lisp_eval_string(content_obj));
   /* ObjectUtil_eprintf("\ndonuts. fresult = %v\n", fresult); */
   return 0;
