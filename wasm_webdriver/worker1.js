@@ -169,21 +169,23 @@ function make_wasm_instance() {
       },
       fd_prestat_dir_name: function(fd, path_ptr, path_len) {
         /**
-         * Write to memory the path of the virtual file at
-         * the path_ptr location.
+         * Write to path_ptr the encoded bytes for the path 
+         * of the virtual directory.
          **/
-        let prefix = logprefix + 'fd_prestat_dir_name. ';
-        console.log(prefix, 'fd=', fd, 'path_ptr=', path_ptr, 'path_len=', path_len);
+        let lp2 = logprefix+' fd_prestat_dir_name. fd='+fd+'.';
+        console.log(lp2, 'fd=', fd, 'path_ptr=', path_ptr, 'path_len=', path_len);
         var entry = files_getentry_by_fd(fd);
         if(!entry) {
-          console.error(prefix, 'could not find find entry from fd=', fd);
+          console.error(lp2, 'could not find find entry from fd=', fd);
           return 8; // WASI_EBADF
         }
-        console.log(prefix, 'entry=', entry);
+        console.log(lp2, 'entry=', entry);
         var path_bytes = (new TextEncoder()).encode(entry.path);
-
-        console.log(prefix, 'path_bytes=', path_bytes);
-
+        console.log(lp2, 'path_bytes=', path_bytes);
+        if(path_bytes.length > path_len) {
+          console.error(lp2, 'path_bytes exceeds allocated path_len');
+          return 8; // WASI_EBADF
+        }
         var memory_view = new Uint8Array(wasm_memory_buffer(), path_ptr, path_len);
         memory_view.set(path_bytes);
 
@@ -193,47 +195,47 @@ function make_wasm_instance() {
         console.log(logprefix, 'fd_seek');
       },
       fd_read: function(fd, iovs_ptr, iovs_len, ret_ptr) {
-        let prefix = logprefix + 'fd_read. fd='+fd+'.';
-        console.log(prefix, 'iovs_ptr=', iovs_ptr, 'iovs_len=', iovs_len, 'ret_ptr=', ret_ptr);
+        let lp2 = logprefix + ' fd_read. fd='+fd+'.';
+        console.log(lp2, 'iovs_ptr=', iovs_ptr, 'iovs_len=', iovs_len, 'ret_ptr=', ret_ptr);
         if(fd !== 0) {
           throw 'only reading on STDIN fd=0 is currently supported';
         }
         var stdin_i32 = new Int32Array(stdin);
-        console.log(prefix, 'waiting...');
+        console.log(lp2, 'waiting...');
         Atomics.wait(stdin_i32, 0, 0);
-        console.log(prefix, '--- wait complete ---');
+        console.log(lp2, '--- wait complete ---');
         Atomics.store(stdin_i32, 0, 0);
         // // output size = 8 octets (64 bits), 2 (32bit, 4byte) uint values
         // var ret_view = new Uint32Array(wasm_memory.buffer, ret_ptr, 2);
         // the number of byets read
         var bytes_read = stdin_i32[1];
-        console.log(prefix, 'bytes_read=', bytes_read);
+        console.log(lp2, 'bytes_read=', bytes_read);
         var stdin_view = new Uint8Array(stdin, 8, bytes_read);
-        console.log(prefix, 'stdin_view=', stdin_view);
+        console.log(lp2, 'stdin_view=', stdin_view);
         // for(i = 0; i < bytes_read; i++) {
         //   let ch = stdin_view[i];
-        //   console.log(logprefix, 'ch=', String.fromCharCode(ch));
+        //   console.log(lp2, 'ch=', String.fromCharCode(ch));
         // }
         var memory = new Uint32Array(wasm_memory_buffer());
         for(let i = 0; i < iovs_len; i++) {
           let offset = i * 8;
           // iov is 2 32-bit/4byte pointers
           let iov = new Uint32Array(wasm_memory_buffer(), iovs_ptr + offset, 2);
-          console.log(prefix, 'iov[', i, ']=', iov);
+          console.log(lp2, 'iov[', i, ']=', iov);
           let buf_ptr = iov[0];
           let buf_size = iov[1];
-          console.log(prefix, 'buf_ptr=', buf_ptr);
-          console.log(prefix, 'wasm_instance=', wasm_instance);
+          console.log(lp2, 'buf_ptr=', buf_ptr);
+          console.log(lp2, 'wasm_instance=', wasm_instance);
           let buf_view = new Uint8Array(wasm_memory_buffer(), buf_ptr, buf_size);
-          console.log(prefix, 'iov i=', i, ' buf_view=', buf_view, 'buf_size=', buf_size);
+          console.log(lp2, 'iov i=', i, ' buf_view=', buf_view, 'buf_size=', buf_size);
           buf_view.set(stdin_view.subarray(0, stdin_view.byteLength));
-          console.log(prefix, 'buf_view=', buf_view, 'buf_size=', buf_size);
+          console.log(lp2, 'buf_view=', buf_view, 'buf_size=', buf_size);
         }
-        console.log(prefix, 'bytes_read=', bytes_read);
+        console.log(lp2, 'bytes_read=', bytes_read);
         var ret_view = new Uint32Array(wasm_memory_buffer(), ret_ptr, 2);
         ret_view[0] = bytes_read;
         ret_view[1] = 0;
-        console.log(prefix, 'ret_view=', ret_view);
+        console.log(lp2, 'ret_view=', ret_view);
         wasm_instance.exports.stdout_flush();
         return 0; // 0 = success
       },
