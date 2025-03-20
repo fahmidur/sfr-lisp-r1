@@ -5,6 +5,8 @@ var term_inited = false;
 var wasm_started = false;
 var stdin = null;
 
+const UINT64_MAX = 2n ** 64n - 1n;
+
 // var stringio_state_ptr = null;
 
 var logprefix = 'worker1.';
@@ -144,11 +146,20 @@ function make_wasm_instance() {
         if(entry.type == 'file') {
           mem.setUint8(fdstat_ptr, 8);
         }
+
         // __wasi_fdflags_t fs_flags;
         // typedef uint16_t __wasi_fdflags_t;
         // #define O_RDONLY (0x04000000)
         // we offset by 8 because alignment is 8 bytes
         mem.setUint16(fdstat_ptr+8, 0x04000000);
+
+        // __wasi_rights_t fs_rights_base;
+        // typedef uint64_t __wasi_rights_t;
+        // mem.setBigUint64(fdstat_ptr+16, UINT64_MAX);
+
+        //__wasi_rights_t fs_rights_inheriting;
+        // typedef uint64_t __wasi_rights_t;
+        // mem.setBigUint64(fdstat_ptr+24, UINT64_MAX);
       },
       fd_fdstat_set_flags: function() {
         console.log(logprefix, 'fd_fdstat_set_flags');
@@ -269,8 +280,18 @@ function make_wasm_instance() {
         wasm_instance.exports.stdout_flush();
         return 0; // 0 = success
       },
-      path_open: function() {
-
+      path_open: function(fd, dirflags, path_ptr, path_len, oflags, fs_rights_base, fs_rights_inheriting, fdflags, newfd_ptr) {
+        let lp2 = logprefix+' path_open. fd='+fd+'.';
+        console.log(lp2, 'dirflags=', dirflags, 'path_ptr=', path_ptr, 'path_len=', path_len, 'oflags=', oflags, 'fd_rights_base=', fs_rights_base, 'fs_rights_inheriting=', fs_rights_inheriting, 'fdflags=', fdflags, 'newfd_ptr=', newfd_ptr);
+        // console.log(lp2, 'newfd_ptr=', newfd_ptr);
+        var entry = files_getentry_by_fd(fd);
+        if(!entry) {
+          console.error(lp2, 'unable to find entry from fd=', fd);
+          return 1; // failure
+        }
+        var mem = new DataView(wasm_memory_buffer());
+        mem.setInt32(newfd_ptr, fd, true);
+        return 0; // success
       },
       fd_write: function(fd, iovs, iovs_len, ret_ptr) {
         console.log(logprefix, 'fd_write. fd=', fd, 'iovs=', iovs, 'ret_ptr =', ret_ptr);
