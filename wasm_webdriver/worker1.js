@@ -122,7 +122,33 @@ function make_wasm_instance() {
         return 0;
       },
       fd_fdstat_get: function(fd, fdstat_ptr) {
-        console.log(logprefix, 'fd_fdstat_get. fd=', fd, 'fdstat_ptr=', fdstat_ptr);
+        let lp2 = logprefix+' fd_fdstat_get. fd='+fd+'.';
+        console.log(lp2, 'fdstat_ptr=', fdstat_ptr);
+        if(fd == 0 || fd == 1) {
+          // stdin, stdout
+          return;
+        }
+        var entry = files_getentry_by_fd(fd);
+        if(!entry) {
+          console.error(lp2, 'could not find entry from fd');
+          return;
+        }
+        var mem = new DataView(wasm_memory_buffer());
+        // __wasi_filetype_t fs_filetype;
+        // typedef uint8_t __wasi_filetype_t;
+        // values = {DT_DIR=4, DT_REG=8}
+        if(entry.type == 'directory') {
+          mem.setUint8(fdstat_ptr, 4);
+        }
+        else
+        if(entry.type == 'file') {
+          mem.setUint8(fdstat_ptr, 8);
+        }
+        // __wasi_fdflags_t fs_flags;
+        // typedef uint16_t __wasi_fdflags_t;
+        // #define O_RDONLY (0x04000000)
+        // we offset by 8 because alignment is 8 bytes
+        mem.setUint16(fdstat_ptr+8, 0x04000000);
       },
       fd_fdstat_set_flags: function() {
         console.log(logprefix, 'fd_fdstat_set_flags');
@@ -133,20 +159,21 @@ function make_wasm_instance() {
          * virtual fd that is 'preopened'.
          * 4 bytes -- the type of the file 0=directory
          **/
-        console.log(logprefix, 'fd_prestat_get, fd=', fd, ' prestat_ptr=', prestat_ptr);
+        let lp2 = logprefix+' fd_prestat_get. fd='+fd+'.';
+        console.log(lp2, 'prestat_ptr=', prestat_ptr);
         var entry = files_getentry_by_fd(fd);
         if(!entry) {
-          console.log(logprefix, 'fd_prestat_get. could not find entry from fd=', fd);
+          console.log(lp2, 'could not find entry from fd=', fd);
           // this ends the loop in __wasilibc_populate_preopens(void)
           return 8; // WASI_EBADF
         }
-        console.log(logprefix, 'fd_prestat_get. entry=', entry);
+        console.log(lp2, 'entry=', entry);
         if(!(entry.preopened )) {
-          console.log(logprefix, 'fd_prestat_get. expecting entry to be preopened');
+          console.log(lp2, 'expecting entry to be preopened');
           return 8; // WASI_EBADF
         }
         if(entry.type !== 'directory') {
-          console.log(logprefix, 'fd_prestat_get. expecting entry type to be directory');
+          console.log(lp2, 'expecting entry type to be directory');
           return 8; // WASI_EBADF
         }
         var ret_view = new DataView(wasm_memory_buffer());
@@ -193,6 +220,9 @@ function make_wasm_instance() {
       },
       fd_seek: function() {
         console.log(logprefix, 'fd_seek');
+      },
+      fd_open: function(fd) {
+        console.log(logprefix, 'fd_open. fd=', fd);
       },
       fd_read: function(fd, iovs_ptr, iovs_len, ret_ptr) {
         let lp2 = logprefix + ' fd_read. fd='+fd+'.';
