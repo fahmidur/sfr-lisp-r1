@@ -3,6 +3,7 @@
 #include "Util.h"
 #include "Object.h"
 #include "Lisp.h"
+#include <unistd.h>
 
 size_t LispAutoGC;
 size_t LispAutoGC_counter;
@@ -1085,6 +1086,12 @@ int Lisp_runfile(char* path) {
   }
   printf("Lisp_runfile. fopen SUCCESS. file=%p\n", file);
   fflush(stdout);
+  int fd = fileno(file);
+  if(fd == -1) {
+    printf("ERROR: Lisp_runfile. fileno(file) failed\n");
+    exit(1);
+  }
+  printf("Lisp_runfile. opened fd=%d\n", fd); fflush(stdout);
   Object* content_obj = QSTRING_NEW1("");
   String* content = content_obj->impl;
   String* fline = String_new("");
