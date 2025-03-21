@@ -245,6 +245,8 @@ char String_zero(String* self) {
 ssize_t String_getline(String* self, FILE* stream) {
   String_zero(self);
   ssize_t ret = 0;
+  long pos = ftell(stream);
+  int fd = fileno(stream);
   /* if(stream == stdin) { */
   /*   #ifdef WASM */
   /*     ret = StringIO_getline(&(self->buf), &(self->buf_size)); */
@@ -253,15 +255,16 @@ ssize_t String_getline(String* self, FILE* stream) {
   /*   #endif */
   /* } */ 
   /* else { */
-
   if(stream == stdin) {
-    printf("donuts. String_getline. calling getline on stdin stream=%p\n", stream);
+    /* printf("donuts. String_getline(%p, stream=%p; fd=%d). pos=%ld\n", self, stream, fd, pos); */
   } else {
-    printf("donuts. String_getline. calling getline on stream=%p\n", stream);
+    printf("donuts. String_getline(%p, stream=%p; fd=%d). pos=%ld\n", self, stream, fd, pos);
   }
   fflush(stdout);
   ret = getline(&(self->buf), &(self->buf_size), stream);
-  printf("donuts. String_getline. ret=%ld\n", ret);
+  if(stream != stdin) {
+    printf("donuts. String_getline. file. ret=%ld\n", ret);
+  }
   fflush(stdout);
   /* } */
   /* dbg_printf("String_getline. ret=%ld buf_size=%ld\n", ret, self->buf_size); */

@@ -252,8 +252,8 @@ function make_wasm_instance() {
 
         return 0; // success
       },
-      fd_seek: function() {
-        console.log(logprefix, 'fd_seek');
+      fd_seek: function(fd) {
+        console.log(logprefix, 'fd_seek. fd=', fd);
       },
       // fd_open: function(fd) {
       //   console.log(logprefix, 'fd_open. fd=', fd);
@@ -278,11 +278,11 @@ function make_wasm_instance() {
           // throw 'only reading on STDIN fd=0 is currently supported';
           var entry = files_getentry_by_fd(fd);
           let content = entry.content;
-          content = ensureEnding(content, "\x1a");
+          content = ensureEnding(content, "\x0a");
           console.log(lp2, 'entry. content=', content);
           stdin_view = (new TextEncoder()).encode(content);
           console.log(lp2, 'entry. stdin_view=', stdin_view);
-          bytes_read = stdin_view.byteLength-1;
+          bytes_read = stdin_view.byteLength;
           console.log(lp2, 'entry. bytes_read=', bytes_read);
         }
         for(let i = 0; i < iovs_len; i++) {
@@ -306,6 +306,7 @@ function make_wasm_instance() {
         console.log(lp2, 'ret_view=', ret_view);
         wasm_instance.exports.stdout_flush();
         if(fd == 0) {
+          debugger;
         } else {
           debugger;
         }
