@@ -23,7 +23,8 @@ var files = {
     path: '/sandbox/main.lsp',
     type: 'file',
     content: '(displayln "hello from main")',
-    opened_at: null
+    opened_at: null,
+    pos: 0,
   },
 };
 
@@ -252,8 +253,25 @@ function make_wasm_instance() {
 
         return 0; // success
       },
-      fd_seek: function(fd) {
-        console.log(logprefix, 'fd_seek. fd=', fd);
+      fd_seek: function(fd, offset, whence, ret_ptr) {
+        /**
+         * __wasi_errno_t __wasi_fd_seek(
+         *   __wasi_fd_t fd,
+         *   __wasi_filedelta_t offset,
+         *   __wasi_whence_t whence,
+         *   __wasi_filesize_t *retptr0
+         * );
+         * typedef uint64_t __wasi_filesize_t;
+         **/
+        let lp2 = logprefix+' fd_seek.';
+        console.log(lp2, 'fd=', fd, 'offset=', offset, 'whence=', whence);
+      },
+      fd_tell: function(fd, ret_ptr) {
+        // __wasi_errno_t __wasi_fd_tell(
+        //   __wasi_fd_t fd,
+        //   __wasi_filesize_t *retptr0
+        // );
+        console.log(logprefix, 'fd_tell. fd=', fd);
       },
       // fd_open: function(fd) {
       //   console.log(logprefix, 'fd_open. fd=', fd);
@@ -263,6 +281,17 @@ function make_wasm_instance() {
         console.log(lp2, 'iovs_ptr=', iovs_ptr, 'iovs_len=', iovs_len, 'ret_ptr=', ret_ptr);
         var stdin_view = null;
         var bytes_read = 0;
+        var min_iov_buf_size = 2**32;
+        for(let i = 0; i < iovs_len; i++) {
+          let offset = i * 8;
+          let iov = new Uint32Array(wasm_memory_buffer(), iovs_ptr + offset, 2);
+          let iov_ptr = iov[0];
+          let iov_size = iov[1];
+          if(iov_size < min_iov_buf_size) {
+            min_iov_buf_size = iov_size;
+          }
+        }
+        console.log(lp2, 'min_iov_buf_size=', min_iov_buf_size);
         if(fd == 0) {
           var stdin_i32 = new Int32Array(stdin);
           console.log(lp2, 'waiting...');
@@ -276,14 +305,25 @@ function make_wasm_instance() {
         } else {
           // console.log(lp2, 'TODO: handle reading from not-stdin');
           // throw 'only reading on STDIN fd=0 is currently supported';
-          var entry = files_getentry_by_fd(fd);
+          let entry = files_getentry_by_fd(fd);
           let content = entry.content;
-          content = ensureEnding(content, "\x0a");
+          // content = ensureEnding(content, "\x0a");
           console.log(lp2, 'entry. content=', content);
-          stdin_view = (new TextEncoder()).encode(content);
-          console.log(lp2, 'entry. stdin_view=', stdin_view);
-          bytes_read = stdin_view.byteLength;
-          console.log(lp2, 'entry. bytes_read=', bytes_read);
+          let remaining = content.length - entry.pos;
+          let toread = Math.min(remaining, min_iov_buf_size);
+          console.log(lp2, 'toread=', toread);
+          if(toread > 0) {
+            stdin_view = (new TextEncoder()).encode(content.slice(entry.pos, entry.pos+toread));
+            bytes_read = stdin_view.byteLength;
+            entry.pos += toread;
+            console.log(lp2, 'entry | entry.pos=', entry.pos);
+          }
+          else {
+            stdin_view = new Uint8Array();
+            bytes_read = 0;
+          }
+          console.log(lp2, 'entry | stdin_view=', stdin_view);
+          console.log(lp2, 'entry | bytes_read=', bytes_read);
         }
         for(let i = 0; i < iovs_len; i++) {
           let offset = i * 8;
@@ -305,11 +345,11 @@ function make_wasm_instance() {
         ret_view[1] = 0;
         console.log(lp2, 'ret_view=', ret_view);
         wasm_instance.exports.stdout_flush();
-        if(fd == 0) {
-          debugger;
-        } else {
-          debugger;
-        }
+        // if(fd == 0) {
+        //   debugger;
+        // } else {
+        //   debugger;
+        // }
         return 0; // 0 = success
       },
       path_open: function(fd, dirflags, path_ptr, path_len, oflags, fs_rights_base, fs_rights_inheriting, fdflags, newfd_ptr) {
