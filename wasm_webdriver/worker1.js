@@ -313,17 +313,13 @@ function make_wasm_instance() {
           stdin_view = new Uint8Array(stdin, 8, bytes_read);
           console.log(lp2, 'stdin_view=', stdin_view);
         } else {
-          // console.log(lp2, 'TODO: handle reading from not-stdin');
-          // throw 'only reading on STDIN fd=0 is currently supported';
           let entry = files_getentry_by_fd(fd);
-          let content = entry.content;
-          // content = ensureEnding(content, "\x0a");
-          console.log(lp2, 'entry. content=', content);
-          let remaining = content.length - entry.pos;
+          console.log(lp2, 'entry.content=', entry.content);
+          let remaining = entry.content.length - entry.pos;
           let toread = Math.min(remaining, min_iov_buf_size);
           console.log(lp2, 'toread=', toread);
           if(toread > 0) {
-            stdin_view = (new TextEncoder()).encode(content.slice(entry.pos, entry.pos+toread));
+            stdin_view = (new TextEncoder()).encode(entry.content.slice(entry.pos, entry.pos+toread));
             bytes_read = stdin_view.byteLength;
             entry.pos += toread;
             console.log(lp2, 'entry | entry.pos=', entry.pos);
