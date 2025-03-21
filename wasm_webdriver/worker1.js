@@ -63,6 +63,13 @@ function files_newfd() {
 //   var self = this;
 // };
 
+function ensureEnding(content, ending) {
+  if(!content.endsWith(ending)) {
+    content += ending;
+  }
+  return content;
+}
+
 // function fetch_wasm_bytes() {
 //   var respPromise = fetch("./build/sfr-lisp-wasm.wasm");
 //   respPromise.then(function(response) {
@@ -267,8 +274,16 @@ function make_wasm_instance() {
           stdin_view = new Uint8Array(stdin, 8, bytes_read);
           console.log(lp2, 'stdin_view=', stdin_view);
         } else {
-          console.log(lp2, 'TODO: handle reading from not-stdin');
-          throw 'only reading on STDIN fd=0 is currently supported';
+          // console.log(lp2, 'TODO: handle reading from not-stdin');
+          // throw 'only reading on STDIN fd=0 is currently supported';
+          var entry = files_getentry_by_fd(fd);
+          let content = entry.content;
+          content = ensureEnding(content, "\x1a");
+          console.log(lp2, 'entry. content=', content);
+          stdin_view = (new TextEncoder()).encode(content);
+          console.log(lp2, 'entry. stdin_view=', stdin_view);
+          bytes_read = stdin_view.byteLength-1;
+          console.log(lp2, 'entry. bytes_read=', bytes_read);
         }
         for(let i = 0; i < iovs_len; i++) {
           let offset = i * 8;
@@ -277,8 +292,8 @@ function make_wasm_instance() {
           console.log(lp2, 'iov[', i, ']=', iov);
           let buf_ptr = iov[0];
           let buf_size = iov[1];
-          console.log(lp2, 'buf_ptr=', buf_ptr);
-          console.log(lp2, 'wasm_instance=', wasm_instance);
+          console.log(lp2, 'buf_ptr=', buf_ptr, 'buf_size=', buf_size);
+          // console.log(lp2, 'wasm_instance=', wasm_instance);
           let buf_view = new Uint8Array(wasm_memory_buffer(), buf_ptr, buf_size);
           console.log(lp2, 'iov i=', i, ' buf_view=', buf_view, 'buf_size=', buf_size);
           buf_view.set(stdin_view.subarray(0, stdin_view.byteLength));
@@ -290,6 +305,10 @@ function make_wasm_instance() {
         ret_view[1] = 0;
         console.log(lp2, 'ret_view=', ret_view);
         wasm_instance.exports.stdout_flush();
+        if(fd == 0) {
+        } else {
+          debugger;
+        }
         return 0; // 0 = success
       },
       path_open: function(fd, dirflags, path_ptr, path_len, oflags, fs_rights_base, fs_rights_inheriting, fdflags, newfd_ptr) {
