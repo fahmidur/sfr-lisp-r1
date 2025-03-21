@@ -17,12 +17,13 @@ var files = {
     path: '/sandbox',
     type: 'directory',
     fd: 3,
-    preopened: true,
+    opened_at: (new Date())
   },
   '/sandbox/main.lsp': {
     path: '/sandbox/main.lsp',
     type: 'file',
-    content: '(displayln "hello from main")'
+    content: '(displayln "hello from main")',
+    opened_at: null
   },
 };
 
@@ -35,6 +36,21 @@ function files_getentry_by_fd(fd) {
     }
   }
   return entry;
+}
+
+function files_getentry_by_path(path) {
+  return files[path] || null;
+}
+
+function files_newfd() {
+  var maxfd = 3;
+  for(var path in files) {
+    let entry = files[path];
+    if(entry.fd && entry.fd > maxfd) {
+      maxfd = entry.fd;
+    }
+  }
+  return maxfd+1;
 }
 
 // function VirtFs() {
@@ -179,8 +195,8 @@ function make_wasm_instance() {
           return 8; // WASI_EBADF
         }
         console.log(lp2, 'entry=', entry);
-        if(!(entry.preopened )) {
-          console.log(lp2, 'expecting entry to be preopened');
+        if(!(entry.opened_at)) {
+          console.log(lp2, 'expecting entry to be preopened with opened_at');
           return 8; // WASI_EBADF
         }
         if(entry.type !== 'directory') {
@@ -232,32 +248,28 @@ function make_wasm_instance() {
       fd_seek: function() {
         console.log(logprefix, 'fd_seek');
       },
-      fd_open: function(fd) {
-        console.log(logprefix, 'fd_open. fd=', fd);
-      },
+      // fd_open: function(fd) {
+      //   console.log(logprefix, 'fd_open. fd=', fd);
+      // },
       fd_read: function(fd, iovs_ptr, iovs_len, ret_ptr) {
         let lp2 = logprefix + ' fd_read. fd='+fd+'.';
         console.log(lp2, 'iovs_ptr=', iovs_ptr, 'iovs_len=', iovs_len, 'ret_ptr=', ret_ptr);
-        if(fd !== 0) {
+        var stdin_view = null;
+        var bytes_read = 0;
+        if(fd == 0) {
+          var stdin_i32 = new Int32Array(stdin);
+          console.log(lp2, 'waiting...');
+          Atomics.wait(stdin_i32, 0, 0);
+          console.log(lp2, '--- wait complete ---');
+          Atomics.store(stdin_i32, 0, 0);
+          bytes_read = stdin_i32[1];
+          console.log(lp2, 'bytes_read=', bytes_read);
+          stdin_view = new Uint8Array(stdin, 8, bytes_read);
+          console.log(lp2, 'stdin_view=', stdin_view);
+        } else {
+          console.log(lp2, 'TODO: handle reading from not-stdin');
           throw 'only reading on STDIN fd=0 is currently supported';
         }
-        var stdin_i32 = new Int32Array(stdin);
-        console.log(lp2, 'waiting...');
-        Atomics.wait(stdin_i32, 0, 0);
-        console.log(lp2, '--- wait complete ---');
-        Atomics.store(stdin_i32, 0, 0);
-        // // output size = 8 octets (64 bits), 2 (32bit, 4byte) uint values
-        // var ret_view = new Uint32Array(wasm_memory.buffer, ret_ptr, 2);
-        // the number of byets read
-        var bytes_read = stdin_i32[1];
-        console.log(lp2, 'bytes_read=', bytes_read);
-        var stdin_view = new Uint8Array(stdin, 8, bytes_read);
-        console.log(lp2, 'stdin_view=', stdin_view);
-        // for(i = 0; i < bytes_read; i++) {
-        //   let ch = stdin_view[i];
-        //   console.log(lp2, 'ch=', String.fromCharCode(ch));
-        // }
-        var memory = new Uint32Array(wasm_memory_buffer());
         for(let i = 0; i < iovs_len; i++) {
           let offset = i * 8;
           // iov is 2 32-bit/4byte pointers
@@ -281,16 +293,39 @@ function make_wasm_instance() {
         return 0; // 0 = success
       },
       path_open: function(fd, dirflags, path_ptr, path_len, oflags, fs_rights_base, fs_rights_inheriting, fdflags, newfd_ptr) {
+        /**
+         * Open a virtual file at particular directory.
+         * defined in __wasilibc_real.c
+         * __imported_wasi_snapshot_preview1_path_open(
+         *   (int32_t) fd, 
+         *   dirflags, (int32_t) path, (int32_t) path_len, oflags, fs_rights_base, fs_rights_inheriting, 
+         *   fdflags, (int32_t) retptr0
+         * )
+         * Variable names:
+         * - 'fd' should really be called 'dirfd' because it refers to a directory file descriptor.
+         * - 'path_ptr' and 'path_len' should really be called 'name_ptr' and 'name_len'.
+         */
         let lp2 = logprefix+' path_open. fd='+fd+'.';
         console.log(lp2, 'dirflags=', dirflags, 'path_ptr=', path_ptr, 'path_len=', path_len, 'oflags=', oflags, 'fd_rights_base=', fs_rights_base, 'fs_rights_inheriting=', fs_rights_inheriting, 'fdflags=', fdflags, 'newfd_ptr=', newfd_ptr);
         // console.log(lp2, 'newfd_ptr=', newfd_ptr);
         var entry = files_getentry_by_fd(fd);
         if(!entry) {
-          console.error(lp2, 'unable to find entry from fd=', fd);
+          console.error(lp2, 'unable to find vfs entry from fd=', fd);
           return 1; // failure
         }
+        var nf_name = (new TextDecoder()).decode(new Uint8Array(wasm_memory_buffer(), path_ptr, path_len));
+        var nf_path = entry.path + '/' + nf_name;
+        console.log(lp2, 'nf_name=', nf_name, 'nf_path=', nf_path);
+        var nf_entry = files_getentry_by_path(nf_path);
+        if(!nf_entry) {
+          console.error(lp2, 'unable to find vfs entry from nf_path=', nf_path);
+          return 1;
+        }
+        nf_entry.fd = files_newfd();
+        nf_entry.opened_at = (new Date());
+        console.log(lp2, 'nf_entry=', nf_entry);
         var mem = new DataView(wasm_memory_buffer());
-        mem.setInt32(newfd_ptr, fd, true);
+        mem.setInt32(newfd_ptr, nf_entry.fd, true);
         return 0; // success
       },
       fd_write: function(fd, iovs, iovs_len, ret_ptr) {
