@@ -24,6 +24,7 @@ var files = {
     type: 'file',
     content: '(displayln "hello from main")',
     opened_at: null,
+    closed_at: null,
     pos: 0,
   },
 };
@@ -106,7 +107,16 @@ function make_wasm_instance() {
     },
     wasi_snapshot_preview1: {
       fd_close: function(fd) {
-        console.log('fd_close. fd=', fd);
+        let lp2 = logprefix+' fd_close. fd='+fd + '.';
+        console.log(lp2, '--- close ---');
+        let entry = files_getentry_by_fd(fd);
+        if(!fd) {
+          console.error(lp2, 'could not find file from fd=', fd);
+          return;
+        }
+        entry.opened_at = null;
+        entry.closed_at = (new Date());
+        entry.pos = 0;
       },
       args_get: function(argv_ptr, argv_buf_ptr, ret_ptr) {
         var ret_arr = new Uint32Array(wasm_memory_buffer(), ret_ptr, 2);
