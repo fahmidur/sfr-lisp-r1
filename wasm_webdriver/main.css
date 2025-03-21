@@ -35,7 +35,7 @@ body {
 }
 .tab-head {
   padding: 0px;
-  border-bottom: 2px solid #444;
+  /* border-bottom: 2px solid #444; */
   margin-bottom: 0.2px;
 }
 .tab-head button {
@@ -45,16 +45,18 @@ body {
   padding: 0.3em;
   padding-left: 0.5em;
   padding-right: 0.5em;
-  border-radius: 0.3em;
+  border-radius: 0.5em;
   border-bottom-left-radius: 0px;
   border-bottom-right-radius: 0px;
   margin: 0px;
   margin-right: 0.2em;
   font-weight: bold;
   cursor: pointer;
+  border-bottom: 1px solid transparent;
 }
 .tab-head button:hover {
   border: 1px solid orange;
+  border-bottom: 1px solid transparent;
   color: orange;
 }
 .tab-body {
