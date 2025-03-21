@@ -1077,21 +1077,21 @@ void Lisp_printenv() {
 }
 
 int Lisp_runfile(char* path) {
-  printf("Lisp_runfile: %s\n", path); fflush(stdout);
+  /* printf("Lisp_runfile: %s\n", path); fflush(stdout); */
   FILE* file = fopen(path, "r");
   if(file == NULL) {
     printf("ERROR: Failed to open file at %s\n", path);
     fflush(stdout);
     return 1;
   }
-  printf("Lisp_runfile. fopen SUCCESS. file=%p\n", file);
+  /* printf("Lisp_runfile. fopen SUCCESS. file=%p\n", file); */
   fflush(stdout);
   int fd = fileno(file);
   if(fd == -1) {
     printf("ERROR: Lisp_runfile. fileno(file) failed\n");
     exit(1);
   }
-  printf("Lisp_runfile. opened fd=%d\n", fd); fflush(stdout);
+  /* printf("Lisp_runfile. opened fd=%d\n", fd); fflush(stdout); */
   Object* content_obj = QSTRING_NEW1("");
   String* content = content_obj->impl;
   String* fline = String_new("");
@@ -1106,10 +1106,11 @@ int Lisp_runfile(char* path) {
   }
   String_del(fline);
   fclose(file);
-  printf("--- { content { ---\n");
-  printf("%s\n", content->buf);
-  printf("--- } content } ---\n");
+  /* printf("--- { content { ---\n"); */
+  /* printf("%s\n", content->buf); */
+  /* printf("--- } content } ---\n"); */
   Object* fresult = Object_accept(Lisp_eval_string(content_obj));
-  /* ObjectUtil_eprintf("\ndonuts. fresult = %v\n", fresult); */
+  Object_assign(&content_obj, NULL);
+  Object_assign(&fresult, NULL);
   return 0;
 }
