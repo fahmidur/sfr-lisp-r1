@@ -8,14 +8,12 @@ var term = new Terminal({
 });
 var fitAddon = new FitAddon.FitAddon();
 term.loadAddon(fitAddon);
-
-term.open(document.getElementById('terminal'));
+var term_el = document.getElementById('terminal');
+term.open(term_el);
 fitAddon.fit();
 
 var term_inited = false;
 var term_encoder = new TextEncoder();
-
-
 
 var stdin = new SharedArrayBuffer(1024);
 
