@@ -149,6 +149,29 @@ worker2.onmessage = function(ev) {
 };
 worker_add('worker2', worker2);
 
+function stdin_set(val) {
+  worker2.postMessage({
+    type: 'stdin_set',
+    data: {
+      val: val
+    }
+  });
+}
+
+function stdin_return() {
+  worker2.postMessage({
+    type: 'stdin',
+    data: {
+      key_code: 13,
+    }
+  });
+}
+
+function stdin_setret(val) {
+  stdin_set(val);
+  stdin_return();
+}
+
 function workers_broadcast(msg) {
   for(var k in workers) {
     let worker = workers[k].worker;

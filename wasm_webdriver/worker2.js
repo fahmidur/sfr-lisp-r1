@@ -28,6 +28,18 @@ function arr_clone(arr) {
   return arr.map((x) => x);
 }
 
+function arr_equal(a, b) {
+  if(a.length != b.length)  {
+    return false;
+  }
+  for(let i = 0; i < a.length; i++) {
+    if(a[i] != b[i]) {
+      return false;
+    }
+  }
+  return true;
+}
+
 function make_wasm_instance() {
   console.log(logprefix, 'make_wasm_instance. wasm_memory.buffer=', wasm_memory.buffer);
   if(!(wasm_memory.buffer instanceof SharedArrayBuffer)) {
@@ -208,8 +220,9 @@ function stdin_set(new_val) {
     tmp = new_val;
   }
   else {
-    tmp = new_val.split('');
+    tmp = new_val.split('').map((x) => x.charCodeAt(0));
   }
+  // now tmp is an array of character codes
   stdin_arr = tmp;
   var keys = tmp.map((x) => String.fromCharCode(x)).join('');
   console.log('stdin_set. keys=', keys);
@@ -223,18 +236,25 @@ function stdin_set(new_val) {
 function history_go(delta) {
   if(stdin_hist.length == 0) {
     // there is no history
-    console.log('history_go. ABORT. There is no stdin_hist.');
+    console.log(logprefix, 'history_go. ABORT. There is no stdin_hist.');
     return;
   }
   stdin_hist_idx = gmod(stdin_hist_idx+delta, stdin_hist.length);
-  console.log('history_go. stdin_hist=', stdin_hist, 'stdin_hist_idx=', stdin_hist_idx);
+  console.log(logprefix, 'history_go. stdin_hist=', stdin_hist, 'stdin_hist_idx=', stdin_hist_idx);
   var hist_val = arr_clone(stdin_hist[stdin_hist_idx]);
-  console.log('history_go. hist_val =', hist_val);
-  if(hist_val.length === 0) {
-    console.log('history_go. ABORT. Blank hist_val=', hist_val);
-    return;
-  }
+  console.log(logprefix, 'history_go. hist_val =', hist_val);
   stdin_set(hist_val);
+}
+
+function history_push(val) {
+  if(stdin_hist.length > 0) {
+    let last_item = stdin_hist[stdin_hist.length-1];
+    if(arr_equal(last_item, val)) {
+      return;
+    }
+  }
+  stdin_hist.push(arr_clone(val));
+  console.log(logprefix, 'stdin_hist=', stdin_hist);
 }
 
 onmessage = function(ev) {
@@ -296,7 +316,7 @@ onmessage = function(ev) {
             key: "\n\r",
           }
         });
-        stdin_hist.push(arr_clone(stdin_arr));
+        history_push(stdin_arr);
         // make sure we push null character into the array
         stdin_arr.push(10); // LF character
         console.log('stdin_arr=', stdin_arr);
@@ -321,20 +341,10 @@ onmessage = function(ev) {
           }
         });
       }
-      // var ret = wasm_instance.exports.stringio_push(data.key_code);
-      // console.log(logprefix, 'stdin. ret=', ret);
-      // if(ret) {
-      //   // stdin has received a newline
-
-      //   var stringio_buf_ptr = wasm_instance.exports.stringio_get_buf();
-      //   console.log(logprefix, 'fd_read. stringio_buf_ptr=', stringio_buf_ptr);
-      //   var stringio_buf = new Uint8Array(wasm_memory.buffer, stringio_buf_ptr, 4);
-      //   console.log(logprefix, 'stringio_buf=', stringio_buf);
-
-      //   var shared_view_i32 = new Int32Array(wasm_memory.buffer);
-      //   Atomics.store(shared_view_i32, stringio_state_ptr, 1);
-      //   Atomics.notify(shared_view_i32, stringio_state_ptr, 1);
-      // }
+      break;
+    case 'stdin_set':
+      console.log(logprefix, 'onmessage. stdin_set. data=', data);
+      stdin_set(data.val);
       break;
     default:
   }
