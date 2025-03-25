@@ -2,17 +2,67 @@ console.log('--- main.js ---');
 
 var logprefix = 'main___.';
 
+var btn_vsplit = $('#btn_vsplit');
+var btn_hsplit = $('#btn_hsplit');
+
+var tilewm = new TileWM($('#tilewm-root'));
+
 var term_kbmode = false;
+
+var term_el = null;
 var term = new Terminal({
-  cursorBlink: true
+  cursorBlink: true,
 });
 var fitAddon = new FitAddon.FitAddon();
 term.loadAddon(fitAddon);
-var term_el = document.getElementById('terminal');
-term.open(term_el);
-fitAddon.fit();
 
+var term_holder = null;
 var term_inited = false;
+
+var tile_term = new Tile($('#tile-term'), {
+  onupdate: function(tile, el) {
+    console.log('tile_term. onupdate. el=', el);
+    if(term_el == null) {
+      term_el = $('<div></div>').addClass('term_el');
+      term_el.appendTo(el);
+      term.open(term_el.get(0));
+    }
+    term_el.width(el.width()-10);
+    term_el.height(el.height()-10);
+    fitAddon.fit();
+  }
+});
+var tile_code = new Tile($('#tile-code'), {});
+
+tilewm.addTile('term', tile_term);
+tilewm.addTile('code', tile_code);
+
+tilewm.update();
+
+function update_btns() {
+  btn_vsplit.hide();
+  btn_hsplit.hide();
+  if(tilewm.split == 'vsplit') {
+    btn_hsplit.show();
+  }
+  else
+  if(tilewm.split == 'hsplit') {
+    btn_vsplit.show();
+  }
+}
+update_btns();
+btn_vsplit.on('click', function() {
+  console.log('vsplit click');
+  tilewm.setSplit('vsplit');
+  update_btns();
+});
+btn_hsplit.on('click', function() {
+  console.log('hsplit click');
+  tilewm.setSplit('hsplit');
+  update_btns();
+});
+
+
 var term_encoder = new TextEncoder();
 
 var stdin = new SharedArrayBuffer(1024);
