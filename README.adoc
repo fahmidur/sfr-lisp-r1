@@ -320,9 +320,9 @@ See link:./TODO.txt[Todo-List] for an updated running list.
 
 == WASM/WASI Build Configuration
 
-The WASM-WASI build is slightly more complicated than the regular build for your host architecture.
+The WASM/WASI build is slightly more complicated than the regular build for your native environment.
 To get a better understanding of how the WASM builds work, I am intentionally using the minimal set of
-tools to get a functioning wasm file to use with my web-driver.
+tools to build a functioning wasm file to then use with my web-driver.
 
 Requirements:
 
