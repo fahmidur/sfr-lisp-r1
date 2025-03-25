@@ -28,7 +28,7 @@ var tile_term = new Tile($('#tile-term'), {
       term.open(term_el.get(0));
     }
     term_el.width(el.width()-10);
-    term_el.height(el.height()-10);
+    term_el.height(el.height()-20);
     fitAddon.fit();
   }
 });
