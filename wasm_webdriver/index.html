@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <title>SFR-Lisp WASM WebDriver</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="node_modules/@xterm/xterm/css/xterm.css" />
     <link rel="stylesheet" href="main.css" type="text/css" media="screen" title="no title" charset="utf-8">
@@ -19,23 +20,30 @@
         </div>
         <div class='col taright'>
           <div class='bmenu'>
-            <button><i class='fa-solid fa-terminal'></i>&nbsp;Terminal</button><!--
+            <button id='btn_vsplit'>V-Split</button><button id='btn_hsplit'>H-Split</button><!--
+         --><button><i class='fa-solid fa-terminal'></i>&nbsp;Terminal</button><!--
          --><button><i class='fa-solid fa-code'></i>&nbsp;Code</button>
           </div> <!-- end of bmenu -->
         </div>
       </div> <!-- end of row (header) -->
 
-      <div class='row'>
-        <div class='col' style='max-width: 50%; padding-bottom: 2em;'>
-          <div id='terminal'></div>
-        </div>
-        <div class='col'>
-          <h4>Put Editor Here</h4>
-        </div>
+      <!-- <div class='row'> -->
+      <!--   <div class='col' style='max-width: 50%; padding-bottom: 2em;'> -->
+      <!--     <div id='terminal'></div> -->
+      <!--   </div> -->
+      <!--   <div class='col'> -->
+      <!--     <h4>Put Editor Here</h4> -->
+      <!--   </div> -->
+      <!-- </div> -->
+
+      <div id='tilewm-root' class='TileWM vsplit'>
+        <div class='Tile' id='tile-term' data-name='tile_term'></div>
+        <div class='Tile' id='tile-code' data-name='tile_code'></div>
       </div>
 
     </div> <!-- end of container -->
 
+    <script src='tile.js'></script>
     <script src='main.js'></script>
   </body>
 </html>
