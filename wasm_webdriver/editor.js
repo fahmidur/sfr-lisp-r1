@@ -9,7 +9,9 @@ Editor.prototype.elmake = function(el) {
   if(!el) {
     el = $('<div></div>');
   }
+  el.addClass('Editor');
   var cmholder = $('<div></div>').addClass('cmholder');
   el.append(cmholder);
+  self.els.cmholder = cmholder;
   return el;
 }
