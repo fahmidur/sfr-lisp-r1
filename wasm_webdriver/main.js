@@ -38,6 +38,9 @@ tilewm.addTile('term', tile_term);
 tilewm.addTile('code', tile_code);
 
 tilewm.update();
+$(window).on('resize', function() {
+  tilewm.update();
+});
 
 function update_btns() {
   btn_vsplit.hide();
