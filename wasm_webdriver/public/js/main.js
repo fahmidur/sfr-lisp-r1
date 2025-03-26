@@ -19,6 +19,9 @@ term.loadAddon(fitAddon);
 var term_holder = null;
 var term_inited = false;
 
+var editor = null;
+var editor_el = null;
+
 var tile_term = new Tile($('#tile-term'), {
   onupdate: function(tile, el) {
     console.log('tile_term. onupdate. el=', el);
@@ -32,7 +35,18 @@ var tile_term = new Tile($('#tile-term'), {
     fitAddon.fit();
   }
 });
-var tile_code = new Tile($('#tile-code'), {});
+
+var tile_code = new Tile($('#tile-code'), {
+  onupdate: function(tile, el) {
+    console.log('tile_code. onupdate');
+    if(editor == null) {
+      editor_el = $("<div></div>");
+      editor_el.appendTo(el);
+      console.log('new Editor(). editor_el=', editor_el);
+      editor = new Editor(editor_el);
+    }
+  }
+});
 
 tilewm.addTile('term', tile_term);
 tilewm.addTile('code', tile_code);
@@ -124,7 +138,7 @@ function maybe_init_term() {
   });
 }
 
-var worker1 = new Worker('./worker1.js');
+var worker1 = new Worker('./js/worker1.js');
 worker1.onmessage = function(ev) {
   var msg = ev.data;
   console.log(logprefix, 'heard worker1. ev=', ev, ' msg=', msg);
@@ -152,7 +166,7 @@ function repl_prompt() {
   });
 }
 
-var worker2 = new Worker('./worker2.js');
+var worker2 = new Worker('./js/worker2.js');
 worker2.onmessage = function(ev) {
   var msg = ev.data;
   console.log(logprefix, 'heard worker2. ev=', ev, ' msg=', msg);
