@@ -159,7 +159,7 @@ function make_wasm_instance() {
         console.log(logprefix, 'arg_sizes_get. ret_arr=', ret_arr);
       },
       environ_get: function() {
-        console.log(logprefix, environ_get);
+        console.log(logprefix, 'environ_get');
       },
       environ_sizes_get: function() {
         console.log(logprefix, 'environ_sizes_get');
