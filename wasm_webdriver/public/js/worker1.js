@@ -4,6 +4,7 @@ var wasm_instance = null;
 var term_inited = false;
 var wasm_started = false;
 var stdin = null;
+var fsbuf = null;
 
 const UINT64_MAX = 2n ** 64n - 1n;
 
@@ -321,6 +322,16 @@ function make_wasm_instance() {
           console.log(lp2, 'stdin_view=', stdin_view);
         } else {
           let entry = files_getentry_by_fd(fd);
+          if(fsbuf) {
+            console.log(lp2, 'donuts. fsbuf=', fsbuf);
+            let fsbuf_view = new Uint8Array(fsbuf, 0);
+            let fsbuf_ns = new Uint8Array(fsbuf.byteLength);
+            for(let i = 0; i < fsbuf_view.byteLength; i++) {
+              fsbuf_ns[i] = fsbuf_view[i];
+            }
+            console.log(lp2, 'donuts. fsbuf_ns=', fsbuf_ns);
+            entry.content = (new TextDecoder()).decode(fsbuf_ns);
+          }
           console.log(lp2, 'entry.content=', entry.content);
           let remaining = entry.content.length - entry.pos;
           let toread = Math.min(remaining, min_iov_buf_size);
@@ -479,6 +490,7 @@ onmessage = function(ev) {
       console.log(logprefix, 'got wasm_memory=', data.wasm_memory, 'buffer=', data.wasm_memory.buffer);
       console.log(logprefix, 'got stdin=', data.stdin);
       stdin = data.stdin;
+      fsbuf = data.fsbuf;
       wasm_args = data.wasm_args;
       wasm_memory = data.wasm_memory;
       wasm_bytes = data.wasm_bytes;

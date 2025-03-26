@@ -83,12 +83,14 @@ btn_run.on('click', function() {
   console.log('run click');
   var val = editor.getValue();
   console.log('val=', val);
+  lisp_load_content(val);
 });
 
 
 var term_encoder = new TextEncoder();
 
 var stdin = new SharedArrayBuffer(1024);
+var fsbuf = new SharedArrayBuffer(1024);
 
 var wasm_memory = new WebAssembly.Memory({
   initial: 2,
@@ -244,15 +246,20 @@ function stdin_setret(val) {
 }
 
 function lisp_load_content(content) {
-  var path = "/sandbox/main.lsp";
   console.log(logprefix, "sending content=", content);
-  worker1.postMessage({
-    type: 'vfs_iowrite',
-    data: {
-      path: path,
-      content: content
+  content_arr = (new TextEncoder()).encode(content);
+  console.log(logprefix, 'donuts. content_arr=', content_arr);
+  let fsbuf2 = new Uint8Array(fsbuf, 0);
+  for(let i = 0; i < fsbuf2.length; i++) {
+    if(i >= 0 && i < content_arr.length) {
+      fsbuf2[i] = content_arr[i];
+    } else {
+      fsbuf2[i] = 0;
     }
-  });
+  }
+  console.log(logprefix, 'donuts. fsbuf2=', fsbuf2);
+  console.log(logprefix, 'donuts. fsbuf_=', fsbuf);
+  var path = "/sandbox/main.lsp";
   stdin_setret(`(load "${path}")`);
 }
 
@@ -274,6 +281,7 @@ respPromise.then(function(response) {
       type: 'init',
       data: {
         stdin: stdin,
+        fsbuf: fsbuf,
         wasm_args: wasm_args,
         wasm_memory: wasm_memory,
         wasm_bytes: wasm_bytes,

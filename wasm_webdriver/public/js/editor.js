@@ -19,7 +19,8 @@ Editor.prototype.elmake = function(el) {
     mode: 'scheme',
     lineNumbers: true,
     viewportMargin: +Infinity,
-    theme: 'nord'
+    theme: 'nord',
+    value: "(displayln (+ 2 3))"
   });
   return el;
 };
