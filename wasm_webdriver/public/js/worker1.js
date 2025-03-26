@@ -331,6 +331,7 @@ function make_wasm_instance() {
             }
             console.log(lp2, 'donuts. fsbuf_ns=', fsbuf_ns);
             entry.content = (new TextDecoder()).decode(fsbuf_ns);
+            (new Uint8Array(fsbuf)).fill(0); // zero the fsbuf
           }
           console.log(lp2, 'entry.content=', entry.content);
           let remaining = entry.content.length - entry.pos;
