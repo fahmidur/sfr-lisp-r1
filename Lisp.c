@@ -834,14 +834,7 @@ Object* Lisp_eval_sexp2(Object* sexp, Object* env, int depth) {
       sexp_type == SYMBOL_STRING ||
       sexp_type == SYMBOL_FUNCTION
   ) {
-    if(Object_type(sexp) == SYMBOL_NUMBER && ((Number*)sexp->impl)->rep == 3.456) {
-      ObjectUtil_eprintf("donuts. over here 001. sexp<Number>=%v rc=%d\n", sexp, sexp->rc);
-    }
     ret = Object_accept(sexp);
-    if(Object_type(sexp) == SYMBOL_NUMBER && ((Number*)sexp->impl)->rep == 3.456) {
-      ObjectUtil_eprintf("donuts. over here 002. sexp<Number>=%v rc=%d\n", sexp, sexp->rc);
-      ObjectUtil_eprintf("donuts. over here 003. ret<Number>=%v rc=%d\n", ret, ret->rc);
-    }
   }
   else
   if(sexp_type == SYMBOL_SYMBOL) {
@@ -1015,12 +1008,6 @@ _return:
     assert(ret->returning);
     Object_rc_decr(ret);
   }
-  /* if(Object_type(ret) == SYMBOL_NUMBER && ((Number*)ret->impl)->rep == 3.456) { */
-  /*   ObjectUtil_eprintf("donuts. over here 004. ret<Number>=%v rc=%d\n", ret, ret->rc); */
-  /* } */
-  /* if(Object_type(ret) == SYMBOL_NUMBER && ((Number*)ret->impl)->rep == 3.456) { */
-  /*   ObjectUtil_eprintf("donuts. over here 005. ret<Number>=%v rc=%d\n", ret, ret->rc); */
-  /* } */
   LispAutoGC_counter = (LispAutoGC_counter + 1) % LispAutoGC;
   ssize_t cursize = Object_system_size();
   /* printf("LispAutoGC_counter = %lu | cursize=%lu | oldsize=%lu\n", LispAutoGC_counter, cursize, LispAutoGC_oldsize); */
