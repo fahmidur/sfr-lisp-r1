@@ -43,10 +43,9 @@ enum TokenizerState {
 };
 
 Object* fn_load(Function* fn, Object* env, Object* argv) {
-  printf("--- fn_load ---\n");
   Object* path = Object_accept(Object_bop_hget(env, QSYMBOL("path")));
-  ObjectUtil_eprintf("fn_load. got path = %v\n", path);
-  // todo: create a Object_to_cstr(...) function
+  // ObjectUtil_eprintf("fn_load. got path = %v\n", path);
+  // TODO: create a Object_to_cstr(...) function
   char* path_cstr = ((String*)path->impl)->buf;
   Lisp_runfile(path_cstr);
   Object_assign(&path, NULL);
@@ -64,18 +63,7 @@ Object* fn_gc_info(Function* fn, Object* env, Object* argv) {
   return NULL;
 }
 
-/* Object* fn_printenv(Function* fn, Object* env, Object* argv) { */
-/*   Lisp_printenv(); */
-/*   return NULL; */
-/* } */
-
 Object* fn_add(Function* fn, Object* env, Object* argv) {
-  /* return Object_return( */
-  /*     Object_bop_add( */
-  /*       Object_bop_hget(env, QSYMBOL("a")), */
-  /*       Object_bop_hget(env, QSYMBOL("b")) */
-  /*     ) */
-  /* ); */
   Object* a = Object_accept(Object_bop_hget(env, QSYMBOL("a")));
   Object* b = Object_accept(Object_bop_hget(env, QSYMBOL("b")));
   /* ObjectUtil_eprintf("fn_add. got a = %v\n", a); */
