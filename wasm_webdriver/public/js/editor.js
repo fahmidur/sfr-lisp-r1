@@ -2,6 +2,7 @@ function Editor(el) {
   var self = this;
   self.els = {};
   self.el = self.elmake(el);
+  console.log('Editor. self=', self);
 }
 
 Editor.prototype.elmake = function(el) {

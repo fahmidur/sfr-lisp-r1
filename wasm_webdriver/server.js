@@ -9,7 +9,7 @@ app.use(function(req, res, next) {
   next();
 });
 
-app.use(express.static('.'));
+app.use(express.static('./public'));
 
 app.listen(port, function() {
   console.log("Server running at\nhttp://localhost:"+port);
