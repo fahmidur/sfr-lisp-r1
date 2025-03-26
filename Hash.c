@@ -70,8 +70,7 @@ void HashNode_del_fwd(HashNode* self) {
 void HashNode_set_key(HashNode* self, Object* key) {
   Object_rc_incr(key);
   if(self->key != NULL) {
-    Object_rc_decr(key);
-    self->key = NULL;
+    Object_assign(&(self->key), NULL);
   }
   self->key = key;
 }
@@ -79,8 +78,7 @@ void HashNode_set_key(HashNode* self, Object* key) {
 void HashNode_set_val(HashNode* self, Object* val) {
   Object_rc_incr(val);
   if(self->val != NULL) {
-    Object_rc_decr(self->val);
-    self->val = NULL;
+    Object_assign(&(self->val), NULL);
   }
   self->val = val;
 }
