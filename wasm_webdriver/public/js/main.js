@@ -23,6 +23,8 @@ var term_inited = false;
 var editor = null;
 var editor_el = null;
 
+var term_adjust_timeout = null;
+
 var tile_term = new Tile($('#tile-term'), {
   onupdate: function(tile, el) {
     console.log('tile_term. onupdate. el=', el);
@@ -31,9 +33,15 @@ var tile_term = new Tile($('#tile-term'), {
       term_el.appendTo(el);
       term.open(term_el.get(0));
     }
-    term_el.width(el.width()-10);
-    term_el.height(el.height()-20);
+    term_el.outerWidth(el.outerWidth());
+    term_el.outerHeight(el.outerHeight());
     fitAddon.fit();
+    clearTimeout(term_adjust_timeout);
+    term_adjust_timeout = setTimeout(function() {
+      term_el.outerWidth(el.outerWidth());
+      term_el.outerHeight(el.outerHeight());
+      fitAddon.fit();
+    }, 500);
   }
 });
 
@@ -45,6 +53,11 @@ var tile_code = new Tile($('#tile-code'), {
       editor_el.appendTo(el);
       console.log('new Editor(). editor_el=', editor_el);
       editor = new Editor(editor_el);
+    }
+    if(tilewm.split == 'vsplit') {
+      editor_el.outerHeight(term_el.outerHeight());
+    } else {
+      editor_el.css('height', '');
     }
   }
 });
