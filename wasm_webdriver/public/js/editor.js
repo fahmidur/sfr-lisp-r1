@@ -20,7 +20,14 @@ Editor.prototype.elmake = function(el) {
     lineNumbers: true,
     viewportMargin: +Infinity,
     theme: 'nord',
-    value: "(displayln (+ 2 3))"
+    value: `(begin
+  (define make_account (lambda (balance) (lambda (amt) (begin (set! balance (+ balance amt)) balance ))))
+  (define acc (make_account 100))
+  (displayln (acc -20))
+  (displayln (acc -10))
+  (displayln (acc -5))
+  (displayln (acc 40))
+)`
   });
   return el;
 };
