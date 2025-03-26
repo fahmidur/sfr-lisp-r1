@@ -38,7 +38,10 @@
 ------------------------------------------------------------------------------
 { TODO {
 ------------------------------------------------------------------------------
-
+- bug. When running with load lambda_003 multiple times, old environments are not
+  being released as expected.
+- bug. cmp functions in Lisp.c are leaking refcount. It should release RC. See
+  cmp_lte as an example.
 - bug. Function calls to lambda are leaving behind tmp Environment 
   in memory. See ./test/sample/lambda_003.lsp
 
