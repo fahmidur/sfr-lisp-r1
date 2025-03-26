@@ -29,6 +29,13 @@ var files = {
   },
 };
 
+function vfs_iowrite(path, content) {
+  let entry = files[path];
+  if(entry) {
+    entry.content = String(content);
+  }
+}
+
 function files_getentry_by_fd(fd) {
   let entry = null;
   for(var path in files) {
@@ -490,6 +497,10 @@ onmessage = function(ev) {
     case 'repl_prompt':
       console.log(logprefix, 'heard repl_prompt');
       wasm_instance.exports.repl_prompt();
+      break;
+    case 'vfs_iowrite':
+      console.log(logprefix, 'heard vfs_iowrite');
+      vfs_iowrite(data.path, data.content);
       break;
     default:
   }

@@ -4,6 +4,7 @@ var logprefix = 'main___.';
 
 var btn_vsplit = $('#btn_vsplit');
 var btn_hsplit = $('#btn_hsplit');
+var btn_run = $('#btn_run');
 
 var tilewm = new TileWM($('#tilewm-root'));
 
@@ -77,6 +78,11 @@ btn_hsplit.on('click', function() {
   console.log('hsplit click');
   tilewm.setSplit('hsplit');
   update_btns();
+});
+btn_run.on('click', function() {
+  console.log('run click');
+  var val = editor.getValue();
+  console.log('val=', val);
 });
 
 
@@ -235,6 +241,19 @@ function stdin_return() {
 function stdin_setret(val) {
   stdin_set(val);
   stdin_return();
+}
+
+function lisp_load_content(content) {
+  var path = "/sandbox/main.lsp";
+  console.log(logprefix, "sending content=", content);
+  worker1.postMessage({
+    type: 'vfs_iowrite',
+    data: {
+      path: path,
+      content: content
+    }
+  });
+  stdin_setret(`(load "${path}")`);
 }
 
 function workers_broadcast(msg) {
