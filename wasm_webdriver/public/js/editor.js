@@ -23,3 +23,8 @@ Editor.prototype.elmake = function(el) {
   });
   return el;
 };
+
+Editor.prototype.getValue = function() {
+  var self = this;
+  return self.cm.getValue();
+};
