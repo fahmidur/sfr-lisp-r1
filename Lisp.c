@@ -313,11 +313,13 @@ Object* fn_cmp_lt(Function* fn, Object* env, Object* argv) {
 Object* fn_cmp_lte(Function* fn, Object* env, Object* argv) {
   Object* a = Object_accept(Object_bop_hget(env, QSYMBOL("a")));
   Object* b = Object_accept(Object_bop_hget(env, QSYMBOL("b")));
+  Object* ret = Object_new_null();
   if(Object_cmp(a, b) <= 0) {
-    return QSYMBOL("true");
-  } else {
-    return Object_new_null();
+    ret = QSYMBOL("true");
   }
+  Object_assign(&a, NULL);
+  Object_assign(&b, NULL);
+  return ret;
 }
 
 Object* fn_cmp_gt(Function* fn, Object* env, Object* argv) {
@@ -328,6 +330,7 @@ Object* fn_cmp_gt(Function* fn, Object* env, Object* argv) {
   } else {
     return Object_new_null();
   }
+  //TODO: fix
 }
 
 Object* fn_cmp_gte(Function* fn, Object* env, Object* argv) {
@@ -338,6 +341,7 @@ Object* fn_cmp_gte(Function* fn, Object* env, Object* argv) {
   } else {
     return Object_new_null();
   }
+  //TODO: fix
 }
 
 Object* fn_cmp_equal(Function* fn, Object* env, Object* argv) {
@@ -348,6 +352,7 @@ Object* fn_cmp_equal(Function* fn, Object* env, Object* argv) {
   } else {
     return Object_new_null();
   }
+  //TODO: fix
 }
 
 void Lisp_init() {
