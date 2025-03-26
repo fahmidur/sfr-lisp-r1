@@ -133,13 +133,15 @@ Object* fn_print(Function* fn, Object* env, Object* argv) {
   }
   assert(Object_type(argv) == SYMBOL_LIST);
   int argv_len = Object_len(argv);
-  Object* tmp;
+  Object* tmp = NULL;
   Symbol* tmp_type;
   int i = 0;
   ListIter* argv_iter = ListIter_new(argv->impl);
   ListIter_head(argv_iter);
   while(!ListIter_at_end(argv_iter)) {
     tmp = ListIter_get_val(argv_iter);
+    // TODO: should we accept the tmp object here? 
+    // If so, we need to assign it to NULL before the next iteration.
     tmp_type = Object_type(tmp);
     if(i > 0) {
       printf(" ");
@@ -165,7 +167,6 @@ Object* fn_print(Function* fn, Object* env, Object* argv) {
   fflush(stdout);
   return Object_new_null();
 }
-
 Object* fn_display(Function* fn, Object* env, Object* argv) {
   assert(fn != NULL);
   assert(argv != NULL);
@@ -180,12 +181,14 @@ Object* fn_display(Function* fn, Object* env, Object* argv) {
   ObjectUtil_eprintf("fn_display. len(argv)=%d\n", Object_len(argv));
 #endif
   int argv_len = Object_len(argv);
-  Object* tmp;
+  Object* tmp = NULL;
   Symbol* tmp_type;
   int i = 0;
   ListIter* argv_iter = ListIter_new(argv->impl);
   ListIter_head(argv_iter);
   while(!ListIter_at_end(argv_iter)) {
+    // TODO: should we accept the tmp object here? 
+    // If so, we need to assign it to NULL before the next iteration.
     tmp = ListIter_get_val(argv_iter);
     /* ObjectUtil_eprintf("display. tmp=%v\n", tmp); */
     tmp_type = Object_type(tmp);
@@ -303,11 +306,13 @@ Object* fn_lambda(Function* fn, Object* env, Object* argv) {
 Object* fn_cmp_lt(Function* fn, Object* env, Object* argv) {
   Object* a = Object_accept(Object_bop_hget(env, QSYMBOL("a")));
   Object* b = Object_accept(Object_bop_hget(env, QSYMBOL("b")));
+  Object* ret = Object_new_null();
   if(Object_cmp(a, b) < 0) {
-    return QSYMBOL("true");
-  } else {
-    return Object_new_null();
+    ret = QSYMBOL("true");
   }
+  Object_assign(&a, NULL);
+  Object_assign(&b, NULL);
+  return ret;
 }
 
 Object* fn_cmp_lte(Function* fn, Object* env, Object* argv) {
@@ -325,34 +330,37 @@ Object* fn_cmp_lte(Function* fn, Object* env, Object* argv) {
 Object* fn_cmp_gt(Function* fn, Object* env, Object* argv) {
   Object* a = Object_accept(Object_bop_hget(env, QSYMBOL("a")));
   Object* b = Object_accept(Object_bop_hget(env, QSYMBOL("b")));
-  if(Object_cmp(a, b) > 0) {
-    return QSYMBOL("true");
-  } else {
-    return Object_new_null();
+  Object* ret = Object_new_null();
+  if (Object_cmp(a, b) > 0) {
+    ret = QSYMBOL("true");
   }
-  //TODO: fix
+  Object_assign(&a, NULL);
+  Object_assign(&b, NULL);
+  return ret;
 }
 
 Object* fn_cmp_gte(Function* fn, Object* env, Object* argv) {
   Object* a = Object_accept(Object_bop_hget(env, QSYMBOL("a")));
   Object* b = Object_accept(Object_bop_hget(env, QSYMBOL("b")));
+  Object* ret = Object_new_null();
   if(Object_cmp(a, b) >= 0) {
-    return QSYMBOL("true");
-  } else {
-    return Object_new_null();
+    ret = QSYMBOL("true");
   }
-  //TODO: fix
+  Object_assign(&a, NULL);
+  Object_assign(&b, NULL);
+  return ret;
 }
 
 Object* fn_cmp_equal(Function* fn, Object* env, Object* argv) {
   Object* a = Object_accept(Object_bop_hget(env, QSYMBOL("a")));
   Object* b = Object_accept(Object_bop_hget(env, QSYMBOL("b")));
+  Object* ret = Object_new_null();
   if(Object_cmp(a, b) == 0) {
-    return QSYMBOL("true");
-  } else {
-    return Object_new_null();
+    ret = QSYMBOL("true");
   }
-  //TODO: fix
+  Object_assign(&a, NULL);
+  Object_assign(&b, NULL);
+  return ret;
 }
 
 void Lisp_init() {
