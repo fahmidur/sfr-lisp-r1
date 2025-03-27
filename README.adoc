@@ -152,7 +152,7 @@ I've named it Symbol after Ruby Symbols.
 
 Symbols are treated differently from normal Objects in that they are
 are not garbage collected until the very end. Like an older version of Ruby,
-Symbols only ever grow in quantitity. It's not great. But the idea here
+Symbols only ever grow in number. It's not great. But the idea here
 is that Symbols should not be dynamically created by a program from user input,
 and relatively few symbols should exist throughout the course of a program.
 In the future, we can eliminate unused symbols from the global symbol table.
@@ -199,7 +199,7 @@ An object with reference count 1 is one that is immediately assigned to a `Objec
 An object with reference count 0 only makes sense if the object is being returned and it
 is not known whether it has a referencing variable or not.
 
-The reference count field is meant to be incremeneted or decremented by a set of methods
+The reference count field is meant to be incremented or decremented by a set of methods
 like `Object_rc_incr`, `Object_rc_decr`, and `Object_assign`.
 
 When the reference count of a non-returning object reaches zero, the object is destroyed.
@@ -207,14 +207,14 @@ I will describe what that means below.
 
 In some cases, such as when we pop an object from a List, or when a factory function creates a new
 object, we do not want the object to be garbage collected immediately.
-For these cases the, the Object class maintains a `returning` field, and this field is set to `1`.
-This prevents the Garbage collector from destroying the Object immediately.
+For these cases, the Object class maintains a `returning` field, and this field is set to `1`.
+This prevents the Reference-Counting Garbage Collector from destroying the Object immediately.
 
-But wouldn't this result in an accumilation of non-destructable garbage objects?
+But wouldn't this result in an accumulation of non-destructible garbage objects?
 For this reason, the following scheme has been constructed for passing Objects between
 function-call barriers.
 Inspired in part by object-ownership principles, every function call returning
-an object must be accepted or reject by using the functions `Object_accept(Object*)` or
+an object must be accepted or rejected by using the functions `Object_accept(Object*)` or
 `Object_reject(Object*)` (respectively).
 When an Object is accepted, its reference count is incremented and its returning state is reset to zero.
 When an Object is rejected, if it has a zero reference count, it is destroyed.
@@ -236,9 +236,8 @@ mechanism of internal reference elimination similar to that of the CPython
 garbage collector.
 
 ==== Hash Class
-
 The Hash class implements a Hashmap, where keys are stored in buckets based on
-the Hash value of the key.
+the hash value of the key.
 At the moment, keys must be `Object<String>` or `Object<Symbol>`.
 To ensure consistency of the Hash, all keys are cloned when added to the Hash,
 values are not. Value references can therefore be mutated, but key values cannot.
@@ -256,15 +255,15 @@ which of these objects are no longer reachable.
 
 To determine reachability, all Object types must be able to enumerate all objects that
 they reference.
-First this gc methood, copies the current reference count to a temporary field called
+First this gc method, copies the current reference count to a temporary field called
 `rc_gc`, which represents the reference count for this GC cycle.
 It then enumerates all objects to subtract references to the referred object.
 Any object which now has a `rc_gc` value of 0, is marked as tentatively unreachable,
-because the totality of their reference count is equal to known objects.
+because the totality of their reference count is accounted for by known objects.
 This indicates that there are no stack variables which refers to these objects.
-However, for each of these tentaively unreachabel objects, there may be a reachable object
+However, for each of these tentatively unreachabel objects, there may be a reachable object
 still capable of reaching this one.
-The GC now scans all objects again to ummark those objects that can be reached by a reachable
+The GC now scans all objects again to unmark those objects that can be reached by a reachable
 object.
 Now all remaining objects marked as unreachable, are truly unreachable, and those objects are
 destroyed.
@@ -333,7 +332,7 @@ Requirements:
 First, we need to install LLVM Clang, because that is what we will use to cross-compile to the web-assembly target.
 If you are on Debian/Ubuntu, you can install this with `apt install clang`
 
-Next, we will need a linker that can link for the wasm target, that is provided by a the LLVM lld project,
+Next, we will need a linker that can link for the wasm target, that is provided by the LLVM lld project,
 which includes a tool called https://lld.llvm.org/WebAssembly.html[wasm-lld]
 If you are on Debian/Ubuntu, you can install this with `apt install lld`.
 
@@ -346,7 +345,7 @@ At this point, the WASM/WASI build will still fail.
 
 Next, you need the following library file from the https://github.com/WebAssembly/wasi-sdk[wasi-sdk project] -- `libclang_rt.builtins-wasm32.a`
 
-Go to the Releases page for the latest Release for
+Go to the Releases page for the latest version of
 https://github.com/WebAssembly/wasi-sdk/releases/tag/wasi-sdk-25[wasi-sdk]
 and download the zipped file https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-25/libclang_rt.builtins-wasm32-wasi-25.0.tar.gz[here].
 Unzip this file and place it into your sysroot/lib/wasm32-wasi directory.
@@ -359,8 +358,7 @@ Now you can run the WASM build using something like Wasmtime as follows:
 wasmtime ./build/sfr-lisp-wasm.wasm
 ```
 
-Alternatively you can use the ./wasm_webdriver which is a set JS shim for
-the purpose of sharing this project on my blog.
+Alternatively you can use the `./wasm_webdriver` which provides the HTML/CSS/JS shim used to share this project on the web.
 
 * CD to ./wasm_webdriver/build/
 * Run: `node server.js` 
