@@ -1644,6 +1644,8 @@ void Object_system_print() {
   printf("--- { Object_system_print() { ---\n");
   Object* iter = object_system->head;
   int i = 0;
+  int function_count = 0;
+  int anon_function_count = 0;
   int env_count = 0;
   int ret_count = 0;
   while(iter != NULL) {
@@ -1654,6 +1656,14 @@ void Object_system_print() {
     if(Object_type(iter) == SYMBOL_ENVIRONMENT) {
       env_count++;
     }
+    else
+    if(Object_type(iter) == SYMBOL_FUNCTION) {
+      function_count++;
+      if(Object_is_null(((Function*)(iter->impl))->name)) {
+        anon_function_count++;
+      }
+    }
+    else
     if(iter->returning) {
       ret_count++;
     }
@@ -1664,6 +1674,8 @@ void Object_system_print() {
   printf("SIZE: %zu\n", object_system->size);
   printf("ENV_COUNT: %d\n", env_count);
   printf("RET_COUNT: %d\n", ret_count);
+  printf("FUNCTION_COUNT: %d\n", function_count);
+  printf("ANON_FUNCTION_COUNT: %d\n", anon_function_count);
   printf("--- } Object_system_print() } ---\n");
 }
 
