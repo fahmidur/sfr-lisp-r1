@@ -21,12 +21,18 @@ Editor.prototype.elmake = function(el) {
     viewportMargin: +Infinity,
     theme: 'nord',
     value: `(begin
-  (define make_account (lambda (balance) (lambda (amt) (begin (set! balance (+ balance amt)) balance ))))
-  (define acc (make_account 100))
-  (displayln (acc -20))
-  (displayln (acc -10))
-  (displayln (acc -5))
-  (displayln (acc 40))
+  (define make_account
+    (lambda (balance)
+      (lambda (amt)
+        (begin
+          (set! balance (+ balance amt))
+          balance
+        ))))
+  (define account1 (make_account 100))
+  (displayln (account1 -20))
+  (displayln (account1 -10))
+  (displayln (account1 -5))
+  (displayln (account1 40))
 )`
   });
   return el;
