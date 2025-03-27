@@ -171,7 +171,17 @@ Object* Function_env_get(Function* self, Object* key) {
 
 void Function_del(Function* self) {
   if(Object_system_delete_recurse()) {
-    Object_assign(&(self->env), NULL);
+    if(self->env != NULL) {
+      // ObjectUtil_eprintf("Function_del(%p) env rc=%d\n", self, self->env->rc);
+      Environment* env0 = (Environment*) self->env->impl;
+      if(env0->parent != NULL && self->env->rc == 2) {
+        // ObjectUtil_eprintf("Function_del(%p) env rc=%d | force detaching\n", self, self->env->rc);
+        // detach self->env from its parent because 
+        // it is referred to only by this Function and the parent.
+        Environment_child_detach(env0->parent, self->env);
+      }
+      Object_assign(&(self->env), NULL);
+    }
     Object_assign(&(self->params), NULL);
     Object_assign(&(self->body), NULL);
   }
