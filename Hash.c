@@ -204,8 +204,7 @@ Object* Hash_set(Hash* self, Object* key, Object* val) {
       iter = iter->next;
     }
     if(clash) {
-      //donuts
-      ObjectUtil_eprintf("Hash_set(%p). key(%v) already exists. new val=%v\n", self, key_clone, val);
+      /* ObjectUtil_eprintf("Hash_set(%p). key(%v) already exists. new val=%v\n", self, key_clone, val); */
       HashNode_set_val(node, val);
     } 
     else {
