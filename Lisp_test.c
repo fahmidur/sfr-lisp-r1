@@ -294,11 +294,11 @@ int main(int argc, char** argv) {
   nassert(environment_count_bef == environment_count_aft);
 
   //generic binary op test
-  size_t binop_obj_count = 0;
-  char* binop_str = (char*) calloc(256, sizeof(char));
   const char* binary_ops[8] = {"<", ">", "<=", ">=", "+", "-", "/", "*"};
+  char binop_str[256];
+  size_t binop_obj_count = 0;
   for(i = 0; i < 8; i++) {
-    memset(binop_str, 0, 256);
+    memset(binop_str, 0, sizeof(binop_str));
     sprintf(binop_str, "(%s 1 2)", binary_ops[i]);
     binop_obj_count = Object_system_size();
     for(int j = 0; j < 10; j++) {
@@ -311,7 +311,19 @@ int main(int argc, char** argv) {
     }
     nassert(Object_system_size() == binop_obj_count);
   }
-  free(binop_str);
+
+  Object* load_statement = QSTRING_NEW1("(load \"test/sample/lambda_001.lsp\")");
+  int load_env_count = ObjectSystem_count_type(SYMBOL_ENVIRONMENT);
+  printf("load_env_count = %d\n", load_env_count);
+  for(i = 0; i < 4; i++) {
+    Object_reject(Lisp_eval_string(load_statement));
+  }
+  // we only gain one Environment from evaluating the last lambda_001.lsp
+  // we do not gain any new objects from evaluating the same file multiple times.
+  int load_env_count_aft = ObjectSystem_count_type(SYMBOL_ENVIRONMENT);
+  printf("load_env_count_aft = %d\n", load_env_count_aft);
+  nassert(load_env_count_aft == (load_env_count+1));
+  Object_assign(&load_statement, NULL);
 
 _shutdown:
   Lisp_done();
