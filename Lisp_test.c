@@ -293,6 +293,26 @@ int main(int argc, char** argv) {
   printf("environment_count_aft = %d\n", environment_count_aft);
   nassert(environment_count_bef == environment_count_aft);
 
+  //generic binary op test
+  size_t binop_obj_count = 0;
+  char* binop_str = (char*) calloc(256, sizeof(char));
+  const char* binary_ops[8] = {"<", ">", "<=", ">=", "+", "-", "/", "*"};
+  for(i = 0; i < 8; i++) {
+    memset(binop_str, 0, 256);
+    sprintf(binop_str, "(%s 1 2)", binary_ops[i]);
+    binop_obj_count = Object_system_size();
+    for(int j = 0; j < 10; j++) {
+      Object* binop_obj = QSTRING_NEW1(binop_str);
+      // ObjectUtil_eprintf("%2d | binop_obj = %v\n", j, binop_obj);
+      Object* binop_res = Object_accept(Lisp_eval_string(binop_obj));
+      // ObjectUtil_eprintf("%2d | binop_res = %v\n", j, binop_res);
+      Object_assign(&binop_obj, NULL);
+      Object_assign(&binop_res, NULL);
+    }
+    nassert(Object_system_size() == binop_obj_count);
+  }
+  free(binop_str);
+
 _shutdown:
   Lisp_done();
   Runtime_done();
