@@ -1871,6 +1871,22 @@ int ObjectSystem_count_matching_number(double x) {
   return count;
 }
 
+int ObjectSystem_count_matching_function_name(Object* name) {
+  int count = 0;
+  Object* iter = object_system->head;
+  Function* tmp;
+  while(iter != NULL) {
+    if(Object_type(iter) == SYMBOL_FUNCTION) {
+      tmp = iter->impl;
+      if(Object_cmp(tmp->name, name) == 0) {
+        count++;
+      }
+    }
+    iter = iter->next;
+  }
+  return count;
+}
+
 int ObjectSystem_count_type(Symbol* type) {
   int count = 0;
   Object* iter = object_system->head;
