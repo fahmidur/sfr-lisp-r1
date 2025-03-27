@@ -585,6 +585,11 @@ int main(int argc, char** argv) {
   ObjectUtil_eprintf("fnres1 = %v\n", fnres1);
   nassert(Object_cmp(fnres1, QNUMBER(2.5)) == 0);
 
+  nassert(ObjectSystem_count_matching_function_name(QSYMBOL("println")) == 1);
+  Object_assign(&fn1, NULL);
+  nassert(Object_is_null(fn1));
+  nassert(ObjectSystem_count_matching_function_name(QSYMBOL("println")) == 0);
+
   Util_heading1(0, "Function Operations");
 
   //===========================================================================
