@@ -888,6 +888,8 @@ Object* Lisp_eval_sexp2(Object* sexp, Object* env, int depth) {
             Object_reject(Object_top_hset(tenv, tmp1, Lisp_eval_sexp2(opargs2, env, depth+1)));
           }
           Object_assign(&tenv, NULL);
+          Object_assign(&tmp1, NULL);
+          Object_assign(&opargs2, NULL);
         }
       }
       else
