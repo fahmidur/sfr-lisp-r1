@@ -34,7 +34,7 @@ output against https://racket-lang.org/[Racket]. There are memory leak tests
 using Valgrind, called by the test suite.
 
 The only third-party library used here is Linenoise, a tiny alternative to
-Readline written by https://github.com/Antirez[Antirez]. This is because
+Readline written by venerable https://github.com/Antirez[Antirez]. This is because
 keyboard handling, terminal specific escape codes for REPLs, and etc is
 somewhat outside of the scope of what I intend on building/learning here. The
 functionality that Linenoise provides is notoriously hard to get right across
@@ -127,13 +127,16 @@ You can also use the `./wasm_webdriver` which provides the HTML/CSS/JS shim used
 Testing is managed at a high level by Ruby, using the built-in `test/unit`
 library. All ruby managed tests are defined in `./test`. These tests execute
 each of the C test programs and expect them to exit successfully. All of the C
-tests are programs matching `_test.c`, programs like `Object_test.c`. These
-programs use a tiny header-only assertion library, written by me, called
+tests are programs with source matching `_test.c`, such as `Object_test.c`.
+These programs use a tiny header-only assertion library, written by me, called
 `nassert.h`. 
 
 To run all tests, simply run:
 
- $ rake test
+[source,bash]
+----
+rake test
+----
 
 There is a Ruby test which will run each of the sample Lisp files using Racket,
 sfr-lisp, and sfr-lisp.rb. It will check that the output for my implementations
@@ -145,9 +148,10 @@ The interpreter, when run without any arguments, starts a REPL.
 If a file path is provided as the first argument, it evaluates
 the file as Lisp source and exits.
 
-```
+[source]
+----
 Usage: sfr-lisp [/path/to/file.lsp]
-```
+----
 
 == The Plan
 
