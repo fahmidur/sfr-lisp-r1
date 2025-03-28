@@ -6,6 +6,15 @@
 
 == Introduction
 
+To misquote one of my favorite physicists:
+
+[,Richard P. Feynman]
+____
+What I cannot create [in C], I do not understand.
+____
+
+'''
+
 SFR-Lisp is a toy lisp-1 interpreter written in C. It is not designed to be
 used for anything important, it is simply a learning exercise. It is also
 test bed to play with ideas around the design of C object systems, memory
@@ -16,15 +25,6 @@ on many aspects of programming, which makes it a great exercise. I chose to do
 this in C because it is about as low-level as one can get before Assembly, and
 the most popular implementations of other interpreted languages (Perl, Python,
 Ruby, Raku) are all written in C.
-
-To misquote one of my favorite physicists:
-
-[,Richard P. Feynman]
-____
-What I cannot create [in C], I do not understand.
-____
-
-
 
 There are definitely better ways to do it than what you see here, efficiency is
 not the goal for this implementation. This implementation tries to be as
