@@ -97,7 +97,15 @@ you can install this with `apt install lld`.
 Next, we need to download and build `wasi-libc`.
 Pull this from Github to some location, and build it.
 The result will be a sysroot folder for the `wasm32-wasi` target.
-This sysroot must be used as the sysroot parameter in ./RakefileConfig.yaml.
+
+The Rakefile which conducts the WASM build expects to read a number of parameters from a config
+file defined at `./RakefileConfig.yaml`. For a sample of how this file should look, check out 
+out `./RakefileConfig.sample.yaml`. Copy this file to `./RakefileConfig.yaml`, and modify the 
+parameters for your own build environment. 
+Fill in the path to clang and the path to the wasi-libc sysroot directory that you have just built.
+
+Now run `rake`. 
+If all pre-conditions are met, it will attempt to compile the WASM target.
 
 At this point, the WASM/WASI build will still fail.
 
