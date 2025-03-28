@@ -2,9 +2,12 @@ console.log('--- main.js ---');
 
 var logprefix = 'main___.';
 
+var btn_term = $('#btn_term');
+var btn_code = $('#btn_code');
 var btn_vsplit = $('#btn_vsplit');
 var btn_hsplit = $('#btn_hsplit');
 var btn_run = $('#btn_run');
+
 
 var tilewm = new TileWM($('#tilewm-root'));
 
@@ -73,12 +76,14 @@ $(window).on('resize', function() {
 function update_btns() {
   btn_vsplit.hide();
   btn_hsplit.hide();
-  if(tilewm.split == 'vsplit') {
-    btn_hsplit.show();
-  }
-  else
-  if(tilewm.split == 'hsplit') {
-    btn_vsplit.show();
+  if(tile_code.visible && tile_term.visible) {
+    if(tilewm.split == 'vsplit') {
+      btn_hsplit.show();
+    }
+    else
+    if(tilewm.split == 'hsplit') {
+      btn_vsplit.show();
+    }
   }
 }
 update_btns();
@@ -99,6 +104,34 @@ btn_run.on('click', function() {
   lisp_load_content(val);
 });
 
+function update_checkbox_icon(parent_el, checked) {
+  let icon_el = parent_el.find('i');
+  icon_el.removeClass('fa-check-square fa-square');
+  if(checked) {
+    icon_el.addClass('fa-check-square');
+  } else {
+    icon_el.addClass('fa-square');
+  }
+}
+
+btn_term.on('click', function() {
+  tile_term.toggleVisible();
+  tilewm.update();
+  update_checkbox_icon($(this), tile_term.visible);
+  update_btns();
+});
+
+btn_code.on('click', function() {
+  tile_code.toggleVisible();
+  tilewm.update();
+  update_checkbox_icon($(this), tile_code.visible);
+  if(tile_code.visible) {
+    btn_run.show();
+  } else {
+    btn_run.hide();
+  }
+  update_btns();
+});
 
 var term_encoder = new TextEncoder();
 
