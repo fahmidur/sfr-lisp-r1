@@ -77,8 +77,8 @@ The executable for the interpreter will be located at
 
 The WASM/WASI build is slightly more complicated than the build for
 your native environment. To get a better understanding of how the WASM builds
-work, I am intentionally using the minimal set of tools to build a functioning
-'.wasm' file to be consumed by some WASM runtime like Wasmtime or your browser.
+work, I am intentionally using the minimal set of tools to build a target to be
+consumed by some WASM runtime like Wasmtime or your browser.
 
 Requirements:
 
@@ -86,39 +86,39 @@ Requirements:
 * https://github.com/WebAssembly/wasi-libc[wasi-libc]
 * `libclang_rt.builtins-wasm32-wasi` from https://github.com/WebAssembly/wasi-sdk/releases/tag/wasi-sdk-25[wasi-sdk-releases]
 
-First, we need to install LLVM Clang, because that is what we will use to cross-compile to the web-assembly target.
+First, we need to install LLVM Clang, because that is what we will use to cross-compile to the WebAssembly target.
 If you are on Debian/Ubuntu, you can install this with `apt install clang`
 
-Next, we will need a linker that can link for the wasm target, that is provided
-by the LLVM lld project, which includes a tool called
-https://lld.llvm.org/WebAssembly.html[wasm-lld]. If you are on Debian/Ubuntu,
-you can install this with `apt install lld`.
+Next, we will need a linker for the WASM target. This is provided by the LLVM `lld` project. 
+For more information see the documentation for
+https://lld.llvm.org/WebAssembly.html[wasm-lld]. 
+If you are on Debian/Ubuntu, you can install this with `apt install lld`.
 
 Next, we need to download and build `wasi-libc`.
-Pull this from Github to some location, and build it.
+Pull this from GitHub to some location, and build it.
 The result will be a sysroot folder for the `wasm32-wasi` target.
 
 The Rakefile which conducts the WASM build expects to read a number of parameters from a config
 file defined at `./RakefileConfig.yaml`. For a sample of how this file should look, check out 
-out `./RakefileConfig.sample.yaml`. Copy this file to `./RakefileConfig.yaml`, and modify the 
-parameters for your own build environment. 
+out `./RakefileConfig.sample.yaml`. 
+Copy this file to `./RakefileConfig.yaml`, and update the parameters to match your own build environment. 
 Fill in the path to clang and the path to the wasi-libc sysroot directory that you have just built.
 
 Now run `rake`. 
 If all pre-conditions are met, it will attempt to compile the WASM target.
 
-At this point, the WASM/WASI build will still fail.
+At this point, the WASM build will still fail.
 
 Next, you need the following library file from the https://github.com/WebAssembly/wasi-sdk[wasi-sdk project] -- `libclang_rt.builtins-wasm32.a`
 
 Go to the Releases page for the latest version of
 https://github.com/WebAssembly/wasi-sdk/releases/tag/wasi-sdk-25[wasi-sdk]
 and download the zipped file https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-25/libclang_rt.builtins-wasm32-wasi-25.0.tar.gz[here].
-Unzip this file and place it into your `sysroot/lib/wasm32-wasi` directory.
+Extract this file and move it to your `sysroot/lib/wasm32-wasi` directory.
 
-Now, at last the WASM build should succeed.
+At last, the WASM build should succeed.
 
-If the build succeeded you can expect a file named `./build/sfr-lisp-wasm.wasm` to be present.
+If the build succeeds, you can expect a file named `./build/sfr-lisp-wasm.wasm` to be present.
 Now you can run the WASM build using something like Wasmtime as follows:
 ```
 wasmtime ./build/sfr-lisp-wasm.wasm
@@ -133,7 +133,7 @@ You can also use the `./wasm_webdriver` which provides the HTML/CSS/JS shim used
 === Testing
 
 Testing is managed at a high level by Ruby, using the built-in `test/unit`
-library. All ruby managed tests are defined in `./test`. These tests execute
+library. All Ruby managed tests are defined in `./test`. These tests execute
 each of the C test programs and expect them to exit successfully. All of the C
 tests are programs with source matching `_test.c`, such as `Object_test.c`.
 These programs use a tiny header-only assertion library, written by me, called
@@ -334,7 +334,7 @@ It then enumerates all objects to subtract references to the referred object.
 Any object which now has a `rc_gc` value of 0, is marked as tentatively unreachable,
 because the totality of their reference count is accounted for by known objects.
 This indicates that there are no stack variables which refers to these objects.
-However, for each of these tentatively unreachabel objects, there may be a reachable object
+However, for each of these tentatively unreachable objects, there may be a reachable object
 still capable of reaching this one.
 The GC now scans all objects again to unmark those objects that can be reached by a reachable
 object.
