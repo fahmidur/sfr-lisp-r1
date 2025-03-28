@@ -257,12 +257,11 @@ implementation.
 The Object class is a wrapper around all of the other classes, with a `Symbol*`
 type, and a `void* impl` pointer which points to the underlying implementation
 class.
-The Object class provides reference-counted object collection by holding a reference count
-defined in the field `rc`.
+The Object class implements reference counting for garbage collection through a dedicated field, `rc`, which tracks the number of active references to the object.
 All objects have a reference count, they are initialized either with reference count 1 or 0.
-An object with reference count 1 is one that is immediately assigned to a `Object*` variable.
-An object with reference count 0 only makes sense if the object is being returned and it
-is not known whether it has a referencing variable or not.
+An object with reference count 1 is one that is immediately assigned to an `Object*` variable.
+An object with reference count 0 only makes sense if the object is being returned from some sort of factory function.
+In this case, the object is not immediately destroyed, but is marked as `returning` and is not garbage collected until it is accepted or rejected by the caller.
 
 The reference count field is meant to be incremented or decremented by a set of methods
 like `Object_rc_incr`, `Object_rc_decr`, and `Object_assign`.
@@ -275,7 +274,8 @@ object, we do not want the object to be garbage collected immediately.
 For these cases, the Object class maintains a `returning` field, and this field is set to `1`.
 This prevents the Reference-Counting Garbage Collector from destroying the Object immediately.
 
-But wouldn't this result in an accumulation of non-destructible garbage objects?
+But wouldn't this result in an accumulation of non-destructible garbage objects? 
+Yes.
 For this reason, the following scheme has been constructed for passing Objects between
 function-call barriers.
 Inspired in part by object-ownership principles, every function call returning
