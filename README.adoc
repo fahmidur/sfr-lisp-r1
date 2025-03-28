@@ -40,9 +40,9 @@ somewhat outside of the scope of what I intend on building/learning here. The
 functionality that Linenoise provides is notoriously hard to get right across
 different systems. But one day, I may switch this out as well.
 
-== Building
+== Building and Testing
 
-=== Requirements:
+=== General Requirements
 
 * GCC or Clang
 * Valgrind >= v3.20
@@ -55,13 +55,13 @@ Vendored as a Git submodule in this repository under ./sub/linenoise). Used main
 for the REPL.
 * https://github.com/bytecodealliance/wasmtime[Wasmtime] -- used to test the WASM build against output from Racket.
 
-=== Build Instructions
+=== Build for Native Target
 
 First clone this repository with the `--recursive` flag.
 This will ensure that the submodule for `./sub/linenoise` is present.
 
 With all of the above requirements met and available
-run the following command
+run the following command
 
  $ rake
 
@@ -71,18 +71,27 @@ most of which are test programs.
 The executable for the interpreter will be located at
 `./build/sfr-lisp`.
 
+=== Build for WASM Target
+
 === Testing
+
+Testing is orchestrated at a high level by Ruby, using the built-in `test/unit` library.
+All of the C tests are programs matching `_test.c`, programs like `Object_test.c`, which use 
+a simply header-only assertion library, also written by me, called `nassert.h`.
 
 To run all tests, simply run:
 
  $ rake test
 
+There is a Ruby test which will run each of the sample Lisp files using Racket,
+sfr-lisp, and sfr-lisp.rb. It will check that the output for my implementations
+match the normalized output of Racket. This test is defined in `./test/tc_racket.rb`.
+
 == Usage
 
-The interpreter without any arguments will start
-a REPL.
-With a file path as the first argument, it will evaluate
-the file as Lisp source and exit.
+The interpreter, when run without any arguments, starts a REPL.
+If a file path is provided as the first argument, it evaluates
+the file as Lisp source and exits.
 
 ```
 Usage: sfr-lisp [/path/to/file.lsp]
@@ -150,12 +159,12 @@ The first primitive type created was the *Symbol*.
 In some other implementations these are called Atoms, but here
 I've named it Symbol after Ruby Symbols.
 
-Symbols are treated differently from normal Objects in that they are
-are not garbage collected until the very end. Like an older version of Ruby,
-Symbols only ever grow in number. It's not great. But the idea here
-is that Symbols should not be dynamically created by a program from user input,
-and relatively few symbols should exist throughout the course of a program.
-In the future, we can eliminate unused symbols from the global symbol table.
+Symbols are treated differently from normal Objects in that they are not
+garbage collected until the very end. Like an older version of Ruby, Symbols
+only ever grow in number. It's not great. But the idea here is that Symbols
+should not be dynamically created by a program from user input, and relatively
+few symbols should exist throughout the course of a program. In the future, we
+can eliminate unused symbols from the global symbol table.
 
 ==== Number Class
 
@@ -338,7 +347,7 @@ If you are on Debian/Ubuntu, you can install this with `apt install lld`.
 
 Next, we need to download and build wasi-libc, this provides a libc and related libraries for WASI.
 Pull this from Github to some location, and build it.
-The result will be a sysroot folder for the wasm32-wasi target.
+The result will be a sysroot folder for the `wasm32-wasi` target.
 This sysroot must be used as the sysroot parameter in ./RakefileConfig.yaml.
 
 At this point, the WASM/WASI build will still fail.
@@ -348,7 +357,7 @@ Next, you need the following library file from the https://github.com/WebAssembl
 Go to the Releases page for the latest version of
 https://github.com/WebAssembly/wasi-sdk/releases/tag/wasi-sdk-25[wasi-sdk]
 and download the zipped file https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-25/libclang_rt.builtins-wasm32-wasi-25.0.tar.gz[here].
-Unzip this file and place it into your sysroot/lib/wasm32-wasi directory.
+Unzip this file and place it into your `sysroot/lib/wasm32-wasi` directory.
 
 Now, at last the WASM build should succeed.
 
