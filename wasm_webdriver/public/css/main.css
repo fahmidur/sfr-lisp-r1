@@ -8,11 +8,12 @@ html, body {
   margin: 0px;
   height: 100%;
   overflow: hidden;
+  font-family: monospace !important;
 }
 body {
   background-color: #1a1b26;
   color: #fff;
-  font-family: 'Courier New', 'Ubuntu Mono', monospace !important;
+  font-family: monospace !important;
   scrollbar-color: #ddd #000;
   scrollbar-width: thin;
   display: flex;
@@ -45,10 +46,12 @@ body {
   flex-grow: 0;
 }
 .bmenu {
+  user-select: none;
   padding: 0.5em;
   margin-bottom: 0.2px;
 }
 .bmenu button {
+  font-family: monospace !important;
   background-color: #444;
   border: 1px solid #345;
   color: #fff;
