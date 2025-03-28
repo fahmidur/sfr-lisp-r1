@@ -42,9 +42,14 @@ different systems. But one day, I may switch this out as well.
 
 == Building and Testing
 
-=== General Requirements
+First clone this repository with the `--recursive` flag.
+This will ensure that the submodule for `./sub/linenoise` is present.
 
-* GCC or Clang
+*General Requirements:*
+
+* Compiler:
+** GNU GCC or LLVM Clang >=18 (for Native Target)
+** LLVM Clang >= 18 (for WASM Target)
 * Valgrind >= v3.20
 * https://racket-lang.org/[Racket] -- This implementation is tested against
 Racket to confirm it is roughly working the same way. Racket is a far more
@@ -56,9 +61,6 @@ for the REPL.
 * https://github.com/bytecodealliance/wasmtime[Wasmtime] -- used to test the WASM build against output from Racket.
 
 === Build for Native Target
-
-First clone this repository with the `--recursive` flag.
-This will ensure that the submodule for `./sub/linenoise` is present.
 
 With all of the above requirements met and available
 run the following command
@@ -73,11 +75,58 @@ The executable for the interpreter will be located at
 
 === Build for WASM Target
 
+The WASM/WASI build is slightly more complicated than the regular build for your native environment.
+To get a better understanding of how the WASM builds work, I am intentionally using the minimal set of
+tools to build a functioning wasm file to then use with my web-driver.
+
+Requirements:
+
+* LLVM Clang >= 18
+* https://github.com/WebAssembly/wasi-libc[wasi-libc]
+* `libclang_rt.builtins-wasm32-wasi` from https://github.com/WebAssembly/wasi-sdk/releases/tag/wasi-sdk-25[wasi-sdk-releases]
+
+First, we need to install LLVM Clang, because that is what we will use to cross-compile to the web-assembly target.
+If you are on Debian/Ubuntu, you can install this with `apt install clang`
+
+Next, we will need a linker that can link for the wasm target, that is provided by the LLVM lld project,
+which includes a tool called https://lld.llvm.org/WebAssembly.html[wasm-lld]
+If you are on Debian/Ubuntu, you can install this with `apt install lld`.
+
+Next, we need to download and build `wasi-libc`.
+Pull this from Github to some location, and build it.
+The result will be a sysroot folder for the `wasm32-wasi` target.
+This sysroot must be used as the sysroot parameter in ./RakefileConfig.yaml.
+
+At this point, the WASM/WASI build will still fail.
+
+Next, you need the following library file from the https://github.com/WebAssembly/wasi-sdk[wasi-sdk project] -- `libclang_rt.builtins-wasm32.a`
+
+Go to the Releases page for the latest version of
+https://github.com/WebAssembly/wasi-sdk/releases/tag/wasi-sdk-25[wasi-sdk]
+and download the zipped file https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-25/libclang_rt.builtins-wasm32-wasi-25.0.tar.gz[here].
+Unzip this file and place it into your `sysroot/lib/wasm32-wasi` directory.
+
+Now, at last the WASM build should succeed.
+
+If the build succeeded you can expect a file named `./build/sfr-lisp-wasm.wasm` to be present.
+Now you can run the WASM build using something like Wasmtime as follows:
+```
+wasmtime ./build/sfr-lisp-wasm.wasm
+```
+
+You can also use the `./wasm_webdriver` which provides the HTML/CSS/JS shim used to run the wasm file.
+
+* CD to ./wasm_webdriver/build/
+* Run: `node server.js` 
+* Now in your browser, navigate to `http://localhost:3000`
+
 === Testing
 
-Testing is orchestrated at a high level by Ruby, using the built-in `test/unit` library.
+Testing is managed at a high level by Ruby, using the built-in `test/unit` library.
+All ruby managed tests are defined in `./test`. These tests call each of the C test programs 
+and expect them to exit successfully.
 All of the C tests are programs matching `_test.c`, programs like `Object_test.c`, which use 
-a simply header-only assertion library, also written by me, called `nassert.h`.
+a tiny header-only assertion library, written by me, called `nassert.h`. 
 
 To run all tests, simply run:
 
@@ -136,8 +185,8 @@ as usable as any other Garbage Collected language.
 This is so we can effectively translate the prototype Ruby implementation 
 to C without much change to the underlying logic.
 
-Objects are a thin pointer-to-implementation wrapper around
-more primitive types like Symbol, String, Number, List, and so on.
+In this system, the `Object` class defines a thin pointer-to-implementation
+wrapper around more primitive types like Symbol, String, Number, List, and etc.
 
 In the documentation, I will be using `Object<Type>` notation, for syntactic
 convenience. Although this looks like a C++ Template Parameter, it is not, and
@@ -325,51 +374,4 @@ There is a lot that is missing from this implementation, such as but not limited
 to Tail-Call-Optimization (TCO).
 
 See link:./TODO.txt[Todo-List] for an updated running list.
-
-== WASM/WASI Build Configuration
-
-The WASM/WASI build is slightly more complicated than the regular build for your native environment.
-To get a better understanding of how the WASM builds work, I am intentionally using the minimal set of
-tools to build a functioning wasm file to then use with my web-driver.
-
-Requirements:
-
-* LLVM Clang >= 18
-* https://github.com/WebAssembly/wasi-libc[wasi-libc]
-* `libclang_rt.builtins-wasm32-wasi` from https://github.com/WebAssembly/wasi-sdk/releases/tag/wasi-sdk-25[wasi-sdk-releases]
-
-First, we need to install LLVM Clang, because that is what we will use to cross-compile to the web-assembly target.
-If you are on Debian/Ubuntu, you can install this with `apt install clang`
-
-Next, we will need a linker that can link for the wasm target, that is provided by the LLVM lld project,
-which includes a tool called https://lld.llvm.org/WebAssembly.html[wasm-lld]
-If you are on Debian/Ubuntu, you can install this with `apt install lld`.
-
-Next, we need to download and build wasi-libc, this provides a libc and related libraries for WASI.
-Pull this from Github to some location, and build it.
-The result will be a sysroot folder for the `wasm32-wasi` target.
-This sysroot must be used as the sysroot parameter in ./RakefileConfig.yaml.
-
-At this point, the WASM/WASI build will still fail.
-
-Next, you need the following library file from the https://github.com/WebAssembly/wasi-sdk[wasi-sdk project] -- `libclang_rt.builtins-wasm32.a`
-
-Go to the Releases page for the latest version of
-https://github.com/WebAssembly/wasi-sdk/releases/tag/wasi-sdk-25[wasi-sdk]
-and download the zipped file https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-25/libclang_rt.builtins-wasm32-wasi-25.0.tar.gz[here].
-Unzip this file and place it into your `sysroot/lib/wasm32-wasi` directory.
-
-Now, at last the WASM build should succeed.
-
-If the build succeeded you can expect a file named `./build/sfr-lisp-wasm.wasm` to be present.
-Now you can run the WASM build using something like Wasmtime as follows:
-```
-wasmtime ./build/sfr-lisp-wasm.wasm
-```
-
-Alternatively you can use the `./wasm_webdriver` which provides the HTML/CSS/JS shim used to share this project on the web.
-
-* CD to ./wasm_webdriver/build/
-* Run: `node server.js` 
-* Now in your browser, navigate to `http://localhost:3000`
 
