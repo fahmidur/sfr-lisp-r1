@@ -56,14 +56,14 @@ Racket to confirm it is roughly working the same way. Racket is a far more
 mature lisp, and this is a tiny learning project.
 * Ruby and Rake -- Used for building and running tests.
 * https://github.com/antirez/linenoise[Linenoise] -- A small self-contained alternative to Readline by Antirez.
-Vendored as a Git submodule in this repository under ./sub/linenoise). Used mainly
+Vendored as a Git submodule in this repository under ./sub/linenoise. Used mainly
 for the REPL.
 * https://github.com/bytecodealliance/wasmtime[Wasmtime] -- used to test the WASM build against output from Racket.
 
 === Build for Native Target
 
-With all of the above requirements met and available
-run the following command
+With all of the general build requirements met,
+run the following command:
 
  $ rake
 
@@ -75,9 +75,10 @@ The executable for the interpreter will be located at
 
 === Build for WASM Target
 
-The WASM/WASI build is slightly more complicated than the regular build for your native environment.
-To get a better understanding of how the WASM builds work, I am intentionally using the minimal set of
-tools to build a functioning wasm file to then use with my web-driver.
+The WASM/WASI build is slightly more complicated than the build for
+your native environment. To get a better understanding of how the WASM builds
+work, I am intentionally using the minimal set of tools to build a functioning
+'.wasm' file to be consumed by some WASM runtime like Wasmtime or your browser.
 
 Requirements:
 
@@ -88,9 +89,10 @@ Requirements:
 First, we need to install LLVM Clang, because that is what we will use to cross-compile to the web-assembly target.
 If you are on Debian/Ubuntu, you can install this with `apt install clang`
 
-Next, we will need a linker that can link for the wasm target, that is provided by the LLVM lld project,
-which includes a tool called https://lld.llvm.org/WebAssembly.html[wasm-lld]
-If you are on Debian/Ubuntu, you can install this with `apt install lld`.
+Next, we will need a linker that can link for the wasm target, that is provided
+by the LLVM lld project, which includes a tool called
+https://lld.llvm.org/WebAssembly.html[wasm-lld]. If you are on Debian/Ubuntu,
+you can install this with `apt install lld`.
 
 Next, we need to download and build `wasi-libc`.
 Pull this from Github to some location, and build it.
@@ -122,11 +124,12 @@ You can also use the `./wasm_webdriver` which provides the HTML/CSS/JS shim used
 
 === Testing
 
-Testing is managed at a high level by Ruby, using the built-in `test/unit` library.
-All ruby managed tests are defined in `./test`. These tests call each of the C test programs 
-and expect them to exit successfully.
-All of the C tests are programs matching `_test.c`, programs like `Object_test.c`, which use 
-a tiny header-only assertion library, written by me, called `nassert.h`. 
+Testing is managed at a high level by Ruby, using the built-in `test/unit`
+library. All ruby managed tests are defined in `./test`. These tests execute
+each of the C test programs and expect them to exit successfully. All of the C
+tests are programs matching `_test.c`, programs like `Object_test.c`. These
+programs use a tiny header-only assertion library, written by me, called
+`nassert.h`. 
 
 To run all tests, simply run:
 
