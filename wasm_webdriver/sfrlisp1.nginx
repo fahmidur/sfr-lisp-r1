@@ -1,0 +1,22 @@
+upstream sfrlisp1_backend {
+  server 127.0.0.1:3000;
+}
+server {
+  listen 80;
+  server_name sfrlisp1.fahmidur.com;
+  charset UTF-8;
+
+  location / {
+    proxy_set_header   Host $host;
+    proxy_set_header   X-Real-IP $remote_addr;
+    proxy_redirect     off;
+    proxy_set_header   Upgrade    $http_upgrade;
+    proxy_set_header   Connection "upgrade";
+    proxy_http_version 1.1;
+    proxy_buffering    off;
+    proxy_cache_bypass $http_pragma $http_authorization;
+    proxy_no_cache     $http_pragma $http_authorization;
+
+    proxy_pass http://sfrlisp1_backend;
+  }
+}
