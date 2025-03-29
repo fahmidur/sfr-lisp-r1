@@ -17,3 +17,18 @@ size_t Util_sizet_max(size_t a, size_t b) {
   }
   return b;
 }
+
+void Util_heading1(char isbeg, char* str) {
+  if(isbeg) {
+    printf("{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{\n");
+  } else {
+    printf("}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}\n");
+  }
+  printf("=== %s. %s \n", (isbeg ? "BEG" : "END"), str);
+  if(isbeg) {
+    printf("{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{\n");
+  } else {
+    printf("}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}\n");
+    printf("\n\n");
+  }
+}

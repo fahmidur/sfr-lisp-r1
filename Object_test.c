@@ -6,27 +6,12 @@
 #include "Number.h"
 #include "Object.h"
 
-void heading(char isbeg, char* str) {
-  if(isbeg) {
-    printf("{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{\n");
-  } else {
-    printf("}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}\n");
-  }
-  printf("=== %s. %s \n", (isbeg ? "BEG" : "END"), str);
-  if(isbeg) {
-    printf("{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{\n");
-  } else {
-    printf("}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}\n");
-    printf("\n\n");
-  }
-}
-
 int main(int argc, char** argv) {
 
-  heading(1, "RUNTIME INIT");
+  Util_heading1(1, "RUNTIME INIT");
   Symbol_system_init();
   Object_system_init();
-  heading(0, "RUNTIME INIT");
+  Util_heading1(0, "RUNTIME INIT");
 
   //===========================================================================
 
@@ -37,15 +22,15 @@ int main(int argc, char** argv) {
   nassert(Symbol_new("List") == SYMBOL_LIST);
 
   //===========================================================================
-  heading(1, "SYMBOL OPERATIONS");
+  Util_heading1(1, "SYMBOL OPERATIONS");
 
   Object* sym1 = QSYMBOL_NEW1("hammer_and_sickle");
   nassert(Object_type(sym1) == SYMBOL_SYMBOL);
 
-  heading(0, "SYMBOL OPERATIONS");
+  Util_heading1(0, "SYMBOL OPERATIONS");
 
   //===========================================================================
-  heading(1, "STRING OPERATIONS");
+  Util_heading1(1, "STRING OPERATIONS");
 
   int objsize = Object_system_size();
   Object* str1 = Object_new(SYMBOL_STRING, 1, String_new("Hello there 001"));
@@ -88,11 +73,11 @@ int main(int argc, char** argv) {
   /*Object_print(qstr1); printf("\n");*/
   ObjectUtil_eprintf("qstr1 = %v\n", qstr1);
 
-  heading(0, "STRING OPERATIONS");
+  Util_heading1(0, "STRING OPERATIONS");
 
   //===========================================================================
 
-  heading(1, "NUMBER OPERATIONS");
+  Util_heading1(1, "NUMBER OPERATIONS");
 
   Object* num1 = Object_new(SYMBOL_NUMBER, 1, Number_new(3));
   Object* num2 = Object_new(SYMBOL_NUMBER, 1, Number_new(4));
@@ -132,11 +117,11 @@ int main(int argc, char** argv) {
   Object* qnum1 = QNUMBER_NEW1(3.14);
   nassert(Object_type(qnum1) == SYMBOL_NUMBER);
   
-  heading(0, "NUMBER OPERATIONS");
+  Util_heading1(0, "NUMBER OPERATIONS");
 
   //===========================================================================
   
-  heading(1, "LIST OPERATIONS");
+  Util_heading1(1, "LIST OPERATIONS");
 
   // List.push
   Object* list1 = Object_new(SYMBOL_LIST, 1, List_new());
@@ -202,15 +187,15 @@ int main(int argc, char** argv) {
   ObjectUtil_eprintf("tmp3 = %v\n", tmp3);
   nassert(Object_cmp(tmp3, mem1) == 0);
 
-  heading(0, "LIST OPERATIONS");
+  Util_heading1(0, "LIST OPERATIONS");
 
   //===========================================================================
 
-  heading(1, "RUNTIME DONE");
+  Util_heading1(1, "RUNTIME DONE");
   Object_system_print();
   Object_system_done();
   Symbol_system_done();
-  heading(0, "RUNTIME DONE");
+  Util_heading1(0, "RUNTIME DONE");
 
   nassert_report();
   return nassert_exit_code();

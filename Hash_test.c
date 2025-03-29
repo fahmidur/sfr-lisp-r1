@@ -21,11 +21,12 @@ int main(int argc, char** argv) {
   nassert(apple_color == red);
   nassert(Object_cmp(apple_color, red) == 0);
 
-  Symbol_system_done();
-  Object_system_done();
-
   //manual cleanup
   Hash_del(h1);
+
+  Object_system_print();
+  Object_system_done();
+  Symbol_system_done();
 
   nassert_report();
   return nassert_exit_code();
