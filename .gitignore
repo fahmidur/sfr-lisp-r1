@@ -71,3 +71,5 @@ node_modules/**
 README.pdf
 .vscode
 .vale.ini
+
+upload.sh
