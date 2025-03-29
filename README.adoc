@@ -50,17 +50,17 @@ This will ensure that the submodule for `./sub/linenoise` is present.
 *General Requirements:*
 
 * Compiler:
-** GNU GCC or LLVM Clang >=18 (for Native Target)
-** LLVM Clang >= 18 (for WASM Target)
-* Valgrind >= v3.20
+** GNU GCC or LLVM Clang >=18 -- For Native Target.
+** LLVM Clang >= 18 -- For WASM Target.
+* Valgrind >= v3.20 -- For memory leak testing.
 * https://racket-lang.org/[Racket] -- This implementation is tested against
 Racket to confirm it is roughly working the same way. Racket is a far more
 mature lisp, and this is a tiny learning project.
-* Ruby and Rake -- Used for building and running tests.
+* Ruby and Rake -- For building and running tests.
 * https://github.com/antirez/linenoise[Linenoise] -- A small self-contained alternative to Readline by Antirez.
 Vendored as a Git submodule in this repository under ./sub/linenoise. Used mainly
 for the REPL.
-* https://github.com/bytecodealliance/wasmtime[Wasmtime] -- used to test the WASM build against output from Racket.
+* https://github.com/bytecodealliance/wasmtime[Wasmtime] -- For testing the WASM build against output from Racket.
 
 === Build for Native Target
 
@@ -82,7 +82,7 @@ your native environment. To get a better understanding of how the WASM builds
 work, I am intentionally using the minimal set of tools to build a target to be
 consumed by some WASM runtime like Wasmtime or your browser.
 
-Requirements:
+*Requirements:*
 
 * LLVM Clang >= 18
 * https://github.com/WebAssembly/wasi-libc[wasi-libc]
