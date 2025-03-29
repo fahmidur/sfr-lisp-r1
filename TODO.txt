@@ -23,9 +23,24 @@
   the runner's output should be the same as that of Racket.
   DONE: tc_racket now compares output of wasm build using wasmtime.
 
+- bug. Function calls to lambda are leaving behind tmp Environment 
+  in memory. See ./test/sample/lambda_003.lsp
+  DONE: the issue was that I was creating two temporary environments,
+  and zipping the params into each one, stupid mistake.
+
 - bug. cmp functions in Lisp.c are leaking refcount. It should release RC. See
   cmp_lte as an example.
   DONE: fixed all cmp functions.
+
+- write a test to ensure that cmp functions do not result in left over 
+  argument objects. After N comparisons with two arguments, the number of
+  constructed objects should remain the same.
+  DONE: see Lisp_test.c
+
+- bug. When running with load lambda_003 multiple times, old functions and
+  environments are not being released/collected as expected.
+  DONE: the problem here was similar to one seen before, due to Environment 
+  being double linked.
 
 ------------------------------------------------------------------------------
 } DONE }
@@ -42,16 +57,6 @@
 ------------------------------------------------------------------------------
 { TODO {
 ------------------------------------------------------------------------------
-
-- write a test to ensure that cmp functions do not result in left over 
-  argument objects. After N comparisons with two arguments, the number of
-  constructed objects should remain the same.
-
-- bug. When running with load lambda_003 multiple times, old functions and
-  environments are not being released/collected as expected.
-
-- bug. Function calls to lambda are leaving behind tmp Environment 
-  in memory. See ./test/sample/lambda_003.lsp
 
 - Create memsafe.h/memsafe.c to export
   void* memsafe_malloc(size_t)
