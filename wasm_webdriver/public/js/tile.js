@@ -20,10 +20,6 @@ TileWM.prototype.addTile = function(name, tile) {
   self.tiles[name] = tile;
 };
 
-TileWM.prototype.init = function() {
-  var self = this;
-};
-
 TileWM.prototype.setVisible = function(name, x) {
   var self = this;
   let tile = self.tiles[name];
