@@ -16,7 +16,7 @@ ____
 '''
 
 SFR-Lisp is a toy lisp-1 interpreter written in C. It is not designed to be
-used for anything important, it is simply a learning exercise. It is also
+used for anything important, it is simply a learning exercise. It is also a
 test bed to play with ideas around the design of C object systems, memory
 management, macros, and etc. 
 
