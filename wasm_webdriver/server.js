@@ -3,7 +3,9 @@ const redis = require('redis');
 const app = express();
 const port = 3000;
 
-var redis_client = redis.createClient();
+var redis_client = redis.createClient({
+  legacyMode: true,
+});
 
 app.get('/.well-known/acme-challenge/:token', function(req, res) {
   var log_prefix = 'acme.';

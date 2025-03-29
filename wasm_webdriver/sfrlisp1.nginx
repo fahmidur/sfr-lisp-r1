@@ -20,3 +20,25 @@ server {
     proxy_pass http://sfrlisp1_backend;
   }
 }
+
+server {
+  listen 443 ssl;
+  server_name sfrlisp1.fahmidur.com;
+  ssl_certificate /etc/letsencrypt/live/sfrlisp1.fahmidur.com/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/sfrlisp1.fahmidur.com/privkey.pem;
+
+  location / {
+    proxy_set_header   Host $host;
+    proxy_set_header   X-Real-IP $remote_addr;
+    proxy_redirect     off;
+    proxy_set_header   Upgrade    $http_upgrade;
+    proxy_set_header   Connection "upgrade";
+    proxy_http_version 1.1;
+    proxy_buffering    off;
+    proxy_cache_bypass $http_pragma $http_authorization;
+    proxy_no_cache     $http_pragma $http_authorization;
+
+    proxy_pass http://sfrlisp1_backend;
+  }
+}
+
