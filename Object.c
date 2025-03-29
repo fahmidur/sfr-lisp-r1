@@ -175,7 +175,6 @@ Object* Object_new_null() {
  */
 void Object_assign(Object** targetptr, Object* source) {
   assert(targetptr != NULL);
-  assert(source != NULL);
   if(*targetptr != NULL) {
     Object_rc_decr(*targetptr);
   }

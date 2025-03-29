@@ -9,6 +9,7 @@ HashNode* HashNode_new(Object* key, Object* val) {
   HashNode* self = calloc(1, sizeof(HashNode));
   self->prev = NULL;
   self->next = NULL;
+  assert(key != val);
   self->key = key;
   self->val = val;
   // we simply do not rc_decr val because this
@@ -16,14 +17,17 @@ HashNode* HashNode_new(Object* key, Object* val) {
   return self;
 }
 
-// Can only handle delete from the 
-// front. 
+// TODO: what if key == val
 void HashNode_del(HashNode* self) {
-  if(self->next) {
-    HashNode_del(self->next);
+  if(self->prev != NULL && self->next != NULL) {
+    HashNode* prev = self->prev;
+    HashNode* next = self->next;
+    prev->next = next;
+    next->prev = prev;
+    self->prev = NULL;
+    self->next = NULL;
   }
-  self->next = NULL;
-  // TODO: what if key == val
+  assert(self->prev == NULL && self->next == NULL);
   if(self->key != NULL) {
     self->key = Object_rc_decr(self->key);
   }
@@ -33,6 +37,15 @@ void HashNode_del(HashNode* self) {
   self->key = NULL;
   self->val = NULL;
   free(self);
+}
+
+void HashNode_del_fwd(HashNode* self) {
+  if(self->next) {
+    HashNode_del_fwd(self->next);
+  }
+  self->next = NULL;
+  self->prev = NULL;
+  HashNode_del(self);
 }
 
 void HashNode_set_key(HashNode* self, Object* key) {
@@ -70,7 +83,7 @@ void Hash_del(Hash* self) {
   for(i = 0; i < HASH_BUCKET_SIZE; i++) {
     node = self->buckets[i];
     if(node != NULL) {
-      HashNode_del(node);
+      HashNode_del_fwd(node);
     }
   }
   free(self->buckets);
@@ -99,6 +112,33 @@ size_t Hash_len(Hash* self) {
   /* return len; */
 }
 
+size_t Hash_rem(Hash* self, Object* key) {
+  Object_rc_incr(key);
+  size_t index = Object_hash(key) % HASH_BUCKET_SIZE;
+  HashNode* iter = self->buckets[index];
+  size_t iter_idx = 0;
+  HashNode* found = NULL;
+  size_t found_idx = 0;
+  while(iter != NULL) {
+    if(Object_cmp(iter->key, key) == 0) {
+      found = iter;
+      found_idx = iter_idx;
+      break;
+    }
+    iter = iter->next;
+    iter_idx++;
+  }
+  if(found != NULL) {
+    HashNode_del(found);
+    self->size--;
+    if(found_idx == 0) {
+      self->buckets[index] = NULL;
+    }
+  }
+  Object_rc_decr(key);
+  return self->size;
+}
+
 size_t Hash_set(Hash* self, Object* key, Object* val) {
   Object_rc_incr(key);
   Object_rc_incr(val);
@@ -112,7 +152,7 @@ size_t Hash_set(Hash* self, Object* key, Object* val) {
     node = HashNode_new(key, val);
     self->buckets[index] = node;
     self->size++;
-    printf("** donuts ** size=%zu\n", self->size);
+    /* printf("** donuts ** size=%zu\n", self->size); */
   }
   else {
     iter = node;

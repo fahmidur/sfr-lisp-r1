@@ -17,9 +17,22 @@ int main(int argc, char** argv) {
   nassert(Hash_len(h1) == 1);
 
   Object* apple_color = NULL;
-  apple_color = Hash_get(h1, apple);
+  apple_color = Object_accept(Hash_get(h1, apple));
   nassert(apple_color == red);
   nassert(Object_cmp(apple_color, red) == 0);
+
+  Hash_rem(h1, apple);
+  nassert(Hash_len(h1) == 0);
+
+  /* Object* banana = QSYMBOL_NEW1("banana"); */
+  /* Object* yellow = QSTRING_NEW1("yellow"); */
+  /* Hash_set(h1, banana, yellow); */
+  /* nassert(Hash_len(h1) == 2); */
+  /**/
+  /* Object* banana_color = NULL; */
+  /* banana_color = Object_accept(Hash_get(h1, banana)); */
+  /* nassert(banana_color == yellow); */
+  /* nassert(Object_cmp(banana_color, yellow) == 0); */
 
   //manual cleanup
   Hash_del(h1);
