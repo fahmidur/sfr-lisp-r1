@@ -3,6 +3,10 @@
   --color-hl-002: #EB7981;
   --color-hl-003: #B184E3;
 }
+a {
+  text-decoration: none;
+  color: inherit;
+}
 html, body {
   padding: 0px;
   margin: 0px;
