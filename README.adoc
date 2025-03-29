@@ -36,8 +36,8 @@ output against https://racket-lang.org/[Racket]. There are memory leak tests
 using Valgrind, called by the test suite.
 
 The only third-party library used here is Linenoise, a tiny alternative to
-Readline written by venerable https://github.com/Antirez[Antirez]. This is because
-keyboard handling, terminal specific escape codes for REPLs, and etc is
+Readline written by the venerable https://github.com/Antirez[Antirez]. This is
+because keyboard handling, terminal specific escape codes for REPLs, and etc is
 somewhat outside of the scope of what I intend on building/learning here. The
 functionality that Linenoise provides is notoriously hard to get right across
 different systems. But one day, I may switch this out as well.
