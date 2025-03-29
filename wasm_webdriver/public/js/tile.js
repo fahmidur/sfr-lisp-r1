@@ -3,6 +3,11 @@ function TileWM(el) {
   self.el = $(el);
   self.el.addClass('TileWM');
   self.split = 'vsplit';
+  let $win = $(window);
+  if($win.width() < $win.height()) {
+    self.split = 'hsplit';
+  }
+  self.el.addClass(self.split);
   self.tiles = {};
   console.log('TileWM. self=', self);
 }
