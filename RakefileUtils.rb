@@ -1,7 +1,23 @@
 require 'yaml'
 
+def empty?(x)
+  x = x.to_str
+  if x.size == 0 || x =~ /^\s*$/s 
+    return true
+  end
+  return false
+end
+
+def read_version
+  ret = `git describe --tags HEAD 2>/dev/null`.strip
+  if empty?(ret)
+    ret = "v0.0.0"
+  end
+  return ret
+end
+
 $git_sha = `git rev-parse HEAD`.strip
-$version = `git describe --tags HEAD`.strip
+$version = read_version()
 
 $conf = YAML::load_file('./RakefileConfig.yaml')
 

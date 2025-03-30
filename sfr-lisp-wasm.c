@@ -70,12 +70,14 @@ void stdout_flush() {
 
 __attribute__((export_name("print_banner")))
 void print_banner() {
-  printf("+---------------------------------------------------\n");
+  printf("+----------------------------------------\n");
   printf("| SFR-LISP \n");
-  printf("+---------------------------------------------------\n");
-  printf("| VERSION: %s\n", VERSION);
-  printf("| GIT_SHA: %s\n", GIT_SHA);
-  printf("+---------------------------------------------------\n");
+  printf("+----------------------------------------\n");
+  printf("| VERSION:\n");
+  printf("| %s\n", VERSION);
+  printf("| GIT_SHA:\n");
+  printf("| %s\n", GIT_SHA);
+  printf("+----------------------------------------\n");
   printf("\n");
 }
 
