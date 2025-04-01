@@ -1,5 +1,6 @@
 import express from 'express';
 import redis from 'redis';
+import * as fs from 'node:fs/promises';
 
 const app = express();
 const port = 3000;
@@ -21,6 +22,13 @@ app.use(function(req, res, next) {
   res.set('Cross-Origin-Resource-Policy', 'same-origin');
   res.set('Cross-Origin-Embedder-Policy', 'require-corp');
   next();
+});
+
+app.get('/samples.json', async function(req, res) {
+  let files = await fs.readdir('../test/sample');
+  res.json({
+    files: files
+  });
 });
 
 app.use(express.static('./public'));

@@ -1,4 +1,5 @@
 :root {
+  --color-bg-001: #1a1b26;
   --color-hl-001: #40CEA6;
   --color-hl-002: #EB7981;
   --color-hl-003: #B184E3;
@@ -15,7 +16,7 @@ html, body {
   font-family: monospace !important;
 }
 body {
-  background-color: #1a1b26;
+  background-color: var(--color-bg-001);
   color: #fff;
   font-family: monospace !important;
   scrollbar-color: #ddd #000;
@@ -53,6 +54,17 @@ body {
   user-select: none;
   padding: 0.5em;
   margin-bottom: 0.2px;
+}
+.bmenu select {
+  background-color: var(--color-bg-001);
+  color: #fff;
+  border: 1px solid #333;
+  border-radius: 0.5em;
+  padding: 0.3em;
+  outline: none;
+}
+.bmenu select option {
+  background-color: var(--color-bg-001);
 }
 .bmenu button {
   font-family: monospace !important;
