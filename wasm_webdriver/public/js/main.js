@@ -7,7 +7,37 @@ var btn_code = $('#btn_code');
 var btn_vsplit = $('#btn_vsplit');
 var btn_hsplit = $('#btn_hsplit');
 var btn_run = $('#btn_run');
+var sel_samples = $('#sel_samples');
+var default_content = `(begin
+  (displayln "--- Welcome! ---")
+  (define make_account
+    (lambda (balance)
+      (lambda (amt)
+        (begin
+          (set! balance (+ balance amt))
+          balance
+        ))))
+  (define account1 (make_account 100))
+  (displayln (account1 -20))
+  (displayln (account1 -10))
+  (displayln (account1 -5))
+  (displayln (account1 40))
+)`;
 
+$.ajax({
+  url: '/samples.json',
+  method: 'GET',
+}).then(function(res) {
+  console.log('samples. res=', res);
+  let files = res.files;
+  if(!files) {
+    console.error('samples. expecting res.files');
+    return;
+  }
+  files.forEach(function(f) {
+    sel_samples.append($('<option>').text(f).attr('value', f));
+  });
+});
 
 var tilewm = new TileWM($('#tilewm-root'));
 
@@ -56,6 +86,7 @@ var tile_code = new Tile($('#tile-code'), {
       editor_el.appendTo(el);
       console.log('new Editor(). editor_el=', editor_el);
       editor = new Editor(editor_el);
+      editor.setValue(default_content);
     }
     if(tilewm.split == 'vsplit') {
       editor_el.outerHeight(term_el.outerHeight());
@@ -63,6 +94,29 @@ var tile_code = new Tile($('#tile-code'), {
       editor_el.css('height', '');
     }
   }
+});
+
+function filter_pragmas(content) {
+  return content.split("\n").
+    filter((x) => (!(x.match(/^\s*#/)))).
+    join("\n");
+}
+
+sel_samples.on('change', function() {
+  let val = this.value;
+  if(val == 'Default') {
+    editor.setValue(default_content);
+  }
+  $.ajax({
+    url: '/sample/'+val
+  }).then(function(resp) {
+    console.log('got-sample. resp=', resp);
+    let content = filter_pragmas(resp);
+    console.log('content=', content);
+    if(editor) {
+      editor.setValue(content);
+    }
+  });
 });
 
 tilewm.addTile('term', tile_term);
