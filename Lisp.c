@@ -371,11 +371,34 @@ void _qdefun(
   }
 }
 
+/**
+ * Define a binary function taking params "a" and "b".
+ **/
 void _qdefun_bin(
   char* name, 
   Object* (*impl)(Function* fn, Object* env, Object* args)
 ) {
   _qdefun(name, impl, 2, Object_new_list(0, 2, QSYMBOL("a"), QSYMBOL("b")));
+}
+
+/**
+ * Define a function that takes zero args.
+ **/
+void _qdefun_0(
+  char* name, 
+  Object* (*impl)(Function* fn, Object* env, Object* args)
+) {
+  _qdefun(name, impl, 0, NULL);
+}
+
+/**
+ * Define a function that takes a variable number of args.
+ **/
+void _qdefun_v(
+  char* name, 
+  Object* (*impl)(Function* fn, Object* env, Object* args)
+) {
+  _qdefun(name, impl, -1, NULL);
 }
 
 void Lisp_init() {
@@ -389,11 +412,11 @@ void Lisp_init() {
   LispSymbol_lambda = QSYMBOL_NEW1("lambda");
   LispSymbol_eval = QSYMBOL_NEW1("eval");
 
-  _qdefun("display", fn_display, -1, NULL);
-  _qdefun("displayln", fn_displayln, -1, NULL);
-  _qdefun("print", fn_print, -1, NULL);
-  _qdefun("println", fn_println, -1, NULL);
-  _qdefun("newline", fn_newline, 0, NULL);
+  _qdefun_v("display", fn_display);
+  _qdefun_v("displayln", fn_displayln);
+  _qdefun_v("print", fn_print);
+  _qdefun_v("println", fn_println);
+  _qdefun_0("newline", fn_newline);
 
   _qdefun_bin("+", fn_add);
   _qdefun_bin("-", fn_sub);
@@ -405,32 +428,10 @@ void Lisp_init() {
   _qdefun_bin("<=", fn_cmp_lte);
   _qdefun_bin("equal?", fn_cmp_equal);
 
-  /* Object* fnobj_begin = Object_new(SYMBOL_FUNCTION, 1, */
-  /*   Function_new(QSYMBOL("begin"), LispEnv_root, fn_begin, -1, NULL, NULL) */
-  /* ); */
-  /* Object_top_hset(LispEnv_root, QSYMBOL("begin"), fnobj_begin); */
-  /* Object_assign(&fnobj_begin, NULL); */
-  _qdefun("begin", fn_begin, -1, NULL);
+  _qdefun_v("begin", fn_begin);
+  _qdefun_0("gc_info", fn_gc_info);
+  _qdefun_0("gc_run", fn_gc_run);
 
-  /* Object* fnobj_gc_info = Object_new(SYMBOL_FUNCTION, 1, */ 
-  /*   Function_new(QSYMBOL("gc_info"), LispEnv_root, fn_gc_info, 0, NULL, NULL) */
-  /* ); */
-  /* Object_top_hset(LispEnv_root, QSYMBOL("gc_info"), fnobj_gc_info); */
-  /* Object_assign(&fnobj_gc_info, NULL); */
-  _qdefun("gc_info", fn_gc_info, 0, NULL);
-
-  /* Object* fnobj_gc_run = Object_new(SYMBOL_FUNCTION, 1, */ 
-  /*   Function_new(QSYMBOL("gc_run"), LispEnv_root, fn_gc_run, 0, NULL, NULL) */
-  /* ); */
-  /* Object_top_hset(LispEnv_root, QSYMBOL("gc_run"), fnobj_gc_run); */
-  /* Object_assign(&fnobj_gc_run, NULL); */
-  _qdefun("gc_run", fn_gc_run, 0, NULL);
-
-  /* Object* fnobj_load = Object_new(SYMBOL_FUNCTION, 1, */
-  /*   Function_new(QSYMBOL("load"), LispEnv_root, fn_load, 1, Object_new_list(1, 1, QSYMBOL("path")), NULL) */
-  /* ); */
-  /* Object_top_hset(LispEnv_root, QSYMBOL("load"), fnobj_load); */
-  /* Object_assign(&fnobj_load, NULL); */
   _qdefun("load", fn_load, 1, Object_new_list(0, 1, QSYMBOL("path")));
 
   LispAutoGC = 5;
