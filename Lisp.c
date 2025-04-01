@@ -397,48 +397,13 @@ void Lisp_init() {
 
   _qdefun_bin("+", fn_add);
   _qdefun_bin("-", fn_sub);
-
-  Object* fnobj_mul = Object_new(SYMBOL_FUNCTION, 1, 
-    Function_new(QSYMBOL("*"), LispEnv_root, fn_mul, 2, Object_new_list(1, 2, QSYMBOL("a"), QSYMBOL("b")), NULL)
-  );
-  Object_top_hset(LispEnv_root, QSYMBOL("*"), fnobj_mul);
-  Object_assign(&fnobj_mul, NULL);
-  
-  Object* fnobj_div = Object_new(SYMBOL_FUNCTION, 1, 
-    Function_new(QSYMBOL("/"), LispEnv_root, fn_div, 2, Object_new_list(1, 2, QSYMBOL("a"), QSYMBOL("b")), NULL)
-  );
-  Object_top_hset(LispEnv_root, QSYMBOL("/"), fnobj_div);
-  Object_assign(&fnobj_div, NULL);
-
-  Object* fnobj_cmp_gt = Object_new(SYMBOL_FUNCTION, 1,
-    Function_new(QSYMBOL(">"), LispEnv_root, fn_cmp_gt, 2, Object_new_list(1, 2, QSYMBOL("a"), QSYMBOL("b")), NULL)
-  );
-  Object_top_hset(LispEnv_root, QSYMBOL(">"), fnobj_cmp_gt);
-  Object_assign(&fnobj_cmp_gt, NULL);
-
-  Object* fnobj_cmp_gte = Object_new(SYMBOL_FUNCTION, 1,
-    Function_new(QSYMBOL(">="), LispEnv_root, fn_cmp_gte, 2, Object_new_list(1, 2, QSYMBOL("a"), QSYMBOL("b")), NULL)
-  );
-  Object_top_hset(LispEnv_root, QSYMBOL(">="), fnobj_cmp_gte);
-  Object_assign(&fnobj_cmp_gte, NULL);
-
-  Object* fnobj_cmp_lt = Object_new(SYMBOL_FUNCTION, 1,
-    Function_new(QSYMBOL("<"), LispEnv_root, fn_cmp_lt, 2, Object_new_list(1, 2, QSYMBOL("a"), QSYMBOL("b")), NULL)
-  );
-  Object_top_hset(LispEnv_root, QSYMBOL("<"), fnobj_cmp_lt);
-  Object_assign(&fnobj_cmp_lt, NULL);
-
-  Object* fnobj_cmp_lte = Object_new(SYMBOL_FUNCTION, 1,
-    Function_new(QSYMBOL("<="), LispEnv_root, fn_cmp_lte, 2, Object_new_list(1, 2, QSYMBOL("a"), QSYMBOL("b")), NULL)
-  );
-  Object_top_hset(LispEnv_root, QSYMBOL("<="), fnobj_cmp_lte);
-  Object_assign(&fnobj_cmp_lte, NULL);
-
-  Object* fnobj_cmp_equal = Object_new(SYMBOL_FUNCTION, 1,
-    Function_new(QSYMBOL("equal?"), LispEnv_root, fn_cmp_equal, 2, Object_new_list(1, 2, QSYMBOL("a"), QSYMBOL("b")), NULL)
-  );
-  Object_top_hset(LispEnv_root, QSYMBOL("equal?"), fnobj_cmp_equal);
-  Object_assign(&fnobj_cmp_equal, NULL);
+  _qdefun_bin("*", fn_mul);
+  _qdefun_bin("/", fn_div);
+  _qdefun_bin(">", fn_cmp_gt);
+  _qdefun_bin(">=", fn_cmp_gte);
+  _qdefun_bin("<", fn_cmp_lt);
+  _qdefun_bin("<=", fn_cmp_lte);
+  _qdefun_bin("equal?", fn_cmp_equal);
 
   Object* fnobj_begin = Object_new(SYMBOL_FUNCTION, 1,
     Function_new(QSYMBOL("begin"), LispEnv_root, fn_begin, -1, NULL, NULL)
