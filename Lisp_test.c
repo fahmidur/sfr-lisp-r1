@@ -333,6 +333,15 @@ int main(int argc, char** argv) {
   nassert(Object_cmp(Object_bop_at(qlist1, 2), QNUMBER(3)) == 0);
   Object_assign(&qlist1, NULL);
 
+  Object* car_res1 = Object_accept(Lisp_eval_string(QSTRING("(car (list 1 2 3))")));
+  nassert(Object_cmp(car_res1, QNUMBER(1)) == 0);
+
+  Object* cdr_res1 = Object_accept(Lisp_eval_string(QSTRING("(cdr (list 1 2 3))")));
+  nassert(Object_type(cdr_res1) == SYMBOL_LIST);
+  nassert(Object_len(cdr_res1) == 2);
+  nassert(Object_cmp(Object_bop_at(cdr_res1, 0), QNUMBER(2)) == 0);
+  nassert(Object_cmp(Object_bop_at(cdr_res1, 1), QNUMBER(3)) == 0);
+
 _shutdown:
   Lisp_done();
   Runtime_done();
