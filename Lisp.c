@@ -479,7 +479,9 @@ void Lisp_init() {
 
   _qdefun_v("list", fn_list);
   _qdefun_1("car", fn_car);
+  _qdefun_1("first", fn_car); // alias
   _qdefun_1("cdr", fn_cdr);
+  _qdefun_1("rest", fn_cdr); // alias
 
   LispAutoGC = 5;
   LispAutoGC_counter = 0;
