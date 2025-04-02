@@ -351,6 +351,16 @@ Object* fn_cmp_equal(Function* fn, Object* env, Object* argv) {
   return ret;
 }
 
+Object* fn_list(Function* fn, Object* env, Object* argv) {
+  /* ObjectUtil_eprintf("donuts. argv=%v | rc=%d\n", argv, argv->rc); */
+  /* Object* ret = Object_accept(Object_clone(argv)); */
+  /* ObjectUtil_eprintf("donuts. ret = %v | rc=%d\n", ret, ret->rc); */
+  /* Object_return(ret); */
+  /* Object_rc_decr(ret); */
+  /* return ret; */
+  return Object_return(Object_clone(argv));
+}
+
 void _qdefun(
   char* name, 
   Object* (*impl)(Function* fn, Object* env, Object* args),  
@@ -433,6 +443,8 @@ void Lisp_init() {
   _qdefun_0("gc_run", fn_gc_run);
 
   _qdefun("load", fn_load, 1, Object_new_list(0, 1, QSYMBOL("path")));
+
+  _qdefun_v("list", fn_list);
 
   LispAutoGC = 5;
   LispAutoGC_counter = 0;
@@ -972,20 +984,22 @@ _return:
     assert(ret->returning);
     Object_rc_decr(ret);
   }
-  LispAutoGC_counter = (LispAutoGC_counter + 1) % LispAutoGC;
-  ssize_t cursize = Object_system_size();
-  /* printf("LispAutoGC_counter = %lu | cursize=%lu | oldsize=%lu\n", LispAutoGC_counter, cursize, LispAutoGC_oldsize); */
-  if(
-      gc_on_return
-      && cursize > 0 
-      && LispAutoGC > 0
-      && LispAutoGC_counter == 0
-      && LispAutoGC_oldsize != cursize
-    ) {
-    /* printf("LispAutoGC. Calling Object_system_gc(). size=%lu\n", Object_system_size()); */
-    Object_system_gc();
-    LispAutoGC_oldsize = Object_system_size();
-    /* printf("LispAutoGC. ..................... Post. size=%lu\n", LispAutoGC_oldsize); */
+  if(LispAutoGC > 0 ) {
+    LispAutoGC_counter = (LispAutoGC_counter + 1) % LispAutoGC;
+    ssize_t cursize = Object_system_size();
+    /* printf("LispAutoGC. LispAutoGC_counter = %lu | cursize=%lu | oldsize=%lu\n", LispAutoGC_counter, cursize, LispAutoGC_oldsize); */
+    if(
+        gc_on_return
+        && cursize > 0 
+        && LispAutoGC > 0
+        && LispAutoGC_counter == 0
+        && LispAutoGC_oldsize != cursize
+      ) {
+      /* printf("LispAutoGC. Calling Object_system_gc(). size=%lu\n", Object_system_size()); */
+      Object_system_gc();
+      LispAutoGC_oldsize = Object_system_size();
+      /* printf("LispAutoGC. ..................... Post. size=%lu\n", LispAutoGC_oldsize); */
+    }
   }
   return ret;
 }

@@ -536,19 +536,19 @@ void Object_action_rc_gc_decr(Object* referer, Object* referend) {
   /*   printf("donuts. critical error!\n"); */
   /*   exit(1); */
   /* } */
-  if(Object_type(referend) == SYMBOL_NUMBER && ((Number*)referend->impl)->rep == 3.456) {
-    printf("donuts. referer=%p ---> referend=%p\n", referer, referend);
-    printf("donuts. break here\n");
-    printf("donuts. referer type="); Symbol_print(referer->type); printf("\n");
-  }
+  /* if(Object_type(referend) == SYMBOL_NUMBER && ((Number*)referend->impl)->rep == 3.456) { */
+  /*   printf("donuts. referer=%p ---> referend=%p\n", referer, referend); */
+  /*   printf("donuts. break here\n"); */
+  /*   printf("donuts. referer type="); Symbol_print(referer->type); printf("\n"); */
+  /* } */
   referend->rc_gc--;
 }
 
-void Object_action_set_unreachable(Object* referer, Object* referend) {
-  if(referend->rc_gc <= 0) {
-    referend->unreachable = 1;
-  }
-}
+/* void Object_action_set_unreachable(Object* referer, Object* referend) { */
+/*   if(referend->rc_gc <= 0 && referend->returning == 0) { */
+/*     referend->unreachable = 1; */
+/*   } */
+/* } */
 
 void Object_action_unset_unreachable(Object* referer, Object* referend) {
   if(referer->unreachable == 0 && referend->unreachable == 1) {
@@ -642,7 +642,9 @@ void Object_system_gc() {
   // mark any object with rc_gc == 0 as tentatively unreachable
   iter = object_system->head;
   while(iter != NULL) {
-    if(iter->rc_gc <= 0) {
+    if(iter->rc_gc <= 0 && iter->returning == 0) {
+      // you are not referenced by anything on the stack.
+      // and you are not returning.
       iter->unreachable = 1;
     }
     iter = iter->next;
