@@ -1,5 +1,11 @@
 #!/bin/bash
 
+##
+# Only here as a reference/notes. 
+# Use `rake build` -- 
+# it will try to build wasm target if possible.
+## 
+
 /usr/lib/llvm-18/bin/clang \
   -O3 \
   -target wasm32-wasi \
