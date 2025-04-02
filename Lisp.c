@@ -128,7 +128,7 @@ Object* fn_print(Function* fn, Object* env, Object* argv) {
   ListIter_head(argv_iter);
   while(!ListIter_at_end(argv_iter)) {
     tmp = ListIter_get_val(argv_iter);
-    // TODO: should we accept the tmp object here? 
+    // todo: should we accept the tmp object here? 
     // If so, we need to assign it to NULL before the next iteration.
     tmp_type = Object_type(tmp);
     if(i > 0) {
@@ -155,6 +155,42 @@ Object* fn_print(Function* fn, Object* env, Object* argv) {
   fflush(stdout);
   return Object_new_null();
 }
+void Lisp_display(Object* obj) {
+  Object_accept(obj);
+  Symbol* obj_type = Object_type(obj);
+  if(obj_type == SYMBOL_STRING) {
+    printf("%s", (char*)(((String*)obj->impl)->buf));
+  } 
+  else
+  if(obj_type == SYMBOL_NUMBER) {
+    Number_print_bare(obj->impl);
+  }
+  else
+  if(obj_type == SYMBOL_FUNCTION) {
+    printf("#<procedure:%p>", obj);
+  }
+  else
+  if(obj_type == SYMBOL_LIST) {
+    ListIter* iter = ListIter_new(obj->impl);
+    int i = 0;
+    ListIter_head(iter);
+    printf("(");
+    while(!ListIter_at_end(iter)) {
+      if(i > 0) {
+        printf(" ");
+      }
+      Lisp_display(ListIter_get_val(iter));
+      i++;
+      ListIter_next(iter);
+    }
+    printf(")");
+    ListIter_del(iter); iter = NULL;
+  }
+  else {
+    Object_print(obj);
+  }
+  Object_assign(&obj, NULL);
+}
 Object* fn_display(Function* fn, Object* env, Object* argv) {
   assert(fn != NULL);
   assert(argv != NULL);
@@ -175,28 +211,12 @@ Object* fn_display(Function* fn, Object* env, Object* argv) {
   ListIter* argv_iter = ListIter_new(argv->impl);
   ListIter_head(argv_iter);
   while(!ListIter_at_end(argv_iter)) {
-    // TODO: should we accept the tmp object here? 
-    // If so, we need to assign it to NULL before the next iteration.
     tmp = ListIter_get_val(argv_iter);
-    /* ObjectUtil_eprintf("display. tmp=%v\n", tmp); */
-    tmp_type = Object_type(tmp);
     if(i > 0) {
       printf(" ");
     }
-    if(tmp_type == SYMBOL_STRING) {
-      printf("%s", (char*)(((String*)tmp->impl)->buf));
-    } 
-    else
-    if(tmp_type == SYMBOL_NUMBER) {
-      Number_print_bare(tmp->impl);
-    }
-    else
-    if(tmp_type == SYMBOL_FUNCTION) {
-      printf("#<procedure:%p>", tmp);
-    }
-    else {
-      Object_print(tmp);
-    }
+    Lisp_display(tmp);
+    //---
     ListIter_next(argv_iter);
     i++;
   }
