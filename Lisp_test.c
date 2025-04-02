@@ -294,10 +294,10 @@ int main(int argc, char** argv) {
   nassert(environment_count_bef == environment_count_aft);
 
   //generic binary op test
-  const char* binary_ops[8] = {"<", ">", "<=", ">=", "+", "-", "/", "*"};
+  const char* binary_ops[9] = {"<", ">", "<=", ">=", "+", "-", "/", "*", "list"};
   char binop_str[256];
   size_t binop_obj_count = 0;
-  for(i = 0; i < 8; i++) {
+  for(i = 0; i < 9; i++) {
     memset(binop_str, 0, sizeof(binop_str));
     sprintf(binop_str, "(%s 1 2)", binary_ops[i]);
     binop_obj_count = Object_system_size();
@@ -305,7 +305,7 @@ int main(int argc, char** argv) {
       Object* binop_obj = QSTRING_NEW1(binop_str);
       // ObjectUtil_eprintf("%2d | binop_obj = %v\n", j, binop_obj);
       Object* binop_res = Object_accept(Lisp_eval_string(binop_obj));
-      // ObjectUtil_eprintf("%2d | binop_res = %v\n", j, binop_res);
+      /* ObjectUtil_eprintf("%2d | binop_res = %v\n", j, binop_res); */
       Object_assign(&binop_obj, NULL);
       Object_assign(&binop_res, NULL);
     }

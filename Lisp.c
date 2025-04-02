@@ -352,13 +352,8 @@ Object* fn_cmp_equal(Function* fn, Object* env, Object* argv) {
 }
 
 Object* fn_list(Function* fn, Object* env, Object* argv) {
-  /* ObjectUtil_eprintf("donuts. argv=%v | rc=%d\n", argv, argv->rc); */
-  /* Object* ret = Object_accept(Object_clone(argv)); */
-  /* ObjectUtil_eprintf("donuts. ret = %v | rc=%d\n", ret, ret->rc); */
-  /* Object_return(ret); */
-  /* Object_rc_decr(ret); */
-  /* return ret; */
-  return Object_return(Object_clone(argv));
+  /* return Object_return(Object_clone(argv)); */
+  return Object_return(argv);
 }
 
 void _qdefun(
