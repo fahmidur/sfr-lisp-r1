@@ -532,18 +532,12 @@ size_t Object_system_rtcount() {
 }
 
 void Object_action_rc_gc_decr(Object* referer, Object* referend) {
-  /* if(Object_type(referend) == SYMBOL_SYMBOL) { */
-  /*   printf("donuts. critical error!\n"); */
-  /*   exit(1); */
-  /* } */
-  /* if(Object_type(referend) == SYMBOL_NUMBER && ((Number*)referend->impl)->rep == 3.456) { */
-  /*   printf("donuts. referer=%p ---> referend=%p\n", referer, referend); */
-  /*   printf("donuts. break here\n"); */
-  /*   printf("donuts. referer type="); Symbol_print(referer->type); printf("\n"); */
-  /* } */
   referend->rc_gc--;
 }
 
+/**
+ * Totally unused.
+ **/
 /* void Object_action_set_unreachable(Object* referer, Object* referend) { */
 /*   if(referend->rc_gc <= 0 && referend->returning == 0) { */
 /*     referend->unreachable = 1; */
