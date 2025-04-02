@@ -328,6 +328,9 @@ int main(int argc, char** argv) {
   Object* qlist1 = Object_accept(Lisp_eval_string(QSTRING("(list 1 2 3)")));
   nassert(Object_type(qlist1) == SYMBOL_LIST);
   nassert(Object_len(qlist1) == 3);
+  nassert(Object_cmp(Object_bop_at(qlist1, 0), QNUMBER(1)) == 0);
+  nassert(Object_cmp(Object_bop_at(qlist1, 1), QNUMBER(2)) == 0);
+  nassert(Object_cmp(Object_bop_at(qlist1, 2), QNUMBER(3)) == 0);
   Object_assign(&qlist1, NULL);
 
 _shutdown:
