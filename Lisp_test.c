@@ -325,6 +325,11 @@ int main(int argc, char** argv) {
   nassert(load_env_count_aft == (load_env_count+1));
   Object_assign(&load_statement, NULL);
 
+  Object* qlist1 = Object_accept(Lisp_eval_string(QSTRING("(list 1 2 3)")));
+  nassert(Object_type(qlist1) == SYMBOL_LIST);
+  nassert(Object_len(qlist1) == 3);
+  Object_assign(&qlist1, NULL);
+
 _shutdown:
   Lisp_done();
   Runtime_done();
