@@ -60,6 +60,17 @@ class LispEnv
   end
 end
 
+def lisp_display(*args)
+  args.each do |e|
+    if e.is_a?(Array) 
+      print(schemestr(e))
+    else
+      print(e)
+    end
+  end
+  return nil
+end
+
 $env_global = LispEnv.new(nil, {
   :+           => lambda {|a, b| a + b },
   :-           => lambda {|a, b| a - b },
@@ -69,12 +80,15 @@ $env_global = LispEnv.new(nil, {
   :<           => lambda {|a, b| a < b },
   :>=          => lambda {|a, b| a >= b },
   :<=          => lambda {|a, b| a <= b },
+  :list        => lambda {|*args| args },
+  :car         => lambda {|list| list.first },
+  :cdr         => lambda {|list| list[1..] },
   :equal?      => lambda {|a, b| a == b },
   :begin       => lambda {|*args| args[-1] },
   :print       => lambda {|obj| print(schemestr(obj)) },
   :println     => lambda {|obj| puts(schemestr(obj))  },
-  :display     => lambda {|*args| print(*args) },
-  :displayln   => lambda {|*args| puts(*args)  },
+  :display     => lambda {|*args| lisp_display(*args) },
+  :displayln   => lambda {|*args| lisp_display(*args); puts},
   :newline     => lambda { puts },
   :exit        => lambda { |ecode| exit(ecode) },
 })

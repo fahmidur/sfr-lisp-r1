@@ -128,7 +128,7 @@ Object* fn_print(Function* fn, Object* env, Object* argv) {
   ListIter_head(argv_iter);
   while(!ListIter_at_end(argv_iter)) {
     tmp = ListIter_get_val(argv_iter);
-    // TODO: should we accept the tmp object here? 
+    // todo: should we accept the tmp object here? 
     // If so, we need to assign it to NULL before the next iteration.
     tmp_type = Object_type(tmp);
     if(i > 0) {
@@ -155,6 +155,42 @@ Object* fn_print(Function* fn, Object* env, Object* argv) {
   fflush(stdout);
   return Object_new_null();
 }
+void Lisp_display(Object* obj) {
+  Object_accept(obj);
+  Symbol* obj_type = Object_type(obj);
+  if(obj_type == SYMBOL_STRING) {
+    printf("%s", (char*)(((String*)obj->impl)->buf));
+  } 
+  else
+  if(obj_type == SYMBOL_NUMBER) {
+    Number_print_bare(obj->impl);
+  }
+  else
+  if(obj_type == SYMBOL_FUNCTION) {
+    printf("#<procedure:%p>", obj);
+  }
+  else
+  if(obj_type == SYMBOL_LIST) {
+    ListIter* iter = ListIter_new(obj->impl);
+    int i = 0;
+    ListIter_head(iter);
+    printf("(");
+    while(!ListIter_at_end(iter)) {
+      if(i > 0) {
+        printf(" ");
+      }
+      Lisp_display(ListIter_get_val(iter));
+      i++;
+      ListIter_next(iter);
+    }
+    printf(")");
+    ListIter_del(iter); iter = NULL;
+  }
+  else {
+    Object_print(obj);
+  }
+  Object_assign(&obj, NULL);
+}
 Object* fn_display(Function* fn, Object* env, Object* argv) {
   assert(fn != NULL);
   assert(argv != NULL);
@@ -175,28 +211,12 @@ Object* fn_display(Function* fn, Object* env, Object* argv) {
   ListIter* argv_iter = ListIter_new(argv->impl);
   ListIter_head(argv_iter);
   while(!ListIter_at_end(argv_iter)) {
-    // TODO: should we accept the tmp object here? 
-    // If so, we need to assign it to NULL before the next iteration.
     tmp = ListIter_get_val(argv_iter);
-    /* ObjectUtil_eprintf("display. tmp=%v\n", tmp); */
-    tmp_type = Object_type(tmp);
     if(i > 0) {
       printf(" ");
     }
-    if(tmp_type == SYMBOL_STRING) {
-      printf("%s", (char*)(((String*)tmp->impl)->buf));
-    } 
-    else
-    if(tmp_type == SYMBOL_NUMBER) {
-      Number_print_bare(tmp->impl);
-    }
-    else
-    if(tmp_type == SYMBOL_FUNCTION) {
-      printf("#<procedure:%p>", tmp);
-    }
-    else {
-      Object_print(tmp);
-    }
+    Lisp_display(tmp);
+    //---
     ListIter_next(argv_iter);
     i++;
   }
@@ -351,6 +371,79 @@ Object* fn_cmp_equal(Function* fn, Object* env, Object* argv) {
   return ret;
 }
 
+Object* fn_list(Function* fn, Object* env, Object* argv) {
+  /* return Object_return(Object_clone(argv)); */
+  return Object_return(argv);
+}
+
+Object* fn_car(Function* fn, Object* env, Object* argv) {
+  return Object_uop_head(Object_bop_hget(env, QSYMBOL("a")));
+}
+
+Object* fn_cdr(Function* fn, Object* env, Object* argv) {
+  return Object_uop_rest(Object_bop_hget(env, QSYMBOL("a")));
+}
+
+void _qdefun(
+  char* name, 
+  Object* (*impl)(Function* fn, Object* env, Object* args),  
+  int arity, 
+  Object* params
+) {
+  if(params != NULL) {
+    Object_accept(params);
+  }
+  Object* fnobj = Object_new(SYMBOL_FUNCTION, 1,
+    Function_new(QSYMBOL(name), LispEnv_root, impl, arity, params, NULL)
+  );
+  Object_top_hset(LispEnv_root, QSYMBOL(name), fnobj);
+  //--- cleanup
+  Object_assign(&fnobj, NULL);
+  if(params != NULL) {
+    Object_assign(&params, NULL);
+  }
+}
+
+/**
+ * Define a binary function taking params "a" and "b".
+ **/
+void _qdefun_bin(
+  char* name, 
+  Object* (*impl)(Function* fn, Object* env, Object* args)
+) {
+  _qdefun(name, impl, 2, Object_new_list(0, 2, QSYMBOL("a"), QSYMBOL("b")));
+}
+
+/**
+ * Define a function that takes zero args.
+ **/
+void _qdefun_0(
+  char* name, 
+  Object* (*impl)(Function* fn, Object* env, Object* args)
+) {
+  _qdefun(name, impl, 0, NULL);
+}
+
+/**
+ * Define a function that takes exactly one argument.
+ **/
+void _qdefun_1(
+  char* name, 
+  Object* (*impl)(Function* fn, Object* env, Object* args)
+) {
+  _qdefun(name, impl, 1, Object_new_list(0, 1, QSYMBOL("a")));
+}
+
+/**
+ * Define a function that takes a variable number of args.
+ **/
+void _qdefun_v(
+  char* name, 
+  Object* (*impl)(Function* fn, Object* env, Object* args)
+) {
+  _qdefun(name, impl, -1, NULL);
+}
+
 void Lisp_init() {
   LISP_PAREN_BEG = QSYMBOL_NEW1("(");
   LISP_PAREN_END = QSYMBOL_NEW1(")");
@@ -362,115 +455,31 @@ void Lisp_init() {
   LispSymbol_lambda = QSYMBOL_NEW1("lambda");
   LispSymbol_eval = QSYMBOL_NEW1("eval");
 
-  Object* fnobj_display = Object_new(SYMBOL_FUNCTION, 1, 
-    Function_new(QSYMBOL("display"), LispEnv_root, fn_display, -1, NULL, NULL)
-  );
-  Object_top_hset(LispEnv_root, QSYMBOL("display"), fnobj_display);
-  
-  Object* fnobj_displayln = Object_new(SYMBOL_FUNCTION, 1, 
-    Function_new(QSYMBOL("displayln"), LispEnv_root, fn_displayln, -1, NULL, NULL)
-  );
-  Object_top_hset(LispEnv_root, QSYMBOL("displayln"), fnobj_displayln);
+  _qdefun_v("display", fn_display);
+  _qdefun_v("displayln", fn_displayln);
+  _qdefun_v("print", fn_print);
+  _qdefun_v("println", fn_println);
+  _qdefun_0("newline", fn_newline);
 
-  Object* fnobj_print = Object_new(SYMBOL_FUNCTION, 1, 
-    Function_new(QSYMBOL("print"), LispEnv_root, fn_print, -1, NULL, NULL)
-  );
-  Object_top_hset(LispEnv_root, QSYMBOL("print"), fnobj_print);
-  
-  Object* fnobj_println = Object_new(SYMBOL_FUNCTION, 1, 
-    Function_new(QSYMBOL("println"), LispEnv_root, fn_println, -1, NULL, NULL)
-  );
-  Object_top_hset(LispEnv_root, QSYMBOL("println"), fnobj_println);
+  _qdefun_bin("+", fn_add);
+  _qdefun_bin("-", fn_sub);
+  _qdefun_bin("*", fn_mul);
+  _qdefun_bin("/", fn_div);
+  _qdefun_bin(">", fn_cmp_gt);
+  _qdefun_bin(">=", fn_cmp_gte);
+  _qdefun_bin("<", fn_cmp_lt);
+  _qdefun_bin("<=", fn_cmp_lte);
+  _qdefun_bin("equal?", fn_cmp_equal);
 
-  Object* fnobj_newline = Object_new(SYMBOL_FUNCTION, 1,
-      Function_new(QSYMBOL("newline"), LispEnv_root, fn_newline, 0, NULL, NULL)
-  );
-  Object_top_hset(LispEnv_root, QSYMBOL("newline"), fnobj_newline);
+  _qdefun_v("begin", fn_begin);
+  _qdefun_0("gc_info", fn_gc_info);
+  _qdefun_0("gc_run", fn_gc_run);
 
+  _qdefun("load", fn_load, 1, Object_new_list(0, 1, QSYMBOL("path")));
 
-  Object* fnobj_add = Object_new(SYMBOL_FUNCTION, 1, 
-    Function_new(QSYMBOL("+"), LispEnv_root, fn_add, 2, Object_new_list(1, 2, QSYMBOL("a"), QSYMBOL("b")), NULL)
-  );
-  Object_top_hset(LispEnv_root, QSYMBOL("+"), fnobj_add);
-  Object_assign(&fnobj_add, NULL);
-
-  Object* fnobj_sub = Object_new(SYMBOL_FUNCTION, 1, 
-    Function_new(QSYMBOL("-"), LispEnv_root, fn_sub, 2, Object_new_list(1, 2, QSYMBOL("a"), QSYMBOL("b")), NULL)
-  );
-  Object_top_hset(LispEnv_root, QSYMBOL("-"), fnobj_sub);
-  Object_assign(&fnobj_sub, NULL);
-
-  Object* fnobj_mul = Object_new(SYMBOL_FUNCTION, 1, 
-    Function_new(QSYMBOL("*"), LispEnv_root, fn_mul, 2, Object_new_list(1, 2, QSYMBOL("a"), QSYMBOL("b")), NULL)
-  );
-  Object_top_hset(LispEnv_root, QSYMBOL("*"), fnobj_mul);
-  Object_assign(&fnobj_mul, NULL);
-  
-  Object* fnobj_div = Object_new(SYMBOL_FUNCTION, 1, 
-    Function_new(QSYMBOL("/"), LispEnv_root, fn_div, 2, Object_new_list(1, 2, QSYMBOL("a"), QSYMBOL("b")), NULL)
-  );
-  Object_top_hset(LispEnv_root, QSYMBOL("/"), fnobj_div);
-  Object_assign(&fnobj_div, NULL);
-
-  Object* fnobj_cmp_gt = Object_new(SYMBOL_FUNCTION, 1,
-    Function_new(QSYMBOL(">"), LispEnv_root, fn_cmp_gt, 2, Object_new_list(1, 2, QSYMBOL("a"), QSYMBOL("b")), NULL)
-  );
-  Object_top_hset(LispEnv_root, QSYMBOL(">"), fnobj_cmp_gt);
-  Object_assign(&fnobj_cmp_gt, NULL);
-
-  Object* fnobj_cmp_gte = Object_new(SYMBOL_FUNCTION, 1,
-    Function_new(QSYMBOL(">="), LispEnv_root, fn_cmp_gte, 2, Object_new_list(1, 2, QSYMBOL("a"), QSYMBOL("b")), NULL)
-  );
-  Object_top_hset(LispEnv_root, QSYMBOL(">="), fnobj_cmp_gte);
-  Object_assign(&fnobj_cmp_gte, NULL);
-
-  Object* fnobj_cmp_lt = Object_new(SYMBOL_FUNCTION, 1,
-    Function_new(QSYMBOL("<"), LispEnv_root, fn_cmp_lt, 2, Object_new_list(1, 2, QSYMBOL("a"), QSYMBOL("b")), NULL)
-  );
-  Object_top_hset(LispEnv_root, QSYMBOL("<"), fnobj_cmp_lt);
-  Object_assign(&fnobj_cmp_lt, NULL);
-
-  Object* fnobj_cmp_lte = Object_new(SYMBOL_FUNCTION, 1,
-    Function_new(QSYMBOL("<="), LispEnv_root, fn_cmp_lte, 2, Object_new_list(1, 2, QSYMBOL("a"), QSYMBOL("b")), NULL)
-  );
-  Object_top_hset(LispEnv_root, QSYMBOL("<="), fnobj_cmp_lte);
-  Object_assign(&fnobj_cmp_lte, NULL);
-
-  Object* fnobj_cmp_equal = Object_new(SYMBOL_FUNCTION, 1,
-    Function_new(QSYMBOL("equal?"), LispEnv_root, fn_cmp_equal, 2, Object_new_list(1, 2, QSYMBOL("a"), QSYMBOL("b")), NULL)
-  );
-  Object_top_hset(LispEnv_root, QSYMBOL("equal?"), fnobj_cmp_equal);
-  Object_assign(&fnobj_cmp_equal, NULL);
-
-  Object* fnobj_begin = Object_new(SYMBOL_FUNCTION, 1,
-    Function_new(QSYMBOL("begin"), LispEnv_root, fn_begin, -1, NULL, NULL)
-  );
-  Object_top_hset(LispEnv_root, QSYMBOL("begin"), fnobj_begin);
-  Object_assign(&fnobj_begin, NULL);
-
-  Object* fnobj_gc_info = Object_new(SYMBOL_FUNCTION, 1, 
-    Function_new(QSYMBOL("gc_info"), LispEnv_root, fn_gc_info, 0, NULL, NULL)
-  );
-  Object_top_hset(LispEnv_root, QSYMBOL("gc_info"), fnobj_gc_info);
-  Object_assign(&fnobj_gc_info, NULL);
-
-  /* Object* fnobj_printenv = Object_new(SYMBOL_FUNCTION, 1, */ 
-  /*   Function_new(QSYMBOL("printenv"), LispEnv_root, fn_printenv, 0, NULL, NULL) */
-  /* ); */
-  /* Object_top_hset(LispEnv_root, QSYMBOL("printenv"), fnobj_printenv); */
-  /* Object_assign(&fnobj_printenv, NULL); */
-
-  Object* fnobj_gc_run = Object_new(SYMBOL_FUNCTION, 1, 
-    Function_new(QSYMBOL("gc_run"), LispEnv_root, fn_gc_run, 0, NULL, NULL)
-  );
-  Object_top_hset(LispEnv_root, QSYMBOL("gc_run"), fnobj_gc_run);
-  Object_assign(&fnobj_gc_run, NULL);
-
-  Object* fnobj_load = Object_new(SYMBOL_FUNCTION, 1,
-    Function_new(QSYMBOL("load"), LispEnv_root, fn_load, 1, Object_new_list(1, 1, QSYMBOL("path")), NULL)
-  );
-  Object_top_hset(LispEnv_root, QSYMBOL("load"), fnobj_load);
-  Object_assign(&fnobj_load, NULL);
+  _qdefun_v("list", fn_list);
+  _qdefun_1("car", fn_car);
+  _qdefun_1("cdr", fn_cdr);
 
   LispAutoGC = 5;
   LispAutoGC_counter = 0;
@@ -1010,20 +1019,22 @@ _return:
     assert(ret->returning);
     Object_rc_decr(ret);
   }
-  LispAutoGC_counter = (LispAutoGC_counter + 1) % LispAutoGC;
-  ssize_t cursize = Object_system_size();
-  /* printf("LispAutoGC_counter = %lu | cursize=%lu | oldsize=%lu\n", LispAutoGC_counter, cursize, LispAutoGC_oldsize); */
-  if(
-      gc_on_return
-      && cursize > 0 
-      && LispAutoGC > 0
-      && LispAutoGC_counter == 0
-      && LispAutoGC_oldsize != cursize
-    ) {
-    /* printf("LispAutoGC. Calling Object_system_gc(). size=%lu\n", Object_system_size()); */
-    Object_system_gc();
-    LispAutoGC_oldsize = Object_system_size();
-    /* printf("LispAutoGC. ..................... Post. size=%lu\n", LispAutoGC_oldsize); */
+  if(LispAutoGC > 0 ) {
+    LispAutoGC_counter = (LispAutoGC_counter + 1) % LispAutoGC;
+    ssize_t cursize = Object_system_size();
+    /* printf("LispAutoGC. LispAutoGC_counter = %lu | cursize=%lu | oldsize=%lu\n", LispAutoGC_counter, cursize, LispAutoGC_oldsize); */
+    if(
+        gc_on_return
+        && cursize > 0 
+        && LispAutoGC > 0
+        && LispAutoGC_counter == 0
+        && LispAutoGC_oldsize != cursize
+      ) {
+      /* printf("LispAutoGC. Calling Object_system_gc(). size=%lu\n", Object_system_size()); */
+      Object_system_gc();
+      LispAutoGC_oldsize = Object_system_size();
+      /* printf("LispAutoGC. ..................... Post. size=%lu\n", LispAutoGC_oldsize); */
+    }
   }
   return ret;
 }

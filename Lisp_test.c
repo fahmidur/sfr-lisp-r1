@@ -294,10 +294,10 @@ int main(int argc, char** argv) {
   nassert(environment_count_bef == environment_count_aft);
 
   //generic binary op test
-  const char* binary_ops[8] = {"<", ">", "<=", ">=", "+", "-", "/", "*"};
+  const char* binary_ops[9] = {"<", ">", "<=", ">=", "+", "-", "/", "*", "list"};
   char binop_str[256];
   size_t binop_obj_count = 0;
-  for(i = 0; i < 8; i++) {
+  for(i = 0; i < 9; i++) {
     memset(binop_str, 0, sizeof(binop_str));
     sprintf(binop_str, "(%s 1 2)", binary_ops[i]);
     binop_obj_count = Object_system_size();
@@ -305,7 +305,7 @@ int main(int argc, char** argv) {
       Object* binop_obj = QSTRING_NEW1(binop_str);
       // ObjectUtil_eprintf("%2d | binop_obj = %v\n", j, binop_obj);
       Object* binop_res = Object_accept(Lisp_eval_string(binop_obj));
-      // ObjectUtil_eprintf("%2d | binop_res = %v\n", j, binop_res);
+      /* ObjectUtil_eprintf("%2d | binop_res = %v\n", j, binop_res); */
       Object_assign(&binop_obj, NULL);
       Object_assign(&binop_res, NULL);
     }
@@ -324,6 +324,23 @@ int main(int argc, char** argv) {
   printf("load_env_count_aft = %d\n", load_env_count_aft);
   nassert(load_env_count_aft == (load_env_count+1));
   Object_assign(&load_statement, NULL);
+
+  Object* qlist1 = Object_accept(Lisp_eval_string(QSTRING("(list 1 2 3)")));
+  nassert(Object_type(qlist1) == SYMBOL_LIST);
+  nassert(Object_len(qlist1) == 3);
+  nassert(Object_cmp(Object_bop_at(qlist1, 0), QNUMBER(1)) == 0);
+  nassert(Object_cmp(Object_bop_at(qlist1, 1), QNUMBER(2)) == 0);
+  nassert(Object_cmp(Object_bop_at(qlist1, 2), QNUMBER(3)) == 0);
+  Object_assign(&qlist1, NULL);
+
+  Object* car_res1 = Object_accept(Lisp_eval_string(QSTRING("(car (list 1 2 3))")));
+  nassert(Object_cmp(car_res1, QNUMBER(1)) == 0);
+
+  Object* cdr_res1 = Object_accept(Lisp_eval_string(QSTRING("(cdr (list 1 2 3))")));
+  nassert(Object_type(cdr_res1) == SYMBOL_LIST);
+  nassert(Object_len(cdr_res1) == 2);
+  nassert(Object_cmp(Object_bop_at(cdr_res1, 0), QNUMBER(2)) == 0);
+  nassert(Object_cmp(Object_bop_at(cdr_res1, 1), QNUMBER(3)) == 0);
 
 _shutdown:
   Lisp_done();
