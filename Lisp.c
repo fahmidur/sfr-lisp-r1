@@ -376,6 +376,14 @@ Object* fn_list(Function* fn, Object* env, Object* argv) {
   return Object_return(argv);
 }
 
+Object* fn_car(Function* fn, Object* env, Object* argv) {
+  return Object_uop_head(Object_bop_hget(env, QSYMBOL("a")));
+}
+
+Object* fn_cdr(Function* fn, Object* env, Object* argv) {
+  return Object_uop_rest(Object_bop_hget(env, QSYMBOL("a")));
+}
+
 void _qdefun(
   char* name, 
   Object* (*impl)(Function* fn, Object* env, Object* args),  
@@ -414,6 +422,16 @@ void _qdefun_0(
   Object* (*impl)(Function* fn, Object* env, Object* args)
 ) {
   _qdefun(name, impl, 0, NULL);
+}
+
+/**
+ * Define a function that takes exactly one argument.
+ **/
+void _qdefun_1(
+  char* name, 
+  Object* (*impl)(Function* fn, Object* env, Object* args)
+) {
+  _qdefun(name, impl, 1, Object_new_list(0, 1, QSYMBOL("a")));
 }
 
 /**
@@ -460,6 +478,8 @@ void Lisp_init() {
   _qdefun("load", fn_load, 1, Object_new_list(0, 1, QSYMBOL("path")));
 
   _qdefun_v("list", fn_list);
+  _qdefun_1("car", fn_car);
+  _qdefun_1("cdr", fn_cdr);
 
   LispAutoGC = 5;
   LispAutoGC_counter = 0;
