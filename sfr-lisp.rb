@@ -81,6 +81,8 @@ $env_global = LispEnv.new(nil, {
   :>=          => lambda {|a, b| a >= b },
   :<=          => lambda {|a, b| a <= b },
   :list        => lambda {|*args| args },
+  :car         => lambda {|list| list.first },
+  :cdr         => lambda {|list| list[1..] },
   :equal?      => lambda {|a, b| a == b },
   :begin       => lambda {|*args| args[-1] },
   :print       => lambda {|obj| print(schemestr(obj)) },
