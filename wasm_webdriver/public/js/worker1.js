@@ -326,9 +326,7 @@ function make_wasm_instance() {
             console.log(lp2, 'donuts. fsbuf=', fsbuf);
             let fsbuf_view = new Uint8Array(fsbuf, 0);
             let fsbuf_ns = new Uint8Array(fsbuf.byteLength);
-            for(let i = 0; i < fsbuf_view.byteLength; i++) {
-              fsbuf_ns[i] = fsbuf_view[i];
-            }
+            fsbuf_ns.set(fsbuf_view);
             console.log(lp2, 'donuts. fsbuf_ns=', fsbuf_ns);
             entry.content = (new TextDecoder()).decode(fsbuf_ns);
             (new Uint8Array(fsbuf)).fill(0); // zero the fsbuf
