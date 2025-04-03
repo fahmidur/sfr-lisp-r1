@@ -323,11 +323,11 @@ function make_wasm_instance() {
         } else {
           let entry = files_getentry_by_fd(fd);
           if(fsbuf) {
-            console.log(lp2, 'donuts. fsbuf=', fsbuf);
+            // console.log(lp2, 'fsbuf=', fsbuf);
             let fsbuf_view = new Uint8Array(fsbuf, 0);
             let fsbuf_ns = new Uint8Array(fsbuf.byteLength);
             fsbuf_ns.set(fsbuf_view);
-            console.log(lp2, 'donuts. fsbuf_ns=', fsbuf_ns);
+            // console.log(lp2, 'fsbuf_ns=', fsbuf_ns);
             entry.content = (new TextDecoder()).decode(fsbuf_ns);
             (new Uint8Array(fsbuf)).fill(0); // zero the fsbuf
           }

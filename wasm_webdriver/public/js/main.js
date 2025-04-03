@@ -348,7 +348,7 @@ function stdin_setret(val) {
 function lisp_load_content(content) {
   console.log(logprefix, "sending content=", content);
   content_arr = (new TextEncoder()).encode(content);
-  console.log(logprefix, 'donuts. content_arr=', content_arr);
+  // console.log(logprefix, 'content_arr=', content_arr);
   let fsbuf2 = new Uint8Array(fsbuf, 0);
   for(let i = 0; i < fsbuf2.length; i++) {
     if(i >= 0 && i < content_arr.length) {
@@ -357,8 +357,8 @@ function lisp_load_content(content) {
       fsbuf2[i] = 0;
     }
   }
-  console.log(logprefix, 'donuts. fsbuf2=', fsbuf2);
-  console.log(logprefix, 'donuts. fsbuf_=', fsbuf);
+  // console.log(logprefix, 'fsbuf2=', fsbuf2);
+  // console.log(logprefix, 'fsbuf_=', fsbuf);
   var path = "/sandbox/main.lsp";
   stdin_setret(`(load "${path}")`);
 }
