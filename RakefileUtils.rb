@@ -120,7 +120,13 @@ def wasm_conf_check
   else
     wasm_err << 'wasm. Missing conf :wasm_cc'
   end
-  unless $conf['wasm_sysroot']
+  wasm_sysroot = $conf['wasm_sysroot']
+  if wasm_sysroot
+    wasm_sysroot = File.expand_path(wasm_sysroot)
+    unless Dir.exist?(wasm_sysroot)
+      wasm_err << "wasm. Expecting dir wasm_sysroot at #{wasm_sysroot}"
+    end
+  else
     wasm_err << 'wasm. Missing conf :wasm_sysroot'
   end
   unless $conf['wasm_target']
@@ -168,7 +174,7 @@ def compile(type, ofile, sources)
     com += " -D WASM"
     com += " -O3"
     com += " -target #{$conf['wasm_target']}"
-    com += " --sysroot=#{$conf['wasm_sysroot']}"
+    com += " --sysroot=#{File.expand_path($conf['wasm_sysroot'])}"
     com += " -nodefaultlibs"
     com += " -lc"
     com += " -lclang_rt.builtins-wasm32"
