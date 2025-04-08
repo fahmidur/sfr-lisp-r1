@@ -380,6 +380,10 @@ Object* fn_car(Function* fn, Object* env, Object* argv) {
   return Object_uop_head(Object_bop_hget(env, QSYMBOL("a")));
 }
 
+Object* fn_last(Function* fn, Object* env, Object* argv) {
+  return Object_uop_tail(Object_bop_hget(env, QSYMBOL("a")));
+}
+
 Object* fn_cdr(Function* fn, Object* env, Object* argv) {
   return Object_uop_rest(Object_bop_hget(env, QSYMBOL("a")));
 }
@@ -482,6 +486,7 @@ void Lisp_init() {
   _qdefun_1("first", fn_car); // alias
   _qdefun_1("cdr", fn_cdr);
   _qdefun_1("rest", fn_cdr); // alias
+  _qdefun_1("last", fn_last);
 
   LispAutoGC = 5;
   LispAutoGC_counter = 0;

@@ -342,6 +342,9 @@ int main(int argc, char** argv) {
   nassert(Object_cmp(Object_bop_at(cdr_res1, 0), QNUMBER(2)) == 0);
   nassert(Object_cmp(Object_bop_at(cdr_res1, 1), QNUMBER(3)) == 0);
 
+  Object* last_res1 = Object_accept(Lisp_eval_string(QSTRING("(last (list 1 2 3))")));
+  nassert(Object_cmp(last_res1, QNUMBER(3)) == 0);
+
 _shutdown:
   Lisp_done();
   Runtime_done();
