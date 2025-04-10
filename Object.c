@@ -1178,12 +1178,6 @@ int Object_cmp(Object* a, Object* b) {
   if(Object_type(a) == SYMBOL_HASH && Object_type(b) == SYMBOL_HASH) {
     ret = Hash_cmp(a->impl, b->impl);
   }
-  else {
-    if(ObjectSystem_debug_001) {
-      printf("donuts. here. debug_001\n");
-      ObjectSystem_debug_001 = 0;
-    }
-  }
   Object_rc_decr(a); Object_rc_decr(b);
   return ret;
 }
@@ -1579,7 +1573,6 @@ Object* Object_bop_child_detach(Object* self, Object* child) {
   Object_accept(child);
   Object* ret = Object_new_null();
   if(Object_type(self) == SYMBOL_ENVIRONMENT && Object_type(child) == SYMBOL_ENVIRONMENT) {
-    printf("donuts. detaching child ...\n");
     Environment_child_detach(self, child);
   }
   else {
