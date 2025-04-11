@@ -112,6 +112,7 @@ Object* Function_call(Function* self, Object* argv) {
       Object_len(argv) > 0 && Object_len(self->params) > 0
     ) {
     // construct temporary environment with keys params x argv
+    // zip all argv and params into the new environment
     ListIter* argv_iter = ListIter_new(argv->impl);
     ListIter_head(argv_iter); // go to head
     ListIter* params_iter = ListIter_new(self->params->impl);
