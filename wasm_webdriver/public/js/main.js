@@ -235,17 +235,21 @@ function maybe_init_term() {
     return;
   }
   term_inited = true;
-  term.onKey(function(ev) {
-    let key_code = ev.key.charCodeAt(0);
-    console.log('term. ev=', ev, 'key=', ev.key, 'key_code=', key_code);
-    let io_worker = workers['worker2'].worker;
-    io_worker.postMessage({
-      type: 'stdin',
-      data: {
-        key: ev.key,
-        key_code: key_code
-      }
+  term.onData(function(str) {
+    console.log(logprefix, 'term. data. str=', str);
+    str.split('').forEach(function(key) {
+      let key_code = key.charCodeAt(0);
+      console.log(logprefix, 'term. key=', key, 'key_code=', key_code);
+      let io_worker = workers['worker2'].worker;
+      io_worker.postMessage({
+        type: 'stdin',
+        data: {
+          key: key,
+          key_code: key_code
+        }
+      });
     });
+
   });
 
   workers['worker1'].worker.postMessage({

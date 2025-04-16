@@ -206,14 +206,14 @@ function do_form_feed() {
 }
 
 function stdin_clear() {
-  console.log('stdin_clear. length=', stdin_arr.length);
+  console.log(logprefix, 'stdin_clear. length=', stdin_arr.length);
   while(stdin_arr.length > 0) {
     term_backspace();
   }
 }
 
 function stdin_set(new_val) {
-  console.log('stdin_set. new_val=', new_val);
+  console.log(logprefix, 'stdin_set. new_val=', new_val);
   stdin_clear();
   var tmp = null;
   if(new_val instanceof Array) {
@@ -285,7 +285,7 @@ onmessage = function(ev) {
     case 'stdin':
       var stdin_size = new Uint32Array(stdin, 4, 1);
       var stdin_view = new Uint8Array(stdin, 8);
-      console.log('data key=', data.key, 'key_code=', data.key_code);
+      console.log(logprefix, 'data key=', data.key, 'key_code=', data.key_code);
       if(data.key == '\x1B[A') { // arrow up
         console.log(logprefix, '-- arrow up --');
         history_go(-1);
@@ -319,7 +319,7 @@ onmessage = function(ev) {
         history_push(stdin_arr);
         // make sure we push null character into the array
         stdin_arr.push(10); // LF character
-        console.log('stdin_arr=', stdin_arr);
+        console.log(logprefix, 'stdin_arr=', stdin_arr);
         for(let i = 0; i < stdin_arr.length; i++) {
           stdin_view[i] = stdin_arr[i];
         }
@@ -333,7 +333,7 @@ onmessage = function(ev) {
       else 
       if(data.key_code >= 32 && data.key_code <= 126) {
         stdin_arr.push(data.key_code);
-        console.log('stdin_arr=', stdin_arr);
+        console.log(logprefix, 'stdin_arr=', stdin_arr);
         postMessage({
           type: 'term_echo',
           data: {
