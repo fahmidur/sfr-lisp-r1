@@ -49,8 +49,12 @@ var term = new Terminal({
 });
 var fitAddon = new FitAddon.FitAddon();
 term.loadAddon(fitAddon);
-// var webglAddon = new WebglAddon.WebglAddon();
-// term.loadAddon(webglAddon);
+try {
+  var webglAddon = new WebglAddon.WebglAddon();
+  term.loadAddon(webglAddon);
+} catch(err) {
+  console.warn("Term. WebGLAddon failed. err=", err);
+}
 // var canvasAddon = new CanvasAddon.CanvasAddon();
 // term.loadAddon(canvasAddon);
 
