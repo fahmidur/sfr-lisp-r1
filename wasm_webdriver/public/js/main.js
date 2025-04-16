@@ -49,6 +49,10 @@ var term = new Terminal({
 });
 var fitAddon = new FitAddon.FitAddon();
 term.loadAddon(fitAddon);
+// var webglAddon = new WebglAddon.WebglAddon();
+// term.loadAddon(webglAddon);
+var canvasAddon = new CanvasAddon.CanvasAddon();
+term.loadAddon(canvasAddon);
 
 var term_holder = null;
 var term_inited = false;

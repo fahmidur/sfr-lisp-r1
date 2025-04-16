@@ -33,6 +33,8 @@ app.get('/samples.json', async function(req, res) {
 
 app.use(express.static('./public'));
 
-app.listen(port, function() {
-  console.log("Server running at\nhttp://localhost:"+port);
+var bind = process.env['BIND'] || '127.0.0.1';
+app.listen(port, bind, function() {
+  console.log("Server running at\nhttp://"+bind+":"+port);
 });
+
