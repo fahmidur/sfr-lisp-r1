@@ -4,7 +4,7 @@
 # Prototype implementation.
 
 require 'readline'
-require 'pry'
+# require 'pry'
 
 $debug = false
 env_debug = ENV['debug'] || ENV['DEBUG']
