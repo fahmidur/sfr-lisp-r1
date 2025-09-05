@@ -1,5 +1,4 @@
 require 'fileutils'
-require 'pry'
 require_relative './RakefileUtils.rb'
 
 task :default => :build
