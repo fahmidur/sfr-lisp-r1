@@ -106,7 +106,7 @@ unless $cc
   exit 1
 end
 
-$cflags = ["-g", "-I."]
+$cflags = ["-g", "-iquote ."]
 # $cflags << "-fsanitize=address"
 if $debug
   $cflags << "-D DEBUG"
