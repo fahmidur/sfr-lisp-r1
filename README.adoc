@@ -45,22 +45,44 @@ different systems. But one day, I may switch this out as well.
 == Building and Testing
 
 First clone this repository with the `--recursive` flag.
+
+Alternatively, 
+if you already cloned the repo without this flag,
+please run `git submodule update --init`.
+
 This will ensure that the submodule for `./sub/linenoise` is present.
 
 *General Requirements:*
 
 * Compiler:
-** GNU GCC or LLVM Clang >=18 -- For Native Target.
+** GNU GCC or LLVM Clang >= 18 -- For Native Target.
 ** LLVM Clang >= 18 -- For WASM Target.
 * Valgrind >= v3.20 -- For memory leak testing.
 * https://racket-lang.org/[Racket] -- This implementation is tested against
 Racket to confirm it is roughly working the same way. Racket is a far more
 mature lisp, and this is a tiny learning project.
-* Ruby and Rake -- For building and running tests.
+* Ruby Installation -- for building and running tests
+** Ruby >= v3.4.1 
+** Rake >= v13.2.1 (Comes with most Ruby installations)
+** Bundler >= v2.4.6 (Comes with most Ruby installations)
 * https://github.com/antirez/linenoise[Linenoise] -- A small self-contained alternative to Readline by Antirez.
 Vendored as a Git submodule in this repository under ./sub/linenoise. Used mainly
 for the REPL.
 * https://github.com/bytecodealliance/wasmtime[Wasmtime] -- For testing the WASM build against output from Racket.
+
+=== Build Pre-Steps
+
+Most modern Ruby installations come with Bundler. 
+If it is not present, please run:
+```
+gem install bundler
+```
+
+Most modern Ruby installations come with Rake.
+If it is not present, please run:
+```
+gem install rake
+```
 
 === Build for Native Target
 
