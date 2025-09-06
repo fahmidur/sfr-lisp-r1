@@ -19,7 +19,12 @@ end
 $git_sha = `git rev-parse HEAD`.strip
 $version = read_version()
 
-$conf = YAML::load_file('./RakefileConfig.yaml')
+RAKEFILE_CONFIG_PATH = "RakefileConfig.yaml"
+if File.exist?(RAKEFILE_CONFIG_PATH)
+  $conf = YAML::load_file(RAKEFILE_CONFIG_PATH)
+else
+  $conf = {}
+end
 
 $target_to_inputs = {}
 
