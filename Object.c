@@ -1800,17 +1800,11 @@ void ObjectUtil_eprintf_buf(int BUFSIZE, char** bufptr, int* bufposptr) {
 
 void ObjectUtil_eprintf(char* fmt, ...) {
   /*dbg_printf("ObjectUtil_eprintf. fmt=%s\n", fmt);*/
-  int i, j;
-  int argc = 0;
+  int i;
   va_list argv;
   size_t fmt_len = strlen(fmt);
   char ch;
-  for(i = 0; i < fmt_len; i++) {
-    ch = fmt[i];
-    if(ch == '%') {
-      argc++;
-    }
-  }
+
   va_start(argv, fmt);
   int   BUFSIZE = fmt_len+1;
   char* buf = calloc(1, BUFSIZE);
@@ -1819,7 +1813,7 @@ void ObjectUtil_eprintf(char* fmt, ...) {
   char* sig = calloc(1, SIGSIZE);
   int   sigpos = 0;
   char  insig = 0;
-  int   argpos = 0;
+
   for(i = 0; i < fmt_len; i++) {
     ch = fmt[i];
     if(insig) {
