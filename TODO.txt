@@ -58,6 +58,9 @@
 { TODO {
 ------------------------------------------------------------------------------
 
+- Rake build should automatically run `git submodule update --init` 
+  if the submodule dependency dir is empty.  
+
 - Create memsafe.h/memsafe.c to export
   void* memsafe_malloc(size_t)
   void* memsafe_calloc(size_t)
