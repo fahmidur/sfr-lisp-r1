@@ -42,6 +42,10 @@
   DONE: the problem here was similar to one seen before, due to Environment 
   being double linked.
 
+- Rake build should automatically run `git submodule update --init` 
+  if the submodule dependency dir is empty.  
+  DONE.
+
 ------------------------------------------------------------------------------
 } DONE }
 ------------------------------------------------------------------------------
@@ -57,9 +61,6 @@
 ------------------------------------------------------------------------------
 { TODO {
 ------------------------------------------------------------------------------
-
-- Rake build should automatically run `git submodule update --init` 
-  if the submodule dependency dir is empty.  
 
 - Create memsafe.h/memsafe.c to export
   void* memsafe_malloc(size_t)
