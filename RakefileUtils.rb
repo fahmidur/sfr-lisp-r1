@@ -223,8 +223,15 @@ def compile_file_task(type, target, deplist)
   end
 end
 
+submodule_paths = IO.read('.gitmodules').split("\n").grep(/^\s*path = /).map {|e| e.split(/\s*=\s*/)[1] }
+puts "submodule_paths = #{submodule_paths}"
 desc "Build everything"
 task :build do
+  if submodule_paths.all? { |e| Dir.empty?(e) }
+    puts "Looks like you may have forgotten to pull with git submodules"
+    puts "Let me fix that for you..."
+    sh "git submodule update --init"
+  end
   $build_targets.each do |name, target|
     Rake::Task[target].invoke
   end
