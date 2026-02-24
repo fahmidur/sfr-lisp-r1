@@ -571,8 +571,6 @@ Object* Lisp_tokenize(Object* string) {
   TokenizerState state = ts_Init;
 
   char ch;
-  Object* paren_beg = QSYMBOL_NEW1("(");
-  Object* paren_end = QSYMBOL_NEW1(")");
 
   Object* tmp_str = QSTRING_NEW1("");
   /* ObjectUtil_eprintf("tmp_str=%v\n", tmp_str); */
@@ -601,11 +599,11 @@ Object* Lisp_tokenize(Object* string) {
       }
       else
       if(ch == '(') {
-        Object_bop_push(ret, paren_beg);
+        Object_bop_push(ret, LISP_PAREN_BEG);
       }
       else
       if(ch == ')') {
-        Object_bop_push(ret, paren_end);
+        Object_bop_push(ret, LISP_PAREN_END);
       }
       else
       if(TokenizerUtil_isdigit(ch)) {
