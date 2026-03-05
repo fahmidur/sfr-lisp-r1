@@ -19,6 +19,10 @@ end
 $git_sha = `git rev-parse HEAD`.strip
 $version = read_version()
 
+WASM_FLAGS_BLACKLIST = {
+  '-fsanitize' => true,
+}.freeze
+
 RAKEFILE_CONFIG_PATH = "RakefileConfig.yaml"
 if File.exist?(RAKEFILE_CONFIG_PATH)
   $conf = YAML::load_file(RAKEFILE_CONFIG_PATH)
@@ -117,6 +121,10 @@ end
 if has_flag?('msan')
   $cflags << "-fsanitize=memory"
 end
+$cflags_wasm = $cflags
+  .select {|e| e =~ /^-(\S+)=(\S+)$/ } 
+  .reject {|e| (k,v)=e.split('='); WASM_FLAGS_BLACKLIST[k] }
+
 # $cflags = $cflags.join(' ')
 
 def wasm_conf_check
@@ -162,12 +170,11 @@ def compile(type, ofile, sources)
     cc = $conf['wasm_cc']
   end
 
-  cflags = $cflags.clone
+  cflags = nil
   if use_wasm
-    # address sanitizer is not supported for wasm targets
-    cflags = cflags.reject {|e| e == "-fsanitize=address" }
-    # memory sanitizer is not supported for wasm targets
-    cflags = cflags.reject {|e| e == "-fsanitize=memory" }
+    cflags = $cflags_wasm.clone
+  else
+    cflags = $cflags.clone
   end
 
   com = <<~EOS
