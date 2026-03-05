@@ -114,6 +114,9 @@ end
 if has_flag?('asan')
   $cflags << "-fsanitize=address"
 end
+if has_flag?('msan')
+  $cflags << "-fsanitize=memory"
+end
 # $cflags = $cflags.join(' ')
 
 def wasm_conf_check
@@ -163,6 +166,8 @@ def compile(type, ofile, sources)
   if use_wasm
     # address sanitizer is not supported for wasm targets
     cflags = cflags.reject {|e| e == "-fsanitize=address" }
+    # memory sanitizer is not supported for wasm targets
+    cflags = cflags.reject {|e| e == "-fsanitize=memory" }
   end
 
   com = <<~EOS
