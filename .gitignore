@@ -75,3 +75,6 @@ README.html
 .vale.ini
 
 upload.sh
+
+compile_commands.json
+
