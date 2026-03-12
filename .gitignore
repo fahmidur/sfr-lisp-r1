@@ -80,3 +80,5 @@ upload.sh
 .cache/
 compile_commands.json
 
+.project
+
