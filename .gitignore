@@ -76,7 +76,7 @@ README.html
 
 upload.sh
 
+# LSP support files
+.cache/
 compile_commands.json
-.cache
-.cache/**
 
