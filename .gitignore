@@ -77,4 +77,6 @@ README.html
 upload.sh
 
 compile_commands.json
+.cache
+.cache/**
 
