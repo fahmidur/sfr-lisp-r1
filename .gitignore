@@ -82,3 +82,6 @@ compile_commands.json
 
 .project
 
+# ignore perf data
+perf.data
+
