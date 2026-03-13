@@ -1,0 +1,17 @@
+desc "Setup public files/symlinks"
+task :setup do 
+  unless File.exist?("./public/node_modules")
+    sh "ln -sf ../node_modules ./public/node_modules"
+  end
+  unless File.exist?("./public/build")
+    sh "ln -sf ../../build ./public/build"
+  end
+  unless File.exist?("./public/sample")
+    sh "ln -sf ../../test/sample ./public/sample"
+  end
+end
+
+desc "Start development server"
+task :develop => :setup  do 
+  sh "node sfrlisp1_server.js"
+end
