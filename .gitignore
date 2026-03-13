@@ -84,4 +84,5 @@ compile_commands.json
 
 # ignore perf data
 perf.data
+perf.*
 
