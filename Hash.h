@@ -43,18 +43,18 @@ struct HashIter {
 // beg  = special position before head
 // end  = special position before tail
 
-Hash*   Hash_new();
-Object* Hash_get(Hash* self, Object* key);
-Object* Hash_set(Hash* self, Object* key, Object* val);
-void    Hash_rem(Hash* self, Object* key);
-char    Hash_has(Hash* self, Object* key);
-void    Hash_del(Hash* self);
-ssize_t  Hash_len(Hash* self);
-ssize_t  Hash_size(Hash* self);
-void    Hash_print(Hash* self);
-Hash*   Hash_clone(Hash* self);
-char    Hash_zero(Hash* self);
-int     Hash_cmp(Hash* self, Hash* other);
+Hash*     Hash_new();
+Object*   Hash_get(Hash* self, Object* key);
+Object*   Hash_set(Hash* self, Object* key, Object* val);
+void      Hash_rem(Hash* self, Object* key);
+char      Hash_has(Hash* self, Object* key);
+void      Hash_del(Hash* self);
+ssize_t   Hash_len(Hash* self);
+ssize_t   Hash_size(Hash* self);
+void      Hash_print(Hash* self);
+Hash*     Hash_clone(Hash* self);
+char      Hash_zero(Hash* self);
+int       Hash_cmp(Hash* self, Hash* other);
 
 HashIter* HashIter_new(Hash* self);
 void      HashIter_del(HashIter* self);
