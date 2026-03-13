@@ -125,8 +125,12 @@ if has_flag?('msan')
   $cflags << "-fsanitize=memory"
   optimizable = false
 end
-if optimizable && has_flag?(:prod)
-  $cflags << "-O3"
+if has_flag?(:prod)
+  # remove debug info
+  $cflags = $cflags - ["-g"]
+  if optimizable
+    $cflags << "-O3"
+  end
 end
 $cflags_wasm = $cflags
   .select {|e| e =~ /^-(\S+)=(\S+)$/ } 
