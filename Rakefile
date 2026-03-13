@@ -103,7 +103,11 @@ task :docs do
   sh 'asciidoctor-pdf README.adoc'
 end
 
-task :perf_record do 
+task :perf_clean do 
+  "sudo rm perf.*"
+end
+
+task :perf_record => :perf_clean do 
   sh "sudo perf record ./build/Object_test"
 end
 
