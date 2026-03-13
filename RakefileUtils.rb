@@ -121,6 +121,9 @@ end
 if has_flag?('msan')
   $cflags << "-fsanitize=memory"
 end
+if has_flag?('prod')
+  $cflags << "-O3"
+end
 $cflags_wasm = $cflags
   .select {|e| e =~ /^-(\S+)=(\S+)$/ } 
   .reject {|e| (k,v)=e.split('='); WASM_FLAGS_BLACKLIST[k] }
