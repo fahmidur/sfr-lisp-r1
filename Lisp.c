@@ -501,15 +501,15 @@ void Lisp_done() {
   dbg_printf("--- } Lisp_done() } ---\n");
 }
 
-char TokenizerUtil_isdigit(char ch) {
+static inline char TokenizerUtil_isdigit(char ch) {
   return (ch >= '0' && ch <= '9');
 }
 
-char TokenizerUtil_numlike(char ch) {
+static inline char TokenizerUtil_numlike(char ch) {
  return ch == '.' || TokenizerUtil_isdigit(ch);
 }
 
-char TokenizerUtil_wordlike(char ch) {
+static inline char TokenizerUtil_wordlike(char ch) {
   return (
     (ch >= 65 && ch <= 90) || 
     (ch >= 97 && ch <= 122) || 
@@ -526,7 +526,7 @@ char TokenizerUtil_wordlike(char ch) {
   );
 }
 
-char TokenizerUtil_min_uint(unsigned int a, unsigned int b) {
+static inline char TokenizerUtil_min_uint(unsigned int a, unsigned int b) {
   return (a < b) ? a : b;
 }
 
