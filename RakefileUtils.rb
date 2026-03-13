@@ -125,7 +125,7 @@ if has_flag?('msan')
   $cflags << "-fsanitize=memory"
   optimizable = false
 end
-if optimizable
+if optimizable && has_flag?(:prod)
   $cflags << "-O3"
 end
 $cflags_wasm = $cflags
