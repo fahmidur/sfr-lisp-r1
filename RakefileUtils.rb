@@ -110,18 +110,22 @@ unless $cc
   exit 1
 end
 
+optimizable = true
 $cflags = ["-g", "-iquote ."]
 # $cflags << "-fsanitize=address"
 if $debug
   $cflags << "-D DEBUG"
+  optimizable = false
 end
 if has_flag?('asan')
   $cflags << "-fsanitize=address"
+  optimizable = false
 end
 if has_flag?('msan')
   $cflags << "-fsanitize=memory"
+  optimizable = false
 end
-if has_flag?('prod')
+if optimizable
   $cflags << "-O3"
 end
 $cflags_wasm = $cflags
