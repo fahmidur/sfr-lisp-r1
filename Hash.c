@@ -86,9 +86,11 @@ void HashNode_set_val(HashNode* self, Object* val) {
 Hash* Hash_new() {
   Hash* self = calloc(1, sizeof(Hash));
   self->size = 0;
-  self->buckets = calloc(HASH_BUCKET_SIZE, sizeof(HashNode*));
+  size_t buckets_size = HASH_BUCKETS_ISIZE;
+  self->buckets_size = buckets_size;
+  self->buckets = calloc(buckets_size, sizeof(HashNode*));
   int i = 0;
-  for(i = 0; i < HASH_BUCKET_SIZE; i++) {
+  for(i = 0; i < buckets_size; i++) {
     self->buckets[i] = NULL;
   }
   return self;
@@ -97,7 +99,8 @@ Hash* Hash_new() {
 void Hash_del(Hash* self) {
   size_t i;
   HashNode* node;
-  for(i = 0; i < HASH_BUCKET_SIZE; i++) {
+  size_t buckets_size = self->buckets_size;
+  for(i = 0; i < buckets_size; i++) {
     node = self->buckets[i];
     if(node != NULL) {
       HashNode_del_fwd(node);
@@ -107,31 +110,59 @@ void Hash_del(Hash* self) {
   free(self);
 }
 
+float Hash_load(Hash* self) {
+  return (float)self->size / (float)self->buckets_size;
+}
+
+void Hash_grow(Hash* self) {
+  size_t old_buckets_size = self->buckets_size;
+  size_t new_buckets_size = 2*old_buckets_size;
+  HashNode** old_buckets = self->buckets;
+  HashNode** new_buckets = calloc(new_buckets_size, sizeof(HashNode*));
+  if(new_buckets == NULL) {
+    printf("ERROR: Hash_grow failed to allocate memory\n");
+    exit(1);
+  }
+  size_t i;
+  for(i = 0; i < old_buckets_size; i++) {
+    new_buckets[i] = old_buckets[i];
+  }
+  for(i = old_buckets_size; i < new_buckets_size; i++) {
+    new_buckets[i] = NULL;
+  }
+  // for(i = 0; i < new_buckets_size; i++) {
+  //   printf("bucket[%lu] = %d", i, new_buckets[i] != NULL);
+  //   HashNode* c = NULL;
+  //   for(c = new_buckets[i]; c != NULL; c++) {
+  //     HashNode_print(c);
+  //   }
+  //   printf("\n");
+  // }
+  free(self->buckets); self->buckets = NULL;
+  self->buckets = new_buckets;
+  self->buckets_size = new_buckets_size;
+}
+
+void Hash_resize(Hash *self) {
+  float load = Hash_load(self); 
+  if(load < 0.75) {
+    // no need to resize
+    return;
+  }
+  Hash_grow(self);
+}
+
 ssize_t Hash_size(Hash* self) {
   return self->size;
 }
 
 ssize_t Hash_len(Hash* self) {
   return self->size;
-  /* size_t i = 0; */
-  /* size_t len = 0; */
-  /* size_t bi; */
-  /* HashNode* iter = NULL; */
-  /* for(i = 0; i < HASH_BUCKET_SIZE; i++) { */
-  /*   iter = self->buckets[i]; */
-  /*   bi = 0; */
-  /*   while(iter != NULL) { */
-  /*     bi++; */
-  /*     iter = iter->next; */
-  /*   } */
-  /*   len += bi; */
-  /* } */
-  /* return len; */
 }
 
 void Hash_rem(Hash* self, Object* key) {
   Object_rc_incr(key);
-  size_t index = Object_hash(key) % HASH_BUCKET_SIZE;
+  size_t index = Object_hash(key) % self->buckets_size;
   HashNode* iter = self->buckets[index];
   size_t iter_idx = 0;
   HashNode* found = NULL;
@@ -156,6 +187,7 @@ void Hash_rem(Hash* self, Object* key) {
 }
 
 Object* Hash_set(Hash* self, Object* key, Object* val) {
+  Hash_resize(self);
   if(key == NULL) {
     return QERROR_NEW0("key cannot be NULL");
   }
@@ -176,7 +208,7 @@ Object* Hash_set(Hash* self, Object* key, Object* val) {
     goto _return;
   }
 
-  size_t index = Object_hash(key_clone) % HASH_BUCKET_SIZE;
+  size_t index = Object_hash(key_clone) % self->buckets_size;
 
   HashNode* node = self->buckets[index];
   HashNode* iter = NULL;
@@ -227,7 +259,7 @@ _return:
 
 Object* Hash_get(Hash* self, Object* key) {
   Object_rc_incr(key);
-  size_t index = Object_hash(key) % HASH_BUCKET_SIZE;
+  size_t index = Object_hash(key) % self->buckets_size;
   Object* ret = NULL;
   HashNode* iter = self->buckets[index];
   while(iter != NULL) {
@@ -242,7 +274,7 @@ Object* Hash_get(Hash* self, Object* key) {
 
 char Hash_has(Hash* self, Object* key) {
   Object_rc_incr(key);
-  size_t index = Object_hash(key) % HASH_BUCKET_SIZE;
+  size_t index = Object_hash(key) % self->buckets_size;
   char ret = 0;
   HashNode* iter = self->buckets[index];
   while(iter != NULL) {
@@ -263,7 +295,8 @@ void Hash_print(Hash* self) {
     printf("\n");
   }
   size_t printed = 0;
-  for(i = 0; i < HASH_BUCKET_SIZE; i++) {
+  size_t buckets_size = self->buckets_size;
+  for(i = 0; i < buckets_size; i++) {
     iter = self->buckets[i];
     while(iter != NULL) {
       if(printed > 0) {
@@ -292,7 +325,8 @@ char Hash_zero(Hash* self) {
   }
   HashNode* iter = NULL;
   size_t i = 0;
-  for(i = 0; i < HASH_BUCKET_SIZE; i++) {
+  size_t buckets_size = self->buckets_size;
+  for(i = 0; i < buckets_size; i++) {
     iter = self->buckets[i];
     if(iter != NULL) {
       HashNode_del_fwd(iter);
@@ -328,14 +362,15 @@ HashIter* HashIter_head(HashIter* self) {
   self->cnode = NULL;
 
   // Look for the first non-empty bucket
-  while(self->cbucket < HASH_BUCKET_SIZE && hash->buckets[self->cbucket] == NULL) {
+  size_t buckets_size = hash->buckets_size;
+  while(self->cbucket < buckets_size && hash->buckets[self->cbucket] == NULL) {
     self->cbucket++;
   }
   self->at_pos = HASH_ITER_POS_INN;
   // cbucket is the first non-empty bucket index.
   // OR 
   // you have reached the end.
-  if(self->cbucket == HASH_BUCKET_SIZE) {
+  if(self->cbucket == buckets_size) {
     self->at_pos = HASH_ITER_POS_END;
     return self;
   }
@@ -375,10 +410,11 @@ HashIter* HashIter_next(HashIter* self) {
   // Look for the next non-empty bucket
   self->cnode = NULL;
   self->cbucket++;
-  while(self->cbucket < HASH_BUCKET_SIZE && hash->buckets[self->cbucket] == NULL) {
+  size_t buckets_size = hash->buckets_size;
+  while(self->cbucket < buckets_size && hash->buckets[self->cbucket] == NULL) {
     self->cbucket++;
   }
-  if(self->cbucket == HASH_BUCKET_SIZE) {
+  if(self->cbucket == buckets_size) {
     self->at_pos = HASH_ITER_POS_END;
     return self;
   }
