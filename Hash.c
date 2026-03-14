@@ -3,6 +3,7 @@
 #include "Object.h"
 #include "Hash.h"
 #include "Error.h"
+#include "Util.h"
 
 HashNode* HashNode_new(Object* key, Object* val) {
   HashNode* self = NULL;
@@ -93,6 +94,7 @@ Hash* Hash_new() {
   for(i = 0; i < buckets_size; i++) {
     self->buckets[i] = NULL;
   }
+  self->bitset = calloc(MAX(1, buckets_size/8), sizeof(char));
   self->grow_count = 0;
   return self;
 }
@@ -107,6 +109,7 @@ void Hash_del(Hash* self) {
       HashNode_del_fwd(node);
     }
   }
+  free(self->bitset);
   free(self->buckets);
   free(self);
 }

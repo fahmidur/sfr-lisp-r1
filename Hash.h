@@ -23,6 +23,7 @@ struct Hash {
   size_t size;
   size_t buckets_size;
   size_t grow_count;
+  char* bitset;
   HashNode** buckets;
 };
 
