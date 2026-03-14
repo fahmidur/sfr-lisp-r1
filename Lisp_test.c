@@ -297,10 +297,12 @@ int main(int argc, char** argv) {
   const char* binary_ops[9] = {"<", ">", "<=", ">=", "+", "-", "/", "*", "list"};
   char binop_str[256];
   size_t binop_obj_count = 0;
+  size_t binop_obj_count_aft = 0;
   for(i = 0; i < 9; i++) {
     memset(binop_str, 0, sizeof(binop_str));
     sprintf(binop_str, "(%s 1 2)", binary_ops[i]);
     binop_obj_count = Object_system_size();
+    printf("bop_obj_count = %lu\n", binop_obj_count);
     for(int j = 0; j < 10; j++) {
       Object* binop_obj = QSTRING_NEW1(binop_str);
       // ObjectUtil_eprintf("%2d | binop_obj = %v\n", j, binop_obj);
@@ -309,7 +311,9 @@ int main(int argc, char** argv) {
       Object_assign(&binop_obj, NULL);
       Object_assign(&binop_res, NULL);
     }
-    nassert(Object_system_size() == binop_obj_count);
+    binop_obj_count_aft = Object_system_size();
+    printf("bop_obj_count_aft = %lu\n", binop_obj_count_aft);
+    nassert(binop_obj_count_aft == binop_obj_count);
   }
 
   Object* load_statement = QSTRING_NEW1("(load \"test/sample/lambda_001.lsp\")");
@@ -322,7 +326,8 @@ int main(int argc, char** argv) {
   // we do not gain any new objects from evaluating the same file multiple times.
   int load_env_count_aft = ObjectSystem_count_type(SYMBOL_ENVIRONMENT);
   printf("load_env_count_aft = %d\n", load_env_count_aft);
-  nassert(load_env_count_aft == (load_env_count+1));
+  // nassert(load_env_count_aft == (load_env_count+1));
+  nassert_eq(load_env_count+1, load_env_count_aft);
   Object_assign(&load_statement, NULL);
 
   Object* qlist1 = Object_accept(Lisp_eval_string(QSTRING("(list 1 2 3)")));

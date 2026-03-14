@@ -3,7 +3,7 @@
 #ifndef _SFR_HASH_H
 #define _SFR_HASH_H
 
-#define HASH_BUCKETS_ISIZE 1
+#define HASH_BUCKETS_ISIZE 4
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -22,6 +22,7 @@ typedef struct Hash Hash;
 struct Hash {
   size_t size;
   size_t buckets_size;
+  size_t grow_count;
   HashNode** buckets;
 };
 

@@ -93,6 +93,7 @@ Hash* Hash_new() {
   for(i = 0; i < buckets_size; i++) {
     self->buckets[i] = NULL;
   }
+  self->grow_count = 0;
   return self;
 }
 
@@ -123,24 +124,42 @@ void Hash_grow(Hash* self) {
     printf("ERROR: Hash_grow failed to allocate memory\n");
     exit(1);
   }
+
   size_t i;
+  size_t new_index = 0;
+  HashNode* iter = NULL;
+  HashNode* iter_next = NULL;
+
   for(i = 0; i < old_buckets_size; i++) {
-    new_buckets[i] = old_buckets[i];
+    iter = old_buckets[i];
+    while(iter != NULL) {
+      // save the iter->next for this iter loop
+      iter_next = iter->next;
+
+      // detach the iter from old_buckets
+      iter->next = NULL;
+      iter->prev = NULL;
+      if(iter_next != NULL) {
+        iter_next->prev = NULL;
+      }
+      old_buckets[i] = iter_next;
+      
+      // calculate new index
+      new_index = Object_hash(iter->key) % new_buckets_size;
+
+      // insert into new_buckets
+      iter->next = new_buckets[new_index];
+      new_buckets[new_index] = iter;
+
+      //---
+      iter = iter_next;
+    }
   }
-  for(i = old_buckets_size; i < new_buckets_size; i++) {
-    new_buckets[i] = NULL;
-  }
-  // for(i = 0; i < new_buckets_size; i++) {
-  //   printf("bucket[%lu] = %d", i, new_buckets[i] != NULL);
-  //   HashNode* c = NULL;
-  //   for(c = new_buckets[i]; c != NULL; c++) {
-  //     HashNode_print(c);
-  //   }
-  //   printf("\n");
-  // }
+
   free(self->buckets); self->buckets = NULL;
   self->buckets = new_buckets;
   self->buckets_size = new_buckets_size;
+  self->grow_count++;
 }
 
 void Hash_resize(Hash *self) {
@@ -149,6 +168,7 @@ void Hash_resize(Hash *self) {
     // no need to resize
     return;
   }
+  // printf("donuts. Hash(%p) growing. old buckets_size=%lu\n", self, self->buckets_size);
   Hash_grow(self);
 }
 
