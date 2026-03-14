@@ -107,11 +107,15 @@ task :perf_clean do
   "sudo rm perf.*"
 end
 
-task :perf_record => :perf_clean do 
+task :perf_record => [:perf_clean, :build] do 
   sh "sudo perf record ./build/Object_test"
 end
 
 task :perf_report do 
+  sh "sudo perf report"
+end
+
+task :perf => [:perf_record] do 
   sh "sudo perf report"
 end
 

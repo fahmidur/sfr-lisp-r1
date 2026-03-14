@@ -76,10 +76,34 @@ int main(int argc, char** argv) {
   nassert(Object_is_error(err2));
   nassert(schrodinger_cat->rc == 1);
 
+
+  Hash* h4 = Hash_new();
+  nassert(h4->grow_count == 0);
+  for(int i = 0; i < 100; i++) {
+    Object* key = QNUMBER(i);
+    Object* val = QNUMBER(i*2);
+    Hash_set(h4, key, val);
+  }
+  printf("h4->grow_count = %lu\n", h4->grow_count);
+  nassert(h4->grow_count > 0);
+
+  printf("--- { hash grow test { ---\n");
+  size_t h4_buckets_size = h4->buckets_size;
+  float h4_load_bef = Hash_load(h4);
+  printf("h4_load_bef = %f\n", h4_load_bef);
+  Hash_grow(h4);
+  float h4_load_aft = Hash_load(h4);
+  printf("h1_load_aft = %f\n", h4_load_aft);
+  nassert(h4_load_aft == h4_load_bef / 2);
+  nassert(h4->buckets_size == 2*h4_buckets_size);
+  printf("--- } hash grow test } ---\n");
+  //--- } hash grow } ---
+
   //--- manual cleanup ---
   Hash_del(h1);
   Hash_del(h1_clone);
   Hash_del(h3);
+  Hash_del(h4);
 
   Object_system_print();
   Object_system_done();

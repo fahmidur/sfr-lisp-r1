@@ -3,7 +3,7 @@
 #ifndef _SFR_HASH_H
 #define _SFR_HASH_H
 
-#define HASH_BUCKET_SIZE 2048
+#define HASH_BUCKETS_ISIZE 4
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -21,6 +21,8 @@ struct HashNode {
 typedef struct Hash Hash;
 struct Hash {
   size_t size;
+  size_t buckets_size;
+  size_t grow_count;
   HashNode** buckets;
 };
 
@@ -51,6 +53,8 @@ char      Hash_has(Hash* self, Object* key);
 void      Hash_del(Hash* self);
 ssize_t   Hash_len(Hash* self);
 ssize_t   Hash_size(Hash* self);
+float     Hash_load(Hash* self);
+void      Hash_grow(Hash* self);
 void      Hash_print(Hash* self);
 Hash*     Hash_clone(Hash* self);
 char      Hash_zero(Hash* self);
