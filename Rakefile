@@ -3,6 +3,13 @@ require_relative './RakefileUtils.rb'
 
 task :default => :build
 
+def clean_coverage
+  sh "rm -f *.profraw"
+  sh "rm -f *.profdata"
+  sh "rm -rf coverage_report"
+  sh "rm -rf coverage_data"
+end
+
 desc "Clean all build artifacts"
 task :clean do
   puts "clean. cleaning..."
@@ -10,6 +17,9 @@ task :clean do
   sh "rm -rf ./build/*"
   sh "rm -f *.o"
   sh "rm -f *.pdf"
+
+  clean_coverage()
+
 
   # Remove any stray executable files which 
   # my be in non-build directory
@@ -118,5 +128,17 @@ end
 
 task :perf => [:perf_record] do 
   sh "sudo perf report"
+end
+
+task :cover_clean do 
+  clean_coverage()
+end
+
+task :cover => [:clean, :cover_clean] do 
+  # Create a coverage build
+  sh "COVER=1 rake" 
+  sh "mkdir -p coverage_data"
+  # Run the tests without valgrind
+  sh "NO_VALGRIND=1 COVER=1 rake test"
 end
 

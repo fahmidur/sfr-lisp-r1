@@ -39,6 +39,11 @@ def dry
   $dry = false
 end
 
+def which(x)
+  out = `which #{x}`.strip
+  return out if out && out.size > 0
+end
+
 def runc(command)
   command = command.gsub(/\s+/m, ' ')
   if $dry
@@ -53,9 +58,17 @@ end
 def env_truthy?(name)
   name = name.to_s
   val = ENV[name] || ENV[name.downcase] || ENV[name.upcase]
-  return true if val == '1' || val == 't'
+  return true if ['1', 't', 'T'].member?(val)
   return true if val =~ /true/i
   return false
+end
+
+def has_flag?(name)
+  name = name.to_s
+  return !!(
+    env_truthy?(name) ||
+    ARGV.map{|e| e.gsub(/^\-+/, '').downcase }.member?(name)
+  )
 end
 
 def mimetype(fpath)
@@ -87,19 +100,6 @@ def build(name)
   return target
 end
 
-def which(x)
-  out = `which #{x}`.strip
-  return out if out && out.size > 0
-end
-
-def has_flag?(name)
-  name = name.to_s
-  return !!(
-    env_truthy?(name) ||
-    ARGV.map{|e| e.gsub(/^\-+/, '').downcase }.member?(name)
-  )
-end
-
 $debug = has_flag?(:debug)
 puts "debug=#{$debug}"
 
@@ -124,6 +124,9 @@ end
 if has_flag?('msan')
   $cflags << "-fsanitize=memory"
   optimizable = false
+end
+if has_flag?('cover')
+  $cflags += ["-fprofile-instr-generate", "-fcoverage-mapping"]
 end
 if has_flag?(:prod)
   # remove debug info
