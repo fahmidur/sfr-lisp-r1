@@ -99,11 +99,29 @@ int main(int argc, char** argv) {
   printf("--- } hash grow test } ---\n");
   //--- } hash grow } ---
 
+  // Deletion from head of bucket 0.
+  // These words are selected to collide on the same bucket.
+  Hash* h5 = Hash_new();
+  Object* w1 = QSTRING("aardvarks");
+  Object* w2 = QSTRING("abacus");
+  Object* w3 = QSTRING("abash");
+  Hash_set(h5, w1, red);
+  Hash_set(h5, w2, red);
+  Hash_set(h5, w3, red);
+  Hash_dprint(h5);
+  nassert(Hash_size(h5) == 3);
+  printf("---\n");
+  Hash_rem(h5, w1);
+  Hash_dprint(h5);
+  nassert(Hash_size(h5) == 2);
+  printf("---\n");
+
   //--- manual cleanup ---
   Hash_del(h1);
   Hash_del(h1_clone);
   Hash_del(h3);
   Hash_del(h4);
+  Hash_del(h5);
 
   Object_system_print();
   Object_system_done();

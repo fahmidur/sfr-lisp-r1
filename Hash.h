@@ -57,6 +57,7 @@ ssize_t   Hash_size(Hash* self);
 float     Hash_load(Hash* self);
 void      Hash_grow(Hash* self);
 void      Hash_print(Hash* self);
+void      Hash_dprint(Hash* self);
 Hash*     Hash_clone(Hash* self);
 char      Hash_zero(Hash* self);
 int       Hash_cmp(Hash* self, Hash* other);
