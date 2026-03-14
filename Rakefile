@@ -104,7 +104,7 @@ task :docs do
 end
 
 task :perf_clean do 
-  "sudo rm perf.*"
+  sh "sudo rm -f perf.*"
 end
 
 task :perf_record => [:perf_clean, :build] do 
