@@ -3,6 +3,7 @@
 #include "Object.h"
 #include "Hash.h"
 #include "Error.h"
+#include "Util.h"
 
 HashNode* HashNode_new(Object* key, Object* val) {
   HashNode* self = NULL;
@@ -36,6 +37,18 @@ void HashNode_del(HashNode* self) {
     next->prev = prev;
     self->prev = NULL;
     self->next = NULL;
+  }
+  else 
+  if(self->next != NULL) {
+    HashNode* next = self->next;
+    next->prev = NULL;
+    self->next = NULL;
+  }
+  else 
+  if(self->prev != NULL) {
+    HashNode* prev = self->prev;
+    prev->next = NULL;
+    self->prev = NULL;
   }
   assert(self->prev == NULL && self->next == NULL);
   if(self->key != NULL && Object_system_delete_recurse()) {
@@ -93,6 +106,7 @@ Hash* Hash_new() {
   for(i = 0; i < buckets_size; i++) {
     self->buckets[i] = NULL;
   }
+  // self->bitset = calloc(MAX(1, buckets_size/8), sizeof(char));
   self->grow_count = 0;
   return self;
 }
@@ -107,6 +121,7 @@ void Hash_del(Hash* self) {
       HashNode_del_fwd(node);
     }
   }
+  // free(self->bitset);
   free(self->buckets);
   free(self);
 }
@@ -197,11 +212,20 @@ void Hash_rem(Hash* self, Object* key) {
     iter_idx++;
   }
   if(found != NULL) {
-    HashNode_del(found);
-    self->size--;
-    if(found_idx == 0) {
-      self->buckets[index] = NULL;
+
+    HashNode* bhead = found;
+    while(bhead->prev != NULL) {
+      bhead = bhead->prev;
     }
+
+    if(found == bhead) {
+      self->buckets[index] = found->next;
+      HashNode_del(found);
+    } else {
+      HashNode_del(found);
+    }
+
+    self->size--;
   }
   Object_rc_decr(key);
 }
@@ -331,6 +355,21 @@ void Hash_print(Hash* self) {
     printf("\n");
   }
   printf(")\n");
+}
+
+void Hash_dprint(Hash* self) {
+  size_t i;
+  size_t buckets_size = self->buckets_size;
+  HashNode* iter = NULL;
+  for(i = 0; i < buckets_size; i++) {
+    printf("[DEBUG] bucket[%02lu]: ", i);
+    iter = self->buckets[i];
+    while(iter != NULL) {
+      HashNode_print(iter);
+      iter = iter->next;
+    }
+    printf("\n");
+  }
 }
 
 /**
