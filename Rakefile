@@ -108,7 +108,8 @@ task :perf_clean do
 end
 
 task :perf_record => [:perf_clean, :build] do 
-  sh "sudo perf record ./build/Object_test"
+  sh "sudo perf record --call-graph dwarf ./build/Object_test"
+  sh "sudo chmod 666 perf.data"
 end
 
 task :perf_report do 
