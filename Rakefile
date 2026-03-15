@@ -126,14 +126,17 @@ task :perf_report do
   sh "sudo perf report"
 end
 
+
 task :perf => [:perf_record] do 
   sh "sudo perf report"
 end
 
+desc "Cleanup coverage artifacts"
 task :cover_clean do 
   clean_coverage()
 end
 
+desc "Create coverage report"
 task :cover => [:clean, :cover_clean] do 
   # Create a coverage build
   sh "COVER=1 rake" 
