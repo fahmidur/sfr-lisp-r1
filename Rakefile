@@ -20,7 +20,6 @@ task :clean do
 
   clean_coverage()
 
-
   # Remove any stray executable files which 
   # my be in non-build directory
   $build_targets.each do |name, target|
@@ -125,7 +124,6 @@ end
 task :perf_report do 
   sh "sudo perf report"
 end
-
 
 task :perf => [:perf_record] do 
   sh "sudo perf report"
