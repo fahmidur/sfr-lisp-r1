@@ -26,7 +26,8 @@ module Util
 
     def run!
       puts "Shellout. run! cmd: #{@cmd}"
-      @stdout, @stderr, @exitstatus = Open3.capture3(@env, @cmd)
+      @stdout, @stderr, status = Open3.capture3(@env, @cmd)
+      @exitstatus = status.exitstatus
       if @stdout && @stdout.size > 0
         puts "--- { stdout { ---"
         puts @stdout
