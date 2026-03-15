@@ -140,5 +140,14 @@ task :cover => [:clean, :cover_clean] do
   sh "mkdir -p coverage_data"
   # Run the tests without valgrind
   sh "NO_VALGRIND=1 COVER=1 rake test"
+
+  sh "llvm-profdata merge coverage_data/*.profraw -o coverage_data/merged.profdata"
+
+  test_binaries = Dir.open('build').to_a.select {|e| e =~ /_test/ }.sort.map {|e|
+    "./build/#{e}"
+  }
+  object_flags = test_binaries.map {|e| "-object #{e}" }
+  sh "mkdir -p coverage_report"
+  sh "llvm-cov show -instr-profile=coverage_data/merged.profdata #{object_flags.join(' ')} -format=html -output-dir=coverage_report"
 end
 
