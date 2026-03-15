@@ -41,7 +41,10 @@ end
 
 def which(x)
   out = `which #{x}`.strip
-  return out if out && out.size > 0
+  if out && out.size > 0
+    return out
+  end
+  return nil
 end
 
 def runc(command)
@@ -74,6 +77,14 @@ end
 def mimetype(fpath)
   name, mimetype = `file --mime-type #{fpath}`.split(/\s*\:\s*/)
   return mimetype
+end
+
+def xdgopen(path)
+  if which('open')
+    system("open #{path}")
+  elsif which("xdg-open")
+    system("xdg-open #{path}")
+  end
 end
 
 def deps(fnames)

@@ -149,5 +149,7 @@ task :cover => [:clean, :cover_clean] do
   object_flags = test_binaries.map {|e| "-object #{e}" }
   sh "mkdir -p coverage_report"
   sh "llvm-cov show -instr-profile=coverage_data/merged.profdata #{object_flags.join(' ')} -format=html -output-dir=coverage_report"
+
+  xdgopen("coverage_report/index.html")
 end
 
