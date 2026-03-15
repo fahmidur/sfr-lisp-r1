@@ -86,3 +86,12 @@ compile_commands.json
 perf.data
 perf.*
 
+*.profraw
+*.profdata
+coverage/
+coverage_report/
+coverage_data/
+
+
+
+
