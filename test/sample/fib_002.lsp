@@ -16,4 +16,8 @@
   (displayln (fib 5))
   (displayln (fib 6))
   (displayln (fib 7))
+  (displayln (fib 8))
+  (displayln (fib 9))
+  (displayln (fib 10))
+  (displayln (fib 12))
 )
