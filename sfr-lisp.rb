@@ -236,7 +236,7 @@ end
 
 class LispProcedure
   attr_reader :params
-  attr_reader :body
+  attr_reader :bodies
   attr_reader :env
   attr_reader :id
   @@count = 0
@@ -254,6 +254,18 @@ class LispProcedure
       ret = lisp_eval(body, newenv)
     end
     return ret
+  end
+  def tail_recursive?
+    return false if bodies.size == 0 
+    lb = @bodies.last.last rescue nil
+    puts "lb=#{lb}"
+    return false unless lb
+    op, *args = lb
+    puts "op=#{op} args=#{args}"
+    opval = @env[op]
+    puts "opval=#{opval} | self=#{self}"
+    puts "---"
+    return !!(opval == self)
   end
 end
 
@@ -293,6 +305,9 @@ def lisp_eval(x, env=$env_global)
     func = lisp_eval(op, env)
     vals = args.map {|e| lisp_eval(e, env) }
     if func.respond_to?(:call)
+      if func.is_a?(LispProcedure) && func.tail_recursive?
+        puts "tail-recursive func: #{func}"
+      end
       func.call(*vals)
     else
       func
