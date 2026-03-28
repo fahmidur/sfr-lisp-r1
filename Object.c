@@ -1062,6 +1062,7 @@ void Object_print(Object* self) {
   if(oti == NULL) {
     printf("FATAL: unknown ObjectTypeInfo oti for type ");
     Symbol_print(self->type);
+    printf("\n");
     exit(1);
   }
   // Or you might want to have a default print.

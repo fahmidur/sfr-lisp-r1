@@ -154,3 +154,10 @@ task :cover => [:clean, :cover_clean] do
   xdgopen("coverage_report/index.html")
 end
 
+task :gdb_coredump do 
+  sh "mkdir -p ./tmp"
+  corepath = "tmp/corefile1.dump"
+  sh "coredumpctl dump --output=#{corepath}"
+  sh "gdb ./build/sfr-lisp #{corepath}"
+end
+
