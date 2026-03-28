@@ -168,3 +168,6 @@ task :gdb_coredump do
   sh "gdb ./build/sfr-lisp #{corepath}"
 end
 
+task :test_view do 
+  sh "less -R tmp/testresults.txt"
+end
