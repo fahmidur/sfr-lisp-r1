@@ -9,5 +9,5 @@
       )
     )
   ))
-  (displayln (factorial 5 1))
+  (displayln (factorial 3 1))
 )
