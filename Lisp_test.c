@@ -393,7 +393,7 @@ int main(int argc, char** argv) {
   Object* dlam_res2 = Object_accept(Lisp_eval_string(QSTRING("(abs 0)")));
   nassert(Object_type(dlam_res2) == SYMBOL_NUMBER);
   nassert(Object_cmp(dlam_res2, QNUMBER(0)) == 0);
-  // ObjectUtil_eprintf("dlam_res2 = %v\n", dlam_res2);
+  ObjectUtil_eprintf("dlam_res2 = %v\n", dlam_res2);
 
 _shutdown:
   Lisp_done();

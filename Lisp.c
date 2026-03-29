@@ -1002,11 +1002,11 @@ Object* Lisp_eval_sexp2(Object* sexp, Object* env, int depth) {
           Object* test_result = Lisp_eval_sexp2(test_expr, env, depth+1);
           if(!Object_is_null(test_result)) {
             // all non-null objects are treated as truthy
-            ObjectUtil_eprintf("donuts. then_expr = %v\n", then_expr);
-            ret = Lisp_eval_sexp2(then_expr, env, depth+1);
-            ObjectUtil_eprintf("donuts. then_expr | ret = %v\n", ret);
+            // ObjectUtil_eprintf("donuts. then_expr = %v\n", then_expr);
+            ret = Object_accept(Lisp_eval_sexp2(then_expr, env, depth+1));
+            // ObjectUtil_eprintf("donuts. then_expr | ret = %v\n", ret);
           } else {
-            ret = Lisp_eval_sexp2(else_expr, env, depth+1);
+            ret = Object_accept(Lisp_eval_sexp2(else_expr, env, depth+1));
           }
         }
       }
