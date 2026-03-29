@@ -202,35 +202,43 @@ def compile(type, ofile, sources)
     cflags = $cflags.clone
   end
 
-  com = <<~EOS
-    #{cc} 
-    #{cflags.join(' ')}
-    -DVERSION='"#{$version}"'
-    -DGIT_SHA='"#{$git_sha}"'
-  EOS
   if type == :program 
-    com += ""
+    # do nothing
   elsif type == :object 
-    com += " -c "
+    cflags << " -c "
   elsif type == :wasm_program
-    com += " -D WASM"
-    com += " -O3"
-    com += " -target #{$conf['wasm_target']}"
-    com += " --sysroot=#{File.expand_path($conf['wasm_sysroot'])}"
-    com += " -nodefaultlibs"
-    com += " -lc"
-    com += " -lclang_rt.builtins-wasm32"
+    cflags << " -D WASM"
+    cflags << " -O3"
+    cflags << " -target #{$conf['wasm_target']}"
+    cflags << " --sysroot=#{File.expand_path($conf['wasm_sysroot'])}"
+    cflags << " -nodefaultlibs"
+    cflags << " -lc"
+    cflags << " -lclang_rt.builtins-wasm32"
   else
     raise "compile(). Invalid type=#{type}"
   end
-  com += " -o #{ofile} "
+
+  cflags << " -o #{ofile} "
 
   sources = sources.flatten.uniq
   # Remove header files.
   # This allows us to use the same dependency list
   # as used by the calling Task.
   sources.select! {|e| File.extname(e) != '.h'}
-  com += sources.join(' ')
+
+  # special case: leaky.c should never be optimized 
+  # because then it does not leak as expected.
+  if sources.include?('leaky.c')
+    cflags.reject! {|e| e =~ /\s*-O/ }
+  end
+
+  com = <<~EOS
+    #{cc} 
+    -DVERSION='"#{$version}"'
+    -DGIT_SHA='"#{$git_sha}"'
+    #{cflags.join(' ')}
+    #{sources.join(' ')}
+  EOS
   runc(com)
 end
 

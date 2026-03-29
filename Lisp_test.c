@@ -350,6 +350,51 @@ int main(int argc, char** argv) {
   Object* last_res1 = Object_accept(Lisp_eval_string(QSTRING("(last (list 1 2 3))")));
   nassert(Object_cmp(last_res1, QNUMBER(3)) == 0);
 
+  Object* tclam3_str = QSTRING_NEW1(
+    "(lambda (x) "
+    "(if (>= x 0) "
+    "  x"
+    "  (* x -1)"
+    ")"
+    ")"
+  );
+  Object* tclam3 = Object_accept(Lisp_eval_string(tclam3_str));
+  ObjectUtil_eprintf("tclam3 = %v\n", tclam3);
+  Object* tclam3_arg1 = Object_new_list(1, 1, QNUMBER(5));
+  Object* tclam3_res1 = Object_accept(Object_bop_call(tclam3, tclam3_arg1));
+  ObjectUtil_eprintf("tclam3_res1 = %v\n", tclam3_res1);
+  nassert(Object_cmp(tclam3_res1, QNUMBER(5)) == 0);
+  Object* tclam3_arg2 = Object_new_list(1, 1, QNUMBER(-5));
+  Object* tclam3_res2 = Object_accept(Object_bop_call(tclam3, tclam3_arg2));
+  ObjectUtil_eprintf("tclam3_res2 = %v\n", tclam3_res2);
+  nassert(Object_cmp(tclam3_res1, QNUMBER(5)) == 0);
+  Object* tclam3_arg3 = Object_new_list(1, 1, QNUMBER(0));
+  Object* tclam3_res3 = Object_accept(Object_bop_call(tclam3, tclam3_arg3));
+  ObjectUtil_eprintf("tclam3_res3 = %v\n", tclam3_res3);
+  nassert(Object_cmp(tclam3_res3, QNUMBER(0)) == 0);
+
+  Object* dlam_str = QSTRING_NEW1(
+    "(define abs "
+    "(lambda (x) "
+    "(if (>= x 0) "
+    "  x"
+    "  (* x -1)"
+    ")"
+    ")"
+    ")"
+  );
+  Object* dlam = Object_accept(Lisp_eval_string(dlam_str));
+  ObjectUtil_eprintf("tclam4 = %v\n", dlam);
+  nassert(Object_is_null(dlam));
+  Object* dlam_res1 = Object_accept(Lisp_eval_string(QSTRING("(abs -1)")));
+  nassert(Object_type(dlam_res1) == SYMBOL_NUMBER);
+  nassert(Object_cmp(dlam_res1, QNUMBER(1)) == 0);
+  ObjectUtil_eprintf("dlam_res1 = %v\n", dlam_res1);
+  Object* dlam_res2 = Object_accept(Lisp_eval_string(QSTRING("(abs 0)")));
+  nassert(Object_type(dlam_res2) == SYMBOL_NUMBER);
+  nassert(Object_cmp(dlam_res2, QNUMBER(0)) == 0);
+  ObjectUtil_eprintf("dlam_res2 = %v\n", dlam_res2);
+
 _shutdown:
   Lisp_done();
   Runtime_done();

@@ -994,12 +994,14 @@ Object* Lisp_eval_sexp2(Object* sexp, Object* env, int depth) {
           Object* then_expr = Object_bop_at(sexp, 2);
           Object* else_expr = Object_bop_at(sexp, 3);
 
-          Object* test_result = Lisp_eval_sexp2(test_expr, env, depth+1);
+          Object* test_result = Object_accept(Lisp_eval_sexp2(test_expr, env, depth+1));
           if(!Object_is_null(test_result)) {
             // all non-null objects are treated as truthy
-            ret = Lisp_eval_sexp2(then_expr, env, depth+1);
+            Object_assign(&test_result, NULL);
+            ret = Object_accept(Lisp_eval_sexp2(then_expr, env, depth+1));
           } else {
-            ret = Lisp_eval_sexp2(else_expr, env, depth+1);
+            Object_assign(&test_result, NULL);
+            ret = Object_accept(Lisp_eval_sexp2(else_expr, env, depth+1));
           }
         }
       }
@@ -1027,7 +1029,7 @@ _return:
   if(LispAutoGC > 0 ) {
     LispAutoGC_counter = (LispAutoGC_counter + 1) % LispAutoGC;
     ssize_t cursize = Object_system_size();
-    /* printf("LispAutoGC. LispAutoGC_counter = %lu | cursize=%lu | oldsize=%lu\n", LispAutoGC_counter, cursize, LispAutoGC_oldsize); */
+    // printf("LispAutoGC. LispAutoGC_counter = %lu | cursize=%lu | oldsize=%lu\n", LispAutoGC_counter, cursize, LispAutoGC_oldsize);
     if(
         gc_on_return
         && cursize > 0 
@@ -1035,10 +1037,10 @@ _return:
         && LispAutoGC_counter == 0
         && LispAutoGC_oldsize != cursize
       ) {
-      /* printf("LispAutoGC. Calling Object_system_gc(). size=%lu\n", Object_system_size()); */
+      // printf("LispAutoGC. Calling Object_system_gc(). size=%lu\n", Object_system_size());
       Object_system_gc();
       LispAutoGC_oldsize = Object_system_size();
-      /* printf("LispAutoGC. ..................... Post. size=%lu\n", LispAutoGC_oldsize); */
+      // printf("LispAutoGC. ..................... Post. size=%lu\n", LispAutoGC_oldsize);
     }
   }
   return ret;

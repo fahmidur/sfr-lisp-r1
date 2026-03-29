@@ -7,6 +7,7 @@ class TcRacket < Test::Unit::TestCase
     Dir.open(sample_dir).each do |path|
       next if [".", ".."].member?(path)
       next unless File.extname(path) == ".lsp"
+      next if File.basename(path).start_with?('x_')
       fpath = File.join(sample_dir, path)
       puts fpath
       racket_out = Util.run("racket #{fpath} | ./normalize-output.rb")

@@ -1,0 +1,18 @@
+#lang racket
+(begin
+  (define double (lambda (x) 
+    (* x 2)
+  ))
+  (displayln (double 1))
+  (displayln (double 2))
+  (displayln (double 3))
+  (displayln (double 4))
+  (displayln "---")
+  (define double_add (lambda (x y) 
+    (+ (* x 2) (* y 2))
+  ))
+  (displayln (double_add 1 2))
+  (displayln (double_add 2 1))
+  (displayln (double_add 3 4))
+  (displayln (double_add 4 3))
+)
