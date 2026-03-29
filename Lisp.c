@@ -999,11 +999,13 @@ Object* Lisp_eval_sexp2(Object* sexp, Object* env, int depth) {
           Object* then_expr = Object_bop_at(sexp, 2);
           Object* else_expr = Object_bop_at(sexp, 3);
 
-          Object* test_result = Lisp_eval_sexp2(test_expr, env, depth+1);
+          Object* test_result = Object_accept(Lisp_eval_sexp2(test_expr, env, depth+1));
           if(!Object_is_null(test_result)) {
             // all non-null objects are treated as truthy
+            Object_assign(&test_result, NULL);
             ret = Object_accept(Lisp_eval_sexp2(then_expr, env, depth+1));
           } else {
+            Object_assign(&test_result, NULL);
             ret = Object_accept(Lisp_eval_sexp2(else_expr, env, depth+1));
           }
         }
