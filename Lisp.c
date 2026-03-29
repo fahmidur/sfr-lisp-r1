@@ -944,7 +944,6 @@ Object* Lisp_eval_sexp2(Object* sexp, Object* env, int depth) {
         ListIter_del(iter);
         dbg_printf("--- { Object_bop_call { ---\n");
         ret = Object_accept(Object_bop_call(opval, opargs2));
-        // ObjectUtil_eprintf("donuts. sexp=%v | ret=%v\n", sexp, ret);
         dbg_printf("--- } Object_bop_call } ---\n");
         dbg_printf("{ delete opargs1 | len=%d {\n", Object_len(opargs1));
         Object_assign(&opargs1, NULL);
