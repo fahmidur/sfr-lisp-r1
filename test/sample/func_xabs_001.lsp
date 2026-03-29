@@ -1,0 +1,20 @@
+#lang racket
+(begin
+  (define xabs (lambda (x) 
+    (if (>= x 0)
+      x
+      (* x -1)
+    )
+  ))
+  (displayln (xabs -5))
+  (displayln (xabs -4))
+  (displayln (xabs -3))
+  (displayln (xabs -2))
+  (displayln (xabs -1))
+  (displayln (xabs 0))
+  (displayln (xabs 1))
+  (displayln (xabs 2))
+  (displayln (xabs 3))
+  (displayln (xabs 4))
+  (displayln (xabs 5))
+)
