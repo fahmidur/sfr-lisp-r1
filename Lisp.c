@@ -853,10 +853,6 @@ Object* Lisp_eval_sexp2(Object* sexp, Object* env, int depth) {
   else
   if(sexp_type == SYMBOL_SYMBOL) {
     ret = Object_accept(Object_bop_hget(env, sexp));
-    // if(sexp == QSYMBOL("x")) {
-    //   ObjectUtil_eprintf("donuts. sexp_type = SYMBOL. sexp=%v\n", sexp);
-    //   ObjectUtil_eprintf("ret = %v\n", ret);
-    // }
   }
   else
   if(sexp_type == SYMBOL_LIST) {
