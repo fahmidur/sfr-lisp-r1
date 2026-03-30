@@ -361,15 +361,15 @@ int main(int argc, char** argv) {
   Object* tclam3 = Object_accept(Lisp_eval_string(tclam3_str));
   ObjectUtil_eprintf("tclam3 = %v\n", tclam3);
   Object* tclam3_arg1 = Object_new_list(1, 1, QNUMBER(5));
-  Object* tclam3_res1 = Object_accept(Object_bop_call(tclam3, tclam3_arg1));
+  Object* tclam3_res1 = Object_accept(Object_bop_apply(tclam3, tclam3_arg1));
   ObjectUtil_eprintf("tclam3_res1 = %v\n", tclam3_res1);
   nassert(Object_cmp(tclam3_res1, QNUMBER(5)) == 0);
   Object* tclam3_arg2 = Object_new_list(1, 1, QNUMBER(-5));
-  Object* tclam3_res2 = Object_accept(Object_bop_call(tclam3, tclam3_arg2));
+  Object* tclam3_res2 = Object_accept(Object_bop_apply(tclam3, tclam3_arg2));
   ObjectUtil_eprintf("tclam3_res2 = %v\n", tclam3_res2);
   nassert(Object_cmp(tclam3_res1, QNUMBER(5)) == 0);
   Object* tclam3_arg3 = Object_new_list(1, 1, QNUMBER(0));
-  Object* tclam3_res3 = Object_accept(Object_bop_call(tclam3, tclam3_arg3));
+  Object* tclam3_res3 = Object_accept(Object_bop_apply(tclam3, tclam3_arg3));
   ObjectUtil_eprintf("tclam3_res3 = %v\n", tclam3_res3);
   nassert(Object_cmp(tclam3_res3, QNUMBER(0)) == 0);
 

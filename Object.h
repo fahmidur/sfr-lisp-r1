@@ -179,7 +179,7 @@ Object* Object_bop_rfind(Object* self, Object* key);
 char    Object_bop_charat(Object* self, size_t idx);
 
 // Mainly function ops
-Object* Object_bop_call(Object* self, Object* argv);
+Object* Object_bop_apply(Object* self, Object* argv);
 
 void ObjectUtil_eprintf(char* fmt, ...);
 
