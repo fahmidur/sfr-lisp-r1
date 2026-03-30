@@ -88,12 +88,13 @@ Object* Function_call(Function* self, Object* argv) {
     argv = Object_accept(argv);
   }
 
-  /* if(self->arity >= 0) { */
-  /*   if(Object_len(argv) == (self->arity+1)) { */
-  /*     ErrorSystem_set(1, "Function_call. argv arity mismatch"); */
-  /*     return NULL; */
-  /*   } */
-  /* } */
+  if(self->arity >= 0) {
+    if(Object_len(argv) != self->arity) {
+      ErrorSystem_set(1, "Function_call. argv arity mismatch");
+      Object_assign(&argv, NULL);
+      return QERROR("Function_call arity mismatch");
+    }
+  }
 
   Object* tmpEnv = Object_new(SYMBOL_ENVIRONMENT, 1, Environment_new());
   assert(tmpEnv->rc == 1);
