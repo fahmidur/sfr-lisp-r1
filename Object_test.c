@@ -585,6 +585,10 @@ int main(int argc, char** argv) {
   ObjectUtil_eprintf("fnres1 = %v\n", fnres1);
   nassert(Object_cmp(fnres1, QNUMBER(2.5)) == 0);
 
+  Object* fnres2 = Object_accept(Object_bop_call(fn2, Object_new_list(1, 3, QNUMBER(1.2), QNUMBER(1.3), QNUMBER(1.4))));
+  ObjectUtil_eprintf("fnres2 = %v\n", fnres2);
+  nassert(Object_is_error(fnres2));
+
   nassert(ObjectSystem_count_matching_function_name(QSYMBOL("println")) == 1);
   Object_assign(&fn1, NULL);
   nassert(Object_is_null(fn1));
