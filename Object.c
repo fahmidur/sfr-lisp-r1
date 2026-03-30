@@ -1310,6 +1310,7 @@ Object* Object_bop_hrem(Object* self, Object* key) {
 /**
  * @param self An Object* of type Function
  * @param argv An Object* of type List
+ * TODO: rename this to Object_bop_apply
  **/
 Object* Object_bop_call(Object* self, Object* argv) {
   assert(self != NULL);
