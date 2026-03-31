@@ -33,4 +33,7 @@ ssize_t Number_len(Number* self);
 void    Number_print(Number* self);
 void    Number_print_bare(Number* self);
 
+int    Number_to_int(Number* self);
+double Number_to_double(Number* self);
+
 #endif

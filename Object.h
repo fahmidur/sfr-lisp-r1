@@ -142,6 +142,7 @@ Object* Object_zero(Object* self);
 Object* Object_to_number(Object* self);
 Object* Object_to_symbol(Object* self);
 Object* Object_to_string(Object* self);
+int     Object_to_cint(Object* self);
 
 // Mainly Number Ops
 ssize_t Object_len(Object* self);
@@ -179,7 +180,7 @@ Object* Object_bop_rfind(Object* self, Object* key);
 char    Object_bop_charat(Object* self, size_t idx);
 
 // Mainly function ops
-Object* Object_bop_call(Object* self, Object* argv);
+Object* Object_bop_apply(Object* self, Object* argv);
 
 void ObjectUtil_eprintf(char* fmt, ...);
 

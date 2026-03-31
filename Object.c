@@ -385,6 +385,17 @@ Object* Object_to_number(Object* self) {
   return ret;
 }
 
+int Object_to_cint(Object* self) {
+  assert(self != NULL);
+  Object_accept(self);
+  int ret = 0;
+  if(Object_type(self) == SYMBOL_NUMBER) {
+    ret = Number_to_int(((Number*)(self->impl)));
+  }
+  Object_assign(&self, NULL);
+  return ret;
+}
+
 Object* Object_to_string(Object* self) {
   assert(self != NULL);
   Object_rc_incr(self);
@@ -1311,7 +1322,7 @@ Object* Object_bop_hrem(Object* self, Object* key) {
  * @param self An Object* of type Function
  * @param argv An Object* of type List
  **/
-Object* Object_bop_call(Object* self, Object* argv) {
+Object* Object_bop_apply(Object* self, Object* argv) {
   assert(self != NULL);
   assert(argv != NULL);
 

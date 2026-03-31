@@ -136,3 +136,12 @@ void Number_print(Number* self) {
   Util_vt_set(VT_RESET);
   printf(")");
 }
+
+int Number_to_int(Number* self) {
+  return (int)self->rep;
+}
+
+double Number_to_double(Number* self) {
+  return self->rep;
+}
+

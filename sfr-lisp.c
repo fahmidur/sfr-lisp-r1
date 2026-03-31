@@ -94,8 +94,12 @@ void repl() {
       rvalue = Object_accept(Lisp_eval_string(obj_inp));
       ObjectUtil_eprintf("%v\n", rvalue);
       Object_assign(&rvalue, NULL);
+      if(LispExit >= 0) {
+        printf("goodbye via (exit %d)\n", LispExit);
+        break;
+      }
     }
-    free(line);
+    free(line); 
     line = NULL;
   }
   /* String_del(inp); */
@@ -182,5 +186,8 @@ int main(int argc, char** argv) {
 _return:
   Lisp_done();
   Runtime_done();
+  if(LispExit >= 0) {
+    ret = LispExit;
+  }
   return ret;
 }
