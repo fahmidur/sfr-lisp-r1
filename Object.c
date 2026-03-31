@@ -385,6 +385,17 @@ Object* Object_to_number(Object* self) {
   return ret;
 }
 
+int Object_to_cint(Object* self) {
+  assert(self != NULL);
+  Object_accept(self);
+  int ret = 0;
+  if(Object_type(self) == SYMBOL_NUMBER) {
+    ret = Number_to_int(((Number*)(self->impl)));
+  }
+  Object_assign(&self, NULL);
+  return ret;
+}
+
 Object* Object_to_string(Object* self) {
   assert(self != NULL);
   Object_rc_incr(self);

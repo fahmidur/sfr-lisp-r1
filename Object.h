@@ -142,6 +142,7 @@ Object* Object_zero(Object* self);
 Object* Object_to_number(Object* self);
 Object* Object_to_symbol(Object* self);
 Object* Object_to_string(Object* self);
+int     Object_to_cint(Object* self);
 
 // Mainly Number Ops
 ssize_t Object_len(Object* self);

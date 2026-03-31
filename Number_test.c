@@ -9,9 +9,13 @@ int main(int argc, char** argv) {
   Number* n0 = Number_new_from_int(0);
   Number* n1 = Number_new_from_int(1);
   nassert(n1->rep == 1);
+  nassert(Number_to_int(n1) == 1);
+  nassert(Number_to_double(n1) == 1.0);
 
   Number* n2 = Number_new_from_float(2.5);
   nassert(n2->rep == 2.5);
+  nassert(Number_to_int(n2) == 2);
+  nassert(Number_to_double(n2) == 2.5);
 
   Number* res1 = Number_add(n1, n2);
   nassert(res1->rep == 3.5);

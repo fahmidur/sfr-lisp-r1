@@ -5,6 +5,7 @@
 #include "Lisp.h"
 #include <unistd.h>
 
+int LispExit = -99;
 size_t LispAutoGC;
 size_t LispAutoGC_counter;
 size_t LispAutoGC_oldsize;
@@ -242,6 +243,24 @@ Object* fn_newline(Function* fn, Object* env, Object* argv) {
   return Object_new_null();
 }
 
+Object* fn_exit(Function* fn, Object* env, Object* argv) {
+  int ecode = 0;
+  Object* arg0 = NULL;
+  if(Object_len(argv) > 0) {
+    arg0 = Object_accept(Object_uop_head(argv));
+    if(Object_type(arg0) != SYMBOL_NUMBER) {
+      ObjectUtil_eprintf("ERROR: exit expecting argv[0] Number");
+      goto _return;
+    }
+    ecode = Object_to_cint(arg0);
+    // ObjectUtil_eprintf("exit. got ecode = %d\n", ecode);
+  }
+  LispExit = ecode;
+_return:
+  Object_assign(&arg0, NULL);
+  return Object_new_null();
+}
+
 Object* fn_begin(Function* fn, Object* env, Object* argv) {
   Object* ret = NULL;
   if(Object_len(argv) > 0) {
@@ -475,6 +494,7 @@ void Lisp_init() {
   _qdefun_bin("<=", fn_cmp_lte);
   _qdefun_bin("equal?", fn_cmp_equal);
 
+  _qdefun_v("exit", fn_exit);
   _qdefun_v("begin", fn_begin);
   _qdefun_0("gc_info", fn_gc_info);
   _qdefun_0("gc_run", fn_gc_run);

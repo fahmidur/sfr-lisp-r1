@@ -19,6 +19,7 @@
 #include "Object.h"
 #include "Runtime.h"
 
+extern int LispExit; 
 extern Object* LISP_PAREN_BEG;
 extern Object* LISP_PAREN_END;
 
