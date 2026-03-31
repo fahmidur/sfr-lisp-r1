@@ -763,20 +763,18 @@ Object* Lisp_tokenize(Object* string) {
 
 Object* Lisp_quotewrap(Object* thing, char* quote_next) {
   assert(thing != NULL);
-  Object_accept(thing);
-  Object* ret = NULL;
   if(*quote_next) {
-    // printf("donuts. quotewrap. quote_next = %d\n", *quote_next);
     *quote_next = 0;
-    ret = Object_new_list(1, 1, LispSymbol_quote);
+    Object* ret = Object_new_list(1, 1, LispSymbol_quote);
     Object_bop_push(ret, thing);
-  } else {
-    ret = Object_accept(thing);
+    Object_return(ret);
+    Object_rc_decr(ret);
+    assert(ret->rc == 0);
+    return ret;
   }
-  Object_assign(&thing, NULL);
-  Object_return(ret);
-  Object_rc_decr(ret);
-  return ret;
+  else {
+    return thing;
+  }
 }
 
 Object* Lisp_parse_tokens2(Object* tokenlist, int depth) {
@@ -795,7 +793,6 @@ Object* Lisp_parse_tokens2(Object* tokenlist, int depth) {
   /* } */
   while(Object_len(tokenlist) > 0) {
     tmp = Object_accept(Object_uop_shift(tokenlist));
-
     // ObjectUtil_eprintf("donuts. d=%d p=%d | tmp = %v\n", depth, idx, tmp);
     // if(depth == 0 && idx == 0 && Object_cmp(tmp, LISP_PAREN_BEG) == 0) {
     //   // special case of first '(' in the tokenlist
@@ -815,14 +812,16 @@ Object* Lisp_parse_tokens2(Object* tokenlist, int depth) {
       sublist = Object_accept(Lisp_parse_tokens2(tokenlist, depth+1));
       assert(sublist->rc == 1);
       tmp2 = Object_accept(Lisp_quotewrap(sublist, &quote_next));
-      if(Object_is_null(ret)) { 
+      Object_assign(&tmp, NULL);
+      if(Object_is_null(ret)) {
         if(Object_len(tokenlist) == 0) {
           Object_assign(&ret, tmp2);
-        } 
+        }
         else {
           ret = QLIST_NEW1(); 
+          Object_bop_push(ret, tmp2);
         }
-      } 
+      }
       else {
         Object_bop_push(ret, tmp2);
       }
@@ -839,7 +838,8 @@ Object* Lisp_parse_tokens2(Object* tokenlist, int depth) {
     else {
       // some sort of atom
       if(Object_is_null(ret) && Object_len(tokenlist) == 0) {
-        ret = Object_accept(Lisp_quotewrap(tmp, &quote_next));
+        // ret = Object_accept(Lisp_quotewrap(tmp, &quote_next));
+        Object_assign(&ret, Lisp_quotewrap(tmp, &quote_next));
         softbreak = 1;
       }
       else {
@@ -851,9 +851,10 @@ Object* Lisp_parse_tokens2(Object* tokenlist, int depth) {
     }
     idx++;
     Object_assign(&tmp, NULL);
+    Object_assign(&tmp2, NULL);
+    Object_assign(&sublist, NULL);
     if(softbreak) {
       // cleanup
-      Object_assign(&sublist, NULL);
       break;
     }
   }
@@ -874,7 +875,7 @@ Object* Lisp_parse_tokens2(Object* tokenlist, int depth) {
     assert(ret->rc == 0);
   }
   Object_assign(&tokenlist, NULL);
-  // ObjectUtil_eprintf("donuts. d=%d p=%d | ret = %v\n", depth, idx, ret);
+  // ObjectUtil_eprintf("donuts. d=%d p=%d | ret = %v | ret.rc=%d\n", depth, idx, ret, ret->rc);
   return ret;
 }
 
@@ -935,7 +936,7 @@ Object* Lisp_eval_sexp2(Object* sexp, Object* env, int depth) {
           ret = QERROR("invalid use of 'quote'");
         }
         else {
-          ret = Object_accept(Object_accept(Object_uop_head(Object_uop_rest(sexp))));
+          ret = Object_accept(Object_uop_head(Object_uop_rest(sexp)));
         }
       }
       else
