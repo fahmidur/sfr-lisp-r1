@@ -1488,7 +1488,8 @@ Object* Object_uop_rest(Object* self) {
   return ret;
 }
 
-// TODO: completely broken and untested.
+// TODO: complete this. 
+// TODO: test this
 Object* Object_bop_append(Object* a, Object* b) {
   assert(a != NULL); assert(b != NULL);
   Object_accept(a); Object_accept(b);
