@@ -92,6 +92,8 @@ Object* Function_call(Function* self, Object* argv) {
     if(Object_len(argv) != self->arity) {
       ErrorSystem_set(1, "Function_call. argv arity mismatch");
       Object_assign(&argv, NULL);
+      ObjectUtil_eprintf("donuts. fn name=%v arity=%d len(argv)=%d\n", self->name, self->arity, Object_len(argv));
+      ObjectUtil_eprintf("donuts. fn argv=%v\n", argv);
       return QERROR("Function_call arity mismatch");
     }
   }

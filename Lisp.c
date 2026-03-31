@@ -12,6 +12,7 @@ size_t LispAutoGC_oldsize;
 
 Object* LISP_PAREN_BEG;
 Object* LISP_PAREN_END;
+Object* LISP_QUOTE_SINGLE;
 
 // The root Environment for the Lisp interpreter.
 // It is this Environment that contains the core functions
@@ -470,6 +471,7 @@ void _qdefun_v(
 void Lisp_init() {
   LISP_PAREN_BEG = QSYMBOL_NEW1("(");
   LISP_PAREN_END = QSYMBOL_NEW1(")");
+  LISP_QUOTE_SINGLE = QSYMBOL_NEW1("'");
   LispEnv_root = Object_new(SYMBOL_ENVIRONMENT, 1, Environment_new());
 
   LispSymbol_quote = QSYMBOL_NEW1("quote");
@@ -517,6 +519,7 @@ void Lisp_done() {
   dbg_printf("--- { Lisp_done() { ---\n");
   Object_assign(&LISP_PAREN_BEG, NULL);
   Object_assign(&LISP_PAREN_END, NULL);
+  Object_assign(&LISP_QUOTE_SINGLE, NULL);
   Object_assign(&LispEnv_root, NULL);
   dbg_printf("--- } Lisp_done() } ---\n");
 }
@@ -624,6 +627,10 @@ Object* Lisp_tokenize(Object* string) {
       else
       if(ch == ')') {
         Object_bop_push(ret, LISP_PAREN_END);
+      }
+      else 
+      if(ch == '\'') {
+        Object_bop_push(ret, LISP_QUOTE_SINGLE);
       }
       else
       if(TokenizerUtil_isdigit(ch)) {
@@ -880,12 +887,12 @@ Object* Lisp_eval_sexp2(Object* sexp, Object* env, int depth) {
     op = Object_accept(Object_uop_head(sexp));
     opval = Object_accept(Lisp_eval_sexp2(op, env, depth+1));
     if(Object_type(op) == SYMBOL_SYMBOL) {
-      if(op == LispSymbol_quote) {
+      if(op == LispSymbol_quote || op == LISP_QUOTE_SINGLE) {
         if(Object_len(sexp) != 2) {
           ret = QERROR("invalid use of 'quote'");
         }
         else {
-          ret = Object_accept(Object_uop_head(Object_uop_rest(sexp)));
+          ret = Object_accept(Object_accept(Object_uop_head(Object_uop_rest(sexp))));
         }
       }
       else
