@@ -10,6 +10,7 @@
 #include "Runtime.h"
 #include "Lisp.h"
 #include "String.h"
+#include "Util.h"
 #include "sub/linenoise/linenoise.h"
 
 #ifndef VERSION
@@ -92,6 +93,9 @@ void repl() {
         Object_assign(&rvalue, NULL);
       }
       rvalue = Object_accept(Lisp_eval_string(obj_inp));
+      Util_vt_set(VT_COLOR_BLUE_FG);
+      printf(" => ");
+      Util_vt_set(VT_RESET);
       ObjectUtil_eprintf("%v\n", rvalue);
       Object_assign(&rvalue, NULL);
       if(LispExit >= 0) {
