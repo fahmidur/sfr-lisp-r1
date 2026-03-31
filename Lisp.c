@@ -761,6 +761,10 @@ Object* Lisp_tokenize(Object* string) {
   return ret;
 }
 
+void Lisp_push_quote(Object* ret, Object* val, char quote_next) {
+  // TODO: finish this
+}
+
 Object* Lisp_parse_tokens2(Object* tokenlist, int depth) {
   assert(tokenlist != NULL);
   tokenlist = Object_accept(tokenlist);
@@ -768,18 +772,27 @@ Object* Lisp_parse_tokens2(Object* tokenlist, int depth) {
   Object* ret = Object_new_null();
   Object* sublist = Object_new_null();
   Object* sublist2 = Object_new_null();
-  Object* sublist3 = Object_new_null();
   int idx = 0;
   char softbreak = 0;
+  char quote_next = 0;
   /* ObjectUtil_eprintf("donuts. lpt2. ret = %v. tokenlist=%v\n", ret, tokenlist); */
   /* ObjectUtil_eprintf("donuts. lpt2. tokenlist=%v len=%zu\n", tokenlist, Object_len(tokenlist)); */
   /* if(Object_len(tokenlist) == 1 && Object_type(Object_uop_head(tokenlist)) != SYMBOL_LIST) { */
   /* } */
   while(Object_len(tokenlist) > 0) {
     tmp = Object_accept(Object_uop_shift(tokenlist));
-    /* ObjectUtil_eprintf("donuts. lpt2. d=%d | tmp = %v\n", depth, tmp); */
+
+    ObjectUtil_eprintf("donuts. d=%d | tmp = %v\n", depth, tmp);
     if(depth == 0 && idx == 0 && Object_cmp(tmp, LISP_PAREN_BEG) == 0) {
       // special case of first '(' in the tokenlist
+    }
+    else
+    if(depth == 0 && quote_next && Object_cmp(tmp, LISP_PAREN_BEG) == 0) {
+      // special case 
+    }
+    else 
+    if(Object_cmp(tmp, LISP_QUOTE_SINGLE) == 0) {
+      quote_next = 1; printf("donuts quote_next=%d\n", quote_next);
     }
     else
     if(Object_cmp(tmp, LISP_PAREN_BEG) == 0) {
@@ -789,28 +802,22 @@ Object* Lisp_parse_tokens2(Object* tokenlist, int depth) {
       if(Object_is_null(ret)) {
         ret = QLIST_NEW1();
       }
-      Object_bop_push(ret, sublist);
-      Object_assign(&sublist, NULL);
+      if(quote_next) {
+        quote_next = 0;
+        sublist2 = Object_new_list(1, 1, LispSymbol_quote);
+        Object_bop_push(sublist2, sublist);
+        Object_bop_push(ret, sublist2);
+        Object_assign(&sublist, NULL);
+        Object_assign(&sublist2, NULL);
+      } 
+      else {
+        Object_bop_push(ret, sublist);
+        Object_assign(&sublist, NULL);
+      }
     }
     else
     if(Object_cmp(tmp, LISP_PAREN_END) == 0) {
       softbreak = 1;
-    }
-    else
-    if(Object_cmp(tmp, LISP_QUOTE_SINGLE) == 0) {
-      sublist = Object_accept(Lisp_parse_tokens2(tokenlist, depth+1));
-      assert(sublist->rc == 1);
-      if(Object_is_null(ret)) {
-        ret = QLIST_NEW1();
-      }
-      sublist2 = Object_new_list(1, 1, LispSymbol_quote);
-      ObjectUtil_eprintf("donuts. sublist2 = %v\n", sublist2);
-      sublist3 = Object_accept(Object_bop_append(sublist2, sublist));
-      ObjectUtil_eprintf("donuts. sublist3 = %v\n", sublist3);
-      Object_bop_push(ret, sublist2);
-      Object_assign(&sublist, NULL);
-      Object_assign(&sublist2, NULL);
-      Object_assign(&sublist3, NULL);
     }
     else {
       // some sort of atom
@@ -822,7 +829,16 @@ Object* Lisp_parse_tokens2(Object* tokenlist, int depth) {
         if(Object_is_null(ret)) {
           ret = QLIST_NEW1();
         }
-        Object_bop_push(ret, tmp);
+        if(quote_next) {
+          quote_next = 0; printf("donuts quote_next=%d\n", quote_next);
+          sublist = Object_new_list(1, 1, LispSymbol_quote);
+          Object_bop_push(sublist, tmp);
+          Object_bop_push(ret, sublist);
+        } 
+        else {
+          ObjectUtil_eprintf("donuts. pushing reg tmp = %v\n", tmp);
+          Object_bop_push(ret, tmp);
+        }
       }
     }
     idx++;
