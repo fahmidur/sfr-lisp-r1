@@ -808,15 +808,15 @@ void Object_rc_done(Object* self, int parent_rc, int level) {
   assert(self != NULL);
   
   if((self->visited & OBJECT_RC_DONE_VFLAG) != 0) {
-    Util_indent(level); ObjectUtil_eprintf("X[%02d] Object_rc_done. prc=%d rc=%d self=%v\n", level, parent_rc, self->rc, self);
-    Util_indent(level); ObjectUtil_eprintf("Loop detected\n");
+    Util_indent(stdout, level); ObjectUtil_eprintf("X[%02d] Object_rc_done. prc=%d rc=%d self=%v\n", level, parent_rc, self->rc, self);
+    Util_indent(stdout, level); ObjectUtil_eprintf("Loop detected\n");
     return;
   }
 
   self->visited = self->visited | OBJECT_RC_DONE_VFLAG;
 
   Symbol* self_type = Object_type(self);
-  Util_indent(level); ObjectUtil_eprintf("A[%02d] Object_rc_done. prc=%d rc=%d self=%v\n", level, parent_rc, self->rc, self);
+  Util_indent(stdout, level); ObjectUtil_eprintf("A[%02d] Object_rc_done. prc=%d rc=%d self=%v\n", level, parent_rc, self->rc, self);
   int i = 0;
   Object* tmp;
   if(self_type == SYMBOL_LIST) {
@@ -860,7 +860,7 @@ void Object_rc_done(Object* self, int parent_rc, int level) {
     self->rc += parent_rc;
   }
   self->visited = self->visited & ~OBJECT_RC_DONE_VFLAG;
-  /* Util_indent(level); ObjectUtil_eprintf("B[%02d] Object_rc_done. prc=%d rc=%d self=%v\n", level, parent_rc, self->rc, self); */
+  /* Util_indent(stdout, level); ObjectUtil_eprintf("B[%02d] Object_rc_done. prc=%d rc=%d self=%v\n", level, parent_rc, self->rc, self); */
 }
 
 void Object_system_done() {

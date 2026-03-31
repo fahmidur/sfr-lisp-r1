@@ -20,7 +20,7 @@ void Util_cstr_print(char* cstr);
 
 void Util_heading1(char isbeg, char* str);
 
-void Util_indent(int size);
+void Util_indent(FILE* f, int size);
 
 
 // See https://en.wikipedia.org/wiki/ANSI_escape_code
