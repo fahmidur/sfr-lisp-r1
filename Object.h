@@ -164,6 +164,7 @@ Object* Object_bop_unshift(Object* a, Object* b);
 Object* Object_uop_shift(Object* self);
 Object* Object_bop_at(Object* self, size_t idx);
 Object* Object_bop_rem(Object* self, Object* val);
+Object* Object_bop_append(Object* a, Object* b);
 
 // Mainly Hash/Environment Ops
 Object* Object_top_hset(Object* self, Object* key, Object* val);

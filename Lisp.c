@@ -767,6 +767,8 @@ Object* Lisp_parse_tokens2(Object* tokenlist, int depth) {
   Object* tmp = Object_new_null();
   Object* ret = Object_new_null();
   Object* sublist = Object_new_null();
+  Object* sublist2 = Object_new_null();
+  Object* sublist3 = Object_new_null();
   int idx = 0;
   char softbreak = 0;
   /* ObjectUtil_eprintf("donuts. lpt2. ret = %v. tokenlist=%v\n", ret, tokenlist); */
@@ -793,6 +795,22 @@ Object* Lisp_parse_tokens2(Object* tokenlist, int depth) {
     else
     if(Object_cmp(tmp, LISP_PAREN_END) == 0) {
       softbreak = 1;
+    }
+    else
+    if(Object_cmp(tmp, LISP_QUOTE_SINGLE) == 0) {
+      sublist = Object_accept(Lisp_parse_tokens2(tokenlist, depth+1));
+      assert(sublist->rc == 1);
+      if(Object_is_null(ret)) {
+        ret = QLIST_NEW1();
+      }
+      sublist2 = Object_new_list(1, 1, LispSymbol_quote);
+      ObjectUtil_eprintf("donuts. sublist2 = %v\n", sublist2);
+      sublist3 = Object_accept(Object_bop_append(sublist2, sublist));
+      ObjectUtil_eprintf("donuts. sublist3 = %v\n", sublist3);
+      Object_bop_push(ret, sublist2);
+      Object_assign(&sublist, NULL);
+      Object_assign(&sublist2, NULL);
+      Object_assign(&sublist3, NULL);
     }
     else {
       // some sort of atom
@@ -832,6 +850,7 @@ Object* Lisp_parse_tokens2(Object* tokenlist, int depth) {
     assert(ret->rc == 0);
   }
   Object_assign(&tokenlist, NULL);
+  ObjectUtil_eprintf("donuts. ret = %v\n", ret);
   return ret;
 }
 
@@ -887,7 +906,7 @@ Object* Lisp_eval_sexp2(Object* sexp, Object* env, int depth) {
     op = Object_accept(Object_uop_head(sexp));
     opval = Object_accept(Lisp_eval_sexp2(op, env, depth+1));
     if(Object_type(op) == SYMBOL_SYMBOL) {
-      if(op == LispSymbol_quote || op == LISP_QUOTE_SINGLE) {
+      if(op == LispSymbol_quote) {
         if(Object_len(sexp) != 2) {
           ret = QERROR("invalid use of 'quote'");
         }

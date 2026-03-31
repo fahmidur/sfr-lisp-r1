@@ -1488,6 +1488,38 @@ Object* Object_uop_rest(Object* self) {
   return ret;
 }
 
+// TODO: completely broken and untested.
+Object* Object_bop_append(Object* a, Object* b) {
+  assert(a != NULL); assert(b != NULL);
+  Object_accept(a); Object_accept(b);
+  ObjectUtil_eprintf("donuts. got a = %v b = %v\n", a, b);
+  Object* tmp = Object_new_null();
+  Object* ret = Object_clone(a);
+  ListIter* iter = NULL;
+  ObjectUtil_eprintf("donuts clone = %v\n", ret);
+  if(Object_type(a) == SYMBOL_LIST) {
+    if(Object_type(b) == SYMBOL_LIST) {
+      iter = ListIter_new(b->impl);
+      ListIter_next(iter);
+      while(!ListIter_at_end(iter)) {
+        tmp = ListIter_get_val(iter);
+        ObjectUtil_eprintf("tmp = %v\n", tmp);
+        Object_reject(Object_bop_push(ret, tmp));
+        ListIter_next(iter);
+      }
+      ListIter_del(iter); iter = NULL;
+    } else {
+      Object_reject(Object_bop_push(ret, b));
+    }
+  } else {
+    ret = QERROR("Expecting type(a) == List");
+  }
+  Object_assign(&a, NULL); Object_assign(&b, NULL);
+  Object_return(ret);
+  Object_rc_decr(ret);
+  return ret;
+}
+
 Object* Object_bop_push(Object* a, Object* b) {
   assert(a != NULL); assert(b != NULL);
   Object_rc_incr(a); Object_rc_incr(b);
