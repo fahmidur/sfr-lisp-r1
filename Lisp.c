@@ -603,7 +603,7 @@ Object* Lisp_tokenize(Object* string) {
     ch = Object_bop_charat(string, i);
     /* dbg_printf("---\n"); */
     /* dbg_printf("state="); print_TokenizerState(state); dbg_printf("\n"); */
-    /* ObjectUtil_eprintf("Lisp_tokenizer. ch=|%c| tmp_str=%v\n", ch, tmp_str); */
+    // ObjectUtil_eprintf("Lisp_tokenizer. ch=|%c| tmp_str=%v\n", ch, tmp_str);
     if(state == ts_Init) {
       if(ch == '-') {
         state = ts_InNumberNegMaybe;
@@ -749,6 +749,11 @@ Object* Lisp_tokenize(Object* string) {
     Object_bop_push(ret, Object_to_number(tmp_str));
     Object_zero(tmp_str);
   }
+  else 
+  if(state == ts_InBareWord){
+    Object_bop_push(ret, Object_to_symbol(tmp_str));
+    Object_zero(tmp_str);
+  }
   /*ObjectUtil_eprintf("tmp_str=%v\n", tmp_str);*/
   /*dbg_printf("---\n");*/
 
@@ -780,17 +785,20 @@ Object* Lisp_quotewrap(Object* thing, char* quote_next) {
 Object* Lisp_parse_tokens2(Object* tokenlist, int depth) {
   assert(tokenlist != NULL);
   tokenlist = Object_accept(tokenlist);
+  // ObjectUtil_eprintf("donuts. lpt | tokenlist = %v\n", tokenlist);
   Object* tmp = Object_new_null();
+  Object* tmp2 = Object_new_null();
   Object* ret = Object_new_null();
   Object* sublist = Object_new_null();
-  Object* tmp2 = Object_new_null();
   int idx = 0;
   char softbreak = 0;
   char quote_next = 0;
   while(Object_len(tokenlist) > 0) {
     tmp = Object_accept(Object_uop_shift(tokenlist));
+    // ObjectUtil_eprintf("\n---\ndonuts. lpt | d=%d p=%d tmp=%v quote_next=%d\n", depth, idx, tmp, quote_next);
     if(Object_cmp(tmp, LISP_QUOTE_SINGLE) == 0) {
       quote_next = 1; 
+      // printf("donuts. lp2 quote_next = %d\n", quote_next);
     }
     else
     if(Object_cmp(tmp, LISP_PAREN_BEG) == 0) {
@@ -856,6 +864,7 @@ Object* Lisp_parse_tokens2(Object* tokenlist, int depth) {
     assert(ret->rc == 0);
   }
   Object_assign(&tokenlist, NULL);
+  // ObjectUtil_eprintf("donuts. lpt | d=%d ret=%v\n", depth, ret);
   return ret;
 }
 

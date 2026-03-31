@@ -399,12 +399,16 @@ int main(int argc, char** argv) {
   Object* squote1_res = Object_accept(Lisp_eval_string(squote1_str));
   nassert(Object_cmp(squote1_res, QNUMBER(3.14)) == 0);
 
-  Object* squote2_str = QSTRING_NEW1("'(3 2 1)");
+  Object* squote2_str = QSTRING_NEW1("'trinity");
   Object* squote2_res = Object_accept(Lisp_eval_string(squote2_str));
-  ObjectUtil_eprintf("squote2_res = %v\n", squote2_res);
-  Object* squote2_exp = Object_new_list(1, 3, QNUMBER(3), QNUMBER(2), QNUMBER(1));
-  ObjectUtil_eprintf("squote2_exp = %v\n", squote2_exp);
-  nassert(Object_cmp(squote2_res, squote2_exp) == 0);
+  nassert(Object_cmp(squote2_res, QSYMBOL("trinity")) == 0);
+
+  Object* squote3_str = QSTRING_NEW1("'(3 2 1)");
+  Object* squote3_res = Object_accept(Lisp_eval_string(squote3_str));
+  ObjectUtil_eprintf("squote3_res = %v\n", squote3_res);
+  Object* squote3_exp = Object_new_list(1, 3, QNUMBER(3), QNUMBER(2), QNUMBER(1));
+  ObjectUtil_eprintf("squote3_exp = %v\n", squote3_exp);
+  nassert(Object_cmp(squote3_res, squote3_exp) == 0);
 
 _shutdown:
   Lisp_done();
