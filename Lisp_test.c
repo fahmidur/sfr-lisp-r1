@@ -395,6 +395,17 @@ int main(int argc, char** argv) {
   nassert(Object_cmp(dlam_res2, QNUMBER(0)) == 0);
   ObjectUtil_eprintf("dlam_res2 = %v\n", dlam_res2);
 
+  Object* squote1_str = QSTRING_NEW1("'3.14");
+  Object* squote1_res = Object_accept(Lisp_eval_string(squote1_str));
+  nassert(Object_cmp(squote1_res, QNUMBER(3.14)) == 0);
+
+  Object* squote2_str = QSTRING_NEW1("'(3 2 1)");
+  Object* squote2_res = Object_accept(Lisp_eval_string(squote2_str));
+  ObjectUtil_eprintf("squote2_res = %v\n", squote2_res);
+  Object* squote2_exp = Object_new_list(1, 3, QNUMBER(3), QNUMBER(2), QNUMBER(1));
+  ObjectUtil_eprintf("squote2_exp = %v\n", squote2_exp);
+  nassert(Object_cmp(squote2_res, squote2_exp) == 0);
+
 _shutdown:
   Lisp_done();
   Runtime_done();
