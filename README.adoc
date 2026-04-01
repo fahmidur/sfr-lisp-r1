@@ -1,4 +1,7 @@
 = SFR-Lisp
+
+image::https://github.com/fahmidur/sfr-lisp-r1/actions/workflows/test.yml/badge.svg[TestBadge, link="https://github.com/fahmidur/sfr-lisp-r1/actions/workflows/test.yml"]
+
 :toc:
 :toclevels: 5
 
