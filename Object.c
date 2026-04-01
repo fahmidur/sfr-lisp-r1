@@ -1488,8 +1488,6 @@ Object* Object_uop_rest(Object* self) {
   return ret;
 }
 
-// TODO: complete this. 
-// TODO: test this
 Object* Object_bop_append(Object* a, Object* b) {
   assert(a != NULL); assert(b != NULL);
   Object_accept(a); Object_accept(b);
@@ -1507,6 +1505,7 @@ Object* Object_bop_append(Object* a, Object* b) {
   if(Object_type(a) == SYMBOL_LIST && Object_type(b) != SYMBOL_LIST) {
     ret = Object_accept(Object_clone(a));
     Object_reject(Object_bop_push(ret, b));
+    //TODO: this should create an Improper List, where the last element is B. 
   }
   else {
     ret = QERROR("invalid types for append");
