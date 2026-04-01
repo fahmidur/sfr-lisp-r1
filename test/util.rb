@@ -2,7 +2,6 @@ module Util
 
   require 'fileutils'
   require 'ostruct'
-  require 'pry'
   require 'digest'
 
   VALGRIND_EXITCODE = 9
