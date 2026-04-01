@@ -110,11 +110,33 @@ int main(int argc, char** argv) {
   }
   nassert(eve_found == 0);
 
+  List* list4 = List_new();
+  List_push(list4, QNUMBER(1));
+  List_push(list4, QNUMBER(2));
+  List* list5 = List_new();
+  List_push(list5, QNUMBER(3));
+  List_push(list5, QNUMBER(4));
+  List* list6 = List_append(list4, list5);
+  nassert(List_len(list6) == List_len(list4) + List_len(list5));
+  ListIter* list6_iter = ListIter_new(list6);
+  ListIter_head(list6_iter);
+  int i = 1;
+  while(!ListIter_at_end(list6_iter)) {
+    nassert(Object_cmp(ListIter_get_val(list6_iter), QNUMBER(i)) == 0);
+    //---
+    i++;
+    ListIter_next(list6_iter);
+  }
+
   //--- manual cleanup ---
   List_del(list1);
   List_del(list2);
   List_del(list3);
+  List_del(list4);
+  List_del(list5);
+  List_del(list6);
   ListIter_del(list3_iter);
+  ListIter_del(list6_iter);
 
   Object_system_print();
   Object_system_done();
