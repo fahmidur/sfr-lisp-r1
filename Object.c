@@ -1488,36 +1488,32 @@ Object* Object_uop_rest(Object* self) {
   return ret;
 }
 
-// TODO: complete this. 
-// TODO: test this
 Object* Object_bop_append(Object* a, Object* b) {
   assert(a != NULL); assert(b != NULL);
   Object_accept(a); Object_accept(b);
-  ObjectUtil_eprintf("donuts. got a = %v b = %v\n", a, b);
-  Object* tmp = Object_new_null();
-  Object* ret = Object_clone(a);
-  ListIter* iter = NULL;
-  ObjectUtil_eprintf("donuts clone = %v\n", ret);
-  if(Object_type(a) == SYMBOL_LIST) {
-    if(Object_type(b) == SYMBOL_LIST) {
-      iter = ListIter_new(b->impl);
-      ListIter_next(iter);
-      while(!ListIter_at_end(iter)) {
-        tmp = ListIter_get_val(iter);
-        ObjectUtil_eprintf("tmp = %v\n", tmp);
-        Object_reject(Object_bop_push(ret, tmp));
-        ListIter_next(iter);
-      }
-      ListIter_del(iter); iter = NULL;
-    } else {
-      Object_reject(Object_bop_push(ret, b));
-    }
-  } else {
-    ret = QERROR("Expecting type(a) == List");
+  Object* ret = NULL;
+  if(Object_type(a) == SYMBOL_LIST && Object_type(b) == SYMBOL_LIST) {
+    List* list_a = (List*)(a->impl);
+    List* list_b = (List*)(b->impl);
+    List* list_r = List_append(list_a, list_b);
+    ret = Object_new(SYMBOL_LIST, 1, list_r);
+    Object_return(ret);
+    Object_rc_decr(ret);
+    assert(ret->rc == 0);
   }
-  Object_assign(&a, NULL); Object_assign(&b, NULL);
-  Object_return(ret);
-  Object_rc_decr(ret);
+  else
+  if(Object_type(a) == SYMBOL_LIST && Object_type(b) != SYMBOL_LIST) {
+    ret = Object_accept(Object_clone(a));
+    Object_reject(Object_bop_push(ret, b));
+    //TODO: this should create an Improper List, where the last element is B. 
+  }
+  else {
+    ret = QERROR("invalid types for append");
+  }
+  Object_assign(&a, NULL);
+  Object_assign(&b, NULL);
+  assert(ret != NULL);
+  assert(ret->rc == 0);
   return ret;
 }
 

@@ -245,6 +245,15 @@ int main(int argc, char** argv) {
   printf("new_obj_sys_size = %d\n", new_obj_sys_size);
   nassert(new_obj_sys_size == old_obj_sys_size);
 
+  old_obj_sys_size = Object_system_size();
+  printf("old_obj_sys_size = %d\n", old_obj_sys_size);
+  for(i = 0; i < 100; i++) {
+    Object_reject(Lisp_eval_string(QSTRING("(list 1 2 3)")));
+  }
+  new_obj_sys_size = Object_system_size();
+  printf("new_obj_sys_size = %d\n", new_obj_sys_size);
+  nassert(new_obj_sys_size == old_obj_sys_size);
+
   Object* tvar1 = QSYMBOL("tvar1");
   char* dstr1 = calloc(255, sizeof(char));
   old_obj_sys_size = Object_system_size();
@@ -423,6 +432,26 @@ int main(int argc, char** argv) {
   Object* squote3_exp = Object_new_list(1, 3, QNUMBER(3), QNUMBER(2), QNUMBER(1));
   ObjectUtil_eprintf("squote3_exp = %v\n", squote3_exp);
   nassert(Object_cmp(squote3_res, squote3_exp) == 0);
+
+  Object* aplist_1s1 = Object_new_list(1, 3, QNUMBER(1), QNUMBER(2), QNUMBER(3));
+  ObjectUtil_eprintf("aplist_1s1 = %v\n", aplist_1s1);
+  Object* aplist_1s2 = Object_new_list(1, 3, QNUMBER(4), QNUMBER(5), QNUMBER(6));
+  ObjectUtil_eprintf("aplist_1s2 = %v\n", aplist_1s2);
+  Object* aplist_1r1 = Object_accept(Object_bop_append(aplist_1s1, aplist_1s2));
+  ObjectUtil_eprintf("aplist_1r1 = %v\n", aplist_1r1);
+
+  Object* aplist_1r2 = Object_accept(Lisp_eval_string(QSTRING("(append (list 1 2 3) (list 4 5 6))")));
+  Object* aplist_1r2_exp = Object_new_list(1, 6, QNUMBER(1), QNUMBER(2), QNUMBER(3), QNUMBER(4), QNUMBER(5), QNUMBER(6));
+  nassert(Object_cmp(aplist_1r2, aplist_1r2_exp) == 0);
+
+  old_obj_sys_size = Object_system_size();
+  printf("old_obj_sys_size = %d\n", old_obj_sys_size);
+  for(i = 0; i < 100; i++) {
+    Object_reject(Lisp_eval_string(QSTRING("(append (list 1 2 3) (list 4 5 6))")));
+  }
+  new_obj_sys_size = Object_system_size();
+  printf("new_obj_sys_size = %d\n", new_obj_sys_size);
+  nassert(old_obj_sys_size == new_obj_sys_size);
 
 _shutdown:
   Lisp_done();
