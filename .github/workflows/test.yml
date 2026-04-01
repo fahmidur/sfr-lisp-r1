@@ -1,0 +1,24 @@
+name: test
+on: [push, pull_request]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v5
+    - name: apt update
+      run: sudo apt-get update
+    - name: install build-essential
+      run: sudo apt-get install -y build-essential
+    - name: install clang
+      run: sudo apt-get install --yes clang
+    - name: install lld 
+      run: sudo apt-get install --yes lld
+    - name: install valgrind
+      run: sudo apt-get install --yes valgrind
+    - name: install ruby
+      run: sudo apt-get install --yes ruby-full
+    - name: install racket
+      run: sudo apt-get install --yes racket
+    - name: run test
+      run: rake clean_test
+
