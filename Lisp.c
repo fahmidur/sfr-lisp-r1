@@ -391,6 +391,16 @@ Object* fn_cmp_equal(Function* fn, Object* env, Object* argv) {
   return ret;
 }
 
+Object* fn_cmp_append(Function* fn, Object* env, Object* argv) {
+  Object* a = Object_accept(Object_bop_hget(env, QSYMBOL("a")));
+  Object* b = Object_accept(Object_bop_hget(env, QSYMBOL("b")));
+  // Object* ret = Object_new_null();
+  Object* ret = Object_bop_append(a, b);
+  Object_assign(&a, NULL);
+  Object_assign(&b, NULL);
+  return ret;
+}
+
 Object* fn_list(Function* fn, Object* env, Object* argv) {
   /* return Object_return(Object_clone(argv)); */
   return Object_return(argv);
@@ -495,6 +505,7 @@ void Lisp_init() {
   _qdefun_bin("<", fn_cmp_lt);
   _qdefun_bin("<=", fn_cmp_lte);
   _qdefun_bin("equal?", fn_cmp_equal);
+  _qdefun_bin("append", fn_cmp_append);
 
   _qdefun_v("exit", fn_exit);
   _qdefun_v("begin", fn_begin);
