@@ -56,7 +56,7 @@ void      List_del(List* self);
 void      List_print(List* self);
 char      List_zero(List* self);
 List*     List_clone(List* self);
-List*     List_append(List* self, List* other); //TODO: test this
+List*     List_append(List* self, List* other);
 int       List_cmp(List* self, List* other);
 
 size_t    List_size(List* self);
