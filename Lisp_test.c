@@ -444,6 +444,10 @@ int main(int argc, char** argv) {
   Object* aplist_1r2_exp = Object_new_list(1, 6, QNUMBER(1), QNUMBER(2), QNUMBER(3), QNUMBER(4), QNUMBER(5), QNUMBER(6));
   nassert(Object_cmp(aplist_1r2, aplist_1r2_exp) == 0);
 
+  Object* aplist_2 = Object_accept(Lisp_eval_string(QSTRING("(append (list 1 2 3) 4)")));
+  Object* aplist_2_exp = Object_new_list(1, 4, QNUMBER(1), QNUMBER(2), QNUMBER(3), QNUMBER(4));
+  nassert(Object_cmp(aplist_2, aplist_2_exp) == 0);
+
   old_obj_sys_size = Object_system_size();
   printf("old_obj_sys_size = %d\n", old_obj_sys_size);
   for(i = 0; i < 100; i++) {

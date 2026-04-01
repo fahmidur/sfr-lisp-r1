@@ -1505,6 +1505,8 @@ Object* Object_bop_append(Object* a, Object* b) {
   if(Object_type(a) == SYMBOL_LIST && Object_type(b) != SYMBOL_LIST) {
     ret = Object_accept(Object_clone(a));
     Object_reject(Object_bop_push(ret, b));
+    Object_return(ret);
+    Object_rc_decr(ret);
     //TODO: this should create an Improper List, where the last element is B. 
   }
   else {
