@@ -6,19 +6,19 @@ jobs:
     steps:
     - uses: actions/checkout@v5
     - name: apt update
-      run: apt-get update
+      run: sudo apt-get update
     - name: install build-essential
-      run: apt-get install -y build-essential
+      run: sudo apt-get install -y build-essential
     - name: install clang
-      run: apt-get install --yes clang
+      run: sudo apt-get install --yes clang
     - name: install lld 
-      run: apt-get install --yes lld
+      run: sudo apt-get install --yes lld
     - name: install valgrind
-      run: apt-get install --yes valgrind
+      run: sudo apt-get install --yes valgrind
     - name: install ruby
-      run: apt-get install --yes ruby-full
+      run: sudo apt-get install --yes ruby-full
     - name: install racket
-      run: apt-get install --yes racket
+      run: sudo apt-get install --yes racket
     - name: run test
       run: rake clean_test
 
