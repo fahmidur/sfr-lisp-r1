@@ -268,7 +268,6 @@ List* List_clone(List* self) {
   return clone;
 }
 
-//TODO: test this
 List* List_append(List* self, List* other) {
   List* clone = List_clone(self);
   ListNode* iter = other->head;
