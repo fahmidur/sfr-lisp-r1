@@ -102,6 +102,10 @@ task :test => :build do
   sh "ruby ./test/all.rb | tee tmp/testresults.txt"
 end
 
+desc "Clean and Run all tests"
+task :clean_test => [:clean, :build, :test] do 
+end
+
 desc "Start a webserver at CWD"
 task :server do
   sh "ruby -run -e httpd ."

@@ -275,6 +275,20 @@ int main(int argc, char** argv) {
   // no new objects have been created
   nassert(new_obj_sys_size == old_obj_sys_size);
 
+  old_obj_sys_size = Object_system_size();
+  printf("old_obj_sys_size = %d\n", old_obj_sys_size);
+  char* dstr3 = calloc(255, sizeof(char));
+  for(i = 0; i < 100; i++) {
+    memset(dstr3, 0, 255);
+    sprintf(dstr3, "'%f", (0.987 + i));
+    Object_reject(Lisp_eval_string(QSTRING(dstr3)));
+  }
+  free(dstr3); dstr3 = NULL;
+  new_obj_sys_size = Object_system_size();
+  printf("new_obj_sys_size = %d\n", new_obj_sys_size);
+  // no new objects have been created
+  nassert(new_obj_sys_size == old_obj_sys_size);
+
   nassert(Object_system_rtcount() == 0);
 
   printf("\n=== === lambda env leak test 2 === ===\n");
@@ -394,6 +408,21 @@ int main(int argc, char** argv) {
   nassert(Object_type(dlam_res2) == SYMBOL_NUMBER);
   nassert(Object_cmp(dlam_res2, QNUMBER(0)) == 0);
   ObjectUtil_eprintf("dlam_res2 = %v\n", dlam_res2);
+
+  Object* squote1_str = QSTRING_NEW1("'3.14");
+  Object* squote1_res = Object_accept(Lisp_eval_string(squote1_str));
+  nassert(Object_cmp(squote1_res, QNUMBER(3.14)) == 0);
+
+  Object* squote2_str = QSTRING_NEW1("'trinity");
+  Object* squote2_res = Object_accept(Lisp_eval_string(squote2_str));
+  nassert(Object_cmp(squote2_res, QSYMBOL("trinity")) == 0);
+
+  Object* squote3_str = QSTRING_NEW1("'(3 2 1)");
+  Object* squote3_res = Object_accept(Lisp_eval_string(squote3_str));
+  ObjectUtil_eprintf("squote3_res = %v\n", squote3_res);
+  Object* squote3_exp = Object_new_list(1, 3, QNUMBER(3), QNUMBER(2), QNUMBER(1));
+  ObjectUtil_eprintf("squote3_exp = %v\n", squote3_exp);
+  nassert(Object_cmp(squote3_res, squote3_exp) == 0);
 
 _shutdown:
   Lisp_done();

@@ -15,10 +15,10 @@ void dbg_printf(char* fmt, ...) {
 }
 #endif
 
-void Util_indent(int size) {
+void Util_indent(FILE* f, int size) {
   int i = 0;
   for(i = 0; i < size; i++) {
-    printf("  ");
+    fprintf(f, "  ");
   }
 }
 

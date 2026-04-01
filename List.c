@@ -268,6 +268,17 @@ List* List_clone(List* self) {
   return clone;
 }
 
+//TODO: test this
+List* List_append(List* self, List* other) {
+  List* clone = List_clone(self);
+  ListNode* iter = other->head;
+  while(iter != NULL) {
+    List_push(clone, Object_clone(iter->data));
+    iter = iter->next;
+  }
+  return clone;
+}
+
 int List_cmp(List* self, List* other) {
   if(self->size != other->size) {
     return 1; 
