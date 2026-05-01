@@ -93,5 +93,6 @@ coverage_report/
 coverage_data/
 
 
-
+massif.out
+massif.out.*
 
