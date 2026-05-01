@@ -17,6 +17,7 @@ task :clean do
   sh "rm -rf ./build/*"
   sh "rm -f *.o"
   sh "rm -f *.pdf"
+  sh "rm -f massif.out*"
 
   clean_coverage()
 
