@@ -417,3 +417,8 @@ to Tail-Call-Optimization (TCO).
 
 See link:./TODO.txt[Todo-List] for an updated running list.
 
+== Quick Links
+
+* https://fahmidur.com/nodes/p/sfrlisp-1[Blog Post on fahmidur.com]
+* https://sfrlisp1.fahmidur.com/[Hosted WASM Build on fahmidur.com]
+
