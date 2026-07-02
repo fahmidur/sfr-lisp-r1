@@ -176,3 +176,12 @@ end
 task :test_view do 
   sh "less -R tmp/testresults.txt"
 end
+
+desc "Use bear to generate compile_commands.json"
+task :bear => [:clean] do 
+  unless which('bear')
+    raise 'bear is not installed'
+  end
+  sh "bear -- rake"
+end
+
